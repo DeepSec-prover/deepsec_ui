@@ -116,3 +116,12 @@ setup.log
 _opam/
 
 # End of https://www.gitignore.io/api/ocaml,intellij
+
+### Eliom files ###
+
+# Compiled files
+_client/
+_deps/
+_server/
+.depend
+local/
