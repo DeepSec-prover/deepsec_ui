@@ -26,5 +26,5 @@ let () =
            ~title:"deepsec_ui"
            ~css:[["css";"deepsec_ui.css"]]
            Html.F.(body [
-             h1 [pcdata "Welcome from Eliom's distillery!"];
+             h1 [pcdata "Welcome in DeepSec UI!"];
            ])))
