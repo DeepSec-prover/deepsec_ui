@@ -1,0 +1,32 @@
+{
+  "name": "deepsec_ui",
+  "version": "1.0.0",
+  "description": "User interface for DeepSec",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron . --disable-gpu",
+    "check": "standard"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DeepSec-prover/deepsec_ui.git"
+  },
+  "keywords": [
+    "deepsec",
+    "inria",
+    "secutity",
+    "ui"
+  ],
+  "author": "Victor YON, Vincent Cheval",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/DeepSec-prover/deepsec_ui/issues"
+  },
+  "homepage": "https://github.com/DeepSec-prover/deepsec_ui#readme",
+  "dependencies": {
+    "electron": "^6.0.5"
+  },
+  "devDependencies": {
+    "standard": "^14.1.0"
+  }
+}
