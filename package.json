@@ -9,7 +9,7 @@
     "check": "standard",
     "package-mac": "electron-packager . --overwrite --appCopyright=\"GPL-3.0\" --platform=darwin --arch=all --darwinDarkModeSupport=true --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
     "package-win": "electron-packager . deepsec-ui --overwrite --appCopyright=\"GPL-3.0\", --asar --platform=win32 --arch=all --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=\"INRIA\" --version-string.FileDescription=\"User interface for DeepSec\" --version-string.ProductName=\"DeepSec UI\"",
-    "package-linux": "electron-packager . deepsec-ui --overwrite --appCopyright=\"GPL-3.0\" --asar --platform=linux --arch=all --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds"
+    "package-linux": "electron-packager . deepsec-ui --overwrite --appCopyright=\"GPL-3.0\" --asar --platform=linux --arch=all --icon=assets/icons/icon.png --prune=true --out=release-builds"
   },
   "repository": {
     "type": "git",
