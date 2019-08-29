@@ -1,6 +1,7 @@
 const { app, BrowserWindow, Menu } = require('electron')
 
 const path = require('path')
+const mainMenuTemplate = require('./mainMenu')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -33,22 +34,6 @@ function createWindow () {
   // Attache the menu to the window
   Menu.setApplicationMenu(Menu.buildFromTemplate(mainMenuTemplate))
 }
-
-// Create menu template
-const mainMenuTemplate = [
-  {
-    label: 'File',
-    submenu: [
-      {
-        label: 'Quit',
-        accelerator: process.platform === 'darwin' ? 'Command+Q' : 'Ctrl+Q',
-        click () {
-          app.quit()
-        }
-      }
-    ]
-  }
-]
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
