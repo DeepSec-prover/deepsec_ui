@@ -1,6 +1,6 @@
 # DeepSec UI
 
-User interface for [Deepsec](https://github.com/DeepSec-prover/deepsec). **Work in progress**.
+User interface for [DeepSec](https://github.com/DeepSec-prover/deepsec). **Work in progress**.
 
 Powered by [Electron](https://electronjs.org) ([doc](https://electronjs.org/docs)).
 
@@ -34,6 +34,10 @@ Note: If you're using Linux Bash for Windows, [see this guide](https://www.howto
 
 - `npm start` : Run the application
 - `npm check` : Check the code syntax
+- `package-mac` : Build and package the application for MacOS (all architectures)
+- `package-win` : Build and package the application for Windows  (all architectures)
+- `package-linux` : Build and package the application for Linux  (all architectures)
+
 
 ## File structure
 
