@@ -3,9 +3,9 @@
   "productName": "Deepsec UI",
   "version": "0.1.0",
   "description": "User interface for DeepSec",
-  "main": "main.js",
+  "main": "src/main.js",
   "scripts": {
-    "start": "electron . --disable-gpu",
+    "start": "electron src/main.js --disable-gpu",
     "check": "standard",
     "package-mac": "electron-packager . --overwrite --appCopyright=\"GPL-3.0\" --platform=darwin --arch=all --darwinDarkModeSupport=true --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
     "package-win": "electron-packager . deepsec-ui --overwrite --appCopyright=\"GPL-3.0\", --asar --platform=win32 --arch=all --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=\"INRIA\" --version-string.FileDescription=\"User interface for DeepSec\" --version-string.ProductName=\"DeepSec UI\"",
