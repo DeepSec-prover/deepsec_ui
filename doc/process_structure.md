@@ -18,7 +18,7 @@ Definition of `<variable>` :
 
 ```
 {
-  "type": "variable",
+  "type": "Variable",
   "label" : <string>,
   "index": <int>
 }
@@ -30,7 +30,7 @@ Definition of `<name>` :
 
 ```
 {
-  "type": "name",
+  "type": "Name",
   "label": <string>,
   "index": <int>,
   "is_public": <bool>
@@ -43,7 +43,7 @@ Definition of `<symbol>` :
 
 ```
 {
-  "type": "symbol",
+  "type": "Symbol",
   "label": <string>,
   "arity": <int>,
   "category": "Tuple" | "Constructor" | "Destructor",
@@ -57,16 +57,16 @@ Definition of `<term>` :
 
 ```
 {
-  "type": "atomic";
+  "type": "Atomic";
   "id": <int>
 }
 ```
 or
 ```
 {
-  "type": "function",
+  "type": "Function",
   "symbol": <int>,
-  "arguments": [
+  "args": [
     <term>,
     ...,
     <term>
@@ -80,16 +80,16 @@ Definition of `<pattern>` :
 
 ```
 {
-  "type": "atomic";
+  "type": "Atomic";
   "id": <int>
 }
 ```
 or
 ```
 {
-  "type": "function",
+  "type": "Function",
   "symbol": <int>,
-  "arguments": [
+  "args": [
     <pattern>,
     ...,
     <pattern>
@@ -99,7 +99,7 @@ or
 or
 ```
 {
-  "type": "equality",
+  "type": "Equality",
   "term": <term>
 }
 ```
@@ -135,12 +135,14 @@ Definition of `<position>`
 }
 ```
 
+
+
 ## Process
 
 Definition of `<process>`
 
 ```
-{ "type": "Nil" }
+{ "type": null }
 ```
 or
 ```
