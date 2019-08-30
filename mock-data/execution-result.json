@@ -1,0 +1,17 @@
+{
+  "deepsec-version": "1.0.1",
+  "git-hash": "7edac0743c53770f91f8243309b2502dc66e0b4f",
+  "input-file": "./specifications/Helios-vanilla-attack.1.dps",
+  "command-options": [
+    {
+      "label": "nb_sets",
+      "value": "60"
+    }
+  ],
+  "query-results": [
+    {
+      "id": 1,
+      "process-file": "./process_example.json"
+    }
+  ]
+}
