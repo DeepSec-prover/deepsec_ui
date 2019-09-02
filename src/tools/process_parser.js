@@ -1,86 +1,102 @@
+const INDENT = '   '
+
 function formatProcess (processJson) {
 
   const atomicTable = processJson.atomic_data
   const process = processJson.process1
 
-  return format(process, atomicTable)
+  return format(process, atomicTable, 0)
 }
 
-function formatNew (content, atomicTable) {
+function strIndent (count) {
+  return INDENT.repeat((count))
+}
+
+function formatNew (content, atomicTable, indent) {
   return 'new ' + atomicTable[content.name].label + ';\n' +
     // Next line
-    format(content.process, atomicTable)
+    format(content.process, atomicTable, indent)
 }
 
-function formatLetInElse (content, atomicTable) {
-  return 'let ' + format(content.pattern, atomicTable) + ' = ' +
-    format(content.term, atomicTable) + ' in \n' +
+function formatLetInElse (content, atomicTable, indent) {
+  return 'let ' + format(content.pattern, atomicTable, indent) + ' = ' +
+    format(content.term, atomicTable, indent) + ' in \n' +
     // Next line
-    format(content.process_then, atomicTable)
+    format(content.process_then, atomicTable, indent)
   // TODO process_else
 }
 
-function formatAtomic (content, atomicTable) {
+function formatAtomic (content, atomicTable, indent) {
   return atomicTable[content.id].label
 }
 
-function formatFunction (content, atomicTable) {
+function formatFunction (content, atomicTable, indent) {
+  let res = atomicTable[content.symbol].label
+
   // TODO not () for empty args?
-  return atomicTable[content.symbol].label + '(' +
-    content.args.map(value => format(value, atomicTable)).join(',') + ')'
-}
-
-function formatOutput (content, atomicTable) {
-  return 'out(' + format(content.channel, atomicTable) + ',' +
-    format(content.term, atomicTable) + ');\n' +
-    // New line
-    format(content.process, atomicTable)
-}
-
-function formatPar (content, atomicTable) {
-  return '(\n' + content.process_list.map(process => {
-    return format(process, atomicTable)
-  }).join(')|(\n') + ')\n'
-}
-
-function formatInput (content, atomicTable) {
-  return 'in(' + format(content.channel, atomicTable) + ',' +
-    format(content.pattern, atomicTable) + ');\n' +
-    // New line
-    format(content.process, atomicTable)
-}
-
-function formatIfThenElse (content, atomicTable) {
-  // TODO always '=' ?
-  let res = 'if ' + format(content.term1, atomicTable) + ' = ' +
-    format(content.term2, atomicTable) + ' then\n' +
-    format(content.process_then, atomicTable)
-
-  if (content.process_else !== null) {
-    res += 'else\n' + format(content.process_else, atomicTable)
+  if (content.args.length > 0) {
+    res += content.args.map(value => format(value, atomicTable, indent)).join(',') + ')'
   }
 
   return res
 }
 
-function format (content, atomicTable) {
+function formatOutput (content, atomicTable, indent) {
+  return 'out(' + format(content.channel, atomicTable, indent) + ',' +
+    format(content.term, atomicTable, indent) + ');\n' +
+    // New line
+    format(content.process, atomicTable, indent)
+}
+
+function formatPar (content, atomicTable, indent) {
+  return '(\n' + content.process_list.map(process => {
+    return format(process, atomicTable, indent + 1)
+  }).join(strIndent(indent) + ')|(\n') + strIndent(indent) + ')\n'
+}
+
+function formatInput (content, atomicTable, indent) {
+  return 'in(' + format(content.channel, atomicTable, indent) + ',' +
+    format(content.pattern, atomicTable, indent) + ');\n' +
+    // New line
+    format(content.process, atomicTable, indent)
+}
+
+function formatIfThenElse (content, atomicTable, indent) {
+  // TODO always '=' ?
+  let res = 'if ' + format(content.term1, atomicTable, indent) + ' = ' +
+    format(content.term2, atomicTable, indent) + ' then\n' +
+    format(content.process_then, atomicTable, indent + 1)
+
+  if (content.process_else !== null) {
+    res += strIndent(indent) + 'else\n' +
+      format(content.process_else, atomicTable, indent + 1)
+  }
+
+  return res
+}
+
+function format (content, atomicTable, indent) {
+
+  let linePrefix = strIndent(indent)
+
   switch (content.type) {
     case 'Atomic':
-      return formatAtomic(content, atomicTable)
-    case 'New':
-      return formatNew(content, atomicTable)
+      // TODO specific format for each atomic
+      return formatAtomic(content, atomicTable, indent)
     case 'Function':
-      return formatFunction(content, atomicTable)
+      return formatFunction(content, atomicTable, indent)
+    case 'New':
+      return linePrefix + formatNew(content, atomicTable, indent)
     case 'LetInElse':
-      return formatLetInElse(content, atomicTable)
+      return linePrefix + formatLetInElse(content, atomicTable, indent)
     case 'Output':
-      return formatOutput(content, atomicTable)
+      return linePrefix + formatOutput(content, atomicTable, indent)
     case 'Par':
-      return formatPar(content, atomicTable)
+      return linePrefix + formatPar(content, atomicTable, indent)
     case 'Input':
-      return formatInput(content, atomicTable)
+      return linePrefix + formatInput(content, atomicTable, indent)
     case 'IfThenElse':
-      return formatIfThenElse(content, atomicTable)
+      return linePrefix + formatIfThenElse(content, atomicTable, indent)
     case null:
       return ''
     default:
