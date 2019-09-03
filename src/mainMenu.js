@@ -19,7 +19,7 @@ const mainMenuTemplate = [
 // ==================== Development Tools ====================
 if (process.env.NODE_ENV !== 'production') {
   mainMenuTemplate.push({
-    label: 'Dev tools',
+    label: 'Dev Tools',
     submenu: [
       {
         label: 'Toggle inspector',

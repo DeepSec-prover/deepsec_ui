@@ -104,7 +104,7 @@ or
 }
 ```
 
-A pattern `pat` with `pat.type = "equality"` should be displayed
+A pattern `pat` with `pat.type = "Equality"` should be displayed
 as `=t` where `t` is the display of `pat.term`
 
 ## Position
