@@ -65,10 +65,9 @@ function strIndent (count) {
   return INDENT.repeat((count))
 }
 
-/* ============================================================================ */
-/* ============================== Format By Type ============================== */
-
-/* ============================================================================ */
+/* ============================================================================
+   ============================== Format By Type ==============================
+   ============================================================================ */
 
 /**
  *  Format "New" type to readable string
@@ -79,7 +78,7 @@ function strIndent (count) {
  * @returns {string} A readable string which describe the sub-process and its children
  */
 function formatNew (subProcess, atomicTable, indent) {
-  return 'new ' + atomicTable[subProcess.name].label + ';\n' +
+  return `new ${atomicTable[subProcess.name].label};\n` +
     // Next line
     format(subProcess.process, atomicTable, indent)
 }
@@ -125,7 +124,7 @@ function formatAtomic (subProcess, atomicTable, indent) {
     return subProcess.label
   }
 
-  throw Error('Unexpected type ' + subProcess.type)
+  throw Error(`Unexpected type ${subProcess.type}`)
 }
 
 /**

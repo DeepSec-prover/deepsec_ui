@@ -1,7 +1,7 @@
 const { app, BrowserWindow, Menu } = require('electron')
 
 const path = require('path')
-const mainMenuTemplate = require('./mainMenu')
+const mainMenuTemplate = require('./main-menu')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -13,15 +13,13 @@ function createWindow () {
     width: 1000,
     height: 800,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true // To use 'require' in the page's script
     }
   })
 
   // and load the index.html of the app.
-  mainWindow.loadFile('views/mainWindow.html')
-
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.loadFile('views/home.html')
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -32,7 +30,7 @@ function createWindow () {
   })
 
   // Attache the menu to the window
-  Menu.setApplicationMenu(Menu.buildFromTemplate(mainMenuTemplate))
+  Menu.setApplicationMenu(Menu.buildFromTemplate(mainMenuTemplate(mainWindow)))
 }
 
 // This method will be called when Electron has finished
