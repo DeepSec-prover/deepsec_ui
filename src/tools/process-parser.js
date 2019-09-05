@@ -143,10 +143,8 @@ function formatFunction (subProcess, atomicTable, indent) {
   } else {
     let res = symbol.label
 
-    // No '()' if no args
-    if (subProcess.args.length > 0) {
-      res += '(' + subProcess.args.map(value => format(value, atomicTable, indent)).join(',') + ')'
-    }
+    res += '(' + subProcess.args.map(value => format(value, atomicTable, indent)).join(',') + ')'
+
 
     return res
   }
