@@ -2,7 +2,12 @@
 Prism.languages['deepsec'] = {
   'keyword': /new|let|in|if|then|else|out/,
   'operator': /=\|/,
-  'function': /\w+(?=\()/,
+  'function': {
+    pattern: /\w+(?=\()/,
+    inside: {
+      'sub': /(?=\w+)_\w+/
+    }
+  },
   'no-args': /\(\)/,
   'punctuation': /[()\u27e8\u27e9,;]/u,
   'sub': /(?=\w+)_\w+/
