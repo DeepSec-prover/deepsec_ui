@@ -1,3 +1,5 @@
+const rename = require('./rename-table')
+
 /**
  * String for one code indent
  * @type {string}
@@ -121,7 +123,7 @@ function formatAtomic (subProcess, atomicTable, indent) {
   subProcess = atomicTable[subProcess.id]
 
   if (subProcess.type === 'Name' || subProcess.type === 'Variable') {
-    return subProcess.label
+    return rename(subProcess.label, subProcess.index)
   }
 
   throw Error(`Unexpected type ${subProcess.type}`)
@@ -144,7 +146,6 @@ function formatFunction (subProcess, atomicTable, indent) {
     let res = symbol.label
 
     res += '(' + subProcess.args.map(value => format(value, atomicTable, indent)).join(',') + ')'
-
 
     return res
   }
