@@ -10,8 +10,8 @@ let mainWindow
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 1000,
-    height: 800,
+    width: 1200,
+    height: 1000,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true // To use 'require' in the page's script
