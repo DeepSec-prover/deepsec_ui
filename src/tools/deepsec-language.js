@@ -9,7 +9,7 @@ Prism.languages['deepsec'] = {
     }
   },
   'no-args': /\(\)/,
-  'punctuation': /[()\u27e8\u27e9,;]/u,
+  'punctuation': /[()\u27e8\u27e9,;]/u, // TODO highlight for ⟨...⟩
   'sub': /(?=\w+)_\w+/
 }
 

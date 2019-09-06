@@ -10,6 +10,8 @@ function showResult (filePath) {
 
   document.getElementById('process').innerHTML =
     formatProcess(result.process1, result.atomic_data)
+
+  Prism.highlightAll()
 }
 
 // Wait to receive a path to a result file, then show it on the page

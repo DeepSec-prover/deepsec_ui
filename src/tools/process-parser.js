@@ -97,12 +97,13 @@ function formatLetInElse (subProcess, atomicTable, indent) {
   let res = 'let ' + format(subProcess.pattern, atomicTable, indent) + ' = ' +
     format(subProcess.term, atomicTable, indent) + ' in \n'
 
+  // No "else" so no indent "in"
   if (subProcess.process_else.type === null) {
-    // No indent bloc
     res += format(subProcess.process_then, atomicTable, indent)
-  } else {
-    // Indent bloc
-    res += format(subProcess.process_then, atomicTable, indent + 1) + '\n'
+  }
+  // With "else" so no indent all
+  else {
+    res += format(subProcess.process_then, atomicTable, indent + 1)
     res += strIndent(indent) + 'else\n' +
       format(subProcess.process_else, atomicTable, indent + 1)
   }
@@ -217,11 +218,16 @@ function formatInput (subProcess, atomicTable, indent) {
  */
 function formatIfThenElse (subProcess, atomicTable, indent) {
   let res = 'if ' + format(subProcess.term1, atomicTable, indent) + ' = ' +
-    format(subProcess.term2, atomicTable, indent) + ' then\n' +
-    format(subProcess.process_then, atomicTable, indent + 1)
+    format(subProcess.term2, atomicTable, indent) + ' then\n'
 
-  if (subProcess.process_else.type !== null) {
-    res += strIndent(indent) + 'else\n' +
+  // No "else" so no indent "then"
+  if (subProcess.process_else.type === null) {
+    res += format(subProcess.process_then, atomicTable, indent)
+  }
+  // With "else" so indent all
+  else {
+    res += format(subProcess.process_then, atomicTable, indent + 1) +
+      strIndent(indent) + 'else\n' +
       format(subProcess.process_else, atomicTable, indent + 1)
   }
 
