@@ -1,7 +1,7 @@
 {
   "name": "deepsec_ui",
   "productName": "Deepsec UI",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "User interface for DeepSec",
   "main": "src/main.js",
   "scripts": {
@@ -29,7 +29,7 @@
   "homepage": "https://github.com/DeepSec-prover/deepsec_ui#readme",
   "dependencies": {
     "app-root-path": "^2.2.1",
-    "winston": "^3.2.1"
+    "electron-log": "^3.0.7"
   },
   "devDependencies": {
     "electron": "^6.0.5",

@@ -1,5 +1,5 @@
 const { dialog } = require('electron')
-const logger = require('winston')
+const logger = require('electron-log')
 
 /**
  * Open the file selector and do an action with the file path.

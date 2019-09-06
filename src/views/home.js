@@ -1,5 +1,5 @@
 const { ipcRenderer } = require('electron')
-const logger = require('winston')
+const logger = require('electron-log')
 const formatProcess = require('../tools/process-parser')
 const fs = require('fs')
 require('../../static/js/prism') // TODO use npm package ?
@@ -21,7 +21,7 @@ function showResult (filePath) {
   } catch (e) {
     // TODO show better error to the user
     result = `<strong>Fail to load the file ${filePath}</strong>`
-    logger.error(`Fail to load the file ${filePath}`, e)
+    logger.error(`Fail to load the file ${filePath}`)
   }
 
   document.getElementById('process').innerHTML =

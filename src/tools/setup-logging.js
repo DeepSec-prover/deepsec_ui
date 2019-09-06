@@ -1,68 +1,43 @@
 const appRoot = require('app-root-path')
-const winston = require('winston')
-const { transports, format } = winston
-const fs = require('fs')
-const path = require('path')
 const { app } = require('electron')
+const fs = require('fs')
+const logger = require('electron-log')
+const path = require('path')
 
 /**
  * Set up the default global logger.
- * Will log in console and in a file (stored in user log directory).
+ * Will log in console and in a file.
+ * The log file is stored in user log directory if packaged or in project root if not.
  */
 function setupDefaultLogger () {
+  // TODO Move some options in a configuration file
   const env = process.env.NODE_ENV || 'development'
+  const consoleLevel = env === 'production' ? 'warn' : 'debug'
+  const fileLevel = env === 'production' ? 'info' : 'silly'
+
   // Get and create the log directory for the current user depending of the OS
   const logDir = app.isPackaged ? app.getPath('logs') : appRoot + '/log'
+  const logFile = path.join(logDir, 'app.log')
 
   // Create the log directory if it does not exist
   if (!fs.existsSync(logDir)) {
     fs.mkdirSync(logDir)
   }
 
-  const logFile = path.join(logDir, 'app.log')
+  // Console Settings
+  logger.transports.console.format = '{h}:{i}:{s}.{ms} [{processType}] {level} - {text}'
+  logger.transports.console.level = consoleLevel
+  logger.transports.console.forceStyles = true
 
-  // TODO Move some options in a configuration file
-  const options = {
-    // Console output (text)
-    console: {
-      level: env === 'production' ? 'warn' : 'debug',
-      format: format.combine(
-        format.colorize(),
-        format.label({ label: path.basename(process.mainModule.filename) }),
-        format.timestamp({ format: 'HH:mm:ss.SSS' }),
-        format.printf(
-          info =>
-            `${info.timestamp} ${info.level} [${info.label}]: ${info.message}`
-        )
-      ),
-      stderrLevels: ['error', 'warn'],
-      handleExceptions: true
-    },
-    // File output (json)
-    file: {
-      level: env === 'production' ? 'info' : 'silly',
-      format: format.combine(
-        format.label({ label: path.basename(process.mainModule.filename) }),
-        format.timestamp(),
-        format.json()
-      ),
-      filename: logFile,
-      handleExceptions: true,
-      maxsize: 5242880, // 5MB
-      maxFiles: 5
-    }
-  }
+  // File Settings
+  logger.transports.file.level = fileLevel
+  logger.transports.file.file = logFile
+  logger.transports.file.maxSize = 5242880 // 5MB
 
-  // Configure the default logger
-  winston.configure({
-    transports: [
-      new transports.Console(options.console),
-      new transports.File(options.file)
-    ],
-    exitOnError: false // do not exit on handled exceptions
-  })
+  // TODO Unhandled error management
+  // logger.catchErrors({onError (error) {}})
 
-  winston.info(`Logger setup: console and file (${logFile})`)
+  logger.info(`Logger setup: console and file (${logFile})`)
 }
 
 module.exports = setupDefaultLogger

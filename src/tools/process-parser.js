@@ -1,5 +1,5 @@
 const rename = require('./rename-table')
-const logger = require('winston')
+const logger = require('electron-log')
 
 /**
  * String for one code indent

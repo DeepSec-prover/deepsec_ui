@@ -1,5 +1,5 @@
 const { app } = require('electron')
-const logger = require('winston')
+const logger = require('electron-log')
 const openResultFile = require('./tools/dialogs')
 
 /**

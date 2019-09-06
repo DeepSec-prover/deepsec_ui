@@ -1,5 +1,5 @@
 const { app, BrowserWindow, Menu } = require('electron')
-const logger = require('winston')
+const logger = require('electron-log')
 let setupDefaultLogger = require('./tools/setup-logging')
 
 const path = require('path')
