@@ -1,7 +1,12 @@
 const { app, BrowserWindow, Menu } = require('electron')
+const logger = require('winston')
+let setupDefaultLogger = require('./tools/setup-logging')
 
 const path = require('path')
 const mainMenuTemplate = require('./main-menu')
+
+// Init default logger
+setupDefaultLogger()
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -31,12 +36,17 @@ function createWindow () {
 
   // Attache the menu to the window
   Menu.setApplicationMenu(Menu.buildFromTemplate(mainMenuTemplate(mainWindow)))
+
+  logger.verbose('Main windows created')
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', () => {
+  logger.info('App ready')
+  createWindow()
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {

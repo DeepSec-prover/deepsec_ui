@@ -28,6 +28,8 @@
   },
   "homepage": "https://github.com/DeepSec-prover/deepsec_ui#readme",
   "dependencies": {
+    "app-root-path": "^2.2.1",
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "electron": "^6.0.5",
