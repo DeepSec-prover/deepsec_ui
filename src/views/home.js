@@ -10,13 +10,12 @@ function showResult (filePath) {
 
   document.getElementById('process').innerHTML =
     formatProcess(result.process1, result.atomic_data)
-
-  Prism.highlightAll()
 }
 
 // Wait to receive a path to a result file, then show it on the page
 ipcRenderer.on('result:show', (event, filePath) => {
   showResult(filePath)
+  Prism.highlightAll()
 })
 
 // TODO remove if no debug
