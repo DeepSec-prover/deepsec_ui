@@ -1,8 +1,10 @@
 const { app } = require('electron')
+const logger = require('winston')
 const openResultFile = require('./tools/dialogs')
 
 /**
- * Select the good command depending of the current system
+ * Select the good command depending of the current system.
+ *
  * @returns {string} Command for macOS and Ctrl for Windows or Linux
  */
 function ctrl () {
@@ -11,7 +13,7 @@ function ctrl () {
 
 /**
  * Create the template for the application main menu
- * TODO Try to remove the main windows reference
+ * TODO Try to remove the main windows reference (send to all windows ?)
  *
  * @param mainWindow - The main windows reference
  * @returns {{submenu: *[], label: string}[]}
@@ -25,11 +27,9 @@ function mainMenuTemplate (mainWindow) {
           label: 'Open',
           accelerator: ctrl() + '+O',
           click () {
-            console.log('EMIT result:show')
-
             openResultFile(filePath => {
-              console.log(filePath)
               // Send file path only because full object is too big
+              logger.debug('Send IPC message : result:show')
               mainWindow.webContents.send('result:show', filePath)
             })
           }

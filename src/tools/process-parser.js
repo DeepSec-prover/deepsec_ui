@@ -1,4 +1,5 @@
 const rename = require('./rename-table')
+const logger = require('winston')
 
 /**
  * String for one code indent
@@ -15,8 +16,11 @@ const INDENT = '   '
  * @see doc/process_structure.md for process structure
  */
 function formatProcess (process, atomicTable) {
+  logger.debug('[Start] Parsing a process')
   // Start recursive formatting
-  return format(process, atomicTable, 0)
+  const res = format(process, atomicTable, 0)
+  logger.debug('[Done] Parsing a process')
+  return res
 }
 
 /**
@@ -52,8 +56,9 @@ function format (subProcess, atomicTable, indent) {
     case null:
       return linePrefix + '0\n'
     default:
-      return '------------not implemented : ' + subProcess.type
-    // throw Error('Not supported type ' + type) TODO turn on exception
+      // Do not stop the app but log an error
+      logger.error(`Try to parse an unknown sub-process type ${subProcess.type}`)
+      return `------------ not implemented : ${subProcess.type} ------------`
   }
 }
 
@@ -81,7 +86,6 @@ function strIndent (count) {
  */
 function formatNew (subProcess, atomicTable, indent) {
   return `new ${atomicTable[subProcess.name].label};\n` +
-    // Next line
     format(subProcess.process, atomicTable, indent)
 }
 

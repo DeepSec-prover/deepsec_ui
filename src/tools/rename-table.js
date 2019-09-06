@@ -1,5 +1,13 @@
 const RENAME_TABLE = new Map()
 
+/**
+ * Simplify an index by using smallest index value (>=0).
+ * Return the name matching with the label and index if existing or create a new one.
+ *
+ * @param {string} label The name or variable name
+ * @param {number} index The index
+ * @returns {string} The name with smallest index
+ */
 function rename (label, index) {
   // Existing label
   if (RENAME_TABLE.has(label)) {
