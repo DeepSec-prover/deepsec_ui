@@ -2,8 +2,6 @@
 
 User interface for [DeepSec](https://github.com/DeepSec-prover/deepsec). **Work in progress**.
 
-Powered by [Electron](https://electronjs.org) ([doc](https://electronjs.org/docs)).
-
 ## Installation
 
 Download the binary file for your OS.
@@ -53,3 +51,9 @@ Note: If you're using Linux Bash for Windows, [see this guide](https://www.howto
 The log file `app.log` is stored : 
 - Packaged : In the OS default user's data directory
 - Development : In the app root directory
+
+## Credits
+
+- [Electron](https://electronjs.org) ([doc](https://electronjs.org/docs)) : Cross platform desktop app framework
+- [Prism](https://prismjs.com) : Code syntax highlighter library
+
