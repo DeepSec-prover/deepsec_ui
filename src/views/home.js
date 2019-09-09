@@ -2,6 +2,8 @@ const { ipcRenderer } = require('electron')
 const logger = require('electron-log')
 const formatProcess = require('../tools/process-parser')
 const fs = require('fs')
+const path = require('path')
+const settings = require('../../settings')
 require('../../static/js/prism') // TODO use npm package ?
 require('../tools/deepsec-language')
 
@@ -35,5 +37,7 @@ ipcRenderer.on('result:show', (event, filePath) => {
   Prism.highlightAll()
 })
 
-// TODO remove if no debug
-showResult('mock-data/process_example.json')
+// For fast test
+if (settings.mockDataAsDefault) {
+  showResult(path.join(__dirname, '../../mock-data/process_example.json'))
+}

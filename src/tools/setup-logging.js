@@ -1,8 +1,8 @@
-const appRoot = require('app-root-path')
 const { app } = require('electron')
 const fs = require('fs')
 const logger = require('electron-log')
 const path = require('path')
+const settings = require('../../settings')
 
 /**
  * Set up the default global logger.
@@ -10,11 +10,6 @@ const path = require('path')
  * The log file is stored in user log directory if packaged or in project root if not.
  */
 function setupDefaultLogger () {
-  // TODO Move some options in a configuration file
-  const env = process.env.NODE_ENV || 'development'
-  const consoleLevel = env === 'production' ? 'warn' : 'debug'
-  const fileLevel = env === 'production' ? 'info' : 'silly'
-
   let logDir = null
 
   // Get and create the log directory for the current user depending of the OS
@@ -24,7 +19,7 @@ function setupDefaultLogger () {
   }
   // For dev create at project root
   else {
-    logDir = appRoot + '/log'
+    logDir = path.join(settings.appRoot, 'log')
 
     // Create the log directory if it does not exist
     if (!fs.existsSync(logDir)) {
@@ -36,11 +31,11 @@ function setupDefaultLogger () {
 
   // Console Settings
   logger.transports.console.format = '{h}:{i}:{s}.{ms} [{processType}] {level} - {text}'
-  logger.transports.console.level = consoleLevel
+  logger.transports.console.level = settings.logLevelConsole
   logger.transports.console.forceStyles = true
 
   // File Settings
-  logger.transports.file.level = fileLevel
+  logger.transports.file.level = settings.logLevelFile
   logger.transports.file.file = logFile
   logger.transports.file.maxSize = 5242880 // 5MB
 

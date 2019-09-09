@@ -1,9 +1,10 @@
 const { app, BrowserWindow, Menu } = require('electron')
 const logger = require('electron-log')
-let setupDefaultLogger = require('./tools/setup-logging')
-
 const path = require('path')
+
+const setupDefaultLogger = require('./tools/setup-logging')
 const mainMenuTemplate = require('./main-menu')
+const settings = require('../settings')
 
 // Init default logger
 setupDefaultLogger()
@@ -24,7 +25,7 @@ function createWindow () {
   })
 
   // and load the index.html of the app.
-  mainWindow.loadFile('views/home.html')
+  mainWindow.loadFile(path.join(__dirname, 'views/home.html'))
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -37,6 +38,10 @@ function createWindow () {
   // Attache the menu to the window
   Menu.setApplicationMenu(Menu.buildFromTemplate(mainMenuTemplate(mainWindow)))
 
+  if (settings.devTools.startUp) {
+    mainWindow.webContents.openDevTools()
+  }
+
   logger.verbose('Main windows created')
 }
 
@@ -45,6 +50,9 @@ function createWindow () {
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
   logger.info('App ready')
+  if (settings.env !== 'prod') {
+    logger.warn(`Not in production mode (current env: ${settings.env})`)
+  }
   createWindow()
 })
 
@@ -52,6 +60,7 @@ app.on('ready', () => {
 app.on('window-all-closed', function () {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
+  logger.info('Closing app')
   if (process.platform !== 'darwin') app.quit()
 })
 

@@ -5,7 +5,7 @@
   "description": "User interface for DeepSec",
   "main": "src/main.js",
   "scripts": {
-    "start": "electron src/main.js --disable-gpu",
+    "start": "NODE_ENV=development electron src/main.js --disable-gpu",
     "check": "standard",
     "package-mac": "electron-packager . --overwrite --appCopyright=\"GPL-3.0\" --platform=darwin --arch=all --darwinDarkModeSupport=true --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
     "package-win": "electron-packager . deepsec-ui --overwrite --appCopyright=\"GPL-3.0\", --asar --platform=win32 --arch=all --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=\"INRIA\" --version-string.FileDescription=\"User interface for DeepSec\" --version-string.ProductName=\"DeepSec UI\"",
@@ -28,7 +28,6 @@
   },
   "homepage": "https://github.com/DeepSec-prover/deepsec_ui#readme",
   "dependencies": {
-    "app-root-path": "^2.2.1",
     "electron-log": "^3.0.7"
   },
   "devDependencies": {

@@ -1,6 +1,7 @@
 const { app } = require('electron')
 const logger = require('electron-log')
 const openResultFile = require('./tools/dialogs')
+const settings = require('../settings')
 
 /**
  * Select the good command depending of the current system.
@@ -46,18 +47,18 @@ function mainMenuTemplate (mainWindow) {
   ]
 
   // ==================== Development Tools ====================
-  if (process.env.NODE_ENV !== 'production') {
+  if (settings.devTools.menu) {
     menuTemplate.push({
       label: 'Dev Tools',
       submenu: [
         {
           label: 'Toggle inspector',
-          accelerator: 'F12',
+          accelerator: process.platform === 'darwin' ? 'Command+I' : 'F12',
           role: 'toggleDevTools'
         },
         {
           label: 'Reload',
-          accelerator: 'F5',
+          accelerator: process.platform === 'darwin' ? 'Command+R' : 'F5',
           role: 'reload'
         }
       ]
