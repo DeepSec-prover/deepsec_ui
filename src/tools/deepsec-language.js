@@ -1,16 +1,18 @@
+require('../../static/js/prism') // TODO use npm package ?
+
 // Define the language grammar
-Prism.languages['deepsec'] = {
-  'keyword': /new|let|in|if|then|else|out/,
-  'operator': /=\|/,
-  'function': {
+Prism.languages.deepsec = {
+  keyword: /new|let|in|if|then|else|out/,
+  operator: /=\|/,
+  function: {
     pattern: /\w+(?=\()/,
     inside: {
-      'sub': /(?=\w+)_\w+/
+      sub: /(?=\w+)_\w+/
     }
   },
   'no-args': /\(\)/,
-  'punctuation': /[()\u27e8\u27e9,;]/u, // TODO highlight for ⟨...⟩
-  'sub': /(?=\w+)_\w+/
+  punctuation: /[()\u27e8\u27e9,;]/u, // TODO highlight for ⟨...⟩
+  sub: /(?=\w+)_\w+/
 }
 
 // Create hook before rendering code

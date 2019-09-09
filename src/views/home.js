@@ -4,7 +4,6 @@ const formatProcess = require('../tools/process-parser')
 const fs = require('fs')
 const path = require('path')
 const settings = require('../../settings')
-require('../../static/js/prism') // TODO use npm package ?
 require('../tools/deepsec-language')
 
 /**
@@ -13,7 +12,6 @@ require('../tools/deepsec-language')
  * @param {string} filePath The path to the json result file.
  */
 function showResult (filePath) {
-
   logger.info(`Opening a process from file: ${filePath}`)
 
   let result = ''

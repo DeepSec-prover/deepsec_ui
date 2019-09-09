@@ -27,6 +27,11 @@
     "url": "https://github.com/DeepSec-prover/deepsec_ui/issues"
   },
   "homepage": "https://github.com/DeepSec-prover/deepsec_ui#readme",
+  "standard": {
+    "ignore": [
+      "/static/"
+    ]
+  },
   "dependencies": {
     "electron-log": "^3.0.7"
   },

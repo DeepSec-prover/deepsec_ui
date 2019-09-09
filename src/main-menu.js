@@ -20,7 +20,7 @@ function ctrl () {
  * @returns {{submenu: *[], label: string}[]}
  */
 function mainMenuTemplate (mainWindow) {
-  let menuTemplate = [
+  const menuTemplate = [
     {
       label: 'File',
       submenu: [
