@@ -15,14 +15,24 @@ function setupDefaultLogger () {
   const consoleLevel = env === 'production' ? 'warn' : 'debug'
   const fileLevel = env === 'production' ? 'info' : 'silly'
 
-  // Get and create the log directory for the current user depending of the OS
-  const logDir = app.isPackaged ? app.getPath('logs') : appRoot + '/log'
-  const logFile = path.join(logDir, 'app.log')
+  let logDir = null
 
-  // Create the log directory if it does not exist
-  if (!fs.existsSync(logDir)) {
-    fs.mkdirSync(logDir)
+  // Get and create the log directory for the current user depending of the OS
+  if (app.isPackaged) {
+    app.setAppLogsPath() // Create
+    logDir = app.getPath('logs')
   }
+  // For dev create at project root
+  else {
+    logDir = appRoot + '/log'
+
+    // Create the log directory if it does not exist
+    if (!fs.existsSync(logDir)) {
+      fs.mkdirSync(logDir)
+    }
+  }
+
+  const logFile = path.join(logDir, 'app.log')
 
   // Console Settings
   logger.transports.console.format = '{h}:{i}:{s}.{ms} [{processType}] {level} - {text}'
@@ -34,7 +44,7 @@ function setupDefaultLogger () {
   logger.transports.file.file = logFile
   logger.transports.file.maxSize = 5242880 // 5MB
 
-  // TODO Unhandled error management
+  // TODO Handled error management
   // logger.catchErrors({onError (error) {}})
 
   logger.info(`Logger setup: console and file (${logFile})`)
