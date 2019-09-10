@@ -1,0 +1,79 @@
+{
+  "status": "completed",
+  "start_time": 54096450184,
+  "end_time": 54096450184,
+  "atomic_data": [
+    {
+      "type": "Name",
+      "label": "osqn",
+      "index": 92,
+      "is_public": false
+    },
+    {
+      "type": "Symbol",
+      "label": "Sqn",
+      "arity": 0,
+      "category": "Constructor",
+      "is_public": true
+    }
+  ],
+  "rewrite_rules": [
+    {
+      "symbol": 42,
+      "left_hand_side": [
+      ],
+      "right_hand_side": {}
+    }
+  ],
+  "semantics": "private",
+  "process": [
+    {},
+    {}
+  ],
+  "is_verified": true,
+  "attack_trace": {
+    "index_process": 0,
+    "action_sequence": [
+      {
+        "type": "output",
+        "channel_recipe": {
+        },
+        "axiom_index": 1,
+        "process_position": {
+        }
+      },
+      {
+        "type": "input",
+        "channel_recipe": {
+        },
+        "term_recipe": {
+        },
+        "process_position": {
+        }
+      },
+      {
+        "type": "comm",
+        "input_process_position": {
+        },
+        "output_process_position": {
+        }
+      },
+      {
+        "type": "eavesdrop",
+        "channel_recipe": {
+        },
+        "input_process_position": {
+        },
+        "output_process_position": {
+        },
+        "axiom_index": 1
+      },
+      {
+        "type": "replication",
+        "process_position": {
+        },
+        "nb_process_unfolded": 5
+      }
+    ]
+  }
+}

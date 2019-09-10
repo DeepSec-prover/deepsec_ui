@@ -1,0 +1,50 @@
+{
+  "deepsec_version": "1.0.1",
+  "run_hash": "7edac0743c53770f91f8243309b2502dc66e0b4f",
+  "git_branch": "master",
+  "git_hash": "7edac0743c53770f91f8243309b2502dc66e0b4f",
+  "input_file": "./specification.1.dps",
+  "start_time": 1565438580,
+  "end_time": 1565441160,
+  "import_date": 1567499340,
+  "command_options": [
+    {
+      "label": "nb_jobs",
+      "value": "60"
+    },
+    {
+      "label": "round_timer",
+      "value": 120
+    },
+    {
+      "label": "no_display_attack_trace",
+      "value": false
+    },
+    {
+      "label": "default_semantics",
+      "value": "private"
+    },
+    {
+      "label": "distant_workers",
+      "value": [
+        {
+          "host": "my_login@my_host",
+          "path": "/deepsec/path/on/my/host",
+          "nb_workers": 10
+        }
+      ]
+    },
+    {
+      "label": "without_por",
+      "value": false
+    },
+    {
+      "label": "distributed",
+      "value": 0
+    }
+  ],
+  "query_result_files": [
+    "./query_completed.json",
+    "./query_in_progress.json"
+  ]
+}
