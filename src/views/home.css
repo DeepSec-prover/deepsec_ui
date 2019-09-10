@@ -2,11 +2,7 @@
     display: none;
 }
 
-.token.keyword.keyword-out {
-    color: lightgreen;
-}
-
-.token.keyword.keyword-in {
+.token.in-out {
     color: lightgreen;
 }
 

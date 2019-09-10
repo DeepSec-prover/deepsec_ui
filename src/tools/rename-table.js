@@ -18,7 +18,7 @@ function rename (label, index) {
       if (newId === 0) {
         return label
       } else {
-        return label + '_' + newId
+        return label + '~' + newId
       }
     }
     // Existing label but new index
@@ -26,7 +26,7 @@ function rename (label, index) {
       const labelTable = RENAME_TABLE.get(label)
       const newId = labelTable.size
       labelTable.set(index, newId)
-      return label + '_' + newId
+      return label + '~' + newId
     }
   }
   // New label in the table
