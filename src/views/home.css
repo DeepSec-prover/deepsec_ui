@@ -13,3 +13,13 @@
     background-color: rgba(255, 255, 0, 0.25);
     font-weight: bold;
 }
+
+/* To avoid different line high and bad line number */
+sup {
+    vertical-align: top;
+}
+
+/* To avoid different line high and bad line number */
+sub {
+    vertical-align: bottom;
+}
