@@ -2,7 +2,7 @@
   "name": "deepsec_ui",
   "productName": "Deepsec UI",
   "version": "0.1.1",
-  "description": "User interface for DeepSec",
+  "description": "User interface for DeepSec tool (DEciding Equivalence Properties in SECurity protocols)",
   "main": "src/main.js",
   "scripts": {
     "start": "NODE_ENV=development electron src/main.js --disable-gpu",
@@ -13,15 +13,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DeepSec-prover/deepsec_ui.git"
+    "url": "https://github.com/DeepSec-prover/deepsec_ui.git"
   },
   "keywords": [
     "deepsec",
+    "GUI",
     "inria",
-    "secutity",
-    "ui"
+    "cryptographic protocols",
+    "formal verification",
+    "symbolic models",
+    "privacy type properties"
+
   ],
-  "author": "Victor YON, Vincent Cheval",
+  "author": "Victor YON, Vincent Cheval, Steve Kremer",
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/DeepSec-prover/deepsec_ui/issues"
