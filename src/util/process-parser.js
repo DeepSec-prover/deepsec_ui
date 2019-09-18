@@ -1,5 +1,5 @@
-const rename = require('./rename-table')
-const logger = require('electron-log')
+import rename from './rename-table'
+import logger from 'electron-log'
 
 /**
  * String for one code indent
@@ -250,4 +250,4 @@ function formatEquality (subProcess, atomicTable, indent) {
   return '=' + format(subProcess.term, atomicTable, indent)
 }
 
-module.exports = formatProcess
+export default formatProcess

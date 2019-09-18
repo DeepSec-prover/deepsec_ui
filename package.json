@@ -1,20 +1,70 @@
 {
   "name": "deepsec_ui",
   "productName": "Deepsec UI",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "User interface for DeepSec tool (DEciding Equivalence Properties in SECurity protocols)",
-  "main": "src/main.js",
+  "author": "Victor YON, Vincent CHEVAL, Steve KREMER",
+  "main": "background.js",
   "scripts": {
-    "start": "NODE_ENV=development electron src/main.js --disable-gpu",
     "check": "standard",
-    "package-mac": "electron-packager . --overwrite --appCopyright=\"GPL-3.0\" --platform=darwin --arch=all --darwinDarkModeSupport=true --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
-    "package-win": "electron-packager . deepsec-ui --overwrite --appCopyright=\"GPL-3.0\", --asar --platform=win32 --arch=all --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=\"INRIA\" --version-string.FileDescription=\"User interface for DeepSec\" --version-string.ProductName=\"DeepSec UI\"",
-    "package-linux": "electron-packager . deepsec-ui --overwrite --appCopyright=\"GPL-3.0\" --asar --platform=linux --arch=all --icon=assets/icons/icon.png --prune=true --out=release-builds"
+    "electron:build": "vue-cli-service electron:build",
+    "electron:serve": "vue-cli-service electron:serve",
+    "postinstall": "electron-builder install-app-deps",
+    "postuninstall": "electron-builder install-app-deps",
+    "package:linux": "electron-packager . deepsec-ui --overwrite --appCopyright=\"GPL-3.0\" --asar --platform=linux --arch=all --icon=assets/icons/icon.png --prune=true --out=release-builds",
+    "package:mac": "electron-packager . --overwrite --appCopyright=\"GPL-3.0\" --platform=darwin --arch=all --darwinDarkModeSupport=true --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
+    "package:win": "electron-packager . deepsec-ui --overwrite --appCopyright=\"GPL-3.0\", --asar --platform=win32 --arch=all --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=\"INRIA\" --version-string.FileDescription=\"User interface for DeepSec\" --version-string.ProductName=\"DeepSec UI\"",
+    "vue:build": "vue-cli-service build",
+    "vue:lint": "vue-cli-service lint",
+    "vue:serve": "vue-cli-service serve"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/DeepSec-prover/deepsec_ui.git"
+  "dependencies": {
+    "babel-plugin-prismjs": "^1.1.1",
+    "core-js": "^2.6.5",
+    "electron-log": "^3.0.7",
+    "prismjs": "^1.17.1",
+    "vue": "^2.6.10",
+    "vue-router": "^3.0.3"
   },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.11.0",
+    "@vue/cli-plugin-eslint": "^3.11.0",
+    "@vue/cli-service": "^3.11.0",
+    "@vue/eslint-config-standard": "^4.0.0",
+    "babel-eslint": "^10.0.1",
+    "electron": "^6.0.5",
+    "electron-packager": "^14.0.5",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "sass": "^1.18.0",
+    "sass-loader": "^7.1.0",
+    "standard": "^14.1.0",
+    "vue-cli-plugin-electron-builder": "^1.4.0",
+    "vue-template-compiler": "^2.6.10"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "@vue/standard"
+    ],
+    "rules": {},
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "bugs": {
+    "url": "https://github.com/DeepSec-prover/deepsec_ui/issues"
+  },
+  "homepage": "https://github.com/DeepSec-prover/deepsec_ui#readme",
   "keywords": [
     "deepsec",
     "GUI",
@@ -23,25 +73,15 @@
     "formal verification",
     "symbolic models",
     "privacy type properties"
-
   ],
-  "author": "Victor YON, Vincent Cheval, Steve Kremer",
   "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/DeepSec-prover/deepsec_ui/issues"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DeepSec-prover/deepsec_ui.git"
   },
-  "homepage": "https://github.com/DeepSec-prover/deepsec_ui#readme",
   "standard": {
     "ignore": [
       "/static/"
     ]
-  },
-  "dependencies": {
-    "electron-log": "^3.0.7"
-  },
-  "devDependencies": {
-    "electron": "^6.0.5",
-    "electron-packager": "^14.0.5",
-    "standard": "^14.1.0"
   }
 }

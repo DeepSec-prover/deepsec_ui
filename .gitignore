@@ -180,3 +180,7 @@ fabric.properties
 
 # Builds
 release-builds/
+
+#Electron-builder output
+/dist_electron
+dist/*

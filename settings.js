@@ -1,11 +1,12 @@
 const common = {
   appName: 'Deepsec UI',
-  env: process.env.NODE_ENV || 'prod',
+  env: process.env.NODE_ENV || 'production',
+  isDevelopment: process.env.NODE_ENV !== 'production',
   appRoot: __dirname // Does not work if packaged
 }
 
 const dev = {
-  logLevelConsole: 'debug',
+  logLevelConsole: 'silly',
   logLevelFile: 'silly',
   devTools: {
     startUp: true,
@@ -26,4 +27,4 @@ const prod = {
 
 // Export "common" union ("prod" or "dev")
 // If same field then common will be override
-module.exports = common.env === 'prod' ? { ...common, ...prod } : { ...common, ...dev }
+export default (common.env === 'production' ? { ...common, ...prod } : { ...common, ...dev })

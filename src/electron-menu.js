@@ -1,16 +1,12 @@
-const { app } = require('electron')
-const logger = require('electron-log')
-const openResultFile = require('./tools/dialogs')
-const settings = require('../settings')
+import { app } from 'electron'
+import logger from 'electron-log'
+import openResultFile from './util/dialogs'
+import settings from '../settings'
 
 /**
- * Select the good command depending of the current system.
- *
- * @returns {string} Command for macOS and Ctrl for Windows or Linux
+ * @type {string} "Command" for macOS and "Ctrl" for Windows or Linux
  */
-function ctrl () {
-  return process.platform === 'darwin' ? 'Command' : 'Ctrl'
-}
+const CTRL = process.platform === 'darwin' ? 'Command' : 'Ctrl'
 
 /**
  * Create the template for the application main menu
@@ -26,7 +22,7 @@ function mainMenuTemplate (mainWindow) {
       submenu: [
         {
           label: 'Open',
-          accelerator: ctrl() + '+O',
+          accelerator: CTRL + '+O',
           click () {
             openResultFile(filePath => {
               // Send file path only because full object is too big
@@ -37,7 +33,7 @@ function mainMenuTemplate (mainWindow) {
         },
         {
           label: 'Quit',
-          accelerator: ctrl() + '+Q',
+          accelerator: CTRL + '+Q',
           click () {
             app.quit()
           }
@@ -67,4 +63,4 @@ function mainMenuTemplate (mainWindow) {
   return menuTemplate
 }
 
-module.exports = mainMenuTemplate
+export default mainMenuTemplate

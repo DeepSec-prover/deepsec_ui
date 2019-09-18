@@ -1,4 +1,4 @@
-require('../../static/js/prism') // TODO use npm package ?
+import Prism from 'prismjs'
 
 // Define the language grammar
 Prism.languages.deepsec = {
@@ -34,3 +34,5 @@ Prism.hooks.add('wrap', env => {
     env.classes.push('hidden')
   }
 })
+
+export default Prism

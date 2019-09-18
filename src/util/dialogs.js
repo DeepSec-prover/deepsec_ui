@@ -1,5 +1,5 @@
-const { dialog } = require('electron')
-const logger = require('electron-log')
+import { dialog } from 'electron'
+import logger from 'electron-log'
 
 /**
  * Open the file selector and do an action with the file path.
@@ -37,4 +37,4 @@ function openResultFile (callback) {
   })
 }
 
-module.exports = openResultFile
+export default openResultFile

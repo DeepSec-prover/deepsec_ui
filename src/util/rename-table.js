@@ -36,4 +36,4 @@ function rename (label, index) {
   }
 }
 
-module.exports = rename
+export default rename

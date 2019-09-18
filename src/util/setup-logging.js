@@ -1,8 +1,8 @@
-const { app } = require('electron')
-const fs = require('fs')
-const logger = require('electron-log')
-const path = require('path')
-const settings = require('../../settings')
+import path from 'path'
+import settings from '../../settings'
+import logger from 'electron-log'
+import { app } from 'electron'
+import fs from 'fs'
 
 /**
  * Set up the default global logger.
@@ -45,4 +45,4 @@ function setupDefaultLogger () {
   logger.info(`Logger setup: console and file (${logFile})`)
 }
 
-module.exports = setupDefaultLogger
+export default setupDefaultLogger
