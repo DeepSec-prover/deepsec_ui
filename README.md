@@ -46,9 +46,23 @@ Note: If you're using Linux Bash for Windows, [see this guide](https://www.howto
 
 ### Sources code
 
-- `package.json` - Points to the app's main file and lists its details and dependencies.
-- `main.js` - Starts the app and creates a browser window to render HTML. This is the app's **main process**.
-- `views/` - Contains all HTML web pages to render.
+- __dist_electron__ - Generated files
+- __doc__ - Project documentation
+- __log__ - Log directory for development
+- __mock-data__ - Fake static data for testing purpose
+- __public__ - Files placed here will be available through `__static`
+- __src/__
+  - __assets/__ - Project assets (images)
+  - __components/__ - Vue components
+  - __util/__ - Misc utility function
+  - __views/__ - Vue views
+  - __App.vue__ - Application root view
+  - __background.js__ - Electron entry file (for Electron's main process)
+  - __electron-menu__ - Main menu (top) template for electron
+  - __main.js__ - App's entry file (for Electron's render process)
+  - __router__ - Vue router logic
+- __package.json__ - Points to the app's main file and lists its details and dependencies.
+- __settings.js__ - Global project settings for prod and dev
 
 ### Log
 
@@ -65,6 +79,9 @@ Theses files are stored in the OS default user's data directory.
 ## Credits
 
 - [Electron](https://electronjs.org) ([doc](https://electronjs.org/docs)) : Cross platform desktop app framework
+- [VueJs](https://vuejs.org) ([doc](https://vuejs.org/v2/api/)) : Web framework
+- [Vue CLI Electron plugin](https://nklayman.github.io/vue-cli-plugin-electron-builder/)
+([doc](https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/)) : Electron builder for Vue application
 - [Prism](https://prismjs.com) : Code syntax highlighter library
-- [Electron-JS](https://github.com/megahertz/electron-log) : Logging system for electron
+- [Electron-Log](https://github.com/megahertz/electron-log) : Logging system for electron
 
