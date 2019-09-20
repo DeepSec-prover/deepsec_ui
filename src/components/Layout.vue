@@ -41,6 +41,11 @@
     width: 200px !important;
   }
 
+  .el-menu-item {
+    height: 45px !important;
+    line-height: 45px !important;
+  }
+
   .logo {
     text-align: center;
     color: #409EFF;
