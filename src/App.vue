@@ -1,29 +1,22 @@
 <template>
-  <div id="app">
-    <ul>
-      <li>
-        <router-link to="/">Home</router-link>
-      </li>
-      <li>
-        <router-link to="start-run">Start Run</router-link>
-      </li>
-    </ul>
-    <img alt="DeepSec logo" src="./assets/logo/logo.png">
-    <h1>DeepSec UI</h1>
+  <layout id="app">
     <router-view/>
-  </div>
+  </layout>
 </template>
+
+<script>
+  import Layout from './components/Layout'
+
+  export default {
+    name: 'app',
+    components: {
+      Layout
+    }
+  }
+</script>
 
 <style scoped>
   #app {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-  }
-
-  img {
-    height: 100px;
+    font-family: Helvetica, sans-serif;
   }
 </style>

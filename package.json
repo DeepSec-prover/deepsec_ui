@@ -22,6 +22,7 @@
     "babel-plugin-prismjs": "^1.1.1",
     "core-js": "^2.6.5",
     "electron-log": "^3.0.7",
+    "element-ui": "^2.12.0",
     "prismjs": "^1.17.1",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3"
