@@ -1,13 +1,13 @@
 <template>
-  <el-form id="start-run" label-position="left" size="mini">
+  <el-form id="start-run" size="mini" label-width="auto" label-suffix=" :">
     <el-row>
       <el-col :span="8">
-        <el-button>Select file(s)...</el-button>
-        <el-button type="success" @click="submitForm()">Submit</el-button>
+        <el-button size="medium">Select file(s)...</el-button>
+        <el-button size="medium" type="success" @click="submitForm()">Submit</el-button>
       </el-col>
       <el-col :span="8">
         <!-- Default Semantic -->
-        <el-form-item label="Default Semantic">
+        <el-form-item label="Default Semantic" class="label-top">
           <el-radio-group v-model="runConf.defaultSemantic">
             <el-radio-button label="private">Private</el-radio-button>
             <el-radio-button label="classic">Classic</el-radio-button>
@@ -17,6 +17,9 @@
         <!-- Distributed -->
         <el-form-item label="Distributed">
           <el-switch v-model="runConf.isDistributed"></el-switch>
+          <el-tag v-show="runConf.isDistributed" class="counter-tag" id="process-count" size="small" effect="plain">
+            {{ nbProcess }} process
+          </el-tag>
         </el-form-item>
         <div v-show="runConf.isDistributed">
           <!-- Nb jobs -->
@@ -25,7 +28,7 @@
           </el-form-item>
           <!-- Nb process local -->
           <el-form-item label="Nb process local">
-            <el-input-number v-model="runConf.nbProcessLocal" :min="1" :max="runConf.nbJobs" controls-position="right"></el-input-number>
+            <el-input-number v-model="runConf.nbProcessLocal" :min="1" controls-position="right"></el-input-number>
           </el-form-item>
           <!-- Timer -->
           <el-form-item label="Timer">
@@ -38,7 +41,7 @@
         <el-button type="primary" icon="el-icon-plus" @click="addDistantServer" size="mini">
           Add Distant server
         </el-button>
-        <el-tag id="server-count" size="small" effect="plain">{{ runConf.servers.length }}</el-tag>
+        <el-tag class="counter-tag" id="server-count" size="small" effect="plain">{{ runConf.servers.length }}</el-tag>
         <div v-if="runConf.servers.length > 0">
           <transition-group name="el-zoom-in-top" tag="div">
             <el-card class="server-card" shadow="hover" v-for="server in runConf.servers" :key="server.id">
@@ -47,17 +50,16 @@
               </el-link>
               <!-- Server Hostname -->
               <el-form-item label="Hostname">
-                <el-input v-model="server.hostname"></el-input>
+                <el-input placeholder="user@adress" v-model="server.hostname"></el-input>
               </el-form-item>
               <!-- Server Local Path -->
               <el-form-item label="Local path">
-                <el-input v-model="server.localPath"></el-input>
+                <el-input placeholder="/usr/bin/deepsec" v-model="server.localPath"></el-input>
               </el-form-item>
               <!-- Server Nb Process -->
               <el-form-item label="Nb Process">
                 <el-input-number
                   :min="1"
-                  :max="runConf.nbJobs"
                   controls-position="right"
                   v-model="server.nbProcess">
                 </el-input-number>
@@ -88,6 +90,17 @@
         serversId: 0
       }
     },
+    computed: {
+      nbProcess: function () {
+        let sum = this.runConf.nbProcessLocal
+
+        this.runConf.servers.forEach(server => {
+          sum += server.nbProcess
+        })
+
+        return sum
+      }
+    },
     methods: {
       addDistantServer () {
         this.runConf.servers.push({
@@ -113,11 +126,7 @@
     width: 100px;
   }
 
-  #start-run .el-form-item__label::after {
-    content: " : ";
-  }
-
-  #server-count {
+  .counter-tag {
     margin-left: 5px;
   }
 
@@ -127,14 +136,14 @@
   }
 
   .server-card .el-card__body {
-    padding: 10px;
+    padding: 20px 10px 10px 0;
   }
 
   .server-card .remove-server {
     position: absolute;
     z-index: 50;
     right: 10px;
-    margin-top: -5px;
+    margin-top: -20px;
   }
 
   .server-card .remove-server:hover:after {
@@ -147,6 +156,11 @@
 
   .server-card .el-form-item {
     margin-bottom: 10px !important;
+  }
+
+  .label-top .el-form-item__content {
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
 </style>
