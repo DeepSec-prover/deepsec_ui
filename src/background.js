@@ -21,6 +21,8 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 1000,
+    minWidth: 600,
+    minHeight: 500,
     webPreferences: {
       nodeIntegration: true // To use node in the client side
     }
