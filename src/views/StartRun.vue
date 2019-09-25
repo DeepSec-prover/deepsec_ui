@@ -2,8 +2,8 @@
   <el-form id="start-run" size="mini" label-width="auto" label-suffix=" :">
     <el-row>
       <el-col :span="8">
-        <el-button size="medium">Select file(s)...</el-button>
-        <el-button size="medium" type="success" @click="submitForm()">Submit</el-button>
+        <el-button @click="selectFiles" size="medium">Select file(s)...</el-button>
+        <el-button :disabled="files.length === 0" size="medium" type="success" @click="submitForm()">Submit</el-button>
       </el-col>
       <el-col :span="8">
         <!-- Default Semantic -->
@@ -24,7 +24,7 @@
         <div v-show="runConf.isDistributed">
           <!-- Nb jobs -->
           <el-form-item label="Nb jobs">
-            <el-input-number v-model="runConf.nbJobs" :min="1" controls-position="right"></el-input-number>
+            <el-input-number v-model="runConf.nbJobs" :min="nbProcess" controls-position="right"></el-input-number>
           </el-form-item>
           <!-- Nb process local -->
           <el-form-item label="Nb process local">
@@ -74,51 +74,60 @@
 
 <script>
   import logger from 'electron-log'
+  import { openSpecFilesRenderer } from '../util/open-files-dialogs'
 
   export default {
-    name: 'preferences',
-    data () {
-      return {
-        runConf: {
-          defaultSemantic: 'private',
-          nbJobs: 10,
-          nbProcessLocal: 10,
-          timer: 180,
-          isDistributed: true,
-          servers: []
-        },
-        serversId: 0
-      }
-    },
-    computed: {
-      nbProcess: function () {
-        let sum = this.runConf.nbProcessLocal
-
-        this.runConf.servers.forEach(server => {
-          sum += server.nbProcess
-        })
-
-        return sum
-      }
-    },
-    methods: {
-      addDistantServer () {
-        this.runConf.servers.push({
-          id: ++this.serversId,
-          hostname: '',
-          localPath: '',
-          nbProcess: 10
-        })
+  name: 'preferences',
+  data () {
+    return {
+      files: [],
+      runConf: {
+        defaultSemantic: 'private',
+        nbJobs: 10,
+        nbProcessLocal: 10,
+        timer: 180,
+        isDistributed: true,
+        servers: []
       },
-      removeServer (server) {
-        let index = this.runConf.servers.indexOf(server)
-        this.runConf.servers.splice(index, 1)
-      },
-      submitForm () {
-        logger.info(`Start new run : ${JSON.stringify(this.runConf)}`)
-      }
+      serversId: 0
+    }
+  },
+  computed: {
+    nbProcess: function () {
+      let sum = this.runConf.nbProcessLocal
+
+      this.runConf.servers.forEach(server => {
+        sum += server.nbProcess
+      })
+
+      return sum
+    }
+  },
+  methods: {
+    addDistantServer () {
+      this.runConf.servers.push({
+        id: ++this.serversId,
+        hostname: '',
+        localPath: '',
+        nbProcess: 10
+      })
+    },
+    removeServer (server) {
+      let index = this.runConf.servers.indexOf(server)
+      this.runConf.servers.splice(index, 1)
+    },
+    submitForm () {
+      logger.info(`Start new run : ${JSON.stringify(this.runConf)}`)
+    },
+    selectFiles () {
+      openSpecFilesRenderer().then(files => {
+        console.log(files)
+      }).catch((_) => {
+        // Nothing to do if canceled or bad value
+      })
     }
   }
+}
 </script>
 
 <style>

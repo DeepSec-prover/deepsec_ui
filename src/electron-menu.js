@@ -1,6 +1,6 @@
 import { app } from 'electron'
 import logger from 'electron-log'
-import openResultFile from './util/dialogs'
+import { openResultFileMain } from './util/open-files-dialogs'
 import settings from '../settings'
 
 /**
@@ -24,10 +24,12 @@ function mainMenuTemplate (mainWindow) {
           label: 'Open',
           accelerator: CTRL + '+O',
           click () {
-            openResultFile(filePath => {
+            openResultFileMain().then(filePath => {
               // Send file path only because full object is too big
               logger.debug('Send IPC message : result:show')
               mainWindow.webContents.send('result:show', filePath)
+            }).catch((_) => {
+              // Nothing to do if canceled or bad value
             })
           }
         },
