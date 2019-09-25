@@ -2,7 +2,20 @@
   <el-form id="start-run" size="mini" label-width="auto" label-suffix=" :">
     <el-row>
       <el-col :span="8">
-        <el-button @click="selectFiles" size="medium">Select file(s)...</el-button>
+        <!-- File and directory support, only one dialog button -->
+        <el-button v-if="dialogFileAndDirectorySupported" @click="selectFiles(true, true)" size="medium"
+                   icon="el-icon-document-add">
+          Select file(s)...
+        </el-button>
+        <!-- No file and directory support, tow dialog buttons -->
+        <div v-else>
+          <el-button @click="selectFiles(false, true)" size="medium" icon="el-icon-folder-add">
+            Select directory ...
+          </el-button>
+          <el-button @click="selectFiles(true, false)" size="medium" icon="el-icon-document-add">
+            Select file(s) ...
+          </el-button>
+        </div>
         <el-button :disabled="files.length === 0" size="medium" type="success" @click="submitForm()">Submit</el-button>
       </el-col>
       <el-col :span="8">
@@ -89,7 +102,9 @@
         isDistributed: true,
         servers: []
       },
-      serversId: 0
+      serversId: 0,
+      // Only mac OS support file and directory selection in th same dialog
+      dialogFileAndDirectorySupported: process.platform === 'darwin'
     }
   },
   computed: {
@@ -119,8 +134,8 @@
     submitForm () {
       logger.info(`Start new run : ${JSON.stringify(this.runConf)}`)
     },
-    selectFiles () {
-      openSpecFilesRenderer().then(files => {
+    selectFiles (files, directories) {
+      openSpecFilesRenderer(files, directories).then(files => {
         console.log(files)
       }).catch((_) => {
         // Nothing to do if canceled or bad value
