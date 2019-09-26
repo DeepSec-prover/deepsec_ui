@@ -16,9 +16,7 @@
     </div>
     <!-- File List -->
     <div v-if="hasSelectedFile">
-      <ul>
-        <li v-for="file in files">{{ file }}</li>
-      </ul>
+      <files-list :files="files"></files-list>
       <el-button size="small" icon="el-icon-delete" :disabled="files.length === 0" @click="resetFiles">
         Reset
       </el-button>
@@ -32,9 +30,13 @@
 
 <script>
   import { openSpecFilesRenderer } from '../util/open-files-dialogs'
+  import FilesList from './FilesList'
 
   export default {
   name: 'spec-files-selection',
+  components: {
+    FilesList
+  },
   props: {
     files: Array // This array is watched and contains a the file paths
   },
