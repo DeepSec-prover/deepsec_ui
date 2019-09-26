@@ -138,10 +138,9 @@ function openSpecFiles (currentDialog, files, directories) {
           let files = []
           recursiveFindFiles(dirPath, /.*\.dps$/ui, files)
           logger.debug(`${files.length} files found recursively in the directory "${dirPath}"`)
-          filePaths.push(files)
+          filePaths.push.apply(filePaths, files)
         })
 
-        // FIXME why ${filePaths.length} always print "1"?
         logger.info(`After directories search, ${filePaths.length} files are selected : 
         ${filePaths.join(', ')}`)
 

@@ -5,18 +5,28 @@
         <!-- File and directory support, only one dialog button -->
         <el-button v-if="dialogFileAndDirectorySupported" @click="selectFiles(true, true)" size="medium"
                    icon="el-icon-document-add">
-          Select file(s)...
+          {{ addOrSelect }} file(s)...
         </el-button>
         <!-- No file and directory support, tow dialog buttons -->
         <div v-else>
           <el-button @click="selectFiles(false, true)" size="medium" icon="el-icon-folder-add">
-            Select directory ...
+            {{ addOrSelect }} directory ...
           </el-button>
           <el-button @click="selectFiles(true, false)" size="medium" icon="el-icon-document-add">
-            Select file(s) ...
+            {{ addOrSelect }} file(s) ...
           </el-button>
         </div>
-        <el-button :disabled="files.length === 0" size="medium" type="success" @click="submitForm()">Submit</el-button>
+        <!-- File List -->
+        <ul v-if="hasSelectedFile">
+          <li v-for="file in filesSet" >{{ file }}</li>
+        </ul>
+        <p v-else>
+          Please select at least one file or folder.
+        </p>
+        <!-- Submit -->
+        <el-button :disabled="!hasSelectedFile" size="medium" type="success" icon="el-icon-video-play" @click="submitForm()">
+          Start Run{{ filesSet.length > 1 ? "s" : "" }}
+        </el-button>
       </el-col>
       <el-col :span="8">
         <!-- Default Semantic -->
@@ -93,7 +103,8 @@
   name: 'preferences',
   data () {
     return {
-      files: [],
+      filesSet: new Set(), // Sets are not watched by Vue2
+      files: [], // This array is watched and contains a copy of the set
       runConf: {
         defaultSemantic: 'private',
         nbJobs: 10,
@@ -116,6 +127,12 @@
       })
 
       return sum
+    },
+    addOrSelect: function () {
+      return this.files.length > 0 ? "Add" : "Select"
+    },
+    hasSelectedFile: function () {
+      return this.files.length > 0
     }
   },
   methods: {
@@ -136,7 +153,12 @@
     },
     selectFiles (files, directories) {
       openSpecFilesRenderer(files, directories).then(files => {
-        console.log(files)
+        // Add files to the Set (duplicate are skipped)
+        files.forEach(file => {
+          this.filesSet.add(file)
+          // Copy the set because Vue2 can only watch an array
+          this.files = Array.from(this.filesSet)
+        })
       }).catch((_) => {
         // Nothing to do if canceled or bad value
       })
