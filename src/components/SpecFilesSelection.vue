@@ -19,9 +19,12 @@
       <ul>
         <li v-for="file in files">{{ file }}</li>
       </ul>
+      <el-button size="small" icon="el-icon-delete" :disabled="files.length === 0" @click="resetFiles">
+        Reset
+      </el-button>
       <el-tag effect="plain"><b>{{ files.length }}</b> file{{ files.length > 1 ? "s" : "" }} selected</el-tag>
     </div>
-    <p v-else>
+    <p class="el-upload__tip" v-else>
       Please select at least one file or folder.
     </p>
   </div>
@@ -67,6 +70,10 @@
       }).catch((_) => {
         // Nothing to do if canceled or bad value
       })
+    },
+    resetFiles () {
+      this.filesSet.clear()
+      this.files.splice(0, this.files.length) // Empty the array in place
     }
   },
   mounted () {

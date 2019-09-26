@@ -22,7 +22,7 @@
         <el-form-item label="Distributed">
           <el-switch v-model="runConf.isDistributed"></el-switch>
           <el-tag v-show="runConf.isDistributed" class="counter-tag" id="process-count" size="small" effect="plain">
-            {{ nbProcess }} process
+            <b>{{ nbProcess }}</b> process
           </el-tag>
         </el-form-item>
         <div v-show="runConf.isDistributed">
