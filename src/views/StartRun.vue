@@ -2,30 +2,11 @@
   <el-form id="start-run" size="mini" label-width="auto" label-suffix=" :">
     <el-row>
       <el-col :span="8">
-        <!-- File and directory support, only one dialog button -->
-        <el-button v-if="dialogFileAndDirectorySupported" @click="selectFiles(true, true)" size="medium"
-                   icon="el-icon-document-add">
-          {{ addOrSelect }} file(s)...
-        </el-button>
-        <!-- No file and directory support, tow dialog buttons -->
-        <div v-else>
-          <el-button @click="selectFiles(false, true)" size="medium" icon="el-icon-folder-add">
-            {{ addOrSelect }} directory ...
-          </el-button>
-          <el-button @click="selectFiles(true, false)" size="medium" icon="el-icon-document-add">
-            {{ addOrSelect }} file(s) ...
-          </el-button>
-        </div>
-        <!-- File List -->
-        <ul v-if="hasSelectedFile">
-          <li v-for="file in filesSet" >{{ file }}</li>
-        </ul>
-        <p v-else>
-          Please select at least one file or folder.
-        </p>
+        <!-- Files selection -->
+        <spec-files-selection :files="files"></spec-files-selection>
         <!-- Submit -->
-        <el-button :disabled="!hasSelectedFile" size="medium" type="success" icon="el-icon-video-play" @click="submitForm()">
-          Start Run{{ filesSet.length > 1 ? "s" : "" }}
+        <el-button :disabled="files.length === 0" size="medium" type="success" icon="el-icon-video-play" @click="submitForm()">
+          Start Run{{ files.length > 1 ? "s" : "" }}
         </el-button>
       </el-col>
       <el-col :span="8">
@@ -97,14 +78,16 @@
 
 <script>
   import logger from 'electron-log'
-  import { openSpecFilesRenderer } from '../util/open-files-dialogs'
+  import SpecFilesSelection from '../components/SpecFilesSelection'
 
   export default {
-  name: 'preferences',
+  name: 'start-run',
+  components: {
+    SpecFilesSelection
+  },
   data () {
     return {
-      filesSet: new Set(), // Sets are not watched by Vue2
-      files: [], // This array is watched and contains a copy of the set
+      files: [],
       runConf: {
         defaultSemantic: 'private',
         nbJobs: 10,
@@ -113,9 +96,7 @@
         isDistributed: true,
         servers: []
       },
-      serversId: 0,
-      // Only mac OS support file and directory selection in th same dialog
-      dialogFileAndDirectorySupported: process.platform === 'darwin'
+      serversId: 0
     }
   },
   computed: {
@@ -127,12 +108,6 @@
       })
 
       return sum
-    },
-    addOrSelect: function () {
-      return this.files.length > 0 ? "Add" : "Select"
-    },
-    hasSelectedFile: function () {
-      return this.files.length > 0
     }
   },
   methods: {
@@ -150,18 +125,6 @@
     },
     submitForm () {
       logger.info(`Start new run : ${JSON.stringify(this.runConf)}`)
-    },
-    selectFiles (files, directories) {
-      openSpecFilesRenderer(files, directories).then(files => {
-        // Add files to the Set (duplicate are skipped)
-        files.forEach(file => {
-          this.filesSet.add(file)
-          // Copy the set because Vue2 can only watch an array
-          this.files = Array.from(this.filesSet)
-        })
-      }).catch((_) => {
-        // Nothing to do if canceled or bad value
-      })
     }
   }
 }
@@ -208,5 +171,4 @@
     margin: 0 !important;
     padding: 0 !important;
   }
-
 </style>
