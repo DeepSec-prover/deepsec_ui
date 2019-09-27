@@ -1,7 +1,8 @@
 <!-- This component is a fork of the Element Upload List component -->
 <!-- node_modules/element-ui/packages/upload/src/upload-list.vue -->
 <template>
-  <transition-group tag="ul" :class="[ 'el-upload-list', 'el-upload-list--text', { 'is-disabled': disabled } ]" name="el-list">
+  <transition-group tag="ul" :class="[ 'el-upload-list', 'el-upload-list--text', { 'is-disabled': disabled } ]" name="el-list"
+                    :duration="{ leave: 100 }">
     <li
       v-for="file in files"
       :class="['el-upload-list__item', focusing ? 'focusing' : '']"
