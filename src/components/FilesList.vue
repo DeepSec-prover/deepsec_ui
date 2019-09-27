@@ -59,3 +59,9 @@
     }
   }
 </script>
+
+<style scoped>
+  li.el-upload-list__item {
+    max-width: 200px !important;
+  }
+</style>

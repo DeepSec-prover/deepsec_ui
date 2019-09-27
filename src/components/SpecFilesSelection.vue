@@ -16,7 +16,9 @@
     </div>
     <!-- File List -->
     <div v-if="hasSelectedFile">
+      <el-divider></el-divider>
       <files-list :files="files" v-on:remove="remove($event)"></files-list>
+      <el-divider></el-divider>
       <el-button size="small" icon="el-icon-delete" :disabled="files.length === 0" @click="resetFiles">
         Reset
       </el-button>
@@ -92,7 +94,3 @@
   }
 }
 </script>
-
-<style scoped>
-
-</style>

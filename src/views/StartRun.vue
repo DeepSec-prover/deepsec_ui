@@ -1,6 +1,6 @@
 <template>
   <el-form id="start-run" size="mini" label-width="auto" label-suffix=" :">
-    <el-row>
+    <el-row :gutter="20">
       <el-col :span="8">
         <!-- Files selection -->
         <spec-files-selection :files="files"></spec-files-selection>
