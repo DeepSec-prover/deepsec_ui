@@ -19,9 +19,7 @@ Definition of `<position_args>` :
 
 ```
 {
-  "replication_index": <int>,
-  "assignation": <int>
+  "type_position": "var"|"int"
+  "value": <int>
 }
 ```
-
-When `assignation` is `0`, it means that it was not assigned yet.
