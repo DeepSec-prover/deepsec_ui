@@ -9,6 +9,7 @@ At least one of `query_result_files` or `query_results` should be present.
 
 ```
 {
+  "status": "completed",
   "deepsec_version": <string>, // Format as "X.X.X"
   "run_hash": <string>,
   "git_branch": <string>,
