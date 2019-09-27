@@ -21,18 +21,18 @@
         <!-- Distributed -->
         <el-form-item label="Distributed">
           <el-switch v-model="runConf.isDistributed"></el-switch>
-          <el-tag v-show="runConf.isDistributed" class="counter-tag" id="process-count" size="small" effect="plain">
-            <b>{{ nbProcess }}</b> process
+          <el-tag v-show="runConf.isDistributed" class="counter-tag" size="small" effect="plain">
+            <b>{{ nbWorkers }}</b> worker{{ nbWorkers > 1 ? "s" : "" }}
           </el-tag>
         </el-form-item>
         <div v-show="runConf.isDistributed">
           <!-- Nb jobs -->
           <el-form-item label="Nb jobs">
-            <el-input-number v-model="runConf.nbJobs" :min="nbProcess" controls-position="right"></el-input-number>
+            <el-input-number v-model="runConf.nbJobs" :min="nbWorkers" controls-position="right"></el-input-number>
           </el-form-item>
-          <!-- Nb process local -->
-          <el-form-item label="Nb process local">
-            <el-input-number v-model="runConf.nbProcessLocal" :min="1" controls-position="right"></el-input-number>
+          <!-- Nb local workers -->
+          <el-form-item label="Local workers">
+            <el-input-number v-model="runConf.nbLocalWorkers" :min="1" controls-position="right"></el-input-number>
           </el-form-item>
           <!-- Timer -->
           <el-form-item label="Timer">
@@ -43,7 +43,7 @@
       <el-col :span="8" v-show="runConf.isDistributed">
         <!-- Add Distant server -->
         <el-button type="primary" icon="el-icon-plus" @click="addDistantServer" size="mini">
-          Add Distant server
+          Add Distant Server
         </el-button>
         <el-tag class="counter-tag" id="server-count" size="small" effect="plain">{{ runConf.servers.length }}</el-tag>
         <div v-if="runConf.servers.length > 0">
@@ -60,12 +60,12 @@
               <el-form-item label="Local path">
                 <el-input placeholder="/usr/bin/deepsec" v-model="server.localPath"></el-input>
               </el-form-item>
-              <!-- Server Nb Process -->
-              <el-form-item label="Nb Process">
+              <!-- Server Nb Workers -->
+              <el-form-item label="Workers">
                 <el-input-number
                   :min="1"
                   controls-position="right"
-                  v-model="server.nbProcess">
+                  v-model="server.nbWorkers">
                 </el-input-number>
               </el-form-item>
             </el-card>
@@ -91,7 +91,7 @@
       runConf: {
         defaultSemantic: 'private',
         nbJobs: 10,
-        nbProcessLocal: 10,
+        nbLocalWorkers: 10,
         timer: 180,
         isDistributed: true,
         servers: []
@@ -100,11 +100,11 @@
     }
   },
   computed: {
-    nbProcess: function () {
-      let sum = this.runConf.nbProcessLocal
+    nbWorkers: function () {
+      let sum = this.runConf.nbLocalWorkers
 
       this.runConf.servers.forEach(server => {
-        sum += server.nbProcess
+        sum += server.nbWorkers
       })
 
       return sum
@@ -116,7 +116,7 @@
         id: ++this.serversId,
         hostname: '',
         localPath: '',
-        nbProcess: 10
+        nbWorkers: 10
       })
     },
     removeServer (server) {
