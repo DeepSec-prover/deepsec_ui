@@ -16,11 +16,11 @@
     </div>
     <!-- File List -->
     <div v-if="hasSelectedFile">
-      <files-list :files="files"></files-list>
+      <files-list :files="files" v-on:remove="remove($event)"></files-list>
       <el-button size="small" icon="el-icon-delete" :disabled="files.length === 0" @click="resetFiles">
         Reset
       </el-button>
-      <el-tag effect="plain"><b>{{ files.length }}</b> file{{ files.length > 1 ? "s" : "" }} selected</el-tag>
+      <el-tag effect="plain"><b>{{ files.length }}</b> file{{ files.length > 1 ? "s" : "" }}</el-tag>
     </div>
     <p class="el-upload__tip" v-else>
       Please select at least one file or folder.
@@ -76,6 +76,14 @@
     resetFiles () {
       this.filesSet.clear()
       this.files.splice(0, this.files.length) // Empty the array in place
+    },
+    remove (file) {
+      let index = this.files.indexOf(file)
+
+      if (index !== -1) {
+        this.files.splice(index, 1)
+        this.filesSet.delete(file)
+      }
     }
   },
   mounted () {
