@@ -11,33 +11,33 @@
       </el-col>
       <el-col :span="8">
         <!-- Default Semantic -->
-        <el-form-item label="Default Semantic" class="label-top">
+        <form-item-helper label="Default Semantic" class="label-top" helper-id="runOptions.defaultSemantic">
           <el-radio-group v-model="runConf.defaultSemantic">
             <el-radio-button label="private">Private</el-radio-button>
             <el-radio-button label="classic">Classic</el-radio-button>
             <el-radio-button label="eavesdrop">Eavesdrop</el-radio-button>
           </el-radio-group>
-        </el-form-item>
+        </form-item-helper>
         <!-- Distributed -->
-        <el-form-item label="Distributed">
+        <form-item-helper label="Distributed" helper-id="runOptions.isDistributed">
           <el-switch v-model="runConf.isDistributed"></el-switch>
           <el-tag v-show="runConf.isDistributed" class="counter-tag" size="small" effect="plain">
             <b>{{ nbWorkers }}</b> worker{{ nbWorkers > 1 ? "s" : "" }}
           </el-tag>
-        </el-form-item>
+        </form-item-helper>
         <div v-show="runConf.isDistributed">
           <!-- Nb jobs -->
-          <el-form-item label="Nb jobs">
+          <form-item-helper label="Nb jobs" helper-id="runOptions.nbJobs">
             <el-input-number v-model="runConf.nbJobs" :min="nbWorkers" controls-position="right"></el-input-number>
-          </el-form-item>
+          </form-item-helper>
           <!-- Nb local workers -->
-          <el-form-item label="Local workers">
+          <form-item-helper label="Local workers" helper-id="runOptions.nbLocalWorkers">
             <el-input-number v-model="runConf.nbLocalWorkers" :min="1" controls-position="right"></el-input-number>
-          </el-form-item>
+          </form-item-helper>
           <!-- Timer -->
-          <el-form-item label="Timer">
+          <form-item-helper label="Timer" helper-id="runOptions.timer">
             <el-input-number v-model="runConf.timer" :min="1" controls-position="right"></el-input-number>
-          </el-form-item>
+          </form-item-helper>
         </div>
       </el-col>
       <el-col :span="8" v-show="runConf.isDistributed">
@@ -53,21 +53,17 @@
               <el-link class="remove-server" @click.prevent="removeServer(server)" icon="el-icon-close" size="small">
               </el-link>
               <!-- Server Hostname -->
-              <el-form-item label="Hostname">
+              <form-item-helper label="Hostname" helper-id="runOptions.server.hostname">
                 <el-input placeholder="user@adress" v-model="server.hostname"></el-input>
-              </el-form-item>
+              </form-item-helper>
               <!-- Server Local Path -->
-              <el-form-item label="Local path">
+              <form-item-helper label="Local path" helper-id="runOptions.server.localPath">
                 <el-input placeholder="/usr/bin/deepsec" v-model="server.localPath"></el-input>
-              </el-form-item>
+              </form-item-helper>
               <!-- Server Nb Workers -->
-              <el-form-item label="Workers">
-                <el-input-number
-                  :min="1"
-                  controls-position="right"
-                  v-model="server.nbWorkers">
-                </el-input-number>
-              </el-form-item>
+              <form-item-helper label="Workers" helper-id="runOptions.server.nbWorkers">
+                <el-input-number :min="1" controls-position="right" v-model="server.nbWorkers"></el-input-number>
+              </form-item-helper>
             </el-card>
           </transition-group>
         </div>
@@ -79,11 +75,13 @@
 <script>
   import logger from 'electron-log'
   import SpecFilesSelection from '../components/SpecFilesSelection'
+  import FormItemHelper from '../components/FormItemHelper'
 
   export default {
   name: 'start-run',
   components: {
-    SpecFilesSelection
+    SpecFilesSelection,
+    FormItemHelper
   },
   data () {
     return {
