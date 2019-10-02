@@ -13,9 +13,15 @@
         <!-- Default Semantic -->
         <form-item-helper label="Default Semantic" class="label-top" helper-id="runOptions.defaultSemantic">
           <el-radio-group v-model="runConf.defaultSemantic">
-            <el-radio-button label="private">Private</el-radio-button>
-            <el-radio-button label="classic">Classic</el-radio-button>
-            <el-radio-button label="eavesdrop">Eavesdrop</el-radio-button>
+            <helper helper-id="semantics.private">
+              <el-radio-button label="private">Private</el-radio-button>
+            </helper>
+            <helper helper-id="semantics.classic">
+              <el-radio-button label="classic">Classic</el-radio-button>
+            </helper>
+            <helper helper-id="semantics.eavesdrop">
+              <el-radio-button label="eavesdrop">Eavesdrop</el-radio-button>
+            </helper>
           </el-radio-group>
         </form-item-helper>
         <!-- Distributed -->
@@ -75,13 +81,15 @@
 <script>
   import logger from 'electron-log'
   import SpecFilesSelection from '../components/SpecFilesSelection'
-  import FormItemHelper from '../components/FormItemHelper'
+  import FormItemHelper from '../components/helpers/FormItemHelper'
+  import Helper from '../components/helpers/Helper'
 
   export default {
   name: 'start-run',
   components: {
     SpecFilesSelection,
-    FormItemHelper
+    FormItemHelper,
+    Helper
   },
   data () {
     return {
