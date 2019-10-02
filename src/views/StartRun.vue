@@ -1,15 +1,17 @@
 <template>
   <el-form id="start-run" size="mini" label-width="auto" label-suffix=" :">
+    <el-row>
+      <!-- Files selection -->
+      <spec-files-selection :files="files"></spec-files-selection>
+    </el-row>
     <el-row :gutter="20">
-      <el-col :span="8">
-        <!-- Files selection -->
-        <spec-files-selection :files="files"></spec-files-selection>
+      <el-col :span="6">
         <!-- Submit -->
-        <el-button :disabled="files.length === 0" size="medium" type="success" icon="el-icon-video-play" @click="submitForm()">
+        <el-button :disabled="files.length === 0" size="default" type="success" icon="el-icon-video-play" @click="submitForm()">
           Start Run{{ files.length > 1 ? "s" : "" }}
         </el-button>
       </el-col>
-      <el-col :span="8">
+      <el-col :span="9" class="border-right">
         <!-- Default Semantic -->
         <form-item-helper label="Default Semantic" class="label-top" helper-id="runOptions.defaultSemantic">
           <el-radio-group v-model="runConf.defaultSemantic">
@@ -46,14 +48,14 @@
           </form-item-helper>
         </div>
       </el-col>
-      <el-col :span="8" v-show="runConf.isDistributed">
+      <el-col :span="9" v-show="runConf.isDistributed">
         <!-- Add Distant server -->
         <el-button type="primary" icon="el-icon-plus" @click="addDistantServer" size="mini">
           Add Distant Server
         </el-button>
         <el-tag class="counter-tag" id="server-count" size="small" effect="plain">{{ runConf.servers.length }}</el-tag>
         <div v-if="runConf.servers.length > 0">
-          <transition-group name="el-zoom-in-top" tag="div">
+          <transition-group name="el-zoom-in-top" tag="div" :duration="{ enter: 20 }">
             <el-card class="server-card" shadow="hover" v-for="server in runConf.servers" :key="server.id">
               <!-- Remove Server -->
               <el-link class="remove-server" @click.prevent="removeServer(server)" icon="el-icon-close" size="small">
@@ -157,7 +159,7 @@
   .server-card .remove-server {
     position: absolute;
     z-index: 50;
-    right: 10px;
+    right: 20px;
     margin-top: -20px;
   }
 
@@ -176,5 +178,10 @@
   .label-top .el-form-item__content {
     margin: 0 !important;
     padding: 0 !important;
+  }
+
+  .border-right {
+    border-left: 1px solid #E4E7ED;
+    border-right: 1px solid #E4E7ED;
   }
 </style>

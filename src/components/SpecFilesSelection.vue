@@ -1,28 +1,33 @@
 <template>
-  <div>
-    <!-- File and directory support, only one dialog button -->
-    <el-button v-if="fileAndDirectorySupported" @click="selectFiles(true, true)" size="medium"
-               icon="el-icon-document-add">
-      {{ addOrSelect }} file(s)...
-    </el-button>
-    <!-- No file and directory support, tow dialog buttons -->
-    <div v-else>
-      <el-button @click="selectFiles(false, true)" size="medium" icon="el-icon-folder-add">
-        {{ addOrSelect }} directory ...
-      </el-button>
-      <el-button @click="selectFiles(true, false)" size="medium" icon="el-icon-document-add">
-        {{ addOrSelect }} file(s) ...
-      </el-button>
-    </div>
+  <div id="file-selection">
+    <el-row type="flex" justify="space-between">
+      <el-col :xs="24" :sm="16">
+        <!-- File and directory support, only one dialog button -->
+        <el-button v-if="fileAndDirectorySupported" @click="selectFiles(true, true)" size="medium"
+                   icon="el-icon-document-add">
+          {{ addOrSelect }} file(s)...
+        </el-button>
+        <!-- No file and directory support, tow dialog buttons -->
+        <div v-else>
+          <el-button @click="selectFiles(false, true)" size="medium" icon="el-icon-folder-add">
+            {{ addOrSelect }} directory ...
+          </el-button>
+          <el-button @click="selectFiles(true, false)" size="medium" icon="el-icon-document-add">
+            {{ addOrSelect }} file(s) ...
+          </el-button>
+        </div>
+      </el-col>
+      <el-col :xs="24" :sm="8" v-if="hasSelectedFile" class="right-align">
+        <el-tag effect="plain" class="file-count"><b>{{ files.length }}</b> file{{ files.length > 1 ? "s" : "" }}</el-tag>
+        <el-button size="small" icon="el-icon-delete" :disabled="files.length === 0" @click="resetFiles">
+          Reset
+        </el-button>
+      </el-col>
+    </el-row>
     <!-- File List -->
+    <el-divider></el-divider>
     <div v-if="hasSelectedFile">
-      <el-divider></el-divider>
       <files-list :files="files" v-on:remove="remove($event)"></files-list>
-      <el-divider></el-divider>
-      <el-button size="small" icon="el-icon-delete" :disabled="files.length === 0" @click="resetFiles">
-        Reset
-      </el-button>
-      <el-tag effect="plain"><b>{{ files.length }}</b> file{{ files.length > 1 ? "s" : "" }}</el-tag>
     </div>
     <p class="el-upload__tip" v-else>
       Please select at least one file or folder.
@@ -94,3 +99,20 @@
   }
 }
 </script>
+
+<style>
+  #file-selection {
+    background: #e5e9f2;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+
+  .right-align {
+    text-align: right;
+  }
+
+  .file-count {
+    margin-right: 10px;
+  }
+</style>
