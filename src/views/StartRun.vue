@@ -1,5 +1,5 @@
 <template>
-  <el-form :disabled="running" id="start-run" size="mini" label-width="auto" label-suffix=" :">
+  <el-form :disabled="running" id="start-run" size="mini" label-width="auto">
     <el-row>
       <!-- Files selection -->
       <spec-files-selection :disabled="running" :files="files"></spec-files-selection>
@@ -181,8 +181,8 @@
   }
 
   .label-top .el-form-item__content {
-    margin: 0 !important;
-    padding: 0 !important;
+    margin-left: 0 !important;
+    /*z-index: -999; TODO z-index issue for tooltip */
   }
 
   .border-right {
