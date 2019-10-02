@@ -1,4 +1,4 @@
-import { app, protocol, BrowserWindow, Menu } from 'electron'
+import { app, BrowserWindow, Menu, protocol } from 'electron'
 import { createProtocol, installVueDevtools } from 'vue-cli-plugin-electron-builder/lib'
 import mainMenuTemplate from './electron-menu'
 import settings from '../settings'
@@ -21,8 +21,8 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 1000,
-    minWidth: 600,
-    minHeight: 500,
+    minWidth: 1000,
+    minHeight: 600,
     webPreferences: {
       nodeIntegration: true // To use node in the client side
     }

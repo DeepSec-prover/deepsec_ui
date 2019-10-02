@@ -1,7 +1,7 @@
 <template>
   <div id="file-selection">
     <el-row type="flex" justify="space-between">
-      <el-col :xs="24" :sm="16">
+      <el-col>
         <!-- File and directory support, only one dialog button -->
         <el-button v-if="fileAndDirectorySupported" @click="selectFiles(true, true)" size="medium"
                    icon="el-icon-document-add">
@@ -17,7 +17,7 @@
           </el-button>
         </div>
       </el-col>
-      <el-col :xs="24" :sm="8" v-if="hasSelectedFile" class="right-align">
+      <el-col v-if="hasSelectedFile" class="right-align">
         <el-tag effect="plain" class="file-count"><b>{{ files.length }}</b> file{{ files.length > 1 ? "s" : "" }}</el-tag>
         <el-button size="small" icon="el-icon-delete" :disabled="files.length === 0" @click="resetFiles">
           Reset
@@ -27,7 +27,7 @@
     <!-- File List -->
     <el-divider></el-divider>
     <div v-if="hasSelectedFile">
-      <files-list :files="files" v-on:remove="remove($event)"></files-list>
+      <files-list :disabled="disabled" :files="files" v-on:remove="remove($event)"></files-list>
     </div>
     <p class="el-upload__tip" v-else>
       Please select at least one file or folder.
@@ -45,7 +45,8 @@
     FilesList
   },
   props: {
-    files: Array // This array is watched and contains a the file paths
+    files: Array, // This array is watched and contains a the file paths
+    disabled: Boolean
   },
   data () {
     return {

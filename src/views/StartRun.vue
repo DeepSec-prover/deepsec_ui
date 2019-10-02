@@ -1,13 +1,13 @@
 <template>
-  <el-form id="start-run" size="mini" label-width="auto" label-suffix=" :">
+  <el-form :disabled="running" id="start-run" size="mini" label-width="auto" label-suffix=" :">
     <el-row>
       <!-- Files selection -->
-      <spec-files-selection :files="files"></spec-files-selection>
+      <spec-files-selection :disabled="running" :files="files"></spec-files-selection>
     </el-row>
     <el-row :gutter="20">
       <el-col :span="6">
         <!-- Submit -->
-        <el-button :disabled="files.length === 0" size="default" type="success" icon="el-icon-video-play" @click="submitForm()">
+        <el-button :loading="running" :disabled="files.length === 0" size="default" type="success" icon="el-icon-video-play" @click="submitForm()">
           Start Run{{ files.length > 1 ? "s" : "" }}
         </el-button>
       </el-col>
@@ -104,7 +104,8 @@
         isDistributed: true,
         servers: []
       },
-      serversId: 0
+      serversId: 0,
+      running: false
     }
   },
   computed: {
@@ -132,7 +133,11 @@
       this.runConf.servers.splice(index, 1)
     },
     submitForm () {
-      logger.info(`Start new run : ${JSON.stringify(this.runConf)}`)
+      this.running = true
+      logger.info(`Start new run :
+      config : ${JSON.stringify(this.runConf)}
+      files : ${this.files.join(', ')}`)
+      // TODO call deepsec
     }
   }
 }
