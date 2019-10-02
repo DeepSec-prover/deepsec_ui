@@ -6,20 +6,9 @@ Definition of `<position>` :
 {
   "index": <int>,
   "args" : [
-    <position_args>,
+    <int>,
     ...,
-    <position_args>
+    <int>
   ]
-}
-```
-
------
-
-Definition of `<position_args>` :
-
-```
-{
-  "type_position": "var"|"int"
-  "value": <int>
 }
 ```

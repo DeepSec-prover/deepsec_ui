@@ -75,7 +75,7 @@ or
 or
 ```
 {
-  "type": "Mult",
+  "type": "Bang",
   "multiplicity": <int>,
   "position": <position>,
   "process": <process>,

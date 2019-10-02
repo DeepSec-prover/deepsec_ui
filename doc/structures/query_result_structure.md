@@ -8,41 +8,36 @@ Definition of `<query_result>`:
 ```
 {
   "status": "in_progress",
-  "start_time": <int> // Timestamp
-}
-```
-or
-```
-{
-  "status": "completed",
-  "start_time": <int> // Timestamp
-  "end_time": <int> | null, // Timestamp or null if not over
+  "start_time": <int> | null, // Timestamp or null if not started yet
   "atomic_data": <atomic_data>,
-  "rewrite_rules": [
-    {
-      "symbol": <int>, // index of atomic data
-      "left_hand_side": [
-        <term>,
-        ...
-        <term>
-      ],
-      "right_hand_side": <term>
-    }
-  ],
   "semantics": <string>, // "private" | "classic" | "eavesdrop"
   "process": [
     <process>,
     ...
     <process>
   ],
-  "is_verified": <bool>,
-  "attack_trace": {
+}
+```
+or
+```
+{
+  "status": "completed",
+  "start_time": <int>, // Timestamp
+  "end_time": <int>, // Timestamp
+  "atomic_data": <atomic_data>,
+  "semantics": <string>, // "private" | "classic" | "eavesdrop"
+  "process": [
+    <process>,
+    ...
+    <process>
+  ],
+  "attack_trace": null | {
     "index_process": <int>, // In process array
     "action_sequence": [
       <action>,
       ...
       <action>
     ]
-  }
+  } // null when the property holds.
 }
 ```
