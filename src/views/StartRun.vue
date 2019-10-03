@@ -8,7 +8,7 @@
       <el-col :span="6">
         <!-- Submit -->
         <el-button :loading="running" :disabled="files.length === 0" size="default" type="success" icon="el-icon-video-play" @click="submitForm()">
-          Start Run{{ files.length > 1 ? "s" : "" }}
+          Start{{ files.length > 1 ? " Batch" : " Run" }}
         </el-button>
       </el-col>
       <el-col :span="9" class="border-right">
