@@ -9,7 +9,7 @@ At least one of `query_result_files` or `query_results` should be present.
 
 ```
 {
-  "status": "completed",
+  "status": "completed" | "in_progress",
   "deepsec_version": <string>, // Format as "X.X.X"
   "run_hash": <string>,
   "git_branch": <string>,
@@ -17,7 +17,7 @@ At least one of `query_result_files` or `query_results` should be present.
   "input_file": <string>, (optional) // Format as "<relative_path>/<name>.<version>.dps",
   "input_str": <string>, (optional) // Full content of the .dps file
   "start_time": <int>, // Timestamp
-  "end_time": <int> | null, // Timestamp or null if not over
+  "end_time": <int> | null, // Timestamp or null if not over. If null then status is "in_progress"
   "import_date": <int> | null, // Timestamp or null if not imported
   "command_options": [ // See deepsec documentation for command details
     {
@@ -66,5 +66,58 @@ At least one of `query_result_files` or `query_results` should be present.
     ...
     <query_result>
   ]
+}
+```
+or
+```
+{
+  "status": "user_error" | "internal_error",
+  "deepsec_version": <string>, // Format as "X.X.X"
+  "run_hash": <string>,
+  "git_branch": <string>,
+  "git_hash": <string>,
+  "input_file": <string>, (optional) // Format as "<relative_path>/<name>.<version>.dps",
+  "input_str": <string>, (optional) // Full content of the .dps file
+  "start_time": <int>, // Timestamp
+  "end_time": <int>,
+  "import_date": <int> | null, // Timestamp or null if not imported
+  "command_options": [ // See deepsec documentation for command details
+    {
+      "label": "nb_jobs",
+      "value": <int>
+    },
+    {
+      "label": "round_timer",
+      "value": <int>
+    },
+    {
+      "label": "no_display_attack_trace",
+      "value": <bool>
+    },
+    {
+      "label": "default_semantics",
+      "value": <string> // "private" | "classic" | "eavesdrop"
+    },
+    {
+      "label": "distant_workers",
+      "value": [
+        {
+          "host": <string>, // Format "<login>@<host>"
+          "path": <string>,
+          "nb_workers": <int>
+        },
+        ...
+      ]
+    },
+    {
+      "label": "without_por",
+      "value": <bool>
+    },
+    {
+      "label": "distributed",
+      "value": <int> // 0 = not distributed
+    }
+  ],
+  "error_msg": <string>
 }
 ```

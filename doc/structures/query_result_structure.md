@@ -21,13 +21,28 @@ Definition of `<query_result>`:
 or
 ```
 {
+  "status": "canceled",
+  "start_time": <int> | null, // Timestamp or null if not started yet
+  "end_time": <int> | null,
+  "atomic_data": <atomic_data>,
+  "semantics": <string>, // "private" | "classic" | "eavesdrop"
+  "process": [
+    <process>,
+    ...
+    <process>
+  ],
+}
+```
+or
+```
+{
   "status": "completed",
   "start_time": <int>, // Timestamp
   "end_time": <int>, // Timestamp
   "atomic_data": <atomic_data>,
   "semantics": <string>, // "private" | "classic" | "eavesdrop"
   "process": [
-    <process>,
+    <process>,a
     ...
     <process>
   ],
@@ -39,5 +54,21 @@ or
       <action>
     ]
   } // null when the property holds.
+}
+```
+or
+```
+{
+  "status": "internal_error",
+  "start_time": <int> | null, // Timestamp or null if not started yet
+  "end_time": <int> | null,
+  "atomic_data": <atomic_data>,
+  "semantics": <string>, // "private" | "classic" | "eavesdrop"
+  "process": [
+    <process>,
+    ...
+    <process>
+  ],
+  "error_msg": <string>
 }
 ```
