@@ -2,62 +2,26 @@
 
 See [run result mock-data](../../mock-data/run/run.json) for example.
 
+Format of name of json for run_result:
+  `<dps file name>_<random>.json`
+
 Definition of `<run_result>`:
 
 At least one of `input_file` or `input_str` should be present.  
-At least one of `query_result_files` or `query_results` should be present.  
+At least one of `query_result_files` or `query_results` should be present.
+
+`<batch_folder>` and `<batch_file>` have the same value.
 
 ```
 {
-  "status": "completed",
-  "deepsec_version": <string>, // Format as "X.X.X"
-  "run_hash": <string>,
-  "git_branch": <string>,
-  "git_hash": <string>,
-  "input_file": <string>, (optional) // Format as "<relative_path>/<name>.<version>.dps",
+  "status": "completed" | "in_progress",
+  "batch_file": "<batch_file>.json"
+  "input_file": <string>, (optional) // Format as "<batch_folder>/<run_folder>/<name>.dps",
   "input_str": <string>, (optional) // Full content of the .dps file
   "start_time": <int>, // Timestamp
-  "end_time": <int> | null, // Timestamp or null if not over
-  "import_date": <int> | null, // Timestamp or null if not imported
-  "command_options": [ // See deepsec documentation for command details
-    {
-      "label": "nb_jobs",
-      "value": <int>
-    },
-    {
-      "label": "round_timer",
-      "value": <int>
-    },
-    {
-      "label": "no_display_attack_trace",
-      "value": <bool>
-    },
-    {
-      "label": "default_semantics",
-      "value": <string> // "private" | "classic" | "eavesdrop"
-    },
-    {
-      "label": "distant_workers",
-      "value": [
-        {
-          "host": <string>, // Format "<login>@<host>"
-          "path": <string>,
-          "nb_workers": <int>
-        },
-        ...
-      ]
-    },
-    {
-      "label": "without_por",
-      "value": <bool>
-    },
-    {
-      "label": "distributed",
-      "value": <int> // 0 = not distributed
-    }
-  ],
+  "end_time": <int>, (optional) // Timestamp. If not defined then status is "in_progress"
   "query_result_files": (optional) [
-    <string>, // Format as "<relative_path>/query_<id>.json"
+    <string>, // Format as "<batch_folder>/<run_folder>/query_<id>.json"
     ...,
     <string>
   ],
@@ -66,5 +30,17 @@ At least one of `query_result_files` or `query_results` should be present.
     ...
     <query_result>
   ]
+}
+```
+or
+```
+{
+  "status": "user_error" | "internal_error",
+  "batch_file": "<batch_file>.json"
+  "input_file": <string>, (optional) // Format as "<batch_folder>/<run_folder>/<name>.dps",
+  "input_str": <string>, (optional) // Full content of the .dps file
+  "start_time": <int>, // Timestamp
+  "end_time": <int>, // Timestamp
+  "error_msg": <string>
 }
 ```
