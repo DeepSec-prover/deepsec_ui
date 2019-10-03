@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
 import StartRun from './views/StartRun'
+import AllResults from './views/AllResults'
 
 Vue.use(Router)
 
@@ -18,6 +19,11 @@ export default new Router({
       path: '/start-run',
       name: 'start-run',
       component: StartRun
+    },
+    {
+      path: '/all-results',
+      name: 'all-results',
+      component: AllResults
     }
   ]
 })

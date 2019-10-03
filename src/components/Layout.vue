@@ -8,6 +8,10 @@
           <i class="el-icon-s-home"></i>
           <span>Home</span>
         </el-menu-item>
+        <el-menu-item index="all-results" @click="routePush('all-results')">
+          <i class="el-icon-finished"></i>
+          <span>Results</span>
+        </el-menu-item>
         <el-menu-item index="start-run" @click="routePush('start-run')">
           <i class="el-icon-video-play"></i>
           <span>Start Run</span>
