@@ -3,12 +3,16 @@
 See [query result mock-data completed](../../mock-data/run/query_completed.json) or
 [query result mock-data in progress](../../mock-data/run/query_in_progress.json) for examples.
 
+`<batch_folder>` and `<batch_file>` have the same value.
+
 Definition of `<query_result>`:
 
 ```
 {
   "status": "in_progress",
-  "start_time": <int> | null, // Timestamp or null if not started yet
+  "batch_file": "<batch_file>.json",
+  "run_file": "<batch_folder>/<run_file>.json"
+  "start_time": <int> (optional), // Timestamp. If not defined then the query hasn't started
   "atomic_data": <atomic_data>,
   "semantics": <string>, // "private" | "classic" | "eavesdrop"
   "process": [
@@ -22,8 +26,10 @@ or
 ```
 {
   "status": "canceled",
-  "start_time": <int> | null, // Timestamp or null if not started yet
-  "end_time": <int> | null,
+  "batch_file": "<batch_file>.json",
+  "run_file": "<batch_folder>/<run_file>.json"
+  "start_time": <int> (optional), // Timestamp. If not defined then the query hasn't started
+  "end_time": <int> (optional), // Timestamp. If not defined then the query hasn't started
   "atomic_data": <atomic_data>,
   "semantics": <string>, // "private" | "classic" | "eavesdrop"
   "process": [
@@ -37,31 +43,35 @@ or
 ```
 {
   "status": "completed",
+  "batch_file": "<batch_file>.json",
+  "run_file": "<batch_folder>/<run_file>.json"
   "start_time": <int>, // Timestamp
   "end_time": <int>, // Timestamp
   "atomic_data": <atomic_data>,
   "semantics": <string>, // "private" | "classic" | "eavesdrop"
   "process": [
-    <process>,a
+    <process>,
     ...
     <process>
   ],
-  "attack_trace": null | {
+  "attack_trace": {
     "index_process": <int>, // In process array
     "action_sequence": [
       <action>,
       ...
       <action>
     ]
-  } // null when the property holds.
+  } (optional) // If not defined then the query is verified.
 }
 ```
 or
 ```
 {
   "status": "internal_error",
-  "start_time": <int> | null, // Timestamp or null if not started yet
-  "end_time": <int> | null,
+  "batch_file": "<batch_file>.json",
+  "run_file": "<batch_folder>/<run_file>.json"
+  "start_time": <int>, // Timestamp
+  "end_time": <int>, // Timestamp
   "atomic_data": <atomic_data>,
   "semantics": <string>, // "private" | "classic" | "eavesdrop"
   "process": [
