@@ -4,6 +4,7 @@ import mainMenuTemplate from './electron-menu'
 import settings from '../settings'
 import setupDefaultLogger from './util/setup-logging'
 import logger from 'electron-log'
+import { unsetToDefault } from './util/default-user-settings'
 
 // Init default logger
 setupDefaultLogger()
@@ -59,6 +60,10 @@ function createWindow () {
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
   logger.info('App ready')
+
+  // Set user settings to default if never set or missing
+  unsetToDefault()
+
   if (settings.env !== 'prod') {
     logger.warn(`Not in production mode (current env: ${settings.env})`)
   }

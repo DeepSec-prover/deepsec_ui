@@ -2,32 +2,27 @@
   <div>
     <h2>Settings</h2>
     <el-form size="small">
-      <el-form-item label="Test">
-        <el-input-number controls-position="right" v-model="test"></el-input-number>
-      </el-form-item>
+      <setting-item label="Test" settings-path="test"></setting-item>
+      <setting-item label="Show Helpers" settings-path="showHelpers"></setting-item>
+      <setting-item label="Name" settings-path="name"></setting-item>
     </el-form>
+    <el-button @click="resetSettings()">Reset to default</el-button>
   </div>
 </template>
 
 <script>
-  import userSettings from 'electron-settings'
-  import logger from 'electron-log'
+  import { resetAll } from '../util/default-user-settings'
+  import SettingItem from '../components/SettingItem'
 
   export default {
     name: 'settings',
-    data () {
-      return {
-        test: 0
-      }
+    components: {
+      SettingItem
     },
-    watch: {
-      test: function (newValue, oldValue) {
-        logger.debug(`Change setting test : ${oldValue} --> ${newValue}`)
-        userSettings.set('test', newValue)
+    methods: {
+      resetSettings () {
+        resetAll()
       }
-    },
-    mounted () {
-      this.test = userSettings.get('test')
     }
   }
 </script>
