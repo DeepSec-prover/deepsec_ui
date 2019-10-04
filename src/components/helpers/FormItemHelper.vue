@@ -6,7 +6,8 @@
                   :placement="helper.placement"
                   :effect="helper.effect"
                   :open-delay="helper.openDelay"
-                  :disabled="helper.disable">
+                  :disabled="helper.disable"
+                  :tabindex="-1">
         <span :class="{'label-helper' : !helper.disable}">{{ label }}</span>
       </el-tooltip> :
     </template>
