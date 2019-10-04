@@ -5,7 +5,9 @@
       <el-col :xs="20" :sm="16" :md="12" :xl="6">
         <!-- Form -->
         <el-form size="small" :key="refreshKey" label-position="right" label-width="auto">
+          <el-divider><i class="el-icon-picture-outline-round"></i> Interface</el-divider>
           <setting-item label="Show Helpers" settings-path="showHelpers"></setting-item>
+          <el-divider><i class="el-icon-files"></i> Environment</el-divider>
           <setting-item label="DeepSec API Path" settings-path="deepsecApiPath" placeholder="/path/to/deepsec-api"></setting-item>
           <setting-item label="Results directory" settings-path="resultsDirPath" placeholder="/path/to/results"></setting-item>
         </el-form>
