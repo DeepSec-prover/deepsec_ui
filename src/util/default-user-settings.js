@@ -2,9 +2,9 @@ import userSettings from 'electron-settings'
 import logger from 'electron-log'
 
 const defaultUserSettings = {
-  test: 42,
   showHelpers: true,
-  name: 'victor'
+  deepsecApiPath: '',
+  resultsDirPath: ''
 }
 
 /**

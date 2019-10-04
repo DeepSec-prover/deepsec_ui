@@ -3,12 +3,16 @@
     <!-- Integer -->
     <el-input-number v-if="Number.isInteger(value)"
                      v-model="value"
-                     controls-position="right"></el-input-number>
+                     controls-position="right"
+                     :placeholder="placeholder"></el-input-number>
     <!-- Boolean -->
     <el-switch v-else-if="typeof value === 'boolean'"
                v-model="value"></el-switch>
     <!-- String -->
-    <el-input v-else v-model="value" class="setting-item-text"></el-input>
+    <el-input v-else
+              v-model="value"
+              class="setting-item-text"
+              :placeholder="placeholder"></el-input>
     <i v-show="!isDefault" :class="['el-icon-circle-check', 'edited', {'current-edit': currentEdit}]"></i>
   </el-form-item>
 </template>
@@ -22,7 +26,11 @@
     name: 'setting-item',
     props: {
       label: String,
-      settingsPath: String
+      settingsPath: String,
+      placeholder: {
+        type: String,
+        default: ''
+      }
     },
     data () {
       return {

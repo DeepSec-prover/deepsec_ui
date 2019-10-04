@@ -5,9 +5,9 @@
       <el-col :xs="20" :sm="16" :md="12" :xl="6">
         <!-- Form -->
         <el-form size="small" :key="refreshKey" label-position="right" label-width="auto">
-          <setting-item label="Test" settings-path="test"></setting-item>
           <setting-item label="Show Helpers" settings-path="showHelpers"></setting-item>
-          <setting-item label="Name" settings-path="name"></setting-item>
+          <setting-item label="DeepSec API Path" settings-path="deepsecApiPath" placeholder="/path/to/deepsec-api"></setting-item>
+          <setting-item label="Results directory" settings-path="resultsDirPath" placeholder="/path/to/results"></setting-item>
         </el-form>
         <!-- Reset Settings -->
         <div id="reset-settings">
