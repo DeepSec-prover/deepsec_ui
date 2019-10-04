@@ -15,8 +15,6 @@
   }
 </script>
 
-<style scoped>
-  #app {
-    font-family: Helvetica, sans-serif;
-  }
+<style type="scss">
+  @import "assets/styles/global.scss";
 </style>

@@ -8,7 +8,7 @@
       <el-col :span="6">
         <!-- Submit -->
         <el-button :loading="running" :disabled="files.length === 0" size="default" type="success" icon="el-icon-video-play" @click="submitForm()">
-          Start{{ files.length > 1 ? " Batch" : " Run" }}
+          Start{{ files.length > 1 ? ' Batch' : ' Run' }}
         </el-button>
       </el-col>
       <el-col :span="9" class="border-right">
@@ -30,7 +30,7 @@
         <form-item-helper label="Distributed" helper-id="runOptions.isDistributed">
           <el-switch v-model="runConf.isDistributed"></el-switch>
           <el-tag v-show="runConf.isDistributed" class="counter-tag" size="small" effect="plain">
-            <b>{{ nbWorkers }}</b> worker{{ nbWorkers > 1 ? "s" : "" }}
+            <b>{{ nbWorkers }}</b> worker{{ nbWorkers > 1 ? 's' : '' }}
           </el-tag>
         </form-item-helper>
         <div v-show="runConf.isDistributed">
@@ -87,60 +87,60 @@
   import Helper from '../components/helpers/Helper'
 
   export default {
-  name: 'start-run',
-  components: {
-    SpecFilesSelection,
-    FormItemHelper,
-    Helper
-  },
-  data () {
-    return {
-      files: [],
-      runConf: {
-        defaultSemantic: 'private',
-        nbJobs: 10,
-        nbLocalWorkers: 10,
-        timer: 180,
-        isDistributed: true,
-        servers: []
+    name: 'start-run',
+    components: {
+      SpecFilesSelection,
+      FormItemHelper,
+      Helper
+    },
+    data () {
+      return {
+        files: [],
+        runConf: {
+          defaultSemantic: 'private',
+          nbJobs: 10,
+          nbLocalWorkers: 10,
+          timer: 180,
+          isDistributed: true,
+          servers: []
+        },
+        serversId: 0,
+        running: false
+      }
+    },
+    computed: {
+      nbWorkers: function () {
+        let sum = this.runConf.nbLocalWorkers
+
+        this.runConf.servers.forEach(server => {
+          sum += server.nbWorkers
+        })
+
+        return sum
+      }
+    },
+    methods: {
+      addDistantServer () {
+        this.runConf.servers.push({
+          id: ++this.serversId,
+          hostname: '',
+          localPath: '',
+          nbWorkers: 10
+        })
       },
-      serversId: 0,
-      running: false
-    }
-  },
-  computed: {
-    nbWorkers: function () {
-      let sum = this.runConf.nbLocalWorkers
-
-      this.runConf.servers.forEach(server => {
-        sum += server.nbWorkers
-      })
-
-      return sum
-    }
-  },
-  methods: {
-    addDistantServer () {
-      this.runConf.servers.push({
-        id: ++this.serversId,
-        hostname: '',
-        localPath: '',
-        nbWorkers: 10
-      })
-    },
-    removeServer (server) {
-      let index = this.runConf.servers.indexOf(server)
-      this.runConf.servers.splice(index, 1)
-    },
-    submitForm () {
-      this.running = true
-      logger.info(`Start new run :
+      removeServer (server) {
+        let index = this.runConf.servers.indexOf(server)
+        this.runConf.servers.splice(index, 1)
+      },
+      submitForm () {
+        this.running = true
+        logger.info(`Start new run :
       config : ${JSON.stringify(this.runConf)}
       files : ${this.files.join(', ')}`)
-      // TODO call deepsec
+        // TODO call deepsec
+      }
     }
   }
-}
 </script>
 
 <style>
