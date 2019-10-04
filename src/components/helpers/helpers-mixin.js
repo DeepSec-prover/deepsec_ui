@@ -1,5 +1,6 @@
 import helpers from '../../text-content/helpers'
 import logger from 'electron-log'
+import userSettings from 'electron-settings'
 
 const mixin = {
   props: {
@@ -12,7 +13,8 @@ const mixin = {
       helper: {
         openDelay: 400, // ms
         effect: 'light',
-        placement: 'top'
+        placement: 'top',
+        disable: !userSettings.get('showHelpers', true)
       }
     }
   },

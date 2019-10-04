@@ -5,8 +5,9 @@
       <el-tooltip :content="helperContent(helperId)"
                   :placement="helper.placement"
                   :effect="helper.effect"
-                  :open-delay="helper.openDelay">
-        <span class="label-helper">{{ label }}</span>
+                  :open-delay="helper.openDelay"
+                  :disabled="helper.disable">
+        <span :class="{'label-helper' : !helper.disable}">{{ label }}</span>
       </el-tooltip> :
     </template>
     <!-- Input field -->
