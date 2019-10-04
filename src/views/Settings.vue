@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2>Settings</h2>
-    <el-form size="small">
+    <el-form size="small" :key="refreshKey">
       <setting-item label="Test" settings-path="test"></setting-item>
       <setting-item label="Show Helpers" settings-path="showHelpers"></setting-item>
       <setting-item label="Name" settings-path="name"></setting-item>
@@ -19,9 +19,16 @@
     components: {
       SettingItem
     },
+    data () {
+      return {
+        refreshKey: 0
+      }
+    },
     methods: {
       resetSettings () {
         resetAll()
+        // Changing the key force Vue to reload the components
+        this.refreshKey += 1
       }
     }
   }

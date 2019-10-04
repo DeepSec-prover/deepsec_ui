@@ -5,6 +5,7 @@ import settings from '../settings'
 import setupDefaultLogger from './util/setup-logging'
 import logger from 'electron-log'
 import { unsetToDefault } from './util/default-user-settings'
+import userSettings from 'electron-settings'
 
 // Init default logger
 setupDefaultLogger()
@@ -63,6 +64,7 @@ app.on('ready', async () => {
 
   // Set user settings to default if never set or missing
   unsetToDefault()
+  logger.debug(`User settings storage path : ${userSettings.file()}`)
 
   if (settings.env !== 'prod') {
     logger.warn(`Not in production mode (current env: ${settings.env})`)
