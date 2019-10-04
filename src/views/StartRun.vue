@@ -58,7 +58,11 @@
           <transition-group name="el-zoom-in-top" tag="div" :duration="{ enter: 20 }">
             <el-card class="server-card" shadow="hover" v-for="server in runConf.servers" :key="server.id">
               <!-- Remove Server -->
-              <el-link class="remove-server" @click.prevent="removeServer(server)" icon="el-icon-close" size="small">
+              <el-link class="remove-server"
+                       :underline="false"
+                       @click.prevent="removeServer(server)"
+                       icon="el-icon-close"
+                       size="small">
               </el-link>
               <!-- Server Hostname -->
               <form-item-helper label="Hostname" helper-id="runOptions.server.hostname">
@@ -166,10 +170,6 @@
     z-index: 50;
     right: 20px;
     margin-top: -20px;
-  }
-
-  .server-card .remove-server:hover:after {
-    border-bottom-style: none !important;
   }
 
   .server-card .remove-server:hover {
