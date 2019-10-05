@@ -15,6 +15,7 @@ Definition of `<query_result>`:
   "start_time": <int> (optional), // Timestamp. If not defined then the query hasn't started
   "atomic_data": <atomic_data>,
   "semantics": <string>, // "private" | "classic" | "eavesdrop"
+  "type": <string>, // "trace_equiv" | "trace_incl" | "observational_equiv" | "session_equiv" | "session_incl"
   "process": [
     <process>,
     ...
@@ -32,6 +33,7 @@ or
   "end_time": <int> (optional), // Timestamp. If not defined then the query hasn't started
   "atomic_data": <atomic_data>,
   "semantics": <string>, // "private" | "classic" | "eavesdrop"
+  "type": <string>, // "trace_equiv" | "trace_incl" | "obs_equiv" | "session_equiv" | "session_incl"
   "process": [
     <process>,
     ...
@@ -49,6 +51,7 @@ or
   "end_time": <int>, // Timestamp
   "atomic_data": <atomic_data>,
   "semantics": <string>, // "private" | "classic" | "eavesdrop"
+  "type": <string>, // "trace_equiv" | "trace_incl" | "observational_equiv" | "session_equiv" | "session_incl"
   "process": [
     <process>,
     ...
@@ -62,23 +65,5 @@ or
       <action>
     ]
   } (optional) // If not defined then the query is verified.
-}
-```
-or
-```
-{
-  "status": "internal_error",
-  "batch_file": "<batch_file>.json",
-  "run_file": "<batch_folder>/<run_file>.json"
-  "start_time": <int>, // Timestamp
-  "end_time": <int>, // Timestamp
-  "atomic_data": <atomic_data>,
-  "semantics": <string>, // "private" | "classic" | "eavesdrop"
-  "process": [
-    <process>,
-    ...
-    <process>
-  ],
-  "error_msg": <string>
 }
 ```

@@ -1,0 +1,19 @@
+{
+  "command" : "start_run",
+  "input_files": [
+    "/Users/vincentcheval/Documents/Recherche/Outils/DeepSec/deepsec/Examples/trace_equivalence/Denning_sacco/DenningSacco-1session.dps",
+    "/Users/vincentcheval/Documents/Recherche/Outils/DeepSec/deepsec/Examples/trace_equivalence/Denning_sacco/DenningSacco-2sessions.dps",
+    "/Users/vincentcheval/Documents/Recherche/Outils/DeepSec/deepsec/Examples/trace_equivalence/Helios/Helios_no_revote_weeding.dps"
+  ],
+
+  "command_options": [
+    {
+      "label": "nb_jobs",
+      "value": 3
+    },
+    {
+      "label": "default_semantics",
+      "value": "classic"
+    }
+  ]
+}

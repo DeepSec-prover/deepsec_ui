@@ -50,8 +50,7 @@ Definition of `<batch_result>`:
       ]
     },
     {
-      "label": "without_por",
-      "value": <bool>
+      "label": "without_por"
     },
     {
       "label": "distributed",

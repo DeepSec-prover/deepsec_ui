@@ -18,7 +18,7 @@ At least one of `query_result_files` or `query_results` should be present.
   "batch_file": "<batch_file>.json"
   "input_file": <string>, (optional) // Format as "<batch_folder>/<run_folder>/<name>.dps",
   "input_str": <string>, (optional) // Full content of the .dps file
-  "start_time": <int>, // Timestamp
+  "start_time": <int>, // Timestamp. If not defined then file hasn't been run yet.
   "end_time": <int>, (optional) // Timestamp. If not defined then status is "in_progress"
   "query_result_files": (optional) [
     <string>, // Format as "<batch_folder>/<run_folder>/query_<id>.json"

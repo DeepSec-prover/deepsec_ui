@@ -19,7 +19,7 @@ Definition of `<variable>` :
   "type": "Variable",
   "label" : <string>,
   "index": <int>,
-  "free" : <bool>
+  "free" : <bool> // if not defined then false
 }
 ```
 
@@ -97,7 +97,7 @@ Definition of `<symbol>` :
   "index": <int>,
   "arity": <int>,
   "category": <category>,
-  "is_public: <bool>,
+  "is_public: <bool>, (optional) // if not defined then false
   "representation": "UserName" | "UserDefined" | "Attacker"
 }
 ```

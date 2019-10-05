@@ -45,6 +45,13 @@ Starting a run: UI -> DeepSec
   ]
 }
 ```
+Reply to start a run : DeepSec -> UI
+
+```
+{
+  "command": "batch_started",
+  "result_file": <string> // Path
+}
 
 Reply to start a run : DeepSec -> UI
 
