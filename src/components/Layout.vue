@@ -32,6 +32,9 @@
 </template>
 
 <script>
+  import { ipcRenderer } from 'electron'
+  import logger from 'electron-log'
+
   export default {
     name: 'layout',
     methods: {
@@ -40,6 +43,18 @@
           this.$router.push({ name: routeName })
         }
       }
+    },
+    mounted () {
+      // When received data then show notification
+      ipcRenderer.on('notification:show', (event, title, content, type) => {
+        logger.silly(`Show notification : (${type}) ${title} - ${content}`)
+        this.$notify({
+          title: title,
+          message: content,
+          type: type,
+          duration: 0
+        })
+      })
     }
   }
 </script>

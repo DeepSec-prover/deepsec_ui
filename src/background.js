@@ -85,9 +85,10 @@ app.on('ready', async () => {
   }
 
   // Listener for Deepsec API call from renderers
-  ipcMain.on('deepsec-api', (event, cmd) => {
+  ipcMain.on('deepsec-api:run', (event, cmd) => {
     logger.silly(`Received Deepsec API command: ${JSON.stringify(cmd)}`)
-    runCmd(cmd)
+    // Run the command then return the result
+    event.reply('deepsec-api:result', runCmd(cmd, mainWindow))
   })
 
   createWindow()

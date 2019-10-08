@@ -6,6 +6,15 @@
     </el-row>
     <el-row :gutter="20">
       <el-col :span="6">
+        <!-- Error message -->
+        <el-alert
+                id="failed-error-msg"
+                v-show="runErrorMsg"
+                title="Fail to start run"
+                type="error"
+                :description="runErrorMsg"
+                :closable="false"
+                show-icon></el-alert>
         <!-- Submit -->
         <el-button :loading="running" :disabled="files.length === 0" size="default" type="success" icon="el-icon-video-play" @click="submitForm()">
           Start{{ files.length > 1 ? ' Batch' : ' Run' }}
@@ -110,7 +119,8 @@
           servers: []
         },
         serversId: 0,
-        running: false
+        running: false,
+        runErrorMsg: ''
       }
     },
     computed: {
@@ -139,10 +149,13 @@
       },
       submitForm () {
         this.running = true
+        this.runErrorMsg = ''
         logger.info(`Send new run :
         config : ${JSON.stringify(this.runConf)}
         files : ${this.files.join(', ')}`)
-        ipcRenderer.send('deepsec-api', {
+
+        // Send the run order
+        ipcRenderer.send('deepsec-api:run', {
           'command': 'start_run',
           'input_files': this.files,
           'command_options': {
@@ -150,9 +163,22 @@
             'round_timer': this.runConf.timer,
             'default_semantics': this.runConf.defaultSemantic,
             'distant_workers': this.runConf.servers,
-            'distributed': this.runConf.isDistributed ? this.runConf.nbLocalWorkers : 0,
+            'distributed': this.runConf.isDistributed ? this.runConf.nbLocalWorkers : 0
           }
         })
+
+        // Wait for the run confirmation or error message
+        ipcRenderer.once('deepsec-api:result', (event, errorMsg) => {
+          if (!errorMsg || errorMsg.length === 0) {
+            this.runStarted()
+          } else {
+            this.runErrorMsg = errorMsg
+          }
+          this.running = false
+        })
+      },
+      runStarted () {
+        // TODO reset files list
       }
     }
   }
@@ -199,5 +225,9 @@
   .border-right {
     border-left: 1px solid #E4E7ED;
     border-right: 1px solid #E4E7ED;
+  }
+
+  #failed-error-msg {
+    margin-bottom: 30px;
   }
 </style>

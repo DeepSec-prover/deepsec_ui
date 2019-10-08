@@ -12,7 +12,7 @@ const CTRL = process.platform === 'darwin' ? 'Command' : 'Ctrl'
  * Create the template for the application main menu
  * TODO Try to remove the main windows reference (send to all windows ?)
  *
- * @param mainWindow - The main windows reference
+ * @param {Object} mainWindow The main windows reference (for IPC)
  * @returns {{submenu: *[], label: string}[]}
  */
 function mainMenuTemplate (mainWindow) {
