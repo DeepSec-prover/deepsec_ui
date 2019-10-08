@@ -33,15 +33,16 @@ Reply to start a run : DeepSec -> UI
 ```
 {
   "command": "batch_started",
-  "result_file": <string> // Path
+  "file": <string> // Path
 }
+```
 
 Reply to start a run : DeepSec -> UI
 
 ```
 {
   "command": "run_started",
-  "result_file": <string> // Path
+  "file": <string> // Path
 }
 ```
 
@@ -50,7 +51,7 @@ Reply to start a run : DeepSec -> UI
 ```
 {
   "command": "query_started",
-  "result_file": <string> // Path
+  "file": <string> // Path
 }
 ```
 
@@ -60,7 +61,7 @@ Reply to start a run : DeepSec -> UI
 {
   "command": "run_ended",
   "status": "user_error" | "internal_error" | "completed" | "canceled",
-  "result_file": <string> // Path
+  "file": <string> // Path
 }
 ```
 
@@ -69,8 +70,8 @@ Reply to start a run : DeepSec -> UI
 ```
 {
   "command": "query_ended",
-  "status": "completed" | "canceled",
-  "result_file": <string> // Path
+  "status": "internal_error" | "completed" | "canceled",
+  "file": <string> // Path
 }
 ```
 
@@ -88,7 +89,7 @@ Canceling a run : UI -> DeepSec
 ```
 {
   "command": "cancel_run",
-  "result_file": <string> // Path
+  "file": <string> // Path
 }
 ```
 
@@ -97,7 +98,7 @@ Canceling a query : UI -> DeepSec
 ```
 {
   "command": "cancel_query",
-  "result_file": <string> // Path
+  "file": <string> // Path
 }
 ```
 
