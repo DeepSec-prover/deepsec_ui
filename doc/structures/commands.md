@@ -69,7 +69,7 @@ Reply to start a run : DeepSec -> UI
 ```
 {
   "command": "query_ended",
-  "status": "internal_error" | "completed" | "canceled",
+  "status": "completed" | "canceled",
   "result_file": <string> // Path
 }
 ```
