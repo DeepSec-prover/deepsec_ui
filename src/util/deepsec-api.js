@@ -17,6 +17,8 @@ function runCmd (cmd) {
   process.stdout.on('data', (data) => {
     logger.info(`Response : ${data}`)
   })
+
+  // child.stdin.end(); TODO after the end
 }
 
 export default runCmd

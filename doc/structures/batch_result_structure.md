@@ -25,37 +25,20 @@ Definition of `<batch_result>`:
     <run_results>
   ], (optional)
   "import_date": <int>, (optional) // Timestamp
-  "command_options": [ // See deepsec documentation for command details
-    {
-      "label": "nb_jobs",
-      "value": <int>
-    },
-    {
-      "label": "round_timer",
-      "value": <int>
-    },
-    {
-      "label": "default_semantics",
-      "value": <string> // "private" | "classic" | "eavesdrop"
-    },
-    {
-      "label": "distant_workers",
-      "value": [
-        {
-          "host": <string>, // Format "<login>@<host>"
-          "path": <string>,
-          "nb_workers": <int>
-        },
-        ...
-      ]
-    },
-    {
-      "label": "without_por"
-    },
-    {
-      "label": "distributed",
-      "value": <int> // 0 = not distributed
-    }
-  ]
+  "command_options": { // See deepsec documentation for command details
+    "nb_jobs": <int>,
+    "round_timer": <int>,
+    "default_semantics": "private" | "classic" | "eavesdrop",
+    "distributed": <int>, // 0 is not distributed
+    "without_por": <bool>,
+    "distant_workers": [
+      {
+        "host": <string>, // Format "<login>@<host>"
+        "path": <string>,
+        "nb_workers": <int>
+      },
+       ...
+     ]
+  }
 }
 ```
