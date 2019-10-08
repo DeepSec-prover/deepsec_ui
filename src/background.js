@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, protocol } from 'electron'
+import { app, BrowserWindow, ipcMain, Menu, protocol } from 'electron'
 import { createProtocol, installVueDevtools } from 'vue-cli-plugin-electron-builder/lib'
 import mainMenuTemplate from './electron-menu'
 import settings from '../settings'
@@ -6,6 +6,7 @@ import setupDefaultLogger from './util/setup-logging'
 import logger from 'electron-log'
 import { unsetToDefault } from './util/default-user-settings'
 import userSettings from 'electron-settings'
+import runCmd from './util/deepsec-api'
 
 // Init default logger
 setupDefaultLogger()
@@ -82,6 +83,13 @@ app.on('ready', async () => {
       console.error('Vue Devtools failed to install:', e.toString())
     }
   }
+
+  // Listener for Deepsec API call from renderers
+  ipcMain.on('deepsec-api', (event, cmd) => {
+    logger.silly(`Received Deepsec API command: ${JSON.stringify(cmd)}`)
+    runCmd(cmd)
+  })
+
   createWindow()
 })
 

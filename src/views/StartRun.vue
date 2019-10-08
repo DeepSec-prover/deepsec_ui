@@ -89,6 +89,7 @@
   import SpecFilesSelection from '../components/SpecFilesSelection'
   import FormItemHelper from '../components/helpers/FormItemHelper'
   import Helper from '../components/helpers/Helper'
+  import { ipcRenderer } from 'electron'
 
   export default {
     name: 'start-run',
@@ -138,10 +139,20 @@
       },
       submitForm () {
         this.running = true
-        logger.info(`Start new run :
-      config : ${JSON.stringify(this.runConf)}
-      files : ${this.files.join(', ')}`)
-        // TODO call deepsec
+        logger.info(`Send new run :
+        config : ${JSON.stringify(this.runConf)}
+        files : ${this.files.join(', ')}`)
+        ipcRenderer.send('deepsec-api', {
+          'command': 'start_run',
+          'input_files': this.files,
+          'command_options': {
+            'nb_jobs': this.runConf.nbJobs,
+            'round_timer': this.runConf.timer,
+            'default_semantics': this.runConf.defaultSemantic,
+            'distant_workers': this.runConf.servers,
+            'distributed': this.runConf.isDistributed ? this.runConf.nbLocalWorkers : 0,
+          }
+        })
       }
     }
   }
