@@ -10,37 +10,20 @@ Starting a run: UI -> DeepSec
     ...,
     <string>
   ],
-  "command_options": [ // See deepsec documentation for command details
+  "command_options": // See deepsec documentation for command details
     {
-      "label": "nb_jobs",
-      "value": <int>
-    },
-    {
-      "label": "round_timer",
-      "value": <int>
-    },
-    {
-      "label": "no_display_attack_trace",
-      "value": <bool>
-    },
-    {
-      "label": "default_semantics",
-      "value": <string> // "private" | "classic" | "eavesdrop"
-    },
-    {
-      "label": "distant_workers",
-      "value": [
-        {
-          "host": <string>, // Format "<login>@<host>"
-          "path": <string>,
-          "nb_workers": <int>
-        },
-        ...
-      ]
-    },
-    {
-      "label": "distributed",
-      "value": <int> // 0 = not distributed
+      "nb_jobs": <int>,
+      "round_timer": <int>,
+      "default_semantics": "private" | "classic" | "eavesdrop",
+      "distributed": <int>, // 0 is not distributed
+      "distant_workers": [
+         {
+           "host": <string>, // Format "<login>@<host>"
+           "path": <string>,
+           "nb_workers": <int>
+         },
+         ...
+       ]
     }
   ]
 }
