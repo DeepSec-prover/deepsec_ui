@@ -5,19 +5,26 @@
       <el-col :xs="20" :sm="16" :md="12" :xl="6">
         <!-- Form -->
         <el-form size="small" :key="refreshKey" label-position="right" label-width="auto">
+          <!-- Interface -->
           <el-divider><i class="el-icon-picture-outline-round"></i> Interface</el-divider>
           <setting-item label="Show Helpers" settings-path="showHelpers"></setting-item>
+          <!-- Environment -->
           <el-divider><i class="el-icon-files"></i> Environment</el-divider>
           <setting-item label="DeepSec API Path" settings-path="deepsecApiPath" placeholder="/path/to/deepsec-api"></setting-item>
           <setting-item label="Results directory" settings-path="resultsDirPath" placeholder="/path/to/results"></setting-item>
+          <!-- Notifications -->
+          <el-divider><i class="el-icon-bell"></i> Notifications</el-divider>
+          <div class="centred-content">
+            <el-button class="test-button" size="mini" @click="testNotification">Test Notification</el-button>
+          </div>
         </el-form>
         <!-- Reset Settings -->
-        <div id="reset-settings">
+        <div id="reset-settings" class="centred-content">
           <el-popover
             placement="top"
             v-model="resetConfirm">
             <p>Reset all settings to default values?</p>
-            <div id="reset-buttons">
+            <div class="centred-content">
               <el-button size="mini" type="text" @click="resetConfirm = false">cancel</el-button>
               <el-button size="mini" type="danger" @click="resetSettings()">confirm</el-button>
             </div>
@@ -25,7 +32,6 @@
               Reset
             </el-link>
           </el-popover>
-
         </div>
       </el-col>
     </el-row>
@@ -53,6 +59,14 @@
         // Changing the key force Vue to reload the components
         this.refreshKey += 1
         this.resetConfirm = false
+      },
+      testNotification () {
+        this.$notify({
+          title: 'Test notification',
+          message: 'This is the description of the notification',
+          type: 'info',
+          duration: 0
+        })
       }
     }
   }
@@ -61,10 +75,5 @@
 <style>
   #reset-settings {
     margin-top: 50px;
-    text-align: center;
-  }
-
-  #reset-buttons {
-    text-align: center;
   }
 </style>
