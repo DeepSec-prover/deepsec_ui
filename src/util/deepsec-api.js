@@ -5,18 +5,25 @@ import { spawn } from 'child_process'
 
 /**
  * Run a command through Deepsec API.
+ * Should reply to the event exactly one time.
  *
  * @param {Object} cmd The JSON command structure
+ * @param event The event to replay
  * @param mainWindow The main windows reference (for IPC)
- * @return {string} Error message or null if everything is good
  */
-function runCmd (cmd, mainWindow) {
+function runCmd (cmd, event, mainWindow) {
   let apiPath = String(userSettings.get('deepsecApiPath'))
 
+  // Check Deepsec API path
   if (isEmptyOrBlankStr(apiPath)) {
-    return 'DeepSec API path is not set'
+    // Send bad result to the Start Run page
+    event.reply('deepsec-api:result', { 'success': false, 'error': 'DeepSec API path is not set' })
+    return
   } else if (!isFile(apiPath)) {
-    return `Incorrect DeepSec API path (${apiPath})`
+    // Send bad result to the Start Run page
+    event.reply('deepsec-api:result',
+      { 'success': false, 'error': `Incorrect DeepSec API path (${apiPath})` })
+    return
   }
 
   logger.info(`Start DeepSec API process with command : ${apiPath}`)
@@ -38,7 +45,7 @@ function runCmd (cmd, mainWindow) {
 
     answers.forEach((a) => {
       if (!isEmptyOrBlankStr(a)) {
-        handleAnswer(a, process, mainWindow)
+        handleAnswer(a, process, event, mainWindow)
       }
     })
   })
@@ -69,7 +76,7 @@ function runCmd (cmd, mainWindow) {
   process.stdin.write(cmdStr + '\n')
 }
 
-function handleAnswer (answer, process, mainWindow) {
+function handleAnswer (answer, process, event, mainWindow) {
   try {
     answer = JSON.parse(answer)
   } catch (e) {
@@ -78,8 +85,9 @@ function handleAnswer (answer, process, mainWindow) {
   }
 
   switch (answer.command) {
+    // --- Normal ---
     case 'batch_started':
-      batchStarted(answer, mainWindow)
+      batchStarted(answer, event, mainWindow)
       break
     case 'run_started':
       runStarted(answer, mainWindow)
@@ -96,15 +104,33 @@ function handleAnswer (answer, process, mainWindow) {
     case 'batch_ended':
       batchEnded(answer, mainWindow)
       break
+    // --- Exit ---
     case 'exit':
       processExit(process)
+      break
+    // --- Error ---
+    case 'init_internal_error':
+      initInternalError(answer, event)
+      break
+    case 'user_error':
+      userError(answer, event)
+      break
+    case 'batch_internal_error':
+      batchInternalError(answer, mainWindow)
+      break
+    case 'query_internal_error':
+      queryInternalError(answer, mainWindow)
       break
     default:
       logger.error(`Unknown DeepSec API answer command : ${answer.command}`)
   }
 }
 
-function batchStarted (answer, mainWindow) {
+// ====================== Normal Answers ======================
+
+function batchStarted (answer, event, mainWindow) {
+  // Send good result to the Start Run page
+  event.reply('deepsec-api:result', { 'success': true, 'files_issues': answer.warning_runs })
   // Send ui notification
   mainWindow.webContents.send('notification:show',
     'Batch started',
@@ -191,9 +217,38 @@ function batchEnded (answer, mainWindow) {
     'success')
 }
 
+// ======================= Error Answers ======================
+
+function initInternalError (answer, event) {
+  // Send bad result to the Start Run page
+  event.reply('deepsec-api:result', { 'success': false, 'error': answer.error_msg })
+}
+
+function userError (answer, event) {
+  // Send bad result to the Start Run page
+  event.reply('deepsec-api:result', { 'success': false, 'files_issues': answer.error_runs })
+}
+
+function batchInternalError (answer, event, mainWindow) {
+  // Send ui notification
+  mainWindow.webContents.send('notification:show',
+    'Internal error',
+    `${answer.error_msg}<br>Result file : ${answer.file}`,
+    'error')
+}
+
+function queryInternalError (answer, mainWindow) {
+  // Send ui notification
+  mainWindow.webContents.send('notification:show',
+    'Internal query error',
+    `${answer.error_msg}<br>Result file : ${answer.file}`,
+    'error')
+}
+
+// ======================== Exit Answer =======================
+
 function processExit (process) {
   process.stdin.end()
 }
-
 
 export default runCmd

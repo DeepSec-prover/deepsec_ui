@@ -1,8 +1,8 @@
 <template>
-  <el-form :disabled="running" id="start-run" size="mini" label-width="auto">
+  <el-form :disabled="runStarting" id="start-run" size="mini" label-width="auto">
     <el-row>
       <!-- Files selection -->
-      <spec-files-selection :disabled="running" :files="files"></spec-files-selection>
+      <spec-files-selection :disabled="runStarting" :files="files"></spec-files-selection>
     </el-row>
     <el-row :gutter="20">
       <el-col :span="6">
@@ -16,7 +16,7 @@
                 :closable="false"
                 show-icon></el-alert>
         <!-- Submit -->
-        <el-button :loading="running" :disabled="files.length === 0" size="default" type="success" icon="el-icon-video-play" @click="submitForm()">
+        <el-button :loading="runStarting" :disabled="files.length === 0" size="default" type="success" icon="el-icon-video-play" @click="submitForm()">
           Start{{ files.length > 1 ? ' Batch' : ' Run' }}
         </el-button>
       </el-col>
@@ -119,8 +119,9 @@
           servers: []
         },
         serversId: 0,
-        running: false,
-        runErrorMsg: ''
+        runStarting: false,
+        runErrorMsg: '',
+        runWarnMsg: []
       }
     },
     computed: {
@@ -148,7 +149,7 @@
         this.runConf.servers.splice(index, 1)
       },
       submitForm () {
-        this.running = true
+        this.runStarting = true
         this.runErrorMsg = ''
         logger.info(`Send new run :
         config : ${JSON.stringify(this.runConf)}
@@ -168,13 +169,22 @@
         })
 
         // Wait for the run confirmation or error message
-        ipcRenderer.once('deepsec-api:result', (event, errorMsg) => {
-          if (!errorMsg || errorMsg.length === 0) {
+        ipcRenderer.once('deepsec-api:result', (event, result) => {
+          if (result.success) {
             this.runStarted()
-          } else {
-            this.runErrorMsg = errorMsg
           }
-          this.running = false
+
+          // Global error
+          if (result.error) {
+            this.runErrorMsg = result.error
+          }
+
+          // Error or warning per files
+          if (result.files_issues) {
+
+          }
+
+          this.runStarting = false
         })
       },
       runStarted () {
