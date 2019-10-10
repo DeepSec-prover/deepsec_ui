@@ -35,12 +35,33 @@ At least one of `query_result_files` or `query_results` should be present.
 or
 ```
 {
-  "status": "user_error" | "internal_error",
+  "status": "internal_error",
   "batch_file": "<batch_file>.json"
   "input_file": <string>, (optional) // Format as "<batch_folder>/<run_folder>/<name>.dps",
   "input_str": <string>, (optional) // Full content of the .dps file
   "start_time": <int>, // Timestamp
   "end_time": <int>, // Timestamp
+  "query_result_files": (optional) [
+    <string>, // Format as "<batch_folder>/<run_folder>/query_<id>.json"
+    ...,
+    <string>
+  ],
   "error_msg": <string>
+}
+```
+or
+```
+{
+  "status": "canceled",
+  "batch_file": "<batch_file>.json"
+  "input_file": <string>, (optional) // Format as "<batch_folder>/<run_folder>/<name>.dps",
+  "input_str": <string>, (optional) // Full content of the .dps file
+  "start_time": <int>, // Timestamp
+  "end_time": <int>, // Timestamp
+  "query_result_files": (optional) [
+    <string>, // Format as "<batch_folder>/<run_folder>/query_<id>.json"
+    ...,
+    <string>
+  ]
 }
 ```

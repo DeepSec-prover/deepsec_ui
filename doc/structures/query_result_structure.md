@@ -44,6 +44,25 @@ or
 or
 ```
 {
+  "status": "internal_error",
+  "batch_file": "<batch_file>.json",
+  "run_file": "<batch_folder>/<run_file>.json"
+  "start_time": <int>,
+  "end_time": <int>,
+  "atomic_data": <atomic_data>,
+  "semantics": <string>, // "private" | "classic" | "eavesdrop"
+  "type": <string>, // "trace_equiv" | "trace_incl" | "obs_equiv" | "session_equiv" | "session_incl"
+  "process": [
+    <process>,
+    ...
+    <process>
+  ],
+  "error_msg": <string>
+}
+```
+or
+```
+{
   "status": "completed",
   "batch_file": "<batch_file>.json",
   "run_file": "<batch_folder>/<run_file>.json"
