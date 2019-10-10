@@ -62,6 +62,6 @@
 
 <style scoped>
   li.el-upload-list__item {
-    max-width: 200px !important;
+    max-width: 300px !important;
   }
 </style>
