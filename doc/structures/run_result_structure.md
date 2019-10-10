@@ -29,7 +29,8 @@ At least one of `query_result_files` or `query_results` should be present.
     <query_result>,
     ...
     <query_result>
-  ]
+  ],
+  "warnings":  [ <string> ] (optional)
 }
 ```
 or
@@ -46,7 +47,8 @@ or
     ...,
     <string>
   ],
-  "error_msg": <string>
+  "error_msg": <string>,
+  "warnings":  [ <string> ] (optional)
 }
 ```
 or
@@ -62,6 +64,7 @@ or
     <string>, // Format as "<batch_folder>/<run_folder>/query_<id>.json"
     ...,
     <string>
-  ]
+  ],
+  "warnings":  [ <string> ] (optional)
 }
 ```
