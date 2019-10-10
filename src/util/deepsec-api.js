@@ -18,14 +18,16 @@ function runCmd (cmd, mainWindow) {
   }
   // TODO check file exist
 
-  logger.info(`First API call : ${apiPath}`)
-  // TODO set env and try detached
-  let process = spawn(apiPath)
+  logger.info(`Start DeepSec API process with command : ${apiPath}`)
+  // TODO set env
+  let process = spawn(apiPath, {
+    detached: true,
+    windowsHide: true
+  })
+  // Allow the application to close even if the process is still running
+  process.unref()
 
-  let cmdStr = JSON.stringify(cmd)
-  logger.info(`Send command to API : ${cmdStr}`)
-  process.stdin.write(cmdStr + '\n')
-
+  // Stdout messages catching
   process.stdout.on('data', (data) => {
     // Convert buffer to string
     data = data.toString()
@@ -40,7 +42,30 @@ function runCmd (cmd, mainWindow) {
     })
   })
 
-  // child.stdin.end(); TODO after the end
+  // Stderr messages catching
+  process.stderr.on('data', data => {
+    logger.error(`Error message from DeepSec API : ${data.toString()}`)
+  })
+
+  // Abnormal behaviours from the process
+  process.on('error', err => {
+    logger.error(`Error detected from DeepSec API : ${err.name} - ${err.message}`)
+  })
+
+  // Process exit signal
+  process.on('exit', code => {
+    logger.info(`DeepSec API process exit with code ${code}`)
+  })
+
+  // Process disconnected signal
+  process.on('disconnect', () => {
+    logger.debug(`DeepSec API process disconnect to current process`)
+  })
+
+  // Send first
+  let cmdStr = JSON.stringify(cmd)
+  logger.info(`Send command to API : ${cmdStr}`)
+  process.stdin.write(cmdStr + '\n')
 }
 
 function handleAnswer (answer, process, mainWindow) {
@@ -72,6 +97,7 @@ function handleAnswer (answer, process, mainWindow) {
       break
     case 'exit':
       processExit(process)
+      break
     default:
       logger.error(`Unknown DeepSec API answer command : ${answer.command}`)
   }
@@ -165,7 +191,7 @@ function batchEnded (answer, mainWindow) {
 }
 
 function processExit (process) {
-  // TODO process exit
+  process.stdin.end()
 }
 
 
