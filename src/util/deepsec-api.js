@@ -1,6 +1,6 @@
 import userSettings from 'electron-settings'
 import logger from 'electron-log'
-import { isEmptyOrBlankStr } from './misc'
+import { isEmptyOrBlankStr, isFile } from './misc'
 import { spawn } from 'child_process'
 
 /**
@@ -11,12 +11,13 @@ import { spawn } from 'child_process'
  * @return {string} Error message or null if everything is good
  */
 function runCmd (cmd, mainWindow) {
-  let apiPath = userSettings.get('deepsecApiPath')
+  let apiPath = String(userSettings.get('deepsecApiPath'))
 
-  if (!apiPath || apiPath.length === 0) {
+  if (isEmptyOrBlankStr(apiPath)) {
     return 'DeepSec API path is not set'
+  } else if (!isFile(apiPath)) {
+    return `Incorrect DeepSec API path (${apiPath})`
   }
-  // TODO check file exist
 
   logger.info(`Start DeepSec API process with command : ${apiPath}`)
   // TODO set env
