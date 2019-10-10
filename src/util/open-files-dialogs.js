@@ -2,6 +2,7 @@ import logger from 'electron-log'
 import { dialog, remote } from 'electron'
 import fs from 'fs'
 import path from 'path'
+import { isDir } from './misc'
 
 /**
  * Open the result file selector from the main process.
@@ -154,23 +155,6 @@ function openSpecFiles (currentDialog, files, directories) {
       throw new Error('Open spec file canceled')
     }
   })
-}
-
-/**
- * Check if a path is a directory.
- * If the path doesn't exist return false.
- *
- * @param {string} path The path to check
- * @returns {boolean} True if the path is a directory, false if not
- */
-function isDir(path) {
-  try {
-    const stat = fs.lstatSync(path);
-    return stat.isDirectory();
-  } catch (e) {
-    // lstatSync throws an error if path doesn't exist
-    return false;
-  }
 }
 
 /**

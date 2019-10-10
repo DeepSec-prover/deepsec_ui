@@ -115,7 +115,7 @@
           nbJobs: 10,
           nbLocalWorkers: 10,
           timer: 180,
-          isDistributed: true,
+          isDistributed: false,
           servers: []
         },
         serversId: 0,
