@@ -9,16 +9,18 @@
         <!-- Error message -->
         <el-alert
                 id="failed-error-msg"
-                v-show="runErrorMsg"
+                v-show="globalErrorMsg"
                 title="Fail to start run"
                 type="error"
-                :description="runErrorMsg"
+                :description="globalErrorMsg"
                 :closable="false"
                 show-icon></el-alert>
         <!-- Submit -->
         <el-button :loading="runStarting" :disabled="files.length === 0" size="default" type="success" icon="el-icon-video-play" @click="submitForm()">
           Start{{ files.length > 1 ? ' Batch' : ' Run' }}
         </el-button>
+        <!-- Files issues -->
+        <file-issues-list v-show="filesIssues.length > 0" :files-issues="filesIssues"></file-issues-list>
       </el-col>
       <el-col :span="9" class="border-right">
         <!-- Default Semantic -->
@@ -98,6 +100,7 @@
   import SpecFilesSelection from '../components/SpecFilesSelection'
   import FormItemHelper from '../components/helpers/FormItemHelper'
   import Helper from '../components/helpers/Helper'
+  import FileIssuesList from '../components/FileIssuesList'
   import { ipcRenderer } from 'electron'
 
   export default {
@@ -105,7 +108,8 @@
     components: {
       SpecFilesSelection,
       FormItemHelper,
-      Helper
+      Helper,
+      FileIssuesList
     },
     data () {
       return {
@@ -120,8 +124,8 @@
         },
         serversId: 0,
         runStarting: false,
-        runErrorMsg: '',
-        runWarnMsg: []
+        globalErrorMsg: '',
+        filesIssues: []
       }
     },
     computed: {
@@ -150,7 +154,9 @@
       },
       submitForm () {
         this.runStarting = true
-        this.runErrorMsg = ''
+        this.globalErrorMsg = ''
+        this.filesIssues = []
+
         logger.info(`Send new run :
         config : ${JSON.stringify(this.runConf)}
         files : ${this.files.join(', ')}`)
@@ -173,17 +179,18 @@
           if (result.success) {
             this.runStarted()
           }
-
-          // Global error
-          if (result.error) {
-            this.runErrorMsg = result.error
+          else {
+            // Global error
+            if (result.error) {
+              this.globalErrorMsg = result.error
+            } else {
+              this.globalErrorMsg = 'Unknown error.'
+            }
+            // Error or warning per files
+            if (result.files_issues) {
+              this.filesIssues = result.files_issues
+            }
           }
-
-          // Error or warning per files
-          if (result.files_issues) {
-
-          }
-
           this.runStarting = false
         })
       },
