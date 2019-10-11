@@ -1,17 +1,18 @@
 <template>
-  <el-collapse>
-    <el-collapse-item v-for="file in filesIssues">
+  <el-collapse :value="openFile">
+    <el-collapse-item v-for="fileIssues in filesIssues" :name="fileIssues.file">
       <template slot="title">
+        <!-- TODO spec file name -->
         The spec file name
-        <el-tag class="tag-status" v-if="file.error_msg" effect="dark" type="danger" size="mini">
+        <el-tag class="tag-status" v-if="fileIssues.error_msg" effect="dark" type="danger" size="mini">
           1 <i class="el-icon-error"></i>
         </el-tag>
-        <el-tag  class="tag-status" v-if="file.warnings && file.warnings.length > 0" effect="dark" type="warning" size="mini">
-          {{ file.warnings.length }} <i class="el-icon-warning"></i>
+        <el-tag  class="tag-status" v-if="fileIssues.warnings && fileIssues.warnings.length > 0" effect="dark" type="warning" size="mini">
+          {{ fileIssues.warnings.length }} <i class="el-icon-warning"></i>
         </el-tag>
       </template>
-      <el-alert class="file-issue" v-if="file.error_msg" type="error" :description="file.error_msg" :closable="false"></el-alert>
-      <el-alert class="file-issue" v-for="warning in file.warnings" type="warning" :description="warning" :closable="false"></el-alert>
+      <el-alert class="file-issue" v-if="fileIssues.error_msg" type="error" :description="fileIssues.error_msg" :closable="false"></el-alert>
+      <el-alert class="file-issue" v-for="warning in fileIssues.warnings" type="warning" :description="warning" :closable="false"></el-alert>
     </el-collapse-item>
   </el-collapse>
 </template>
@@ -23,7 +24,17 @@
       filesIssues: Array
     },
     data () {
-      return {}
+      return {
+        openFile: ''
+      }
+    },
+    mounted () {
+      // If small content show it
+      if (this.filesIssues.length === 1) {
+        if (this.filesIssues[0].warnings.length < 10) {
+          this.openFile = this.filesIssues[0].file
+        }
+      }
     }
   }
 </script>

@@ -5,59 +5,66 @@
       <spec-files-selection :disabled="runStarting" :files="files"></spec-files-selection>
     </el-row>
     <el-row :gutter="20">
-      <el-col :span="6">
-        <!-- Error message -->
-        <el-alert
-                id="failed-error-msg"
-                v-show="globalErrorMsg"
-                title="Fail to start run"
-                type="error"
-                :description="globalErrorMsg"
-                :closable="false"
-                show-icon></el-alert>
-        <!-- Submit -->
-        <el-button :loading="runStarting" :disabled="files.length === 0" size="default" type="success" icon="el-icon-video-play" @click="submitForm()">
-          Start{{ files.length > 1 ? ' Batch' : ' Run' }}
-        </el-button>
-        <!-- Files issues -->
-        <file-issues-list v-show="filesIssues.length > 0" :files-issues="filesIssues"></file-issues-list>
-      </el-col>
-      <el-col :span="9" class="border-right">
-        <!-- Default Semantic -->
-        <form-item-helper label="Default Semantic" class="label-top" helper-id="runOptions.defaultSemantic">
-          <el-radio-group v-model="runConf.defaultSemantic">
-            <helper helper-id="semantics.private">
-              <el-radio-button label="private">Private</el-radio-button>
-            </helper>
-            <helper helper-id="semantics.classic">
-              <el-radio-button label="classic">Classic</el-radio-button>
-            </helper>
-            <helper helper-id="semantics.eavesdrop">
-              <el-radio-button label="eavesdrop">Eavesdrop</el-radio-button>
-            </helper>
-          </el-radio-group>
-        </form-item-helper>
-        <!-- Distributed -->
-        <form-item-helper label="Distributed" helper-id="runOptions.isDistributed">
-          <el-switch v-model="runConf.isDistributed"></el-switch>
-          <el-tag v-show="runConf.isDistributed" class="counter-tag" size="small" effect="plain">
-            <b>{{ nbWorkers }}</b> worker{{ nbWorkers > 1 ? 's' : '' }}
-          </el-tag>
-        </form-item-helper>
-        <div v-show="runConf.isDistributed">
-          <!-- Nb jobs -->
-          <form-item-helper label="Nb jobs" helper-id="runOptions.nbJobs">
-            <el-input-number v-model="runConf.nbJobs" :min="nbWorkers" controls-position="right"></el-input-number>
-          </form-item-helper>
-          <!-- Nb local workers -->
-          <form-item-helper label="Local workers" helper-id="runOptions.nbLocalWorkers">
-            <el-input-number v-model="runConf.nbLocalWorkers" :min="1" controls-position="right"></el-input-number>
-          </form-item-helper>
-          <!-- Timer -->
-          <form-item-helper label="Timer" helper-id="runOptions.timer">
-            <el-input-number v-model="runConf.timer" :min="1" controls-position="right"></el-input-number>
-          </form-item-helper>
-        </div>
+      <el-col :span="15">
+        <el-row :gutter="20">
+          <el-col :span="10">
+            <!-- Error message -->
+            <el-alert
+                    id="failed-error-msg"
+                    v-show="globalErrorMsg"
+                    title="Fail to start run"
+                    type="error"
+                    :description="globalErrorMsg"
+                    :closable="false"
+                    show-icon></el-alert>
+            <!-- Submit -->
+            <el-button :loading="runStarting" :disabled="files.length === 0" size="default" type="success" icon="el-icon-video-play" @click="submitForm()">
+              Start{{ files.length > 1 ? ' Batch' : ' Run' }}
+            </el-button>
+          </el-col>
+          <el-col :span="14" class="border-right">
+            <!-- Default Semantic -->
+            <form-item-helper label="Default Semantic" class="label-top" helper-id="runOptions.defaultSemantic">
+              <el-radio-group v-model="runConf.defaultSemantic">
+                <helper helper-id="semantics.private">
+                  <el-radio-button label="private">Private</el-radio-button>
+                </helper>
+                <helper helper-id="semantics.classic">
+                  <el-radio-button label="classic">Classic</el-radio-button>
+                </helper>
+                <helper helper-id="semantics.eavesdrop">
+                  <el-radio-button label="eavesdrop">Eavesdrop</el-radio-button>
+                </helper>
+              </el-radio-group>
+            </form-item-helper>
+            <!-- Distributed -->
+            <form-item-helper label="Distributed" helper-id="runOptions.isDistributed">
+              <el-switch v-model="runConf.isDistributed"></el-switch>
+              <el-tag v-show="runConf.isDistributed" class="counter-tag" size="small" effect="plain">
+                <b>{{ nbWorkers }}</b> worker{{ nbWorkers > 1 ? 's' : '' }}
+              </el-tag>
+            </form-item-helper>
+            <div v-show="runConf.isDistributed">
+              <!-- Nb jobs -->
+              <form-item-helper label="Nb jobs" helper-id="runOptions.nbJobs">
+                <el-input-number v-model="runConf.nbJobs" :min="nbWorkers" controls-position="right"></el-input-number>
+              </form-item-helper>
+              <!-- Nb local workers -->
+              <form-item-helper label="Local workers" helper-id="runOptions.nbLocalWorkers">
+                <el-input-number v-model="runConf.nbLocalWorkers" :min="1" controls-position="right"></el-input-number>
+              </form-item-helper>
+              <!-- Timer -->
+              <form-item-helper label="Timer" helper-id="runOptions.timer">
+                <el-input-number v-model="runConf.timer" :min="1" controls-position="right"></el-input-number>
+              </form-item-helper>
+            </div>
+          </el-col>
+        </el-row>
+        <el-row v-show="filesIssues.length > 0">
+          <el-divider></el-divider>
+          <!-- Files issues -->
+          <file-issues-list :files-issues="filesIssues"></file-issues-list>
+        </el-row>
       </el-col>
       <el-col :span="9" v-show="runConf.isDistributed">
         <!-- Add Distant server -->
@@ -116,9 +123,9 @@
         files: [],
         runConf: {
           defaultSemantic: 'private',
-          nbJobs: 10,
-          nbLocalWorkers: 10,
-          timer: 180,
+          nbJobs: 200,
+          nbLocalWorkers: 2,
+          timer: 120,
           isDistributed: false,
           servers: []
         },
