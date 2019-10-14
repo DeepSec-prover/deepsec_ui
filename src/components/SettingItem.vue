@@ -1,5 +1,6 @@
 <template>
   <el-form-item :label="label">
+    <!-- TODO slot for slider ? -->
     <!-- Integer -->
     <el-input-number v-if="Number.isInteger(value)"
                      v-model="value"

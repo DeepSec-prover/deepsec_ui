@@ -4,7 +4,8 @@ import logger from 'electron-log'
 const defaultUserSettings = {
   showHelpers: true,
   deepsecApiPath: '',
-  resultsDirPath: ''
+  resultsDirPath: '',
+  notificationDuration: 5000 // ms
 }
 
 /**

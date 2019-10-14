@@ -61,12 +61,7 @@
         this.resetConfirm = false
       },
       testNotification () {
-        this.$notify({
-          title: 'Test notification',
-          message: 'This is the description of the notification',
-          type: 'info',
-          duration: 0
-        })
+        this.$notification('Test title', 'Test description', 'info')
       }
     }
   }
