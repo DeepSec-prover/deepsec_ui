@@ -3,16 +3,23 @@
 See [query result mock-data completed](../../mock-data/run/query_completed.json) or
 [query result mock-data in progress](../../mock-data/run/query_in_progress.json) for examples.
 
-`<batch_folder>` and `<batch_file>` have the same value.
+## Status flow
 
-Definition of `<query_result>`:
+![Status flow](../flows/result_status.svg)
+
+## File
+
+`batch_folder` and `batch_file` have the same name.
+
+## Definition of `<query_result>`:
+
+### Waiting
 
 ```
 {
-  "status": "in_progress",
-  "batch_file": "<batch_file>.json",
-  "run_file": "<batch_folder>/<run_file>.json"
-  "start_time": <int> (optional), // Timestamp. If not defined then the query hasn't started
+  "status": "waiting",
+  "batch_file": "batch_file.json",
+  "run_file": "batch_folder/run_file.json"
   "atomic_data": <atomic_data>,
   "semantics": <string>, // "private" | "classic" | "eavesdrop"
   "type": <string>, // "trace_equiv" | "trace_incl" | "observational_equiv" | "session_equiv" | "session_incl"
@@ -23,14 +30,35 @@ Definition of `<query_result>`:
   ],
 }
 ```
-or
+
+### In Progress
+
+```
+{
+  "status": "in_progress",
+  "batch_file": "batch_file.json",
+  "run_file": "batch_folder/run_file.json"
+  "start_time": <int>, // Timestamp
+  "atomic_data": <atomic_data>,
+  "semantics": <string>, // "private" | "classic" | "eavesdrop"
+  "type": <string>, // "trace_equiv" | "trace_incl" | "observational_equiv" | "session_equiv" | "session_incl"
+  "process": [
+    <process>,
+    ...
+    <process>
+  ],
+}
+```
+
+### Canceled
+
 ```
 {
   "status": "canceled",
   "batch_file": "<batch_file>.json",
   "run_file": "<batch_folder>/<run_file>.json"
-  "start_time": <int> (optional), // Timestamp. If not defined then the query hasn't started
-  "end_time": <int> (optional), // Timestamp. If not defined then the query hasn't started
+  "start_time": <int> (optional), // Timestamp. Not defined if the query was cancled before to start 
+  "end_time": <int>, // Timestamp. When is has been canceled
   "atomic_data": <atomic_data>,
   "semantics": <string>, // "private" | "classic" | "eavesdrop"
   "type": <string>, // "trace_equiv" | "trace_incl" | "obs_equiv" | "session_equiv" | "session_incl"
@@ -41,14 +69,16 @@ or
   ],
 }
 ```
-or
+
+### Internal Error
+
 ```
 {
   "status": "internal_error",
   "batch_file": "<batch_file>.json",
   "run_file": "<batch_folder>/<run_file>.json"
-  "start_time": <int>,
-  "end_time": <int>,
+  "start_time": <int>, // Timestamp
+  "end_time": <int>, // Timestamp
   "atomic_data": <atomic_data>,
   "semantics": <string>, // "private" | "classic" | "eavesdrop"
   "type": <string>, // "trace_equiv" | "trace_incl" | "obs_equiv" | "session_equiv" | "session_incl"
@@ -60,7 +90,9 @@ or
   "error_msg": <string>
 }
 ```
-or
+
+### Completed
+
 ```
 {
   "status": "completed",
