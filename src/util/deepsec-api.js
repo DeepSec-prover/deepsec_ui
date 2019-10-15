@@ -142,13 +142,15 @@ function batchStarted (answer, event, mainWindow) {
       `Result file : ${answer.file} <br>
       ${nbTotalWarning} warning${nbTotalWarning > 1 ? 's' : ''} in
       ${nbFilesWarning} file${nbFilesWarning > 1 ? 's' : ''}`,
-      'warning')
+      'warning',
+      'batch')
   } else {
     // Send ui notification
     mainWindow.webContents.send('notification:show',
       'Batch started',
       `Result file : ${answer.file}`,
-      'info')
+      'info',
+      'batch')
   }
 }
 
@@ -157,7 +159,8 @@ function runStarted (answer, mainWindow) {
   mainWindow.webContents.send('notification:show',
     'Run started',
     `Result file : ${answer.file}`,
-    'info')
+    'info',
+    'run')
 }
 
 function queryStarted (answer, mainWindow) {
@@ -165,7 +168,8 @@ function queryStarted (answer, mainWindow) {
   mainWindow.webContents.send('notification:show',
     'Query started',
     `Result file : ${answer.file}`,
-    'info')
+    'info',
+    'query')
 }
 
 function queryEnded (answer, mainWindow) {
@@ -190,7 +194,8 @@ function queryEnded (answer, mainWindow) {
   mainWindow.webContents.send('notification:show',
     title,
     `Result file : ${answer.file}`,
-    type)
+    type,
+    'query')
 }
 
 function runEnded (answer, mainWindow) {
@@ -219,7 +224,8 @@ function runEnded (answer, mainWindow) {
   mainWindow.webContents.send('notification:show',
     title,
     `Result file : ${answer.file}`,
-    type)
+    type,
+    'run')
 }
 
 function batchEnded (answer, mainWindow) {
@@ -227,7 +233,8 @@ function batchEnded (answer, mainWindow) {
   mainWindow.webContents.send('notification:show',
     'Batch completed',
     `Result file : ${answer.file}`,
-    'success')
+    'success',
+    'batch')
 }
 
 // ======================= Error Answers ======================
@@ -265,7 +272,8 @@ function batchInternalError (answer, event, mainWindow) {
   mainWindow.webContents.send('notification:show',
     'Internal error',
     `${answer.error_msg}<br>Result file : ${answer.file}`,
-    'error')
+    'error',
+    'batch')
 }
 
 function queryInternalError (answer, mainWindow) {
@@ -273,7 +281,8 @@ function queryInternalError (answer, mainWindow) {
   mainWindow.webContents.send('notification:show',
     'Internal query error',
     `${answer.error_msg}<br>Result file : ${answer.file}`,
-    'error')
+    'error',
+    'query')
 }
 
 // ======================== Exit Answer =======================

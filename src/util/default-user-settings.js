@@ -5,7 +5,10 @@ const defaultUserSettings = {
   showHelpers: true,
   deepsecApiPath: '',
   resultsDirPath: '',
-  notificationDuration: 5 // seconds
+  notificationDuration: 5, // seconds
+  showBatchNotif: true,
+  showRunNotif: true,
+  showQueryNotif: false
 }
 
 /**

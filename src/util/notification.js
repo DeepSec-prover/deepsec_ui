@@ -2,8 +2,26 @@ import logger from 'electron-log'
 import { Notification } from 'element-ui'
 import userSettings from 'electron-settings'
 
-export default function notification (title, message, type) {
-  logger.silly(`Show notification : (${type}) ${title} - ${message}`)
+export default function notification (title, message, type, topic = 'default') {
+
+  if (type === 'success' || type === 'info') {
+    // Check skip query
+    if (topic === 'query' && !userSettings.get('showQueryNotif')) {
+      return
+    }
+
+    // Check skip run
+    if (topic === 'run' && !userSettings.get('showRunNotif')) {
+      return
+    }
+
+    // Check skip batch
+    if (topic === 'batch' && !userSettings.get('showBatchNotif')) {
+      return
+    }
+  }
+
+  logger.silly(`Show notification : (${type}) [${topic}] ${title}`)
   Notification({
     title: title,
     message: message,
