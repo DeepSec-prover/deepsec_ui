@@ -5,7 +5,7 @@ const defaultUserSettings = {
   showHelpers: true,
   deepsecApiPath: '',
   resultsDirPath: '',
-  notificationDuration: 5000 // ms
+  notificationDuration: 5 // seconds
 }
 
 /**

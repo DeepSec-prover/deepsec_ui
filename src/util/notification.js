@@ -8,6 +8,6 @@ export default function notification (title, message, type) {
     title: title,
     message: message,
     type: type,
-    duration: userSettings.get('notificationDuration')
+    duration: userSettings.get('notificationDuration') * 1000 // Seconds to ms
   })
 }

@@ -17,6 +17,7 @@
           <div class="centred-content">
             <el-button class="test-button" size="mini" @click="testNotification">Test Notification</el-button>
           </div>
+          <setting-item label="Duration (s)" settings-path="notificationDuration" :min="0" :max="10"></setting-item>
         </el-form>
         <!-- Reset Settings -->
         <div id="reset-settings" class="centred-content">
@@ -70,5 +71,9 @@
 <style>
   #reset-settings {
     margin-top: 50px;
+  }
+
+  .test-button {
+    margin-bottom: 15px !important;
   }
 </style>
