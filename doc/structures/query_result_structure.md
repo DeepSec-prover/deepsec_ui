@@ -33,81 +33,49 @@ See [query result mock-data completed](../../mock-data/run/query_completed.json)
 
 ### In Progress
 
+waiting +
 ```
 {
   "status": "in_progress",
-  "batch_file": "batch_file.json",
-  "run_file": "batch_folder/run_file.json"
-  "start_time": <int>, // Timestamp
-  "atomic_data": <atomic_data>,
-  "semantics": <string>, // "private" | "classic" | "eavesdrop"
-  "type": <string>, // "trace_equiv" | "trace_incl" | "observational_equiv" | "session_equiv" | "session_incl"
-  "process": [
-    <process>,
-    ...
-    <process>
-  ],
+  ...
+  "start_time": <int> // Timestamp
 }
 ```
 
 ### Canceled
 
+waiting +
 ```
 {
   "status": "canceled",
-  "batch_file": "<batch_file>.json",
-  "run_file": "<batch_folder>/<run_file>.json"
+  ...
   "start_time": <int> (optional), // Timestamp. Not defined if the query was cancled before to start 
-  "end_time": <int>, // Timestamp. When is has been canceled
-  "atomic_data": <atomic_data>,
-  "semantics": <string>, // "private" | "classic" | "eavesdrop"
-  "type": <string>, // "trace_equiv" | "trace_incl" | "obs_equiv" | "session_equiv" | "session_incl"
-  "process": [
-    <process>,
-    ...
-    <process>
-  ],
+  "end_time": <int> // Timestamp. When is has been canceled
 }
 ```
 
 ### Internal Error
 
+waiting +
 ```
 {
   "status": "internal_error",
-  "batch_file": "<batch_file>.json",
-  "run_file": "<batch_folder>/<run_file>.json"
+  ...
   "start_time": <int>, // Timestamp
-  "end_time": <int>, // Timestamp
-  "atomic_data": <atomic_data>,
-  "semantics": <string>, // "private" | "classic" | "eavesdrop"
-  "type": <string>, // "trace_equiv" | "trace_incl" | "obs_equiv" | "session_equiv" | "session_incl"
-  "process": [
-    <process>,
-    ...
-    <process>
-  ],
+  "end_time": <int>, // Timestamp. When the error occure
   "error_msg": <string>
 }
 ```
 
 ### Completed
 
+waiting +
 ```
 {
   "status": "completed",
-  "batch_file": "<batch_file>.json",
-  "run_file": "<batch_folder>/<run_file>.json"
+  ...
   "start_time": <int>, // Timestamp
   "end_time": <int>, // Timestamp
-  "atomic_data": <atomic_data>,
-  "semantics": <string>, // "private" | "classic" | "eavesdrop"
-  "type": <string>, // "trace_equiv" | "trace_incl" | "observational_equiv" | "session_equiv" | "session_incl"
-  "process": [
-    <process>,
-    ...
-    <process>
-  ],
   "attack_trace": {
     "index_process": <int>, // In process array
     "action_sequence": [
