@@ -5,9 +5,18 @@ It defines all atomic data which will be used in one or many specific process.
 Definition of `<atomic_data>` :
 
 ```
-[
-  <variable> | <name> | <symbol>
-]
+{
+  "meta" :  {
+    "number_symbols": <int>,
+    "number_variables": <int>,
+    "number_names": <int>,
+    "number_attacker_names": <int>
+  },
+  "data" :
+    [
+      <variable> | <name> | <symbol>
+    ]
+}
 ```
 
 -----
