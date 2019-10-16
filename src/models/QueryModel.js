@@ -1,7 +1,8 @@
 import loadResultFile from '../util/results-files'
 
-export default class Query {
+export default class QueryModel {
   constructor (resultFile) {
+    this.path = resultFile
     // Load result file as json
     let json = loadResultFile(resultFile)
 

@@ -7,7 +7,7 @@ import fs from 'fs'
 /**
  * Load a result file as a JSON object
  *
- * @param {string} relativePath The path to the result file relative to the result directory
+ * @param {String} relativePath The path to the result file relative to the result directory
  * @returns {JSON} A json object
  */
 export default function loadResultFile (relativePath) {
