@@ -4,7 +4,11 @@
               :effect="helper.effect"
               :open-delay="helper.openDelay"
               :disabled="helper.disable">
-    <slot></slot>
+    <!-- If text add span and class for cursor -->
+    <span v-if="textContent" :class="{'label-helper' : !helper.disable}">
+      <slot></slot>
+    </span>
+    <slot v-else></slot>
   </el-tooltip>
 </template>
 
@@ -13,6 +17,12 @@
 
   export default {
     name: 'helper',
-    mixins: [helpersMixin]
+    mixins: [helpersMixin],
+    props: {
+      textContent: {
+        type: Boolean,
+        default: false
+      }
+    }
   }
 </script>
