@@ -4,7 +4,11 @@ import logger from 'electron-log'
 const defaultUserSettings = {
   showHelpers: true,
   deepsecApiPath: '',
-  resultsDirPath: ''
+  resultsDirPath: '',
+  notificationDuration: 5, // seconds
+  showBatchNotif: true,
+  showRunNotif: true,
+  showQueryNotif: false
 }
 
 /**

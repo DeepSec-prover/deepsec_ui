@@ -87,39 +87,39 @@ function handleAnswer (answer, process, event, mainWindow) {
   switch (answer.command) {
     // --- Normal ---
     case 'batch_started':
-      batchStarted(answer, event, mainWindow)
+      batchStarted(answer, event, mainWindow) // Notification and event reply
       break
     case 'run_started':
-      runStarted(answer, mainWindow)
+      runStarted(answer, mainWindow) // Notification
       break
     case 'query_started':
-      queryStarted(answer, mainWindow)
+      queryStarted(answer, mainWindow) // Notification
       break
     case 'query_ended':
-      queryEnded(answer, mainWindow)
+      queryEnded(answer, mainWindow) // Notification
       break
     case 'run_ended':
-      runEnded(answer, mainWindow)
+      runEnded(answer, mainWindow) // Notification
       break
     case 'batch_ended':
-      batchEnded(answer, mainWindow)
+      batchEnded(answer, mainWindow) // Notification
       break
     // --- Exit ---
     case 'exit':
-      processExit(process)
+      processExit(process) // Silent for the user
       break
     // --- Error ---
     case 'init_internal_error':
-      initInternalError(answer, event)
+      initInternalError(answer, event) // Event reply
       break
     case 'user_error':
-      userError(answer, event)
+      userError(answer, event) // Event reply
       break
     case 'batch_internal_error':
-      batchInternalError(answer, mainWindow)
+      batchInternalError(answer, mainWindow) // Notification
       break
     case 'query_internal_error':
-      queryInternalError(answer, mainWindow)
+      queryInternalError(answer, mainWindow) // Notification
       break
     default:
       logger.error(`Unknown DeepSec API answer command : ${answer.command}`)
@@ -130,13 +130,28 @@ function handleAnswer (answer, process, event, mainWindow) {
 
 function batchStarted (answer, event, mainWindow) {
   // Send good result to the Start Run page
-  event.reply('deepsec-api:result', { 'success': true, 'files_issues': answer.warning_runs })
-  // Send ui notification
-  mainWindow.webContents.send('notification:show',
-    'Batch started',
-    `Result file : ${answer.file}`,
-    'info')
-  // TODO handle warnings
+  event.reply('deepsec-api:result', { 'success': true })
+
+  // Started with warning
+  if (answer.warning_runs && answer.warning_runs.length > 0) {
+    let nbFilesWarning = answer.warning_runs.length
+    let nbTotalWarning = answer.warning_runs.reduce((sum, a) => sum + a.warnings.length, 0)
+    // Send ui notification
+    mainWindow.webContents.send('notification:show',
+      'Batch started with warnings',
+      `Result file : ${answer.file} <br>
+      ${nbTotalWarning} warning${nbTotalWarning > 1 ? 's' : ''} in
+      ${nbFilesWarning} file${nbFilesWarning > 1 ? 's' : ''}`,
+      'warning',
+      'batch')
+  } else {
+    // Send ui notification
+    mainWindow.webContents.send('notification:show',
+      'Batch started',
+      `Result file : ${answer.file}`,
+      'info',
+      'batch')
+  }
 }
 
 function runStarted (answer, mainWindow) {
@@ -144,7 +159,8 @@ function runStarted (answer, mainWindow) {
   mainWindow.webContents.send('notification:show',
     'Run started',
     `Result file : ${answer.file}`,
-    'info')
+    'info',
+    'run')
 }
 
 function queryStarted (answer, mainWindow) {
@@ -152,7 +168,8 @@ function queryStarted (answer, mainWindow) {
   mainWindow.webContents.send('notification:show',
     'Query started',
     `Result file : ${answer.file}`,
-    'info')
+    'info',
+    'query')
 }
 
 function queryEnded (answer, mainWindow) {
@@ -177,7 +194,8 @@ function queryEnded (answer, mainWindow) {
   mainWindow.webContents.send('notification:show',
     title,
     `Result file : ${answer.file}`,
-    type)
+    type,
+    'query')
 }
 
 function runEnded (answer, mainWindow) {
@@ -206,7 +224,8 @@ function runEnded (answer, mainWindow) {
   mainWindow.webContents.send('notification:show',
     title,
     `Result file : ${answer.file}`,
-    type)
+    type,
+    'run')
 }
 
 function batchEnded (answer, mainWindow) {
@@ -214,7 +233,8 @@ function batchEnded (answer, mainWindow) {
   mainWindow.webContents.send('notification:show',
     'Batch completed',
     `Result file : ${answer.file}`,
-    'success')
+    'success',
+    'batch')
 }
 
 // ======================= Error Answers ======================
@@ -225,8 +245,26 @@ function initInternalError (answer, event) {
 }
 
 function userError (answer, event) {
+  let nbFilesIssue = answer.error_runs.length
+  let nbTotalWarnings = 0
+  let nbTotalError = 0
+
+  answer.error_runs.forEach(error => {
+    if (!isEmptyOrBlankStr(error.error_msg)) {
+      nbTotalError++
+    }
+    if (error.warning) {
+      nbTotalWarnings += error.warning.length
+    }
+  })
+
   // Send bad result to the Start Run page
-  event.reply('deepsec-api:result', { 'success': false, 'files_issues': answer.error_runs })
+  event.reply('deepsec-api:result', {
+    'success': false,
+    'error': `${nbTotalError} error${nbTotalError > 1 ? 's' : ''} and
+    ${nbTotalWarnings} warning${nbTotalWarnings > 1 ? 's' : ''} in
+    ${nbFilesIssue} file${nbFilesIssue > 1 ? 's' : ''}`,
+    'files_issues': answer.error_runs })
 }
 
 function batchInternalError (answer, event, mainWindow) {
@@ -234,7 +272,8 @@ function batchInternalError (answer, event, mainWindow) {
   mainWindow.webContents.send('notification:show',
     'Internal error',
     `${answer.error_msg}<br>Result file : ${answer.file}`,
-    'error')
+    'error',
+    'batch')
 }
 
 function queryInternalError (answer, mainWindow) {
@@ -242,7 +281,8 @@ function queryInternalError (answer, mainWindow) {
   mainWindow.webContents.send('notification:show',
     'Internal query error',
     `${answer.error_msg}<br>Result file : ${answer.file}`,
-    'error')
+    'error',
+    'query')
 }
 
 // ======================== Exit Answer =======================

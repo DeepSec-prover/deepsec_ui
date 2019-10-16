@@ -17,22 +17,24 @@
           <div class="centred-content">
             <el-button class="test-button" size="mini" @click="testNotification">Test Notification</el-button>
           </div>
+          <setting-item label="Duration (s)" settings-path="notificationDuration" :min="0" :max="10"></setting-item>
+          <setting-item label="Batch notifications" settings-path="showBatchNotif"></setting-item>
+          <setting-item label="Run notifications" settings-path="showRunNotif"></setting-item>
+          <setting-item label="Query notifications" settings-path="showQueryNotif"></setting-item>
+          <!-- Reset Settings -->
+          <div id="reset-settings" class="centred-content">
+            <el-popover placement="top" v-model="resetConfirm">
+              <p>Reset all settings to default values?</p>
+              <div class="centred-content">
+                <el-button size="mini" type="text" @click="resetConfirm = false">cancel</el-button>
+                <el-button size="mini" type="danger" @click="resetSettings()">confirm</el-button>
+              </div>
+              <el-link slot="reference" :underline="false" icon="el-icon-refresh-left" type="danger">
+                Reset
+              </el-link>
+            </el-popover>
+          </div>
         </el-form>
-        <!-- Reset Settings -->
-        <div id="reset-settings" class="centred-content">
-          <el-popover
-            placement="top"
-            v-model="resetConfirm">
-            <p>Reset all settings to default values?</p>
-            <div class="centred-content">
-              <el-button size="mini" type="text" @click="resetConfirm = false">cancel</el-button>
-              <el-button size="mini" type="danger" @click="resetSettings()">confirm</el-button>
-            </div>
-            <el-link slot="reference" :underline="false" icon="el-icon-refresh-left" type="danger">
-              Reset
-            </el-link>
-          </el-popover>
-        </div>
       </el-col>
     </el-row>
   </div>
@@ -50,7 +52,7 @@
     data () {
       return {
         refreshKey: 0,
-        resetConfirm: false,
+        resetConfirm: false
       }
     },
     methods: {
@@ -61,12 +63,7 @@
         this.resetConfirm = false
       },
       testNotification () {
-        this.$notify({
-          title: 'Test notification',
-          message: 'This is the description of the notification',
-          type: 'info',
-          duration: 0
-        })
+        this.$notification('Test title', 'Test description', 'info')
       }
     }
   }
@@ -75,5 +72,9 @@
 <style>
   #reset-settings {
     margin-top: 50px;
+  }
+
+  .test-button {
+    margin-bottom: 15px !important;
   }
 </style>

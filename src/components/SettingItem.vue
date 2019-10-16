@@ -4,7 +4,9 @@
     <el-input-number v-if="Number.isInteger(value)"
                      v-model="value"
                      controls-position="right"
-                     :placeholder="placeholder"></el-input-number>
+                     :placeholder="placeholder"
+                     :min="min"
+                     :max="max"></el-input-number>
     <!-- Boolean -->
     <el-switch v-else-if="typeof value === 'boolean'"
                v-model="value"></el-switch>
@@ -30,6 +32,15 @@
       placeholder: {
         type: String,
         default: ''
+      },
+      min: {
+        type: Number,
+        default: -Infinity
+
+      },
+      max: {
+        type: Number,
+        default: Infinity
       }
     },
     data () {

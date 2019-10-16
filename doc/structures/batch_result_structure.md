@@ -11,6 +11,8 @@ Definition of `<batch_result>`:
 
 ```
 {
+  "status": "in_progress" | "completed" | "internal_error" | "canceled",
+  "error_msg": <string>, // If status = "internal_error"
   "deepsec_version": <string>, // Format as "X.X.X"
   "git_branch": <string>,
   "git_hash": <string>,
