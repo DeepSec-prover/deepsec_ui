@@ -43,9 +43,12 @@
       </el-tab-pane>
     </el-tabs>
 
-    <div v-for="process in processesStr">
-      <spec-code :code="process"></spec-code>
-    </div>
+    <el-row type="flex" :gutter="10" justify="center">
+      <el-col :lg="12" :xl="8" v-for="(process, index) in processesStr">
+        <h3>Process {{ index + 1 }} </h3>
+        <spec-code :code="process"></spec-code>
+      </el-col>
+    </el-row>
 
   </div>
 </template>
@@ -70,7 +73,7 @@
     data () {
       return {
         icons: icons,
-        text: text,
+        text: text
       }
     },
     computed: {
@@ -82,9 +85,9 @@
 </script>
 
 <style scoped>
- #breadcrumb {
-   margin-bottom: 20px;
- }
+  #breadcrumb {
+    margin-bottom: 20px;
+  }
 
   .dropdown-link {
     cursor: pointer;
