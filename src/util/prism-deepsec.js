@@ -2,7 +2,7 @@ import Prism from 'prismjs'
 
 // Define the language grammar
 Prism.languages.deepsec = {
-  keyword: /new|let|in(?!\()|if|then|else/,
+  keyword: /new|let|in(?!\()|if|then|else|->/,
   'in-out': /in(?=\()|out(?=\()/,
   operator: /=\|/,
   function: {

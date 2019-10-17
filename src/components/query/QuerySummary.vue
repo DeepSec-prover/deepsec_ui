@@ -14,6 +14,10 @@
           <dd>
             <helper :helper-id="`query.type.${query.type}`" :text-content="true">{{ text.query.type[query.type] }}</helper>
           </dd>
+          <dt v-if="query.startTime">Running time</dt>
+          <dd v-if="query.startTime">
+            <duration :start-time="query.startTime" :end-time="query.endTime"></duration>
+          </dd>
         </dl>
       </el-col>
       <el-col>
@@ -89,6 +93,7 @@
 <script>
   import Helper from '../helpers/Helper'
   import SpecCode from '../SpecCode'
+  import Duration from '../Duration'
   import text from '../../text-content/text'
   import formatProcess from '../../util/process-parser'
 
@@ -96,7 +101,8 @@
     name: 'query-summary',
     components: {
       Helper,
-      SpecCode
+      SpecCode,
+      Duration
     },
     props: {
       query: Object
