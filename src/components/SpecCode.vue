@@ -1,20 +1,25 @@
 <template>
-  <div class="language-deepsec line-numbers match-braces">
+  <code v-if="inLine" class="language-deepsec match-braces" ref="codeBlock"></code>
+  <div v-else class="language-deepsec match-braces line-numbers">
     <pre><code ref="codeBlock"></code></pre>
   </div>
 </template>
 
 <script>
-  import Prism from '@/util/prism-deepsec'
+  import Prism from '../util/prism-deepsec'
   import logger from 'electron-log'
 
   // Disable automatic highlight at page load
   document.removeEventListener('DOMContentLoaded', Prism.highlightAll)
 
   export default {
-    name: 'process',
+    name: 'spec-code',
     props: {
-      code: String
+      code: String,
+      inLine: {
+        type: Boolean,
+        default: false
+      }
     },
     methods: {
       render () {
