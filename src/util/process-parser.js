@@ -16,7 +16,8 @@ const INDENT = '   '
  * @see doc/process_structure.md for process structure
  */
 function formatProcess (process, atomicTable) {
-  logger.debug('[Start] Parsing a process')
+  logger.debug(`[Start] Parsing a process (atomic data size: ${atomicTable.length})`)
+
   // Start recursive formatting
   const res = format(process, atomicTable, 0)
   logger.debug('[Done] Parsing a process')
@@ -26,13 +27,17 @@ function formatProcess (process, atomicTable) {
 /**
  * Select the correct formatting function and indent lines
  *
- * @param {Object} subProcess - A structured sub-process
+ * @param {Object|undefined} subProcess - A structured sub-process
  * @param {Array} atomicTable - The table of atomic data
  * @param {number} indent - The number of indentation character for the current sub-process (>1)
  * @returns {string} A readable string which describe the sub-process and its children
  */
 function format (subProcess, atomicTable, indent) {
   const linePrefix = strIndent(indent)
+
+  if (!subProcess) {
+    return linePrefix + '0\n'
+  }
 
   switch (subProcess.type) {
     case 'Atomic':
@@ -102,7 +107,7 @@ function formatLetInElse (subProcess, atomicTable, indent) {
     format(subProcess.term, atomicTable, indent) + ' in \n'
 
   // No "else" so no indent "in"
-  if (subProcess.process_else.type === null) {
+  if (subProcess.process_else === undefined) {
     res += format(subProcess.process_then, atomicTable, indent)
   }
   // With "else" so no indent all
@@ -168,7 +173,7 @@ function formatOutput (subProcess, atomicTable, indent) {
   let res = 'out(' + format(subProcess.channel, atomicTable, indent) + ',' +
     format(subProcess.term, atomicTable, indent) + ')'
 
-  if (subProcess.process.type === null) {
+  if (subProcess.process === undefined) {
     res += '\n'
   } else {
     res += ';\n' + format(subProcess.process, atomicTable, indent)
@@ -203,7 +208,7 @@ function formatInput (subProcess, atomicTable, indent) {
   let res = 'in(' + format(subProcess.channel, atomicTable, indent) + ',' +
     format(subProcess.pattern, atomicTable, indent) + ')'
 
-  if (subProcess.process.type === null) {
+  if (subProcess.process === undefined) {
     res += '\n'
   } else {
     res += ';\n' + format(subProcess.process, atomicTable, indent)
@@ -225,7 +230,7 @@ function formatIfThenElse (subProcess, atomicTable, indent) {
     format(subProcess.term2, atomicTable, indent) + ' then\n'
 
   // No "else" so no indent "then"
-  if (subProcess.process_else.type === null) {
+  if (subProcess.process_else === undefined) {
     res += format(subProcess.process_then, atomicTable, indent)
   }
   // With "else" so indent all

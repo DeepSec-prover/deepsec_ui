@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-row>
-      <el-col>
+      <el-col :lg="9">
         <!-- Show error message if present -->
         <el-alert v-if="query.errorMsg" title="Error" type="error" :description="query.errorMsg" show-icon :closable="false"></el-alert>
         <!-- General information -->
@@ -20,7 +20,7 @@
           </dd>
         </dl>
       </el-col>
-      <el-col>
+      <el-col :lg="15">
         <dl class="in-line">
           <dt>Constructor symbols</dt>
           <dd>

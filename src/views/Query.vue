@@ -43,18 +43,25 @@
       </el-tab-pane>
     </el-tabs>
 
+    <div v-for="process in processesStr">
+      <spec-code :code="process"></spec-code>
+    </div>
+
   </div>
 </template>
 
 <script>
   import icons from '../text-content/icons'
   import text from '../text-content/text'
+  import formatProcess from '../util/process-parser'
   import QuerySummary from '../components/query/QuerySummary'
+  import SpecCode from '../components/SpecCode'
 
   export default {
     name: 'query',
     components: {
-      QuerySummary
+      QuerySummary,
+      SpecCode
     },
     mixins: [status],
     props: {
@@ -63,7 +70,12 @@
     data () {
       return {
         icons: icons,
-        text: text
+        text: text,
+      }
+    },
+    computed: {
+      processesStr: function () {
+        return this.query.processes.map(p => formatProcess(p, this.query.atomicData))
       }
     }
   }

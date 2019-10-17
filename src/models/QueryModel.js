@@ -10,10 +10,10 @@ export default class QueryModel {
     this.status = json.status
     this.batchFile = json.batch_file
     this.runFile = json.run_file
-    this.atomicData = json.atomic_data
+    this.atomicData = json.atomic_data.data
     this.semantics = json.semantics
     this.type = json.type
-    this.process = json.process
+    this.processes = json.processes
 
     // Optional fields
     if (json.start_time) {
