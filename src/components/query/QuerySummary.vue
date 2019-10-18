@@ -10,14 +10,18 @@
           <dd>
             <helper :helper-id="`semantics.${query.semantics}`" :text-content="true">{{ query.semantics }}</helper>
           </dd>
-          <dt>Type</dt>
+          <dt>Query type</dt>
           <dd>
             <helper :helper-id="`query.type.${query.type}`" :text-content="true">{{ text.query.type[query.type] }}</helper>
           </dd>
-          <dt v-if="query.startTime">Running time</dt>
-          <dd v-if="query.startTime">
-            <duration :start-time="query.startTime" :end-time="query.endTime"></duration>
-          </dd>
+          <template v-if="query.startTime">
+            <dt>Start time</dt>
+            <dd>{{ query.startTime.toLocaleDateString() }} {{ query.startTime.toLocaleTimeString() }}</dd>
+            <dt>Running time</dt>
+            <dd>
+              <duration :start-time="query.startTime" :end-time="query.endTime"></duration>
+            </dd>
+          </template>
         </dl>
       </el-col>
       <el-col :lg="15">
@@ -79,12 +83,22 @@
             <spec-code :code="rewritingSystem[0]" in-line v-if="rewritingSystem.length === 1"></spec-code>
             <!-- Many -->
             <ul v-else-if="rewritingSystem.length > 1" class="rewriting-list">
-              <li v-for="rs in rewritingSystem"><spec-code in-line :code="rs" ></spec-code></li>
+              <li v-for="rs in rewritingSystem">
+                <spec-code in-line :code="rs"></spec-code>
+              </li>
             </ul>
             <!-- None -->
             <el-tag v-else size="mini" effect="plain" class="tag" type="info">None</el-tag>
           </dd>
         </dl>
+      </el-col>
+    </el-row>
+    <el-row v-if="query.status === 'completed'">
+      <el-divider></el-divider>
+      <el-col :md="12" tag="p">{{ resultMessage }}</el-col>
+      <el-col :md="12" v-if="query.attackTrace">
+        Attack trace :
+        <spec-code id="attack-trace" :code="formattedAttackTrace"></spec-code>
       </el-col>
     </el-row>
   </div>
@@ -95,7 +109,7 @@
   import SpecCode from '../SpecCode'
   import Duration from '../Duration'
   import text from '../../text-content/text'
-  import formatProcess from '../../util/process-parser'
+  import { formatProcess, formatTrace } from '../../util/process-parser'
 
   export default {
     name: 'query-summary',
@@ -169,11 +183,20 @@
         })
 
         return rewriteRulesStr
+      },
+      formattedAttackTrace: function () {
+        return formatTrace(this.query.attackTrace.action_sequence, this.query.atomicData)
+      },
+      resultMessage: function () {
+        switch (this.query.type) {
+          case 'trace_equiv':
+            return `Attack found on process ${this.query.attackTrace.index_process}`
+        }
       }
     },
     data () {
       return {
-        text: text,
+        text: text
       }
     }
   }
@@ -192,5 +215,9 @@
     list-style-type: none;
     padding: 0;
     margin: 0;
+  }
+
+  #attack-trace {
+    display: flex;
   }
 </style>

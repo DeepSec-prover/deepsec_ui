@@ -56,7 +56,7 @@
 <script>
   import icons from '../text-content/icons'
   import text from '../text-content/text'
-  import formatProcess from '../util/process-parser'
+  import { formatProcess } from '../util/process-parser'
   import QuerySummary from '../components/query/QuerySummary'
   import SpecCode from '../components/SpecCode'
 

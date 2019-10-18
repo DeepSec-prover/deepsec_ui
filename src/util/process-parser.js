@@ -8,6 +8,36 @@ import logger from 'electron-log'
 const INDENT = '   '
 
 /**
+ * Format an action list as a string of visible attack trace.
+ *
+ * @param {Array} actions The list of action of this attack
+ * @param {Array} atomicTable The table of atomic data
+ * @returns {string} The string of visible attack trace
+ */
+export function formatTrace (actions, atomicTable) {
+  let axiomId = 1
+  let res = ''
+
+  actions.forEach(action => {
+    switch (action.type) {
+      case 'input':
+        res += 'in(' + formatRecipe(action.channel, atomicTable) + ',' +
+          formatRecipe(action.term, atomicTable) + ')\n'
+        break
+      case 'output':
+        res += 'out(' + formatRecipe(action.channel, atomicTable) + ',ax_' + axiomId++ + ')\n'
+        break
+      case 'eavesdrop':
+        res += 'eavesdrop(' + formatRecipe(action.channel, atomicTable) + ',ax_' + axiomId++ + ')\n'
+        break
+      // Skip others cases because not visible
+    }
+  })
+
+  return res
+}
+
+/**
  * Format a process from a Json format to a readable string
  *
  * @param {Object} process - The structured process
@@ -15,9 +45,8 @@ const INDENT = '   '
  * @returns {string} A readable string which describe the process
  * @see doc/process_structure.md for process structure
  */
-function formatProcess (process, atomicTable) {
+export function formatProcess (process, atomicTable) {
   logger.debug(`[Start] Parsing a process (atomic data size: ${atomicTable.length})`)
-
   // Start recursive formatting
   const res = format(process, atomicTable, 0)
   logger.debug('[Done] Parsing a process')
@@ -255,4 +284,22 @@ function formatEquality (subProcess, atomicTable, indent) {
   return '=' + format(subProcess.term, atomicTable, indent)
 }
 
-export default formatProcess
+/**
+ * Format "Recipe" type to readable string
+ * Only use for attack trace
+ *
+ * @param {Object} recipe The recipe to parse
+ * @param {Array} atomicTable The table of atomic data
+ * @returns {string} A readable string which describe the recipe
+ */
+function formatRecipe (recipe, atomicTable) {
+  if (recipe.type === 'Axiom') {
+    return 'ax_' + recipe.id
+  } else if (recipe.type === 'Function') {
+    return formatProcess(recipe, atomicTable)
+  } else {
+    // Do not stop the app but log an error
+    logger.error(`Try to parse an unknown recipe type ${recipe.type}`)
+    return `------------ not implemented : ${recipe.type} ------------`
+  }
+}

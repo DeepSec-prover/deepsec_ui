@@ -10,7 +10,7 @@
   import { ipcRenderer } from 'electron'
   import logger from 'electron-log'
   import openJsonFile from '@/util/input-tools'
-  import formatProcess from '@/util/process-parser'
+  import { formatProcess } from '@/util/process-parser'
   import settings from '../../settings'
   import path from 'path'
 

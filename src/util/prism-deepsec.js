@@ -3,10 +3,10 @@ import Prism from 'prismjs'
 // Define the language grammar
 Prism.languages.deepsec = {
   keyword: /new|let|in(?!\()|if|then|else|->/,
-  'in-out': /in(?=\()|out(?=\()/,
+  'in-out': /in(?=\()|out(?=\()|eavesdrop(?=\()/,
   operator: /=\|/,
   function: {
-    pattern: /\w+(?=\()/,
+    pattern: /#?\w+(?=\()/,
     inside: {
       sub: /(?<=\w+)_\w+/
     }
