@@ -1,21 +1,17 @@
 import ResultModel from './ResultModel'
 import BatchModel from './BatchModel'
-import RunModel from './RunModel'
+import QueryModel from './QueryModel'
 
-export default class QueryModel extends ResultModel{
+export default class RunModel extends ResultModel {
   mapJsonFile (json) {
-    // Mandatory fields
     this.status = json.status
-    this.atomicData = json.atomic_data.data
-    this.semantics = json.semantics
-    this.type = json.type
-    this.processes = json.processes
+    this.inputFile = json.input_file
 
     this.batch = null // Not loaded yet
     this.batchFile = json.batch_file
 
-    this.run = null // Not loaded yet
-    this.runFile = json.run_file
+    this.queries = null // Not loaded yet
+    this.queryFiles = json.query_files
 
     // Optional fields
     if (json.start_time) {
@@ -30,21 +26,26 @@ export default class QueryModel extends ResultModel{
       this.endTime = null
     }
 
+    if (json.warnings) {
+      this.warnings = json.warnings
+    } else {
+      this.warnings = null
+    }
+
     if (json.error_msg) {
       this.errorMsg = json.error_msg
     } else {
       this.errorMsg = null
     }
-
-    if (json.attack_trace) {
-      this.attackTrace = json.attack_trace
-    } else {
-      this.attackTrace = null
-    }
   }
 
-  loadRelations (json) {
+  loadRelations () {
     this.batch = new BatchModel(this.batchFile, false)
-    this.run = new RunModel(this.runFile, false)
+    this.queries = this.queryFiles.map(queryFile =>
+      new QueryModel(queryFile, false))
+  }
+
+  nbQueries () {
+    return this.queryFiles.length
   }
 }

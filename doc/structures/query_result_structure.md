@@ -50,7 +50,7 @@ waiting +
   "status": "canceled",
   ...
   "start_time": <int> (optional), // Timestamp. Not defined if the query was cancled before to start 
-  "end_time": <int> // Timestamp. When is has been canceled
+  "end_time": <int> // Timestamp. When it has been canceled
 }
 ```
 
@@ -77,7 +77,7 @@ waiting +
   "start_time": <int>, // Timestamp
   "end_time": <int>, // Timestamp
   "attack_trace": {
-    "index_process": <int>, // In process array
+    "index_process": <int>, // In process array (starting from 1)
     "action_sequence": [
       <action>,
       ...

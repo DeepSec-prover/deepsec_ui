@@ -1,32 +1,32 @@
 # Batch Result
 
-// TODO See [run result mock-data](../../mock-data/run/run.json) for example.
+// TODO add example.
 
-Format of name of json for batch_result:
+## Status flow
 
-  `<timestamp>"_"<random>.json`
+![Status flow](../flows/result_status.svg)
 
+In fact batch always skip the _waiting_ state.
 
-Definition of `<batch_result>`:
+## File
+
+Format of name: `timestamp_random.json`
+
+## Definition of `<batch_result>`:
 
 ```
 {
   "status": "in_progress" | "completed" | "internal_error" | "canceled",
-  "error_msg": <string>, // If status = "internal_error"
+  "error_msg": <string>, (optional) // If status = "internal_error"
   "deepsec_version": <string>, // Format as "X.X.X"
   "git_branch": <string>,
   "git_hash": <string>,
-  "run_result_files": [
-    <string>, // Ex: <timestamp>"_"<random>/<dps file name>_<random>.json
+  "run_files": [
+    <string>,
     ...,
     <string>
-  ] (optional)
-  "run_results": [
-    <run_results>,
-    ...,
-    <run_results>
-  ], (optional)
-  "import_date": <int>, (optional) // Timestamp
+  ],
+  "import_date": <int>, (optional) // Timestamp. Only if imported
   "command_options": { // See deepsec documentation for command details
     "nb_jobs": <int>,
     "round_timer": <int>,
