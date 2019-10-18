@@ -22,13 +22,13 @@ export function formatTrace (actions, atomicTable) {
     switch (action.type) {
       case 'input':
         res += 'in(' + formatRecipe(action.channel, atomicTable) + ',' +
-          formatRecipe(action.term, atomicTable) + ')\n'
+          formatRecipe(action.term, atomicTable) + ');'
         break
       case 'output':
-        res += 'out(' + formatRecipe(action.channel, atomicTable) + ',ax_' + axiomId++ + ')\n'
+        res += 'out(' + formatRecipe(action.channel, atomicTable) + ',ax_' + axiomId++ + ');'
         break
       case 'eavesdrop':
-        res += 'eavesdrop(' + formatRecipe(action.channel, atomicTable) + ',ax_' + axiomId++ + ')\n'
+        res += 'eavesdrop(' + formatRecipe(action.channel, atomicTable) + ',ax_' + axiomId++ + ');'
         break
       // Skip others cases because not visible
     }

@@ -95,11 +95,8 @@
     </el-row>
     <el-row v-if="query.status === 'completed'">
       <el-divider></el-divider>
-      <el-col :md="12" tag="p">{{ resultMessage }}</el-col>
-      <el-col :md="12" v-if="query.attackTrace">
-        Attack trace :
-        <spec-code id="attack-trace" :code="formattedAttackTrace"></spec-code>
-      </el-col>
+      <p>{{ resultMessage }}</p>
+      <spec-code in-line v-if="query.attackTrace" :code="formattedAttackTrace"></spec-code>
     </el-row>
   </div>
 </template>
@@ -188,9 +185,37 @@
         return formatTrace(this.query.attackTrace.action_sequence, this.query.atomicData)
       },
       resultMessage: function () {
-        switch (this.query.type) {
-          case 'trace_equiv':
-            return `Attack found on process ${this.query.attackTrace.index_process}`
+        // Attack found
+        if (this.query.attackTrace) {
+          switch (this.query.type) {
+            case 'trace_equiv':
+              return `The processes are not equivalent.
+              The following trace from process ${this.query.attackTrace.index_process} doesn't have an
+              equivalent.`
+            case 'trace_incl':
+              return 'TODO'
+            case 'observational_equiv':
+              return 'TODO'
+            case 'session_equiv':
+              return 'TODO'
+            case 'session_incl':
+              return 'TODO'
+          }
+        }
+        // No attack found
+        else {
+          switch (this.query.type) {
+            case 'trace_equiv':
+              return `The processes are equivalent.`
+            case 'trace_incl':
+              return 'TODO'
+            case 'observational_equiv':
+              return 'TODO'
+            case 'session_equiv':
+              return 'TODO'
+            case 'session_incl':
+              return 'TODO'
+          }
         }
       }
     },
@@ -215,9 +240,5 @@
     list-style-type: none;
     padding: 0;
     margin: 0;
-  }
-
-  #attack-trace {
-    display: flex;
   }
 </style>
