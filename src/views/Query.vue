@@ -37,25 +37,34 @@
         <span slot="label"><i class="el-icon-s-data"></i> Summary</span>
         <query-summary :query="query"></query-summary>
       </el-tab-pane>
-      <el-tab-pane label="Config">Config</el-tab-pane>
-      <el-tab-pane label="Role">Role</el-tab-pane>
-      <el-tab-pane label="Task">Task</el-tab-pane>
+      <el-tab-pane>
+        <span slot="label"><i class="el-icon-time"></i> Duration</span>
+        Duration
+      </el-tab-pane>
     </el-tabs>
 
+    <el-row type="flex" :gutter="10" justify="center">
+      <el-col :lg="12" :xl="8" v-for="(process, index) in processesStr">
+        <h3>Process {{ index + 1 }} </h3>
+        <spec-code :code="process"></spec-code>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
   import icons from '../text-content/icons'
   import text from '../text-content/text'
+  import { formatProcess } from '../util/process-parser'
   import QuerySummary from '../components/query/QuerySummary'
+  import SpecCode from '../components/SpecCode'
 
   export default {
     name: 'query',
     components: {
-      QuerySummary
+      QuerySummary,
+      SpecCode
     },
-    mixins: [status],
     props: {
       query: Object
     },
@@ -64,14 +73,19 @@
         icons: icons,
         text: text
       }
+    },
+    computed: {
+      processesStr: function () {
+        return this.query.processes.map(p => formatProcess(p, this.query.atomicData))
+      }
     }
   }
 </script>
 
 <style scoped>
- #breadcrumb {
-   margin-bottom: 20px;
- }
+  #breadcrumb {
+    margin-bottom: 20px;
+  }
 
   .dropdown-link {
     cursor: pointer;

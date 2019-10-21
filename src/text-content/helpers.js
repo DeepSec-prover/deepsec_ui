@@ -11,6 +11,15 @@ const helpers = {
       nbWorkers: 'TODO description of server.nbWorkers'
     }
   },
+  query: {
+    type: {
+      trace_equiv: 'TODO trace equivalence',
+      trace_incl: 'TODO trace inclusion',
+      observational_equiv: 'TODO observational equivalence',
+      session_equiv: 'TODO session equivalence',
+      session_incl: 'TODO session inclusion',
+    }
+  },
   semantics: {
     private: 'TODO description of private',
     classic: 'TODO description of classic',

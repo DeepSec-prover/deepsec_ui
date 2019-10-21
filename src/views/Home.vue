@@ -1,23 +1,23 @@
 <template>
   <div class="home">
-    <Process v-bind:code="code"/>
+    <spec-code v-bind:code="code"/>
   </div>
 </template>
 
 <script>
   // @ is an alias to /src
-  import Process from '@/components/Process.vue'
+  import SpecCode from '@/components/SpecCode.vue'
   import { ipcRenderer } from 'electron'
   import logger from 'electron-log'
   import openJsonFile from '@/util/input-tools'
-  import formatProcess from '@/util/process-parser'
+  import { formatProcess } from '@/util/process-parser'
   import settings from '../../settings'
   import path from 'path'
 
   export default {
     name: 'home',
     components: {
-      Process
+      SpecCode
     },
     data: () => {
       return {

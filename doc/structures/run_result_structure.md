@@ -6,68 +6,76 @@ See [run result mock-data](../../mock-data/run/run.json) for example.
 
 ![Status flow](../flows/result_status.svg)
 
+## File
+
 Format of name of json for run_result: `timestamp_random.json` (encoded)
+`batch_folder` and `batch_file` have the same value.
 
 ## Definition of `<run_result>`:
 
-At least one of `input_file` or `input_str` should be present.  
-At least one of `query_result_files` or `query_results` should be present.
-
-`<batch_folder>` and `<batch_file>` have the same value.
+### Waiting
 
 ```
 {
-  "status": "completed" | "in_progress",
+  "status": "waiting",
   "batch_file": "batch_file.json"
-  "input_file": <string>, (optional) // Format as "<batch_folder>/<run_folder>/<name>.dps",
-  "input_str": <string>, (optional) // Full content of the .dps file
-  "start_time": <int>, // Timestamp. If not defined then file hasn't been run yet.
-  "end_time": <int>, (optional) // Timestamp. If not defined then status is "in_progress"
-  "query_result_files": (optional) [
+  "input_file": <string>, // Format as "batch_folder/run_folder/name.dps",
+  "query_files": [
     <string>, // Format as "batch_folder/run_folder/query_file.json"
     ...,
     <string>
-  ],
-  "query_results": (optional) [
-    <query_result>,
-    ...
-    <query_result>
-  ],
-  "warnings":  [ <string> ] (optional)
+  ]
 }
 ```
-or
+
+### In Progress
+
+waiting +
 ```
 {
-  "status": "internal_error",
-  "batch_file": "<batch_file>.json"
-  "input_file": <string>, (optional) // Format as "<batch_folder>/<run_folder>/<name>.dps",
-  "input_str": <string>, (optional) // Full content of the .dps file
+  "status": "in_progress",
+  ...
   "start_time": <int>, // Timestamp
-  "end_time": <int>, // Timestamp
-  "query_result_files": (optional) [
-    <string>, // Format as "<batch_folder>/<run_folder>/query_<id>.json"
-    ...,
-    <string>
-  ],
-  "error_msg": <string>,
-  "warnings":  [ <string> ] (optional)
+  "warnings":  [ <string> ] (optional) // Warnings about the user inputs
 }
 ```
-or
+
+### Canceled
+
+waiting +
 ```
 {
   "status": "canceled",
-  "batch_file": "<batch_file>.json"
-  "input_file": <string>, (optional) // Format as "<batch_folder>/<run_folder>/<name>.dps",
-  "input_str": <string>, (optional) // Full content of the .dps file
+  ...
+  "start_time": <int>, // Timestamp
+  "end_time": <int> // Timestamp. When it has been canceled
+  "warnings":  [ <string> ] (optional) // Warnings about the user inputs
+}
+```
+
+### Internal error
+
+waiting +
+```
+{
+  "status": "internal_error",
+  ...
+  "start_time": <int>, // Timestamp
+  "end_time": <int>, // Timestamp. When the error occure
+  "error_msg": <string>,
+  "warnings":  [ <string> ] (optional) // Warnings about the user inputs
+}
+```
+
+### Completed
+
+waiting +
+```
+{
+  "status": "canceled",
+  ...
   "start_time": <int>, // Timestamp
   "end_time": <int>, // Timestamp
-  "query_result_files": (optional) [
-    <string>, // Format as "<batch_folder>/<run_folder>/query_<id>.json"
-    ...,
-    <string>
-  ],
-  "warnings":  [ <string> ] (optional)
+  "warnings":  [ <string> ] (optional) // Warnings about the user inputs
 }
 ```

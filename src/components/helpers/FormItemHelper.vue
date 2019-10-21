@@ -29,9 +29,3 @@
     }
   }
 </script>
-
-<style scoped>
-  .label-helper {
-    cursor: help;
-  }
-</style>

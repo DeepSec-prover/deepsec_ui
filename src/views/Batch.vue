@@ -1,10 +1,15 @@
 <template>
-
+  <div>
+    Batch
+  </div>
 </template>
 
 <script>
   export default {
-    name: 'run-result'
+    name: 'batch',
+    data () {
+      return {}
+    }
   }
 </script>
 
