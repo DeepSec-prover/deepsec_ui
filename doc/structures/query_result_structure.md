@@ -23,7 +23,7 @@ See [query result mock-data completed](../../mock-data/run/query_completed.json)
   "atomic_data": <atomic_data>,
   "semantics": <string>, // "private" | "classic" | "eavesdrop"
   "type": <string>, // "trace_equiv" | "trace_incl" | "observational_equiv" | "session_equiv" | "session_incl"
-  "process": [
+  "processes": [
     <process>,
     ...
     <process>
@@ -49,7 +49,7 @@ waiting +
 {
   "status": "canceled",
   ...
-  "start_time": <int> (optional), // Timestamp. Not defined if the query was cancled before to start 
+  "start_time": <int> (optional), // Timestamp. Not defined if the query was cancled before to start
   "end_time": <int> // Timestamp. When is has been canceled
 }
 ```
