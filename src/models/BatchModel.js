@@ -41,4 +41,8 @@ export default class BatchModel extends ResultModel {
   loadRelations () {
     this.runs = this.runFiles.map(file => new RunModel(file, false))
   }
+
+  title () {
+    return this.startTime.toLocaleDateString() + ' ' + this.startTime.toLocaleTimeString()
+  }
 }

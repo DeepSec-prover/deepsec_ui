@@ -6,6 +6,10 @@
 
     <el-card>
       <div slot="header"><i class="el-icon-s-data"></i> Summary</div>
+
+      <!-- Show error message if present -->
+      <el-alert v-if="run.errorMsg" title="Error" type="error" :description="run.errorMsg" show-icon :closable="false"></el-alert>
+
       <dl class="in-line">
         <dt>File</dt>
         <dd>{{ run.inputFileName() }}</dd> <!-- TODO open file link -->
