@@ -49,8 +49,8 @@ waiting +
 {
   "status": "canceled",
   ...
-  "start_time": <int> (optional), // Timestamp. Not defined if the query was cancled before to start 
-  "end_time": <int> // Timestamp. When it has been canceled
+  "start_time": <int> (optional), // Timestamp. Not defined if the query was canceled before to start
+  "end_time": <int> // Timestamp. When is has been canceled
 }
 ```
 
@@ -62,7 +62,7 @@ waiting +
   "status": "internal_error",
   ...
   "start_time": <int>, // Timestamp
-  "end_time": <int>, // Timestamp. When the error occure
+  "end_time": <int>, // Timestamp. When the error occurs
   "error_msg": <string>
 }
 ```
