@@ -23,7 +23,7 @@ See [query result mock-data completed](../../mock-data/run/query_completed.json)
   "atomic_data": <atomic_data>,
   "semantics": <string>, // "private" | "classic" | "eavesdrop"
   "type": <string>, // "trace_equiv" | "trace_incl" | "observational_equiv" | "session_equiv" | "session_incl"
-  "process": [
+  "processes": [
     <process>,
     ...
     <process>

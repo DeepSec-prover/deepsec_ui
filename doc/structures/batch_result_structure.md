@@ -14,10 +14,13 @@ Format of name: `timestamp_random.json`
 
 ## Definition of `<batch_result>`:
 
+### In progress
+
 ```
 {
-  "status": "in_progress" | "completed" | "internal_error" | "canceled",
-  "error_msg": <string>, (optional) // If status = "internal_error"
+  "status": "in_progress",
+  "start_time": <int> // Timestamp.
+  "import_date": <int>, (optional) // Timestamp. Only if imported
   "deepsec_version": <string>, // Format as "X.X.X"
   "git_branch": <string>,
   "git_hash": <string>,
@@ -26,7 +29,6 @@ Format of name: `timestamp_random.json`
     ...,
     <string>
   ],
-  "import_date": <int>, (optional) // Timestamp. Only if imported
   "command_options": { // See deepsec documentation for command details
     "nb_jobs": <int>,
     "round_timer": <int>,
@@ -42,5 +44,39 @@ Format of name: `timestamp_random.json`
        ...
      ]
   }
+}
+```
+
+### Canceled
+
+in_progress +
+```
+{
+  "status": "canceled",
+  ...
+  "end_time": <int> // Timestamp. When it has been canceled
+}
+```
+
+### Internal Error
+
+in_progress +
+```
+{
+  "status": "internal_error",
+  ...
+  "end_time": <int>, // Timestamp. When it has been canceled
+  "error_msg": <string>
+}
+```
+
+### Completed
+
+in_progress +
+```
+{
+  "status": "completed",
+  ...
+  "end_time": <int> // Timestamp.
 }
 ```

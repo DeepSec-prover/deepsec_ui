@@ -24,7 +24,8 @@ Format of name of json for run_result: `timestamp_random.json` (encoded)
     <string>, // Format as "batch_folder/run_folder/query_file.json"
     ...,
     <string>
-  ]
+  ],
+  "warnings":  [ <string> ] (optional) // Warnings about the user inputs
 }
 ```
 
@@ -35,8 +36,7 @@ waiting +
 {
   "status": "in_progress",
   ...
-  "start_time": <int>, // Timestamp
-  "warnings":  [ <string> ] (optional) // Warnings about the user inputs
+  "start_time": <int> // Timestamp
 }
 ```
 
@@ -49,7 +49,6 @@ waiting +
   ...
   "start_time": <int>, // Timestamp
   "end_time": <int> // Timestamp. When it has been canceled
-  "warnings":  [ <string> ] (optional) // Warnings about the user inputs
 }
 ```
 
@@ -62,8 +61,7 @@ waiting +
   ...
   "start_time": <int>, // Timestamp
   "end_time": <int>, // Timestamp. When the error occure
-  "error_msg": <string>,
-  "warnings":  [ <string> ] (optional) // Warnings about the user inputs
+  "error_msg": <string>
 }
 ```
 
@@ -75,7 +73,6 @@ waiting +
   "status": "canceled",
   ...
   "start_time": <int>, // Timestamp
-  "end_time": <int>, // Timestamp
-  "warnings":  [ <string> ] (optional) // Warnings about the user inputs
+  "end_time": <int> // Timestamp
 }
 ```
