@@ -47,13 +47,13 @@ export default new Router({
       path: '/run/:path',
       name: 'run',
       component: Run,
-      props: (route) => ({ query: new RunModel(route.params.path, true) })
+      props: (route) => ({ run: new RunModel(route.params.path, true) })
     },
     {
       path: '/batch/:path',
       name: 'batch',
       component: Batch,
-      props: (route) => ({ query: new BatchModel(route.params.path, true) })
+      props: (route) => ({ batch: new BatchModel(route.params.path, true) })
     }
   ]
 })

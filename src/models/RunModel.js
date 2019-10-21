@@ -1,6 +1,7 @@
 import ResultModel from './ResultModel'
 import BatchModel from './BatchModel'
 import QueryModel from './QueryModel'
+import path from 'path'
 
 export default class RunModel extends ResultModel {
   mapJsonFile (json) {
@@ -43,6 +44,14 @@ export default class RunModel extends ResultModel {
     this.batch = new BatchModel(this.batchFile, false)
     this.queries = this.queryFiles.map(queryFile =>
       new QueryModel(queryFile, false))
+  }
+
+  title () {
+    return this.inputFileName ().replace(/\.dps$/ui, '')
+  }
+
+  inputFileName () {
+    return path.basename(this.inputFile)
   }
 
   nbQueries () {

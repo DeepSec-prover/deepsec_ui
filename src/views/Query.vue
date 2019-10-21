@@ -49,7 +49,6 @@
         <spec-code :code="process"></spec-code>
       </el-col>
     </el-row>
-
   </div>
 </template>
 
@@ -66,7 +65,6 @@
       QuerySummary,
       SpecCode
     },
-    mixins: [status],
     props: {
       query: Object
     },
