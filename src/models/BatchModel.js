@@ -45,4 +45,8 @@ export default class BatchModel extends ResultModel {
   title () {
     return this.startTime.toLocaleDateString() + ' ' + this.startTime.toLocaleTimeString()
   }
+
+  nbRun () {
+    return this.runFiles.length
+  }
 }

@@ -1,6 +1,6 @@
 {
   "name": "deepsec_ui",
-  "productName": "Deepsec UI",
+  "productName": "DeepSec UI",
   "version": "0.2.0",
   "description": "User interface for DeepSec tool (DEciding Equivalence Properties in SECurity protocols)",
   "author": "Victor YON, Vincent CHEVAL, Steve KREMER",

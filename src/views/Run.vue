@@ -2,7 +2,7 @@
   <div>
     <!-- TODO breadcrumb -->
 
-    <h2><i :class="[icons[run.status], run.status]"></i> Run {{ run.title() }} {{ text.status[run.status] }}</h2>
+    <h2><i :class="[icons[run.status], run.status]"></i> Run <em>{{ run.title() }}</em> {{ text.status[run.status] }}</h2>
 
     <el-card>
       <div slot="header"><i class="el-icon-s-data"></i> Summary</div>
@@ -25,6 +25,8 @@
         </template>
       </dl>
     </el-card>
+
+    <!-- TODO show warnings -->
 
     <el-collapse id="query-list" v-model="openedSummary">
       <el-collapse-item v-for="(query, index) in run.queries" :name="query.path">

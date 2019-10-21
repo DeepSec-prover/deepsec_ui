@@ -1,8 +1,9 @@
 const common = {
-  appName: 'Deepsec UI',
+  appName: 'DeepSec UI',
   env: process.env.NODE_ENV || 'production',
   isDevelopment: process.env.NODE_ENV !== 'production',
-  appRoot: __dirname // Does not work if packaged
+  appRoot: __dirname, // Does not work if packaged
+  deepsecGitUrl: 'https://github.com/DeepSec-prover/deepsec'
 }
 
 const dev = {
