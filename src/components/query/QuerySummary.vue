@@ -95,7 +95,7 @@
     </el-row>
     <el-row v-if="query.status === 'completed'">
       <el-divider></el-divider>
-      <p>{{ resultMessage }}</p>
+      <p>{{ query.longResultDescription() }}</p>
       <spec-code in-line v-if="query.attackTrace" :code="formattedAttackTrace"></spec-code>
     </el-row>
   </div>
@@ -184,40 +184,6 @@
       formattedAttackTrace: function () {
         return formatTrace(this.query.attackTrace.action_sequence, this.query.atomicData)
       },
-      resultMessage: function () {
-        // Attack found
-        if (this.query.attackTrace) {
-          switch (this.query.type) {
-            case 'trace_equiv':
-              return `The processes are not equivalent.
-              The following trace from process ${this.query.attackTrace.index_process} doesn't have an
-              equivalent.`
-            case 'trace_incl':
-              return 'TODO'
-            case 'observational_equiv':
-              return 'TODO'
-            case 'session_equiv':
-              return 'TODO'
-            case 'session_incl':
-              return 'TODO'
-          }
-        }
-        // No attack found
-        else {
-          switch (this.query.type) {
-            case 'trace_equiv':
-              return `The processes are equivalent.`
-            case 'trace_incl':
-              return 'TODO'
-            case 'observational_equiv':
-              return 'TODO'
-            case 'session_equiv':
-              return 'TODO'
-            case 'session_incl':
-              return 'TODO'
-          }
-        }
-      }
     },
     data () {
       return {

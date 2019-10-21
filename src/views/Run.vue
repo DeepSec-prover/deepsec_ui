@@ -27,7 +27,10 @@
         <template slot="title">
           <h3>
             <i :class="[icons[run.status], run.status]"></i> Query {{ index + 1 }}
-            <el-button size="small" class="open-query" @click="openQuery(query.path)">
+            <el-tag size="small" class="query-result" :type="query.attackFound() ? 'danger' : 'success'">
+              {{ query.shortResultDescription() }}
+            </el-tag>
+            <el-button size="mini" class="open-query" @click="openQuery(query.path)">
               Details <i class="el-icon-top-right"></i>
             </el-button>
           </h3>
@@ -81,7 +84,7 @@
     margin-top: 30px;
   }
 
-  .open-query {
-    margin-left: 15px;
+  .open-query, .query-result {
+    margin-left: 12px;
   }
 </style>
