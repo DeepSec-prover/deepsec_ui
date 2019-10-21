@@ -65,7 +65,7 @@ in_progress +
 {
   "status": "internal_error",
   ...
-  "end_time": <int>, // Timestamp. When it has been canceled
+  "end_time": <int>, // Timestamp. When the error occurs
   "error_msg": <string>
 }
 ```

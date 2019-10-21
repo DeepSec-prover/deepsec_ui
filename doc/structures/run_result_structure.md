@@ -60,7 +60,7 @@ waiting +
   "status": "internal_error",
   ...
   "start_time": <int>, // Timestamp
-  "end_time": <int>, // Timestamp. When the error occure
+  "end_time": <int>, // Timestamp. When the error occurs
   "error_msg": <string>
 }
 ```
