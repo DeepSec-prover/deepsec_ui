@@ -18,6 +18,7 @@ See [query result mock-data completed](../../mock-data/run/query_completed.json)
 ```
 {
   "status": "waiting",
+  "index": <int>, // Starting from 1
   "batch_file": "batch_file.json",
   "run_file": "batch_folder/run_file.json"
   "atomic_data": <atomic_data>,
