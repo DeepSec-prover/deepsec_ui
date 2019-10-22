@@ -1,5 +1,6 @@
 <template>
   <result-layout :result-object="batch">
+    <!-- Summary -->
     <template slot="summary">
       <el-tabs type="border-card">
         <el-tab-pane>
@@ -41,12 +42,15 @@
         </el-tab-pane>
       </el-tabs>
     </template>
+    <!-- Details -->
     <template slot="details">
-      <el-collapse>
-        <el-collapse-item v-for="run in batch.runs">
+      <el-collapse v-model="openedRun">
+        <el-collapse-item v-for="run in batch.runs"
+                          :class="['colored-header', 'colored-header-' + run.status]"
+                          :name="run.path">
           <template slot="title">
             <h3>
-              <i :class="[icons[run.status], run.status]"></i> {{ run.title() }}
+              <i :class="[icons[run.status], 'color-' + run.status]"></i> {{ run.title() }}
             </h3>
             <span class="run-info">
             {{ run.nbQueries() }} {{ run.nbQueries() > 1 ? 'queries' : 'query' }}
@@ -54,6 +58,9 @@
             <duration :start-time="run.startTime" :end-time="run.endTime"></duration>
           </span>
           </template>
+          <el-collapse>
+            <query-collapsible v-for="query in run.queries" :query="query"></query-collapsible>
+          </el-collapse>
         </el-collapse-item>
       </el-collapse>
     </template>
@@ -64,6 +71,7 @@
   import icons from '../text-content/icons'
   import Duration from '../components/Duration'
   import ResultLayout from '../components/results/ResultLayout'
+  import QueryCollapsible from '../components/query/QueryCollapsible'
   import settings from '../../settings'
   import path from 'path'
 
@@ -73,14 +81,16 @@
     name: 'batch',
     components: {
       Duration,
-      ResultLayout
+      ResultLayout,
+      QueryCollapsible
     },
     props: {
       batch: Object
     },
     data () {
       return {
-        icons: icons
+        icons: icons,
+        openedRun: []
       }
     },
     methods: {
@@ -94,6 +104,13 @@
       },
       hashUrl: function () {
         return path.join(settings.deepsecGitUrl, 'tree', this.batch.gitHash)
+      }
+    },
+    beforeMount () {
+      this.batch.runs.forEach(r => r.loadQueries())
+
+      if (this.batch.nbRun() === 1) {
+        this.openedRun.push(this.batch.runs[0].path)
       }
     }
   }
@@ -112,5 +129,36 @@
   .run-info {
     margin-left: 10px;
     color: #909399;
+  }
+</style>
+
+<style>
+  .colored-header > div > .el-collapse-item__header {
+    padding-left: 5px;
+  }
+
+  .colored-header > div > .el-collapse-item__content {
+    margin-left: 30px;
+    margin-right: 30px;
+  }
+
+  .colored-header-completed > div > .el-collapse-item__header {
+    background-color: rgba(103, 194, 58, 0.1);
+  }
+
+  .colored-header-waiting > div > .el-collapse-item__header {
+    background-color: rgba(144, 147, 153, 0.1);
+  }
+
+  .colored-header-internal_error > div > .el-collapse-item__header {
+    background-color: rgba(245, 108, 108, 0.1);
+  }
+
+  .colored-header-canceled > div > .el-collapse-item__header {
+    background-color: rgba(230, 162, 60, 0.1);
+  }
+
+  .colored-header-in_progress > div > .el-collapse-item__header {
+    background-color: rgba(64, 158, 255, 0.1);
   }
 </style>

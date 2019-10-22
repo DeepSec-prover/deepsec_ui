@@ -1,11 +1,13 @@
 <template>
   <result-layout :result-object="query">
+    <!-- Summary -->
     <template slot="summary">
       <el-card>
         <span slot="header"><i class="el-icon-s-data"></i> Summary</span>
         <query-summary :query="query"></query-summary>
       </el-card>
     </template>
+    <!-- Details -->
     <template slot="details">
       <el-row type="flex" :gutter="10" justify="center">
         <el-col :lg="12" :xl="8" v-for="(process, index) in processesStr">

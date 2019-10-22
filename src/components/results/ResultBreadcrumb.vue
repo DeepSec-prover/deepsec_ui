@@ -33,7 +33,7 @@
             </el-dropdown-item>
           </template>
           <template v-else>
-            <el-dropdown-item disabled>No more</el-dropdown-item>
+            <el-dropdown-item disabled>no more</el-dropdown-item>
           </template>
         </el-dropdown-menu>
       </el-dropdown>
@@ -56,7 +56,7 @@
             </el-dropdown-item>
           </template>
           <template v-else>
-            <el-dropdown-item disabled>No more</el-dropdown-item>
+            <el-dropdown-item disabled>no more</el-dropdown-item>
           </template>
         </el-dropdown-menu>
       </el-dropdown>

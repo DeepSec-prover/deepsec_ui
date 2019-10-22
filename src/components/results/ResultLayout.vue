@@ -5,7 +5,7 @@
                        :query="breadcrumbQuery"></result-breadcrumb>
 
     <h2>
-      <i :class="[icons[resultObject.status], resultObject.status]"></i>
+      <i :class="[icons[resultObject.status], 'color-' + resultObject.status]"></i>
       {{ classTitle }} <em>{{ resultObject.title() }}</em> {{ text.status[resultObject.status] }}
     </h2>
 
