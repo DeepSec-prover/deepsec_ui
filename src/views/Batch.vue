@@ -44,6 +44,21 @@
       </el-tab-pane>
     </el-tabs>
 
+    <el-collapse>
+      <el-collapse-item v-for="run in batch.runs">
+        <template slot="title">
+          <h3>
+            <i :class="[icons[run.status], run.status]"></i> {{ run.title() }}
+          </h3>
+          <span class="run-info">
+            {{ run.nbQueries() }} {{ run.nbQueries() > 1 ? 'queries' : 'query' }}
+            &ndash;
+            <duration :start-time="run.startTime" :end-time="run.endTime"></duration>
+          </span>
+        </template>
+      </el-collapse-item>
+    </el-collapse>
+
   </div>
 </template>
 
@@ -54,7 +69,7 @@
   import settings from '../../settings'
   import path from 'path'
 
-  const { remote } = require('electron');
+  const { remote } = require('electron')
 
   export default {
     name: 'batch',
@@ -71,9 +86,9 @@
       }
     },
     methods: {
-      openExternalBrowser(e) {
-        remote.shell.openExternal(e.target.href);
-      },
+      openExternalBrowser (e) {
+        remote.shell.openExternal(e.target.href)
+      }
     },
     computed: {
       branchUrl: function () {
@@ -94,5 +109,10 @@
 
   dd > a:hover {
     text-decoration: underline;
+  }
+
+  .run-info {
+    margin-left: 10px;
+    color: #909399;
   }
 </style>

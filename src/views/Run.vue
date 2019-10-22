@@ -32,7 +32,7 @@
       <el-collapse-item v-for="(query, index) in run.queries" :name="query.path">
         <template slot="title">
           <h3>
-            <i :class="[icons[run.status], run.status]"></i> Query {{ index + 1 }}
+            <i :class="[icons[query.status], query.status]"></i> Query {{ index + 1 }}
             <el-tag size="small" class="query-result" :type="query.attackFound() ? 'danger' : 'success'">
               {{ query.shortResultDescription() }}
             </el-tag>

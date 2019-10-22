@@ -32,16 +32,10 @@
 
     <h2><i :class="[icons[query.status], query.status]"></i> Query {{ text.status[query.status] }}</h2>
 
-    <el-tabs type="border-card">
-      <el-tab-pane>
-        <span slot="label"><i class="el-icon-s-data"></i> Summary</span>
-        <query-summary :query="query"></query-summary>
-      </el-tab-pane>
-      <el-tab-pane>
-        <span slot="label"><i class="el-icon-time"></i> Duration</span>
-        Duration
-      </el-tab-pane>
-    </el-tabs>
+    <el-card>
+      <span slot="header"><i class="el-icon-s-data"></i> Summary</span>
+      <query-summary :query="query"></query-summary>
+    </el-card>
 
     <el-row type="flex" :gutter="10" justify="center">
       <el-col :lg="12" :xl="8" v-for="(process, index) in processesStr">
