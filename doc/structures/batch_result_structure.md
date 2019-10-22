@@ -30,19 +30,20 @@ Format of name: `timestamp_random.json`
     <string>
   ],
   "command_options": { // See deepsec documentation for command details
-    "nb_jobs": <int>,
+    "nb_jobs": <int> | "auto",
     "round_timer": <int>,
     "default_semantics": "private" | "classic" | "eavesdrop",
-    "distributed": <int>, // 0 is not distributed
-    "without_por": <bool>,
+    "distributed": <bool> | "auto",
+    "por": <bool>,
     "distant_workers": [
       {
         "host": <string>, // Format "<login>@<host>"
         "path": <string>,
-        "nb_workers": <int>
+        "nb_workers": <int> | "auto"
       },
        ...
-     ]
+     ],
+    "local_workers": <int> | "auto"
   }
 }
 ```

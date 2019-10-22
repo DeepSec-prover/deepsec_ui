@@ -2,4 +2,11 @@
 
 
 
-{  "command" : "start_run",  "input_files": [   "/Users/vincentcheval/Documents/Recherche/Outils/DeepSec/deepsec/Examples/trace_equivalence/Helios/Helios_no_revote_ZKP.dps"  ],  "command_options": {   "default_semantics": "classic" }}
+{  "command" : "start_run",  "input_files": [   "/Users/vincentcheval/Documents/Recherche/Outils/DeepSec/deepsec/Examples/trace_equivalence/Helios/Helios_no_revote_ZKP.dps"  ],  "command_options": {   "default_semantics": "eavesdrop", "distributed":2 }}
+
+******* Before generating inputs (8) ******
+
+
+Bug_files/example_stackOverflow.dps
+
+{  "command" : "start_run",  "input_files": [   "/Users/vincentcheval/Documents/Recherche/Outils/DeepSec/deepsec/Bug_files/example_stackOverflow.dps"  ],  "command_options": {   "default_semantics": "classic", "distributed":2 }}

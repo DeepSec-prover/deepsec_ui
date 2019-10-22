@@ -10,22 +10,22 @@ Starting a run: UI -> DeepSec
     ...,
     <string>
   ],
-  "command_options": // See deepsec documentation for command details
-    {
-      "nb_jobs": <int>,
-      "round_timer": <int>,
-      "default_semantics": "private" | "classic" | "eavesdrop",
-      "distributed": <int>, // 0 is not distributed
-      "distant_workers": [
-         {
-           "host": <string>, // Format "<login>@<host>"
-           "path": <string>,
-           "nb_workers": <int>
-         },
-         ...
-       ]
-    }
-  ]
+  "command_options": { // See deepsec documentation for command details
+    "nb_jobs": <int> | "auto",
+    "round_timer": <int>,
+    "default_semantics": "private" | "classic" | "eavesdrop",
+    "distributed": <bool> | "auto",
+    "por": <bool>,
+    "distant_workers": [
+      {
+        "host": <string>, // Format "<login>@<host>"
+        "path": <string>,
+        "nb_workers": <int> | "auto"
+      },
+       ...
+     ],
+    "local_workers": <int> | "auto"
+  }
 }
 ```
 Reply to start a run : DeepSec -> UI
