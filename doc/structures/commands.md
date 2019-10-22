@@ -12,6 +12,7 @@ Starting a run: UI -> DeepSec
   ],
   "command_options": { // See deepsec documentation for command details
     "nb_jobs": <int> | "auto",
+    "local_workers": <int> | "auto",
     "round_timer": <int>,
     "default_semantics": "private" | "classic" | "eavesdrop",
     "distributed": <bool> | "auto",
@@ -20,11 +21,10 @@ Starting a run: UI -> DeepSec
       {
         "host": <string>, // Format "<login>@<host>"
         "path": <string>,
-        "nb_workers": <int> | "auto"
+        "workers": <int> | "auto"
       },
        ...
-     ],
-    "local_workers": <int> | "auto"
+     ]
   }
 }
 ```

@@ -11,25 +11,55 @@
         </el-button>
       </h3>
     </template>
-    <query-summary :query="query"></query-summary>
+    <!-- Show error message if present -->
+    <el-alert v-if="query.errorMsg" title="Error" type="error" :description="query.errorMsg" show-icon :closable="false"></el-alert>
+    <!-- General information -->
+    <el-row>
+      <el-col :span="12">
+        <dl class="in-line">
+          <dt>Semantics</dt>
+          <dd>
+            <helper :helper-id="`semantics.${query.semantics}`" :text-content="true">{{ query.semantics }}</helper>
+          </dd>
+          <dt>Query type</dt>
+          <dd>
+            <helper :helper-id="`query.type.${query.type}`" :text-content="true">{{ text.query.type[query.type] }}</helper>
+          </dd>
+        </dl>
+      </el-col>
+      <el-col :span="12" v-if="query.startTime">
+        <dl class="in-line">
+          <dt>Start time</dt>
+          <dd>{{ query.startTime.toLocaleDateString() }} {{ query.startTime.toLocaleTimeString() }}</dd>
+          <dt>Running time</dt>
+          <dd>
+            <duration :start-time="query.startTime" :end-time="query.endTime"></duration>
+          </dd>
+        </dl>
+      </el-col>
+    </el-row>
   </el-collapse-item>
 </template>
 
 <script>
   import icons from '../../text-content/icons'
-  import QuerySummary from './QuerySummary'
+  import text from '../../text-content/text'
+  import Helper from '../helpers/Helper'
+  import Duration from '../Duration'
 
   export default {
     name: 'query-collapsible',
     components: {
-      QuerySummary
+      Helper,
+      Duration
     },
     props: {
       query: Object
     },
     data () {
       return {
-        icons: icons
+        icons: icons,
+        text: text
       }
     },
     methods: {
