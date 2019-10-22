@@ -46,6 +46,11 @@ export default class RunModel extends ResultModel {
       new QueryModel(queryFile, false))
   }
 
+  loadQueries () {
+    this.queries = this.queryFiles.map(queryFile =>
+      new QueryModel(queryFile, false))
+  }
+
   title () {
     return this.inputFileName ().replace(/\.dps$/ui, '')
   }

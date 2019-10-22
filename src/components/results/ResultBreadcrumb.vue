@@ -1,32 +1,48 @@
 <template>
   <el-breadcrumb id="breadcrumb" separator="/">
+    <!-- All results -->
+    <!-- TODO go to current batch page in all-results -->
+    <el-breadcrumb-item :to="{name: 'all-results'}">
+      results
+    </el-breadcrumb-item>
+
     <!-- Batch -->
     <el-breadcrumb-item v-if="isRoute('batch')">
-      batch ({{ batch.title() }})
+      <span class="current-location">batch ({{ batch.title() }})</span>
     </el-breadcrumb-item>
     <el-breadcrumb-item v-else :to="{ name: 'batch', params: { path: batch.path } }">
       batch ({{ batch.title() }})
     </el-breadcrumb-item>
+
     <!-- Run -->
     <el-breadcrumb-item>
       <router-link v-if="query" :to="{name: 'run', params: { path: query.run.path } }">
         run ({{ run.title() }})
       </router-link>
-      <template v-else-if="run">run ({{ run.title() }}) </template>
-      <template v-else>runs </template>
+      <template v-else-if="run">
+        <span :class="{'current-location': isRoute('run')}">run ({{ run.title() }}) </span>
+      </template>
+      <template v-else>runs</template>
       <!-- Listing -->
       <el-dropdown trigger="click" @command="goToRun">
         <i class="el-icon-arrow-down dropdown-link"></i>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item v-for="run in batch.runs" :command="run.path">
-            {{ run.title() }}
-          </el-dropdown-item>
+          <template v-if="otherRuns.length > 0">
+            <el-dropdown-item v-for="run in otherRuns" :command="run.path">
+              {{ run.title() }}
+            </el-dropdown-item>
+          </template>
+          <template v-else>
+            <el-dropdown-item disabled>No more</el-dropdown-item>
+          </template>
         </el-dropdown-menu>
       </el-dropdown>
     </el-breadcrumb-item>
+
     <!-- Query -->
     <el-breadcrumb-item v-if="run">
-      <template v-if="query">query {{query.title()}} </template>
+      <template v-if="query">
+        <span class="current-location">query {{query.title()}} </span></template>
       <template v-else>
         queries
       </template>
@@ -34,9 +50,14 @@
       <el-dropdown trigger="click" @command="goToQuery">
         <i class="el-icon-arrow-down dropdown-link"></i>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item v-for="(query, index) in run.queries" :command="query.path">
-            Query {{ index + 1 }}
-          </el-dropdown-item>
+          <template v-if="otherQueries.length > 0">
+            <el-dropdown-item v-for="(query, index) in otherQueries" :command="query.path">
+              query {{ index + 1 }}
+            </el-dropdown-item>
+          </template>
+          <template v-else>
+            <el-dropdown-item disabled>No more</el-dropdown-item>
+          </template>
         </el-dropdown-menu>
       </el-dropdown>
     </el-breadcrumb-item>
@@ -70,8 +91,46 @@
         this.$router.push({ name: 'run', params: { path: path } })
       }
     },
-    data () {
-      return {}
+    computed: {
+      /**
+       * Get all batch's runs except the current one (if define).
+       * Load data from files if necessary.
+       *
+       * @returns {Array} List if runs
+       */
+      otherRuns: function () {
+        if (this.batch.runs === null) {
+          // Load runs
+          // Also reload the current one but it's not big deal
+          this.batch.loadRelations()
+        }
+
+        if (this.run) {
+          // Return all except the current one
+          return this.batch.runs.filter(r => r.path !== this.run.path)
+        } else {
+          return this.batch.runs
+        }
+      },
+      /**
+       * Get all run's queries except the current one (if define).
+       * Load data from files if necessary.
+       *
+       * @returns {Array} List if queries
+       */
+      otherQueries: function () {
+        if (this.run.queries === null) {
+          // Also reload the current one but it's not big deal
+          this.run.loadQueries()
+        }
+
+        if (this.query) {
+          // Return all except the current one
+          return this.run.queries.filter(q => q.path !== this.query.path)
+        } else {
+          return this.run.queries
+        }
+      }
     }
   }
 </script>
@@ -83,5 +142,9 @@
 
   .dropdown-link {
     cursor: pointer;
+  }
+
+  .current-location {
+    color: #409EFF;
   }
 </style>
