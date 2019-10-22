@@ -57,6 +57,7 @@
     mounted () {
       this.value = userSettings.get(this.settingsPath)
 
+      // TODO try beforeCreate to avoid custom watcher
       // Set watcher after the initialization to avoid useless update
       this.$watch('value', (newValue, oldValue) => {
         logger.debug(`Change user setting "${this.settingsPath}" : ${oldValue} --> ${newValue}`)

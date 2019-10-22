@@ -7,6 +7,7 @@ export default class QueryModel extends ResultModel {
   mapJsonFile (json) {
     // Mandatory fields
     this.status = json.status
+    this.index = json.index
     this.atomicData = json.atomic_data.data
     this.semantics = json.semantics
     this.type = json.type
@@ -47,6 +48,10 @@ export default class QueryModel extends ResultModel {
   loadRelations (json) {
     this.batch = new BatchModel(this.batchFile, false)
     this.run = new RunModel(this.runFile, false)
+  }
+
+  title () {
+    return this.index.toString()
   }
 
   /**

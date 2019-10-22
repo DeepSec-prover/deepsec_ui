@@ -94,7 +94,7 @@
       }
     }
   },
-  mounted () {
+  beforeMount () {
     // Copy the content of the array to the set
     this.filesSet = new Set(this.files)
   }

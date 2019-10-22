@@ -44,6 +44,13 @@ export default class ResultModel {
   }
 
   /**
+   * @return {String} Current result name as human readable string
+   */
+  title () {
+    throw new TypeError('Must override method')
+  }
+
+  /**
    * Load a result file as a JSON object
    *
    * @param {String} relativePath The path to the result file relative to the result directory

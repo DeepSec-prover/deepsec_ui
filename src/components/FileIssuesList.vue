@@ -28,7 +28,7 @@
         openFile: ''
       }
     },
-    mounted () {
+    beforeMount () {
       // If small content show it
       if (this.filesIssues.length === 1) {
         if (this.filesIssues[0].warnings.length < 10) {

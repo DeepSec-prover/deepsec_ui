@@ -1,12 +1,20 @@
 <template>
   <el-breadcrumb id="breadcrumb" separator="/">
     <!-- Batch -->
-    <el-breadcrumb-item v-if="isRoute('batch')">batch</el-breadcrumb-item>
-    <el-breadcrumb-item v-else :to="{ name: 'batch', params: { path: batch.path } }">batch</el-breadcrumb-item>
+    <el-breadcrumb-item v-if="isRoute('batch')">
+      batch ({{ batch.title() }})
+    </el-breadcrumb-item>
+    <el-breadcrumb-item v-else :to="{ name: 'batch', params: { path: batch.path } }">
+      batch ({{ batch.title() }})
+    </el-breadcrumb-item>
     <!-- Run -->
     <el-breadcrumb-item>
-      <router-link v-if="query" :to="{name: 'run', params: { path: query.run.path } }">run</router-link>
-      <template v-else>run</template>
+      <router-link v-if="query" :to="{name: 'run', params: { path: query.run.path } }">
+        run ({{ run.title() }})
+      </router-link>
+      <template v-else-if="run">run ({{ run.title() }}) </template>
+      <template v-else>runs </template>
+      <!-- Listing -->
       <el-dropdown trigger="click" @command="goToRun">
         <i class="el-icon-arrow-down dropdown-link"></i>
         <el-dropdown-menu slot="dropdown">
@@ -18,7 +26,11 @@
     </el-breadcrumb-item>
     <!-- Query -->
     <el-breadcrumb-item v-if="run">
-      query
+      <template v-if="query">query {{query.title()}} </template>
+      <template v-else>
+        queries
+      </template>
+      <!-- Listing -->
       <el-dropdown trigger="click" @command="goToQuery">
         <i class="el-icon-arrow-down dropdown-link"></i>
         <el-dropdown-menu slot="dropdown">

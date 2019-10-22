@@ -1,72 +1,69 @@
 <template>
-  <div>
-    <result-breadcrumb :batch="batch"></result-breadcrumb>
-
-    <h2><i :class="[icons[batch.status], batch.status]"></i> Batch <em>{{ batch.title() }}</em> {{ text.status[batch.status] }}</h2>
-
-    <el-tabs type="border-card">
-      <el-tab-pane>
-        <span slot="label"><i class="el-icon-s-data"></i> Summary</span>
-        <dl class="in-line">
-          <dt>Nb run</dt>
-          <dd>{{ batch.nbRun() }}</dd>
-          <template v-if="batch.startTime">
-            <dt>Start time</dt>
-            <dd>{{ batch.startTime.toLocaleDateString() }} {{ batch.startTime.toLocaleTimeString() }}</dd>
-            <dt>Running time</dt>
+  <result-layout :result-object="batch">
+    <template slot="summary">
+      <el-tabs type="border-card">
+        <el-tab-pane>
+          <span slot="label"><i class="el-icon-s-data"></i> Summary</span>
+          <dl class="in-line">
+            <dt>Nb run</dt>
+            <dd>{{ batch.nbRun() }}</dd>
+            <template v-if="batch.startTime">
+              <dt>Start time</dt>
+              <dd>{{ batch.startTime.toLocaleDateString() }} {{ batch.startTime.toLocaleTimeString() }}</dd>
+              <dt>Running time</dt>
+              <dd>
+                <duration :start-time="batch.startTime" :end-time="batch.endTime"></duration>
+              </dd>
+            </template>
+          </dl>
+        </el-tab-pane>
+        <el-tab-pane>
+          <span slot="label"><i class="el-icon-set-up"></i> Run Options</span>
+        </el-tab-pane>
+        <el-tab-pane>
+          <span slot="label"><i class="el-icon-monitor"></i> DeepSec version</span>
+          <dl class="in-line">
+            <dt>Version</dt>
+            <dd>{{ batch.deepsecVersion }}</dd>
+            <dt>Git Branch</dt>
             <dd>
-              <duration :start-time="batch.startTime" :end-time="batch.endTime"></duration>
+              <a :href="branchUrl" target="_blank" @click.prevent="openExternalBrowser">
+                {{ batch.gitBranch }}
+              </a>
             </dd>
-          </template>
-        </dl>
-      </el-tab-pane>
-      <el-tab-pane>
-        <span slot="label"><i class="el-icon-set-up"></i> Run Options</span>
-      </el-tab-pane>
-      <el-tab-pane>
-        <span slot="label"><i class="el-icon-monitor"></i> DeepSec version</span>
-        <dl class="in-line">
-          <dt>Version</dt>
-          <dd>{{ batch.deepsecVersion }}</dd>
-          <dt>Git Branch</dt>
-          <dd>
-            <a :href="branchUrl" target="_blank" @click.prevent="openExternalBrowser">
-              {{ batch.gitBranch }}
-            </a>
-          </dd>
-          <dt>Git Hash</dt>
-          <dd>
-            <a :href="hashUrl" target="_blank" @click.prevent="openExternalBrowser">
-              {{ batch.gitHash }}
-            </a>
-          </dd>
-        </dl>
-      </el-tab-pane>
-    </el-tabs>
-
-    <el-collapse>
-      <el-collapse-item v-for="run in batch.runs">
-        <template slot="title">
-          <h3>
-            <i :class="[icons[run.status], run.status]"></i> {{ run.title() }}
-          </h3>
-          <span class="run-info">
+            <dt>Git Hash</dt>
+            <dd>
+              <a :href="hashUrl" target="_blank" @click.prevent="openExternalBrowser">
+                {{ batch.gitHash }}
+              </a>
+            </dd>
+          </dl>
+        </el-tab-pane>
+      </el-tabs>
+    </template>
+    <template slot="details">
+      <el-collapse>
+        <el-collapse-item v-for="run in batch.runs">
+          <template slot="title">
+            <h3>
+              <i :class="[icons[run.status], run.status]"></i> {{ run.title() }}
+            </h3>
+            <span class="run-info">
             {{ run.nbQueries() }} {{ run.nbQueries() > 1 ? 'queries' : 'query' }}
             &ndash;
             <duration :start-time="run.startTime" :end-time="run.endTime"></duration>
           </span>
-        </template>
-      </el-collapse-item>
-    </el-collapse>
-
-  </div>
+          </template>
+        </el-collapse-item>
+      </el-collapse>
+    </template>
+  </result-layout>
 </template>
 
 <script>
   import icons from '../text-content/icons'
-  import text from '../text-content/text'
   import Duration from '../components/Duration'
-  import ResultBreadcrumb from '../components/results/ResultBreadcrumb'
+  import ResultLayout from '../components/results/ResultLayout'
   import settings from '../../settings'
   import path from 'path'
 
@@ -76,15 +73,14 @@
     name: 'batch',
     components: {
       Duration,
-      ResultBreadcrumb
+      ResultLayout
     },
     props: {
       batch: Object
     },
     data () {
       return {
-        icons: icons,
-        text: text
+        icons: icons
       }
     },
     methods: {
