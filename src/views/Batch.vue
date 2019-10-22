@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- TODO breadcrumb -->
+    <result-breadcrumb :batch="batch"></result-breadcrumb>
 
     <h2><i :class="[icons[batch.status], batch.status]"></i> Batch <em>{{ batch.title() }}</em> {{ text.status[batch.status] }}</h2>
 
@@ -66,6 +66,7 @@
   import icons from '../text-content/icons'
   import text from '../text-content/text'
   import Duration from '../components/Duration'
+  import ResultBreadcrumb from '../components/results/ResultBreadcrumb'
   import settings from '../../settings'
   import path from 'path'
 
@@ -74,7 +75,8 @@
   export default {
     name: 'batch',
     components: {
-      Duration
+      Duration,
+      ResultBreadcrumb
     },
     props: {
       batch: Object

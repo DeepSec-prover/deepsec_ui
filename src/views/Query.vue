@@ -77,11 +77,5 @@
 </script>
 
 <style scoped>
-  #breadcrumb {
-    margin-bottom: 20px;
-  }
 
-  .dropdown-link {
-    cursor: pointer;
-  }
 </style>
