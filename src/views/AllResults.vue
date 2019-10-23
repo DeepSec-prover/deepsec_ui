@@ -43,7 +43,7 @@
     },
     beforeMount () {
       fs.readdir(userSettings.get('resultsDirPath').toString(), (err, files) => {
-        files.filter(file => file.endsWith('.json')).sort().forEach(file => this.batches.push(new BatchModel(file, false)))
+        files.filter(file => file.endsWith('.json')).sort().reverse().forEach(file => this.batches.push(new BatchModel(file, false)))
       })
     }
   }
