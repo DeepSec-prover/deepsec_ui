@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2>Results</h2>
-    <el-table :data="batches" @row-click="rowClick" empty-text="No batch found in the result folder.">
+    <el-table id="result-table" :data="batches" @row-click="rowClick" empty-text="No batch found in the result folder.">
       <el-table-column prop="status" label="Status">
         <template slot-scope="scope">
           <result-status :status="scope.row.status" tag></result-status>
@@ -49,6 +49,8 @@
   }
 </script>
 
-<style scoped>
-
+<style>
+ #result-table tbody tr {
+   cursor: pointer;
+ }
 </style>
