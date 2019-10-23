@@ -48,7 +48,7 @@ export default class RunConfigModel {
       'por': this.por
     }
 
-    if (this.distributed === 'yes') {
+    if (this.distributed === true) {
       json['nb_jobs'] = this.nbJobs.auto ? 'auto' : this.nbJobs.value
       json['local_workers'] = this.localWorkers.auto ? 'auto' : this.localWorkers.value
       json['distant_workers'] = this.servers.map(s => {
