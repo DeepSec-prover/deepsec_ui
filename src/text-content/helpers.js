@@ -1,14 +1,18 @@
 const helpers = {
   runOptions: {
     defaultSemantic: 'TODO description of defaultSemantic',
-    isDistributed: 'TODO description of isDistributed',
+    distributed: {
+      auto: 'TODO description of distributed auto',
+      yes: 'TODO description of distributed yes',
+      no: 'TODO description of distributed no',
+    },
     nbJobs: 'TODO description of nbJobs',
-    nbLocalWorkers: 'TODO description of nbLocalWorkers',
-    timer: 'TODO description of timer',
+    localWorkers: 'TODO description of localWorkers',
+    roundTimer: 'TODO description of roundTimer',
     server: {
-      hostname: 'TODO description of server.hostname',
-      localPath: 'TODO description of server.localPath',
-      nbWorkers: 'TODO description of server.nbWorkers'
+      host: 'TODO description of server.host',
+      path: 'TODO description of server.path',
+      workers: 'TODO description of server.workers'
     }
   },
   query: {

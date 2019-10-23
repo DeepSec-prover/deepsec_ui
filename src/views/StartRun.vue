@@ -38,25 +38,45 @@
               </el-radio-group>
             </form-item-helper>
             <!-- Distributed -->
-            <form-item-helper label="Distributed" helper-id="runOptions.isDistributed">
-              <el-switch v-model="runConf.isDistributed"></el-switch>
-              <el-tag v-show="runConf.isDistributed" class="counter-tag" size="small" effect="plain">
-                <b>{{ nbWorkers }}</b> worker{{ nbWorkers > 1 ? 's' : '' }}
-              </el-tag>
-            </form-item-helper>
-            <div v-show="runConf.isDistributed">
+            <el-form-item label="Distributed :" class="label-top" helper-id="runOptions.distributed">
+              <el-radio-group v-model="runConf.distributed">
+                <helper helper-id="runOptions.distributed.auto">
+                  <el-radio-button label="auto">Auto</el-radio-button>
+                </helper>
+                <helper helper-id="runOptions.distributed.yes">
+                  <el-radio-button label="yes">Yes</el-radio-button>
+                </helper>
+                <helper helper-id="runOptions.distributed.no">
+                  <el-radio-button label="no">No</el-radio-button>
+                </helper>
+              </el-radio-group>
+            </el-form-item>
+            <div v-show="runConf.distributed === 'yes'">
               <!-- Nb jobs -->
               <form-item-helper label="Nb jobs" helper-id="runOptions.nbJobs">
-                <el-input-number v-model="runConf.nbJobs" :min="nbWorkers" controls-position="right"></el-input-number>
+                <el-checkbox class="auto" v-model="runConf.nbJobs.auto">Auto</el-checkbox>
+                <el-input-number v-show="!runConf.nbJobs.auto"
+                                 v-model="runConf.nbJobs.value"
+                                 :min="nbWorkers === Number.POSITIVE_INFINITY ? 1 : nbWorkers"
+                                 controls-position="right"></el-input-number>
               </form-item-helper>
               <!-- Nb local workers -->
-              <form-item-helper label="Local workers" helper-id="runOptions.nbLocalWorkers">
-                <el-input-number v-model="runConf.nbLocalWorkers" :min="1" controls-position="right"></el-input-number>
+              <form-item-helper label="Local workers" helper-id="runOptions.localWorkers">
+                <el-checkbox class="auto" v-model="runConf.localWorkers.auto">Auto</el-checkbox>
+                <el-input-number v-show="!runConf.localWorkers.auto"
+                                 v-model="runConf.localWorkers.value"
+                                 :min="1"
+                                 controls-position="right"></el-input-number>
               </form-item-helper>
               <!-- Timer -->
-              <form-item-helper label="Timer" helper-id="runOptions.timer">
-                <el-input-number v-model="runConf.timer" :min="1" controls-position="right"></el-input-number>
+              <form-item-helper label="Round timer" helper-id="runOptions.roundTimer" id="round-timer">
+                <el-input-number v-model="runConf.roundTimer" :min="1" controls-position="right"></el-input-number>
               </form-item-helper>
+              <div class="centred-content">
+                <el-tag v-show="runConf.servers.length > 0" class="counter-tag" size="small" effect="plain">
+                  Total worker <b>{{ nbWorkers === Number.POSITIVE_INFINITY ? 'Auto' : nbWorkers }}</b>
+                </el-tag>
+              </div>
             </div>
           </el-col>
         </el-row>
@@ -66,7 +86,7 @@
           <file-issues-list :files-issues="filesIssues"></file-issues-list>
         </el-row>
       </el-col>
-      <el-col :span="9" v-show="runConf.isDistributed">
+      <el-col :span="9" v-show="runConf.distributed">
         <!-- Add Distant server -->
         <el-button type="primary" icon="el-icon-plus" @click="addDistantServer" size="mini">
           Add Distant Server
@@ -83,16 +103,20 @@
                        size="small">
               </el-link>
               <!-- Server Hostname -->
-              <form-item-helper label="Hostname" helper-id="runOptions.server.hostname">
-                <el-input placeholder="user@adress" v-model="server.hostname"></el-input>
+              <form-item-helper label="Hostname" helper-id="runOptions.server.host">
+                <el-input placeholder="user@adress" v-model="server.host"></el-input>
               </form-item-helper>
               <!-- Server Local Path -->
-              <form-item-helper label="Local path" helper-id="runOptions.server.localPath">
-                <el-input placeholder="/usr/bin/deepsec" v-model="server.localPath"></el-input>
+              <form-item-helper label="Local path" helper-id="runOptions.server.path">
+                <el-input placeholder="/usr/bin/deepsec" v-model="server.path"></el-input>
               </form-item-helper>
               <!-- Server Nb Workers -->
-              <form-item-helper label="Workers" helper-id="runOptions.server.nbWorkers">
-                <el-input-number :min="1" controls-position="right" v-model="server.nbWorkers"></el-input-number>
+              <form-item-helper label="Workers" helper-id="runOptions.server.workers">
+                <el-checkbox class="auto" v-model="server.workers.auto">Auto</el-checkbox>
+                <el-input-number v-show="!server.workers.auto"
+                                 v-model="server.workers.value"
+                                 :min="1"
+                                 controls-position="right"></el-input-number>
               </form-item-helper>
             </el-card>
           </transition-group>
@@ -120,13 +144,14 @@
     },
     data () {
       return {
+        test: 42,
         files: [],
         runConf: {
           defaultSemantic: 'private',
-          nbJobs: 200,
-          nbLocalWorkers: 2,
-          timer: 120,
-          isDistributed: false,
+          distributed: 'auto',
+          nbJobs: {auto: true, value: 200},
+          localWorkers: {auto: true, value: 2},
+          roundTimer: 120,
           servers: []
         },
         serversId: 0,
@@ -137,11 +162,18 @@
     },
     computed: {
       nbWorkers: function () {
-        let sum = this.runConf.nbLocalWorkers
+        if (this.runConf.localWorkers.auto) {
+          return Number.POSITIVE_INFINITY
+        }
 
-        this.runConf.servers.forEach(server => {
-          sum += server.nbWorkers
-        })
+        let sum = this.runConf.localWorkers.value
+
+        for (let i = 0; i < this.runConf.servers.length; i++) {
+          if (this.runConf.servers[i].workers.auto) {
+            return Number.POSITIVE_INFINITY
+          }
+          sum += this.runConf.servers[i].workers.value
+        }
 
         return sum
       }
@@ -150,9 +182,9 @@
       addDistantServer () {
         this.runConf.servers.push({
           id: ++this.serversId,
-          hostname: '',
-          localPath: '',
-          nbWorkers: 10
+          host: '',
+          path: '',
+          workers: {auto: true, value: 10}
         })
       },
       removeServer (server) {
@@ -174,10 +206,11 @@
           'input_files': this.files,
           'command_options': {
             'nb_jobs': this.runConf.nbJobs,
-            'round_timer': this.runConf.timer,
+            'local_workers': this.runConf.local_workers,
+            'round_timer': this.runConf.roundTimer,
             'default_semantics': this.runConf.defaultSemantic,
             'distant_workers': this.runConf.servers,
-            'distributed': this.runConf.isDistributed ? this.runConf.nbLocalWorkers : 0
+            'distributed': this.runConf.distributed ? this.runConf.localWorkers : 0
           }
         })
 
@@ -246,6 +279,10 @@
     /*z-index: -999; TODO z-index issue for tooltip */
   }
 
+  .label-top .el-radio-group {
+    min-width: 230px;
+  }
+
   .border-right {
     border-left: 1px solid #E4E7ED;
     border-right: 1px solid #E4E7ED;
@@ -253,5 +290,10 @@
 
   #failed-error-msg {
     margin-bottom: 30px;
+  }
+
+  .auto {
+    line-height: 29px;
+    margin-right: 10px !important;
   }
 </style>
