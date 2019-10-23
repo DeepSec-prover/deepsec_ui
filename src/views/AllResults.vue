@@ -10,6 +10,11 @@
       <el-table-column label="Date">
         <template slot-scope="scope">{{ scope.row.title() }}</template>
       </el-table-column>
+      <el-table-column label="Nb Run">
+        <template slot-scope="scope">
+          {{ scope.row.nbRun() }}
+        </template>
+      </el-table-column>
     </el-table>
   </div>
 </template>
@@ -38,7 +43,7 @@
     },
     beforeMount () {
       fs.readdir(userSettings.get('resultsDirPath').toString(), (err, files) => {
-        files.filter(file => file.endsWith('.json')).sort().forEach(file => this.batches.push(new BatchModel(file)))
+        files.filter(file => file.endsWith('.json')).sort().forEach(file => this.batches.push(new BatchModel(file, false)))
       })
     }
   }

@@ -51,8 +51,8 @@
         <i class="el-icon-arrow-down dropdown-link"></i>
         <el-dropdown-menu slot="dropdown">
           <template v-if="otherQueries.length > 0">
-            <el-dropdown-item v-for="(query, index) in otherQueries" :command="query.path">
-              query {{ index + 1 }}
+            <el-dropdown-item v-for="query in otherQueries" :command="query.path">
+              query {{ query.index }}
             </el-dropdown-item>
           </template>
           <template v-else>

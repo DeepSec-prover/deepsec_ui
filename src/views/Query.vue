@@ -1,5 +1,10 @@
 <template>
   <result-layout :result-object="query">
+    <template slot="post-title">
+      <el-tag size="medium" effect="dark" class="query-result" :type="query.attackFound() ? 'danger' : 'success'">
+        {{ query.shortResultDescription() }}
+      </el-tag>
+    </template>
     <!-- Summary -->
     <template slot="summary">
       <el-card>

@@ -7,6 +7,7 @@
     <h2>
       <result-status :status="resultObject.status"></result-status>
       {{ classTitle }} <em>{{ resultObject.title() }}</em> {{ text.status[resultObject.status] }}
+      <slot name="post-title"></slot>
     </h2>
 
     <div id="summary">
@@ -87,6 +88,10 @@
 </script>
 
 <style scoped>
+  h2 {
+    height: 28px;
+  }
+
   h2 > em {
     font-style: normal;
     color: #909399;

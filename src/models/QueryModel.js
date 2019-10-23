@@ -78,6 +78,9 @@ export default class QueryModel extends ResultModel {
       } else {
         description = text.query.results.attack[this.type].long
       }
+
+      description = description.replace('%p', this.attackTrace.index_process).
+        replace('%q', (this.attackTrace.index_process % 2) + 1)
     } else {
       if (short) {
         description = text.query.results.no_attack[this.type].short
@@ -86,8 +89,7 @@ export default class QueryModel extends ResultModel {
       }
     }
 
-    return description.replace('%p', this.attackTrace.index_process).
-      replace('%q', (this.attackTrace.index_process % 2) + 1)
+    return description
   }
 
   /**
