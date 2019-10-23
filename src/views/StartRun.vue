@@ -73,7 +73,7 @@
                 <el-input-number v-model="runConf.roundTimer" :min="1" controls-position="right"></el-input-number>
               </form-item-helper>
               <div class="centred-content">
-                <el-tag v-show="runConf.servers.length > 0" class="counter-tag" size="small" effect="plain">
+                <el-tag v-show="runConf.nbServer() > 0" class="counter-tag" size="small" effect="plain">
                   Total worker <b>{{ nbWorkers === Number.POSITIVE_INFINITY ? 'Auto' : nbWorkers }}</b>
                 </el-tag>
               </div>
@@ -86,19 +86,19 @@
           <file-issues-list :files-issues="filesIssues"></file-issues-list>
         </el-row>
       </el-col>
-      <el-col :span="9" v-show="runConf.distributed">
+      <el-col :span="9" v-show="runConf.distributed === 'yes'">
         <!-- Add Distant server -->
-        <el-button type="primary" icon="el-icon-plus" @click="addDistantServer" size="mini">
+        <el-button type="primary" icon="el-icon-plus" @click="runConf.addServer()" size="mini">
           Add Distant Server
         </el-button>
-        <el-tag class="counter-tag" id="server-count" size="small" effect="plain">{{ runConf.servers.length }}</el-tag>
-        <div v-if="runConf.servers.length > 0">
+        <el-tag class="counter-tag" id="server-count" size="small" effect="plain">{{ runConf.nbServer() }}</el-tag>
+        <div v-if="runConf.nbServer() > 0">
           <transition-group name="el-zoom-in-top" tag="div" :duration="{ enter: 20 }">
             <el-card class="server-card" shadow="hover" v-for="server in runConf.servers" :key="server.id">
               <!-- Remove Server -->
               <el-link class="remove-server"
                        :underline="false"
-                       @click.prevent="removeServer(server)"
+                       @click.prevent="runConf.removeServer(server)"
                        icon="el-icon-close"
                        size="small">
               </el-link>
@@ -127,12 +127,12 @@
 </template>
 
 <script>
-  import logger from 'electron-log'
   import SpecFilesSelection from '../components/SpecFilesSelection'
   import FormItemHelper from '../components/helpers/FormItemHelper'
   import Helper from '../components/helpers/Helper'
   import FileIssuesList from '../components/FileIssuesList'
   import { ipcRenderer } from 'electron'
+  import RunConfigModel from '../models/RunConfigModel'
 
   export default {
     name: 'start-run',
@@ -144,17 +144,8 @@
     },
     data () {
       return {
-        test: 42,
         files: [],
-        runConf: {
-          defaultSemantic: 'private',
-          distributed: 'auto',
-          nbJobs: {auto: true, value: 200},
-          localWorkers: {auto: true, value: 2},
-          roundTimer: 120,
-          servers: []
-        },
-        serversId: 0,
+        runConf: new RunConfigModel(),
         runStarting: false,
         globalErrorMsg: '',
         filesIssues: []
@@ -168,7 +159,7 @@
 
         let sum = this.runConf.localWorkers.value
 
-        for (let i = 0; i < this.runConf.servers.length; i++) {
+        for (let i = 0; i < this.runConf.nbServer(); i++) {
           if (this.runConf.servers[i].workers.auto) {
             return Number.POSITIVE_INFINITY
           }
@@ -179,39 +170,16 @@
       }
     },
     methods: {
-      addDistantServer () {
-        this.runConf.servers.push({
-          id: ++this.serversId,
-          host: '',
-          path: '',
-          workers: {auto: true, value: 10}
-        })
-      },
-      removeServer (server) {
-        let index = this.runConf.servers.indexOf(server)
-        this.runConf.servers.splice(index, 1)
-      },
       submitForm () {
         this.runStarting = true
         this.globalErrorMsg = ''
         this.filesIssues = []
 
-        logger.info(`Send new run :
-        config : ${JSON.stringify(this.runConf)}
-        files : ${this.files.join(', ')}`)
-
         // Send the run order
         ipcRenderer.send('deepsec-api:run', {
           'command': 'start_run',
           'input_files': this.files,
-          'command_options': {
-            'nb_jobs': this.runConf.nbJobs,
-            'local_workers': this.runConf.local_workers,
-            'round_timer': this.runConf.roundTimer,
-            'default_semantics': this.runConf.defaultSemantic,
-            'distant_workers': this.runConf.servers,
-            'distributed': this.runConf.distributed ? this.runConf.localWorkers : 0
-          }
+          'command_options': this.runConf.toJson()
         })
 
         // Wait for the run confirmation or error message
