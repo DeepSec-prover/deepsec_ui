@@ -39,7 +39,12 @@ waiting +
 {
   "status": "in_progress",
   ...
-  "start_time": <int> // Timestamp
+  "start_time": <int>, // Timestamp
+  "progression": {
+     round: <int>, // Single core = 0
+     percent: <int>, // 0-100
+     jobs_remaining: <int>
+  }
 }
 ```
 
@@ -51,7 +56,12 @@ waiting +
   "status": "canceled",
   ...
   "start_time": <int> (optional), // Timestamp. Not defined if the query was canceled before to start
-  "end_time": <int> // Timestamp. When is has been canceled
+  "end_time": <int>, // Timestamp. When is has been canceled
+  "progression": {
+     round: <int>, // Single core = 0
+     percent: <int>, // 0-100
+     jobs_remaining: <int>
+  }
 }
 ```
 
@@ -64,7 +74,12 @@ waiting +
   ...
   "start_time": <int>, // Timestamp
   "end_time": <int>, // Timestamp. When the error occurs
-  "error_msg": <string>
+  "error_msg": <string>,
+  "progression": {
+     round: <int>, // Single core = 0
+     percent: <int>, // 0-100
+     jobs_remaining: <int>
+  }
 }
 ```
 

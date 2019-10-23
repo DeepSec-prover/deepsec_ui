@@ -116,3 +116,14 @@ Set config: UI -> DeepSec
   "output_dir": <string>
 }
 ```
+
+Progression: DeepSec -> UI
+```
+{
+  "command": "progression",
+  "file": <string> // Path
+  "round": <int>, // Single core = 0
+  "percent": <int>, // 0-100
+  "jobs_remaining": <int>
+}
+```
