@@ -4,11 +4,6 @@ import { openResultFileMain } from './util/open-files-dialogs'
 import settings from '../settings'
 
 /**
- * @type {string} "Command" for macOS and "Ctrl" for Windows or Linux
- */
-const CTRL = process.platform === 'darwin' ? 'Command' : 'Ctrl'
-
-/**
  * Create the template for the application main menu
  * TODO Try to remove the main windows reference (send to all windows ?)
  *
@@ -22,7 +17,7 @@ function mainMenuTemplate (mainWindow) {
       submenu: [
         {
           label: 'Open',
-          accelerator: CTRL + '+O',
+          accelerator: 'CmdOrCtrl+O',
           click () {
             openResultFileMain().then(filePath => {
               // Send file path only because full object is too big
@@ -35,14 +30,31 @@ function mainMenuTemplate (mainWindow) {
         },
         {
           label: 'Quit',
-          accelerator: CTRL + '+Q',
+          accelerator: 'CmdOrCtrl+Q',
           click () {
             app.quit()
           }
-        }
+        },
+        { type: "separator" },
+        { label: 'Undo', accelerator: 'CmdOrCtrl+Z', role: 'undo' },
+        { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", role: "redo" },
+        { type: "separator" },
+        { label: "Zoom In", accelerator: "CmdOrCtrl+numadd", role: "zoomIn" },
+        { label: "Zoom Out", accelerator: "CmdOrCtrl+numsub", role: "zoomOut" },
       ]
     }
   ]
+
+  // =================== MacOS basic actions ===================
+  if (process.platform === 'darwin') {
+    menuTemplate[0].submenu = menuTemplate[0].submenu.concat([
+      { type: "separator" },
+      { label: "Cut", accelerator: "CmdOrCtrl+X", role: "cut" },
+      { label: "Copy", accelerator: "CmdOrCtrl+C", role: "copy" },
+      { label: "Paste", accelerator: "CmdOrCtrl+V", role: "paste" },
+      { label: "Select All", accelerator: "CmdOrCtrl+A", role: "selectAll" },
+    ])
+  }
 
   // ==================== Development Tools ====================
   if (settings.devTools.menu) {
