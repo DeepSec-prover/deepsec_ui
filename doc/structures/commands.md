@@ -120,8 +120,7 @@ Set config: UI -> DeepSec
 Progression: DeepSec -> UI
 ```
 {
-  "command": "progression",
-  "file": <string> // Path
+  "command": "query_progression",
   "round": <int>, // Single core = 0
   "percent": <int>, // 0-100
   "jobs_remaining": <int>
