@@ -35,7 +35,6 @@
 </template>
 
 <script>
-  import icons from '../text-content/icons'
   import Duration from '../components/Duration'
   import QueryCollapsible from '../components/query/QueryCollapsible'
   import ResultLayout from '../components/results/ResultLayout'
@@ -52,7 +51,6 @@
     },
     data () {
       return {
-        icons: icons,
         openedSummary: []
       }
     },

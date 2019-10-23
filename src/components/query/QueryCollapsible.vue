@@ -2,7 +2,7 @@
   <el-collapse-item :name="query.path">
     <template slot="title">
       <h3>
-        <i :class="[icons[query.status], 'color-' + query.status]"></i> Query {{ query.index }}
+        <result-status :status="query.status"></result-status> Query {{ query.index }}
         <el-tag size="small" class="query-result" :type="query.attackFound() ? 'danger' : 'success'">
           {{ query.shortResultDescription() }}
         </el-tag>
@@ -42,8 +42,8 @@
 </template>
 
 <script>
-  import icons from '../../text-content/icons'
   import text from '../../text-content/text'
+  import ResultStatus from '../results/ResultStatus'
   import Helper from '../helpers/Helper'
   import Duration from '../Duration'
 
@@ -51,14 +51,14 @@
     name: 'query-collapsible',
     components: {
       Helper,
-      Duration
+      Duration,
+      ResultStatus
     },
     props: {
       query: Object
     },
     data () {
       return {
-        icons: icons,
         text: text
       }
     },

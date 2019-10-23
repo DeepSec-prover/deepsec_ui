@@ -5,7 +5,7 @@
                        :query="breadcrumbQuery"></result-breadcrumb>
 
     <h2>
-      <i :class="[icons[resultObject.status], 'color-' + resultObject.status]"></i>
+      <result-status :status="resultObject.status"></result-status>
       {{ classTitle }} <em>{{ resultObject.title() }}</em> {{ text.status[resultObject.status] }}
     </h2>
 
@@ -20,8 +20,8 @@
 
 <script>
   import ResultBreadcrumb from './ResultBreadcrumb'
+  import ResultStatus from './ResultStatus'
   import ResultModel from '../../models/ResultModel'
-  import icons from '../../text-content/icons'
   import text from '../../text-content/text'
   import BatchModel from '../../models/BatchModel'
   import RunModel from '../../models/RunModel'
@@ -30,7 +30,8 @@
   export default {
     name: 'result-layout',
     components: {
-      ResultBreadcrumb
+      ResultBreadcrumb,
+      ResultStatus
     },
     props: {
       resultObject: {
@@ -39,7 +40,6 @@
     },
     data () {
       return {
-        icons: icons,
         text: text
       }
     },

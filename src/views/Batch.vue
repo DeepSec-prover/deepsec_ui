@@ -48,7 +48,7 @@
                           :name="run.path">
           <template slot="title">
             <h3>
-              <i :class="[icons[run.status], 'color-' + run.status]"></i> {{ run.title() }}
+              <result-status :status="run.status"></result-status> {{ run.title() }}
             </h3>
             <span class="run-info">
             {{ run.nbQueries() }} {{ run.nbQueries() > 1 ? 'queries' : 'query' }}
@@ -66,7 +66,7 @@
 </template>
 
 <script>
-  import icons from '../text-content/icons'
+  import ResultStatus from '../components/results/ResultStatus'
   import Duration from '../components/Duration'
   import ResultLayout from '../components/results/ResultLayout'
   import QueryCollapsible from '../components/query/QueryCollapsible'
@@ -80,14 +80,14 @@
     components: {
       Duration,
       ResultLayout,
-      QueryCollapsible
+      QueryCollapsible,
+      ResultStatus
     },
     props: {
       batch: Object
     },
     data () {
       return {
-        icons: icons,
         openedRun: []
       }
     },
