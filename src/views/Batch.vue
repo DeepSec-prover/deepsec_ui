@@ -8,14 +8,12 @@
           <dl class="in-line">
             <dt>Nb run</dt>
             <dd>{{ batch.nbRun() }}</dd>
-            <template v-if="batch.startTime">
-              <dt>Start time</dt>
-              <dd>{{ batch.startTime.toLocaleDateString() }} {{ batch.startTime.toLocaleTimeString() }}</dd>
-              <dt>Running time</dt>
-              <dd>
-                <duration :start-time="batch.startTime" :end-time="batch.endTime"></duration>
-              </dd>
-            </template>
+            <dt>Start time</dt>
+            <dd>{{ batch.startTime.toLocaleDateString() }} {{ batch.startTime.toLocaleTimeString() }}</dd>
+            <dt>Running time</dt>
+            <dd>
+              <duration :start-time="batch.startTime" :end-time="batch.endTime"></duration>
+            </dd>
           </dl>
         </el-tab-pane>
         <el-tab-pane>

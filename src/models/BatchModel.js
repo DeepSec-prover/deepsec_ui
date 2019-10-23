@@ -12,13 +12,9 @@ export default class BatchModel extends ResultModel {
     this.runs = null // Not loaded yet
     this.runFiles = json.run_files
 
-    // Optional fields
-    if (json.start_time) {
-      this.startTime = new Date(json.start_time * 1000)
-    } else {
-      this.startTime = null
-    }
+    this.startTime = new Date(json.start_time * 1000)
 
+    // Optional fields
     if (json.end_time) {
       this.endTime = new Date(json.end_time * 1000)
     } else {
