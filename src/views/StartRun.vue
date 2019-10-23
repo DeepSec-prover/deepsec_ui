@@ -44,16 +44,16 @@
                   <el-radio-button label="auto">Auto</el-radio-button>
                 </helper>
                 <helper helper-id="runOptions.distributed.yes">
-                  <el-radio-button label="yes">Yes</el-radio-button>
+                  <el-radio-button :label="true">Yes</el-radio-button>
                 </helper>
                 <helper helper-id="runOptions.distributed.no">
-                  <el-radio-button label="no">No</el-radio-button>
+                  <el-radio-button :label="false">No</el-radio-button>
                 </helper>
               </el-radio-group>
             </el-form-item>
-            <div v-show="runConf.distributed === 'yes'">
+            <div v-show="runConf.distributed === true">
               <!-- Nb jobs -->
-              <form-item-helper label="Nb jobs" helper-id="runOptions.nbJobs">
+              <form-item-helper label="Number jobs" helper-id="runOptions.nbJobs">
                 <el-checkbox class="auto" v-model="runConf.nbJobs.auto">Auto</el-checkbox>
                 <el-input-number v-show="!runConf.nbJobs.auto"
                                  v-model="runConf.nbJobs.value"
@@ -86,7 +86,7 @@
           <file-issues-list :files-issues="filesIssues"></file-issues-list>
         </el-row>
       </el-col>
-      <el-col :span="9" v-show="runConf.distributed === 'yes'">
+      <el-col :span="9" v-show="runConf.distributed === true">
         <!-- Add Distant server -->
         <el-button type="primary" icon="el-icon-plus" @click="runConf.addServer()" size="mini">
           Add Distant Server
