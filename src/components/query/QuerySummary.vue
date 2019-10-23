@@ -6,6 +6,8 @@
         <el-alert v-if="query.errorMsg" title="Error" type="error" :description="query.errorMsg" show-icon :closable="false"></el-alert>
         <!-- General information -->
         <dl class="in-line">
+          <dt>File</dt>
+          <dd>{{ query.run.inputFileName() }}</dd> <!-- TODO open file link -->
           <dt>Semantics</dt>
           <dd>
             <helper :helper-id="`semantics.${query.semantics}`" :text-content="true">{{ query.semantics }}</helper>
