@@ -50,7 +50,7 @@ function runCmd (cmd, event, mainWindow) {
     })
   })
 
-  // Stderr messages catching
+  // Stderr messages catching, should never happen
   process.stderr.on('data', data => {
     logger.error(`Error message from DeepSec API : ${data.toString()}`)
   })

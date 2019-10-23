@@ -44,7 +44,8 @@ export default class RunConfigModel {
   toJson () {
     let json = {
       'default_semantics': this.defaultSemantic,
-      'distributed': this.distributed
+      'distributed': this.distributed,
+      'por': this.por
     }
 
     if (this.distributed === 'yes') {
