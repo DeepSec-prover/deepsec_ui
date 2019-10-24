@@ -3,23 +3,23 @@ import Prism from 'prismjs'
 // Define the language grammar
 Prism.languages.deepsec = {
   keyword: {
-    pattern: /new|let|in(?!\()|if|then|else|->|!~\d/,
+    pattern: /(?<=^|\s)(new|let|if|then|else)(?=\s)|(?<=\s)->(?=\s)|(?<=^|\s)!~\d/,
     inside: {
       sup: /~\d+/
     }
   },
-  'in-out': /in(?=\()|out(?=\()|eavesdrop(?=\()/,
+  'in-out': /(?<=^|\s)(in|out|eavesdrop)(?=\()/,
   operator: /=\|/,
   function: {
     pattern: /#?\w+(?=\()/,
     inside: {
-      sub: /(?<=\w+)_\w+/
+      sub: /(?<=\w)_\d+(?=$|\s)/
     }
   },
   'no-args': /\(\)/,
   punctuation: /[()\u27e8\u27e9,;]/u, // TODO highlight for ⟨...⟩
-  sup: /(?<=\w+)~\d+/,
-  sub: /(?<=\w+)_\w+/
+  sup: /(?<=\w)~\d+(?=$|\s)/,
+  sub: /(?<=\w)_\d+(?=$|\s)/
 }
 
 // Create hook before rendering code
