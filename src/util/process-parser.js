@@ -6,6 +6,7 @@ import logger from 'electron-log'
  * @type {string}
  */
 const INDENT = '   '
+const BREAK_POINT = '\u200B' // zero-width space
 
 /**
  * Format an action list as a string of visible attack trace.
@@ -22,13 +23,15 @@ export function formatTrace (actions, atomicTable) {
     switch (action.type) {
       case 'input':
         res += 'in(' + formatRecipe(action.channel, atomicTable) + ',' +
-          formatRecipe(action.term, atomicTable) + ');'
+          formatRecipe(action.term, atomicTable) + ');' + BREAK_POINT
         break
       case 'output':
-        res += 'out(' + formatRecipe(action.channel, atomicTable) + ',ax_' + axiomId++ + ');'
+        res += 'out(' + formatRecipe(action.channel, atomicTable) + ',ax_' + axiomId++ + ');' +
+          BREAK_POINT
         break
       case 'eavesdrop':
-        res += 'eavesdrop(' + formatRecipe(action.channel, atomicTable) + ',ax_' + axiomId++ + ');'
+        res += 'eavesdrop(' + formatRecipe(action.channel, atomicTable) + ',ax_' + axiomId++ +
+          ');\u200B' + BREAK_POINT
         break
       // Skip others cases because not visible
     }
