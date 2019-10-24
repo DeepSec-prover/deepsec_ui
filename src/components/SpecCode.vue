@@ -1,12 +1,14 @@
 <template>
-  <code v-if="inLine" class="language-deepsec match-braces" ref="codeBlock"></code>
-  <div v-else class="language-deepsec match-braces line-numbers">
-    <pre><code ref="codeBlock"></code></pre>
-  </div>
+  <code v-if="inLine" class="language-deepsec match-braces" ref="code"></code>
+  <simplebar v-else class="code-block language-deepsec match-braces line-numbers">
+    <pre class="test"><code ref="code"></code></pre>
+  </simplebar>
 </template>
 
 <script>
   import Prism from '../util/prism-deepsec'
+  import Simplebar from 'simplebar-vue'
+  import 'simplebar/dist/simplebar.min.css'
   import logger from 'electron-log'
 
   // Disable automatic highlight at page load
@@ -14,6 +16,9 @@
 
   export default {
     name: 'spec-code',
+    components: {
+      Simplebar
+    },
     props: {
       code: String,
       inLine: {
@@ -26,11 +31,11 @@
         logger.silly('Update Prism code highlight')
         if (this.code) {
           // We have to edit directly the dom to enable Prism plugins
-          this.$refs.codeBlock.textContent = this.code
-          Prism.highlightElement(this.$refs.codeBlock)
+          this.$refs.code.textContent = this.code
+          Prism.highlightElement(this.$refs.code)
         } else {
           // No code yet
-          this.$refs.codeBlock.textContent = 'loading ...'
+          this.$refs.code.textContent = 'loading ...'
         }
       }
     },
@@ -70,5 +75,17 @@
   /* To avoid different line high and bad line number */
   sub {
     vertical-align: bottom;
+  }
+
+  /* Scroll bar color */
+  .simplebar-scrollbar.simplebar-visible:before {
+    background-color: white;
+  }
+</style>
+
+<style scoped>
+  /* TODO remove horizontal scroll in <pre> for Simplebar */
+  .code-block {
+    max-height: 80vh; /* 80% of the window height */
   }
 </style>

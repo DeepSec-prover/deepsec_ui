@@ -25,6 +25,7 @@
     "electron-settings": "^3.2.0",
     "element-ui": "^2.12.0",
     "prismjs": "^1.17.1",
+    "simplebar-vue": "^1.3.3",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3"
   },

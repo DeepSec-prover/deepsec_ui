@@ -15,8 +15,8 @@
     <!-- Details -->
     <template slot="details">
       <el-row type="flex" :gutter="10" justify="center">
-        <el-col :lg="12" :xl="8" v-for="(process, index) in processesStr">
-          <h3>Process {{ index + 1 }} </h3>
+        <el-col :span="12" v-for="(process, index) in processesStr">
+          <h3>Process {{ index + 1 }}</h3>
           <spec-code :code="process"></spec-code>
         </el-col>
       </el-row>
