@@ -75,6 +75,8 @@ function format (subProcess, atomicTable, indent) {
       return formatFunction(subProcess, atomicTable, indent)
     case 'Equality':
       return formatEquality(subProcess, atomicTable, indent)
+    case 'Axiom':
+      return formatAxiom(subProcess, atomicTable, indent)
     case 'New':
       return linePrefix + formatNew(subProcess, atomicTable, indent)
     case 'LetInElse':
@@ -87,6 +89,8 @@ function format (subProcess, atomicTable, indent) {
       return linePrefix + formatInput(subProcess, atomicTable, indent)
     case 'IfThenElse':
       return linePrefix + formatIfThenElse(subProcess, atomicTable, indent)
+    case 'Bang':
+      return linePrefix + formatBang(subProcess, atomicTable, indent)
     case null:
       return linePrefix + '0\n'
     default:
@@ -273,6 +277,18 @@ function formatIfThenElse (subProcess, atomicTable, indent) {
 }
 
 /**
+ *  Format "Bang" type to readable string
+ *
+ * @param {Object} subProcess - A structured sub-process
+ * @param {Array} atomicTable - The table of atomic data
+ * @param {number} indent - The number of indentation character for the current sub-process (>1)
+ * @returns {string} A readable string which describe the sub-process and its children
+ */
+function formatBang (subProcess, atomicTable, indent) {
+  return `!~${subProcess.multiplicity}\n` + format(subProcess.process, atomicTable, indent)
+}
+
+/**
  *  Format "Equality" type to readable string
  *
  * @param {Object} subProcess - A structured sub-process
@@ -282,6 +298,10 @@ function formatIfThenElse (subProcess, atomicTable, indent) {
  */
 function formatEquality (subProcess, atomicTable, indent) {
   return '=' + format(subProcess.term, atomicTable, indent)
+}
+
+function formatAxiom (subProcess, atomicTable, indent) {
+  return 'ax_' + subProcess.id
 }
 
 /**

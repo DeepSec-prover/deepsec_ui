@@ -14,9 +14,9 @@ or
   "type": "Function",
   "symbol": <int>,
   "args": [
-    <term>,
+    <recipe>,
     ...,
-    <term>
+    <recipe>
   ]
 }
 ```
