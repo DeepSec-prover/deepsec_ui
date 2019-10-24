@@ -2,7 +2,7 @@
   <el-collapse-item :name="query.path">
     <template slot="title">
       <h3>
-        <result-status :status="query.status"></result-status> Query {{ query.index }}
+        <result-status :status="query.status" tooltip></result-status> Query {{ query.index }}
         <el-tag size="small" class="query-result" :type="query.attackFound() ? 'danger' : 'success'">
           {{ query.shortResultDescription() }}
         </el-tag>

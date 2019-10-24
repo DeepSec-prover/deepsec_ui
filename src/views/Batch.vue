@@ -48,7 +48,7 @@
                           :name="run.path">
           <template slot="title">
             <h3>
-              <result-status :status="run.status"></result-status> {{ run.title() }}
+              <result-status :status="run.status" tooltip></result-status> {{ run.title() }}
             </h3>
             <span class="run-info">
             {{ run.nbQueries() }} {{ run.nbQueries() > 1 ? 'queries' : 'query' }}
