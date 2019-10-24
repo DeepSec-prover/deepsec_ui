@@ -41,9 +41,16 @@ waiting +
   ...
   "start_time": <int>, // Timestamp
   "progression": {
-     round: <int>, // Single core = 0
-     percent: <int>, // 0-100
-     jobs_remaining: <int>
+     "round": <int>, // Single core = 0
+     "verification": {
+       "percent": <int>, // 0-100
+       "jobs_remaining": <int>
+     },
+     "generation": {
+       "minimum_jobs": <int>,
+       "jobs_created": <int>
+     }
+     // Can have either verification or generation but not both at the same time.
   }
 }
 ```
@@ -58,9 +65,16 @@ waiting +
   "start_time": <int> (optional), // Timestamp. Not defined if the query was canceled before to start
   "end_time": <int>, // Timestamp. When is has been canceled
   "progression": {
-     round: <int>, // Single core = 0
-     percent: <int>, // 0-100
-     jobs_remaining: <int>
+     "round": <int>, // Single core = 0
+     "verification": {
+       "percent": <int>, // 0-100
+       "jobs_remaining": <int>
+     },
+     "generation": {
+       "minimum_jobs": <int>,
+       "jobs_created": <int>
+     }
+     // Can have either verification or generation but not both at the same time.
   }
 }
 ```
@@ -76,9 +90,16 @@ waiting +
   "end_time": <int>, // Timestamp. When the error occurs
   "error_msg": <string>,
   "progression": {
-     round: <int>, // Single core = 0
-     percent: <int>, // 0-100
-     jobs_remaining: <int>
+     "round": <int>, // Single core = 0
+     "verification": {
+       "percent": <int>, // 0-100
+       "jobs_remaining": <int>
+     },
+     "generation": {
+       "minimum_jobs": <int>,
+       "jobs_created": <int>
+     }
+     // Can have either verification or generation but not both at the same time.
   }
 }
 ```
