@@ -45,8 +45,12 @@ export default class QueryModel extends ResultModel {
     }
   }
 
-  loadRelations (json) {
+  loadRelations () {
     this.batch = new BatchModel(this.batchFile, false)
+    this.run = new RunModel(this.runFile, false)
+  }
+
+  loadRun () {
     this.run = new RunModel(this.runFile, false)
   }
 

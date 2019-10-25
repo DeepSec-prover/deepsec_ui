@@ -45,4 +45,22 @@ export default class BatchModel extends ResultModel {
   nbRun () {
     return this.runFiles.length
   }
+
+  runIndex (run) {
+    return this.runFiles.indexOf(run.file)
+  }
+
+  runsStatusCount () {
+    let status = []
+
+    for (let run in this.runs) {
+      if (!status[this.run.status]) {
+        status[this.run.status] = 1
+      } else {
+        status[this.run.status]++
+      }
+    }
+
+    return status
+  }
 }

@@ -2,6 +2,9 @@ import userSettings from 'electron-settings'
 import logger from 'electron-log'
 import { isEmptyOrBlankStr, isFile } from './misc'
 import { spawn } from 'child_process'
+import BatchModel from '../models/BatchModel'
+import RunModel from '../models/RunModel'
+import QueryModel from '../models/QueryModel'
 
 /**
  * Run a command through Deepsec API.
@@ -22,7 +25,7 @@ function runCmd (cmd, event, mainWindow) {
   } else if (!isFile(apiPath)) {
     // Send bad result to the Start Run page
     event.reply('deepsec-api:result',
-      { 'success': false, 'error': `Incorrect DeepSec API path (${apiPath})` })
+                { 'success': false, 'error': `Incorrect DeepSec API path (${apiPath})` })
     return
   }
 
@@ -116,10 +119,10 @@ function handleAnswer (answer, process, event, mainWindow) {
       userError(answer, event) // Event reply
       break
     case 'batch_internal_error':
-      batchInternalError(answer, mainWindow) // Notification
+      batchEnded(answer, mainWindow) // Notification, use batch ended
       break
     case 'query_internal_error':
-      queryInternalError(answer, mainWindow) // Notification
+      queryEnded(answer, mainWindow) // Notification, use query ended
       break
     default:
       logger.error(`Unknown DeepSec API answer command : ${answer.command}`)
@@ -136,105 +139,158 @@ function batchStarted (answer, event, mainWindow) {
   if (answer.warning_runs && answer.warning_runs.length > 0) {
     let nbFilesWarning = answer.warning_runs.length
     let nbTotalWarning = answer.warning_runs.reduce((sum, a) => sum + a.warnings.length, 0)
+
     // Send ui notification
     mainWindow.webContents.send('notification:show',
-      'Batch started with warnings',
-      `Result file : ${answer.file} <br>
-      ${nbTotalWarning} warning${nbTotalWarning > 1 ? 's' : ''} in
-      ${nbFilesWarning} file${nbFilesWarning > 1 ? 's' : ''}`,
-      'warning',
-      'batch')
+                                `Batch started with warnings`,
+                                `${nbTotalWarning} warning${nbTotalWarning > 1 ? 's' : ''} in
+                                 ${nbFilesWarning} file${nbFilesWarning > 1 ? 's' : ''}`,
+                                'warning',
+                                'batch',
+                                { name: 'batch', params: { 'path': answer.file } }
+    )
   } else {
     // Send ui notification
     mainWindow.webContents.send('notification:show',
-      'Batch started',
-      `Result file : ${answer.file}`,
-      'info',
-      'batch')
+                                'Batch started',
+                                '',
+                                'info',
+                                'batch',
+                                { name: 'batch', params: { 'path': answer.file } })
   }
 }
 
 function runStarted (answer, mainWindow) {
+  let run = new RunModel(answer.file)
+  run.loadBatch()
   // Send ui notification
   mainWindow.webContents.send('notification:show',
-    'Run started',
-    `Result file : ${answer.file}`,
-    'info',
-    'run')
+                              `Run ${run.title()} started`,
+                              `From batch ${run.batch.title()} : run ${run.batch.runIndex(run) +
+                              1} / ${run.batch.nbRun()}`,
+                              'info',
+                              'run',
+                              { name: 'run', params: { 'path': answer.file } })
 }
 
 function queryStarted (answer, mainWindow) {
+  let query = new QueryModel(answer.file)
+  query.loadRun()
   // Send ui notification
   mainWindow.webContents.send('notification:show',
-    'Query started',
-    `Result file : ${answer.file}`,
-    'info',
-    'query')
+                              `Query ${query.title()} started`,
+                              `From run ${query.run.title()} : query ${query.index} / ${query.run.nbQueries()}`,
+                              'info',
+                              'query',
+                              { name: 'query', params: { 'path': answer.file } })
 }
 
 function queryEnded (answer, mainWindow) {
   let title
   let type
+  let query = new QueryModel(answer.file)
+  query.loadRun()
   switch (answer.status) {
     case 'completed':
-      title = 'Query completed'
+      title = `Query ${query.name()} completed`
       type = 'success'
       break
     case 'canceled':
-      title = 'Query canceled'
+      title = `Query ${query.name()} canceled`
       type = 'warning'
+      break
+    case 'internal_error':
+      title = `Query ${query.name()} internal error`
+      type = 'error'
       break
     default:
       logger.error(`Unknown query status : ${answer.status}`)
-      title = `Query ended (${answer.status})`
+      title = `Query ${query.name()} ended (${answer.status})`
       type = 'error'
   }
 
   // Send ui notification
   mainWindow.webContents.send('notification:show',
-    title,
-    `Result file : ${answer.file}`,
-    type,
-    'query')
+                              title,
+                              `From run ${query.run.title()} : query ${query.index} / ${query.run.nbQueries()}`,
+                              type,
+                              'query',
+                              { name: 'query', params: { 'path': answer.file } })
 }
 
 function runEnded (answer, mainWindow) {
   let title
   let type
+  let run = new RunModel(answer.file)
+  run.loadBatch()
   switch (answer.status) {
     case 'completed':
-      title = 'Run completed'
+      title = `Run ${run.title()} completed`
       type = 'success'
       break
     case 'canceled':
-      title = 'Run canceled'
+      title = `Run ${run.title()} canceled`
       type = 'warning'
       break
     case 'internal_error':
-      title = 'Run internal error'
+      title = `Run ${run.title()} internal error`
       type = 'error'
       break
     default:
       logger.error(`Unknown run status : ${answer.status}`)
-      title = `Run ended (${answer.status})`
+      title = `Run ${run.title()} ended (${answer.status})`
       type = 'error'
   }
 
   // Send ui notification
   mainWindow.webContents.send('notification:show',
-    title,
-    `Result file : ${answer.file}`,
-    type,
-    'run')
+                              title,
+                              `From batch ${run.batch.title()} : run ${run.batch.runIndex(run) +
+                              1} / ${run.batch.nbRun()}`,
+                              type,
+                              'run',
+                              { name: 'run', params: { 'path': answer.file } })
 }
 
 function batchEnded (answer, mainWindow) {
+  let title
+  let type
+  let batch = new BatchModel(answer.file, true) // Load with runs
+  let nbRun = batch.nbRun()
+  let runStatus = batch.runsStatusCount()
+
+  switch (answer.status) {
+    case 'completed':
+      title = `Batch ${batch.title()} completed`
+      type = 'success'
+      break
+    case 'canceled':
+      title = `Batch ${batch.title()} canceled`
+      type = 'warning'
+      break
+    case 'internal_error':
+      title = `Batch ${batch.title()} internal error`
+      type = 'error'
+      break
+    default:
+      logger.error(`Unknown batch status : ${answer.status}`)
+      title = `Batch ${batch.title()} ended (${answer.status})`
+      type = 'error'
+  }
+
+  // TODO use vue component for notification message (if possible)
   // Send ui notification
   mainWindow.webContents.send('notification:show',
-    'Batch completed',
-    `Result file : ${answer.file}`,
-    'success',
-    'batch')
+                              title,
+                              `Batch of ${nbRun} run${nbRun > 1 ? 's' : ''}.<ul>
+                              <li>${runStatus['completed']} completed</li>
+                              <li>${runStatus['canceled']} canceled</li>
+                              <li>${runStatus['internal_error']} error</li>
+                              </ul>
+                              `,
+                              type,
+                              'batch',
+                              { name: 'batch', params: { 'path': answer.file } })
 }
 
 // ======================= Error Answers ======================
@@ -264,25 +320,8 @@ function userError (answer, event) {
     'error': `${nbTotalError} error${nbTotalError > 1 ? 's' : ''} and
     ${nbTotalWarnings} warning${nbTotalWarnings > 1 ? 's' : ''} in
     ${nbFilesIssue} file${nbFilesIssue > 1 ? 's' : ''}`,
-    'files_issues': answer.error_runs })
-}
-
-function batchInternalError (answer, event, mainWindow) {
-  // Send ui notification
-  mainWindow.webContents.send('notification:show',
-    'Internal error',
-    `${answer.error_msg}<br>Result file : ${answer.file}`,
-    'error',
-    'batch')
-}
-
-function queryInternalError (answer, mainWindow) {
-  // Send ui notification
-  mainWindow.webContents.send('notification:show',
-    'Internal query error',
-    `${answer.error_msg}<br>Result file : ${answer.file}`,
-    'error',
-    'query')
+    'files_issues': answer.error_runs
+  })
 }
 
 // ======================== Exit Answer =======================

@@ -51,6 +51,10 @@ export default class RunModel extends ResultModel {
       new QueryModel(queryFile, false))
   }
 
+  loadBatch () {
+    this.batch = new BatchModel(this.batchFile, false)
+  }
+
   title () {
     return this.inputFileName ().replace(/\.dps$/ui, '')
   }

@@ -63,7 +63,7 @@
         this.resetConfirm = false
       },
       testNotification () {
-        this.$notification('Test title', 'Test description', 'info')
+        this.$notification('Test title', 'Test description')
       }
     }
   }

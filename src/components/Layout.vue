@@ -45,8 +45,8 @@
     },
     mounted () {
       // When received data then show notification
-      ipcRenderer.on('notification:show', (event, title, content, type, topic) => {
-        this.$notification(title, content, type, topic)
+      ipcRenderer.on('notification:show', (event, title, content, type, topic, link) => {
+        this.$notification(title, content, type, topic, link, this.$router)
       })
     }
   }
