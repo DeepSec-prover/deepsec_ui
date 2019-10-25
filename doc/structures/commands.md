@@ -102,6 +102,22 @@ Canceling a query : UI -> DeepSec
 }
 ```
 
+Canceling a batch: UI -> DeepSec
+
+```
+{
+  "command": "cancel_batch"
+}
+```
+
+```
+{
+  "command": "exit"
+}
+```
+The two previous commands behave similarly.
+
+
 Get config: UI -> DeepSec
 ```
 {
@@ -122,7 +138,14 @@ Progression: DeepSec -> UI
 {
   "command": "query_progression",
   "round": <int>, // Single core = 0
-  "percent": <int>, // 0-100
-  "jobs_remaining": <int>
+  "verification": {
+    "percent": <int>, // 0-100
+    "jobs_remaining": <int>
+  },
+  "generation": {
+    "minimum_jobs": <int>,
+    "jobs_created": <int>
+  }
+  // Can have either verification or generation but not both at the same time.
 }
 ```
