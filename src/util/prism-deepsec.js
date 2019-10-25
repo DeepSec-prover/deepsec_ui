@@ -3,23 +3,23 @@ import Prism from 'prismjs'
 // Define the language grammar
 Prism.languages.deepsec = {
   keyword: {
-    pattern: /(?<=^|\s)(new|let|if|then|else)(?=\s)|(?<=\s)->(?=\s)|(?<=^|\s)!~\d/,
+    pattern: /(?<=\b)(new|let|if|then|else|in)(?=\s)|(?<=\s)->(?=\s)|(?<=^|\s|;)!~\d+/,
     inside: {
       sup: /~\d+/
     }
   },
-  'in-out': /(?<=^|\s)(in|out|eavesdrop)(?=\()/,
+  'in-out': /(?<=\b)(in|out|eavesdrop)(?=\()/,
   operator: /=\|/,
   function: {
-    pattern: /#?\w+(?=\()/,
+    pattern: /(?<=^|[\s,;()])(#?\w+|proj_{\d+,\d+})(?=\()/,
     inside: {
-      sub: /(?<=\w)_\d+(?=$|\s)/
+      sub: /(?<=\w)_\d+(?=\b)/
     }
   },
   'no-args': /\(\)/,
-  punctuation: /[()\u27e8\u27e9,;]/u, // TODO highlight for ⟨...⟩
-  sup: /(?<=\w)~\d+(?=$|\s)/,
-  sub: /(?<=\w)_\d+(?=$|\s)/
+  punctuation: /[(),;]/u,
+  sup: /(?<=\w)~\d+(?=\b)/,
+  sub: /(?<=\w)_\d+(?=\b)/
 }
 
 // Create hook before rendering code
@@ -37,6 +37,11 @@ Prism.hooks.add('wrap', env => {
   // Hide no args "()"
   else if (env.type === 'no-args') {
     env.classes.push('hidden')
+  }
+  // Format projection function
+  else if (env.type === 'function' && env.content.startsWith('proj_{')) {
+    let n = Array.from(env.content.matchAll(/\d+/g))
+    env.content = `\u03A0<sub>${n[0]},${n[1]}</sub>`
   }
 })
 

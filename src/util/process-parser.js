@@ -187,7 +187,7 @@ function formatFunction (subProcess, atomicTable, indent) {
   const symbol = atomicTable[subProcess.symbol]
 
   if (symbol.category === 'Tuple') {
-    return '⟨' + subProcess.args.map(value => format(value, atomicTable, indent)).join(',') + '⟩'
+    return '(' + subProcess.args.map(value => format(value, atomicTable, indent)).join(',') + ')'
   } else {
     let res = symbol.label
 
