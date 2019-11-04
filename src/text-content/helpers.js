@@ -9,6 +9,7 @@ const helpers = {
     nbJobs: 'TODO description of nbJobs',
     localWorkers: 'TODO description of localWorkers',
     roundTimer: 'TODO description of roundTimer',
+    por: 'TODO description of POR',
     server: {
       host: 'TODO description of server.host',
       path: 'TODO description of server.path',

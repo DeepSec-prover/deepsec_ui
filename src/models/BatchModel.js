@@ -1,5 +1,6 @@
 import ResultModel from './ResultModel'
 import RunModel from './RunModel'
+import RunConfigModel from './RunConfigModel'
 
 export default class BatchModel extends ResultModel {
   mapJsonFile (json) {
@@ -7,7 +8,7 @@ export default class BatchModel extends ResultModel {
     this.deepsecVersion = json.deepsec_version
     this.gitBranch = json.git_branch
     this.gitHash = json.git_hash
-    this.commandOptions = json.command_options // TODO same model than in start run
+    this.commandOptions = RunConfigModel.loadFromJson(json.command_options)
 
     this.runs = null // Not loaded yet
     this.runFiles = json.run_files
@@ -48,6 +49,10 @@ export default class BatchModel extends ResultModel {
 
   runIndex (run) {
     return this.runFiles.indexOf(run.path) + 1
+  }
+
+  localId () {
+    return this.path.replace(/\.json$/ui, '')
   }
 
   runsStatusCount () {

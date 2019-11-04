@@ -19,11 +19,11 @@
         <dl class="in-line">
           <dt>Semantics</dt>
           <dd>
-            <helper :helper-id="`semantics.${query.semantics}`" :text-content="true">{{ query.semantics }}</helper>
+            <helper :helper-id="`semantics.${query.semantics}`" text-content>{{ query.semantics }}</helper>
           </dd>
           <dt>Query type</dt>
           <dd>
-            <helper :helper-id="`query.type.${query.type}`" :text-content="true">{{ text.query.type[query.type] }}</helper>
+            <helper :helper-id="`query.type.${query.type}`" text-content>{{ text.query.type[query.type] }}</helper>
           </dd>
         </dl>
       </el-col>

@@ -8,6 +8,8 @@
           <dl class="in-line">
             <dt>Nb run</dt>
             <dd>{{ batch.nbRun() }}</dd>
+            <dt>Local ID</dt>
+            <dd>{{ batch.localId() }}</dd>
             <dt>Start time</dt>
             <dd>{{ batch.startTime.toLocaleDateString() }} {{ batch.startTime.toLocaleTimeString() }}</dd>
             <dt>Running time</dt>
@@ -16,9 +18,12 @@
             </dd>
           </dl>
         </el-tab-pane>
+        <!-- Run Options -->
         <el-tab-pane>
           <span slot="label"><i class="el-icon-set-up"></i> Run Options</span>
+          <run-config :user-config="batch.commandOptions" :computed-config="batch.commandOptions"></run-config>
         </el-tab-pane>
+        <!-- Deepsec Version -->
         <el-tab-pane>
           <span slot="label"><i class="el-icon-monitor"></i> DeepSec version</span>
           <dl class="in-line">
@@ -70,6 +75,7 @@
   import Duration from '../components/Duration'
   import ResultLayout from '../components/results/ResultLayout'
   import QueryCollapsible from '../components/query/QueryCollapsible'
+  import RunConfig from '../components/RunConfig'
   import settings from '../../settings'
   import path from 'path'
 
@@ -81,7 +87,8 @@
       Duration,
       ResultLayout,
       QueryCollapsible,
-      ResultStatus
+      ResultStatus,
+      RunConfig
     },
     props: {
       batch: Object

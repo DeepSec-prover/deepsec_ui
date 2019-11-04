@@ -36,6 +36,19 @@ export default class RunConfigModel {
     return this.servers.length
   }
 
+  nbDistantWorkers () {
+    let sum = 0
+
+    for (let s in this.servers) {
+      if (s.workers.auto) {
+        return 'auto'
+      }
+      sum += s.workers.value
+    }
+
+    return sum
+  }
+
   /**
    * Convert to a json object usable for DeepSec API command.
    *
@@ -51,6 +64,7 @@ export default class RunConfigModel {
     if (this.distributed === true) {
       json['nb_jobs'] = this.nbJobs.auto ? 'auto' : this.nbJobs.value
       json['local_workers'] = this.localWorkers.auto ? 'auto' : this.localWorkers.value
+      json['round_timer'] = this.roundTimer
       json['distant_workers'] = this.servers.map(s => {
         return {
           'host': s.host,
@@ -58,10 +72,48 @@ export default class RunConfigModel {
           'workers': s.workers.auto ? 'auto' : s.workers.value
         }
       })
-      json['round_timer'] = this.roundTimer
     }
 
     return json
+  }
+
+  /**
+   * Load a run config from json object.
+   *
+   * @param {Object} json The json object which contains the config information
+   * @returns {RunConfigModel} The run config model
+   */
+  static loadFromJson (json) {
+    let config = new RunConfigModel()
+    config.defaultSemantic = json.default_semantics
+    config.distributed = json.distributed
+    config.por = json.por
+
+    if (json.nb_jobs) {
+      config.nbJobs.auto = json.nb_jobs === 'auto'
+      if (!config.nbJobs.auto) {
+        config.nbJobs.value = json.nb_jobs
+      }
+    }
+
+    if (json.local_workers) {
+      config.localWorkers.auto = json.local_workers === 'auto'
+      if (!config.localWorkers.auto) {
+        config.localWorkers.value = json.local_workers
+      }
+    }
+
+    if (json.round_timer) {
+      config.roundTimer = json.round_timer
+    }
+
+    if (json.distant_workers) {
+      config.servers = json.distant_workers.map(s => {
+        RunConfigServerModel.loadFromJson(s, ++config.serversId)
+      })
+    }
+
+    return config
   }
 }
 
@@ -71,5 +123,20 @@ class RunConfigServerModel {
     this.host = ''
     this.path = ''
     this.workers = { auto: true, value: 10 }
+  }
+
+  static loadFromJson (json, id) {
+    let server = new RunConfigServerModel(id)
+    server.host = json.host
+    server.path = json.path
+
+    if (json.workers) {
+      server.workers.auto = json.workers === 'auto'
+      if (!server.workers.auto) {
+        server.workers.value = json.workers
+      }
+    }
+
+    return server
   }
 }

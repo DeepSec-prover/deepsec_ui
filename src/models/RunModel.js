@@ -43,12 +43,12 @@ export default class RunModel extends ResultModel {
   loadRelations () {
     this.batch = new BatchModel(this.batchFile, false)
     this.queries = this.queryFiles.map(queryFile =>
-      new QueryModel(queryFile, false))
+                                         new QueryModel(queryFile, false))
   }
 
   loadQueries () {
     this.queries = this.queryFiles.map(queryFile =>
-      new QueryModel(queryFile, false))
+                                         new QueryModel(queryFile, false))
   }
 
   loadBatch () {
@@ -56,7 +56,7 @@ export default class RunModel extends ResultModel {
   }
 
   title () {
-    return this.inputFileName ().replace(/\.dps$/ui, '')
+    return this.inputFileName().replace(/\.dps$/ui, '')
   }
 
   inputFileName () {
