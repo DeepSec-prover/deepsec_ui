@@ -166,8 +166,8 @@ function runStarted (answer, mainWindow) {
   // Send ui notification
   mainWindow.webContents.send('notification:show',
                               `Run ${run.title()} started`,
-                              `From batch ${run.batch.title()} : run ${run.batch.runIndex(run) +
-                              1} / ${run.batch.nbRun()}`,
+                              `From batch ${run.batch.title()} <br> Run ${run.batch.runIndex(
+                                run)} / ${run.batch.nbRun()}`,
                               'info',
                               'run',
                               { name: 'run', params: { 'path': answer.file } })
@@ -179,7 +179,7 @@ function queryStarted (answer, mainWindow) {
   // Send ui notification
   mainWindow.webContents.send('notification:show',
                               `Query ${query.title()} started`,
-                              `From run ${query.run.title()} : query ${query.index} / ${query.run.nbQueries()}`,
+                              `From run ${query.run.title()} <br> Query ${query.index} / ${query.run.nbQueries()}`,
                               'info',
                               'query',
                               { name: 'query', params: { 'path': answer.file } })
@@ -192,27 +192,27 @@ function queryEnded (answer, mainWindow) {
   query.loadRun()
   switch (answer.status) {
     case 'completed':
-      title = `Query ${query.name()} completed`
+      title = `Query ${query.title()} completed`
       type = 'success'
       break
     case 'canceled':
-      title = `Query ${query.name()} canceled`
+      title = `Query ${query.title()} canceled`
       type = 'warning'
       break
     case 'internal_error':
-      title = `Query ${query.name()} internal error`
+      title = `Query ${query.title()} internal error`
       type = 'error'
       break
     default:
       logger.error(`Unknown query status : ${answer.status}`)
-      title = `Query ${query.name()} ended (${answer.status})`
+      title = `Query ${query.title()} ended (${answer.status})`
       type = 'error'
   }
 
   // Send ui notification
   mainWindow.webContents.send('notification:show',
                               title,
-                              `From run ${query.run.title()} : query ${query.index} / ${query.run.nbQueries()}`,
+                              `From run ${query.run.title()} <br> Query ${query.index} / ${query.run.nbQueries()}`,
                               type,
                               'query',
                               { name: 'query', params: { 'path': answer.file } })
@@ -245,8 +245,8 @@ function runEnded (answer, mainWindow) {
   // Send ui notification
   mainWindow.webContents.send('notification:show',
                               title,
-                              `From batch ${run.batch.title()} : run ${run.batch.runIndex(run) +
-                              1} / ${run.batch.nbRun()}`,
+                              `From batch ${run.batch.title()} <br> Run ${run.batch.runIndex(
+                                run)} / ${run.batch.nbRun()}`,
                               type,
                               'run',
                               { name: 'run', params: { 'path': answer.file } })
@@ -282,10 +282,11 @@ function batchEnded (answer, mainWindow) {
   // Send ui notification
   mainWindow.webContents.send('notification:show',
                               title,
-                              `Batch of ${nbRun} run${nbRun > 1 ? 's' : ''}.<ul>
-                              <li>${runStatus['completed']} completed</li>
-                              <li>${runStatus['canceled']} canceled</li>
-                              <li>${runStatus['internal_error']} error</li>
+                              `Batch of ${nbRun} run${nbRun > 1 ? 's' : ''}.
+                              <ul>
+                                <li>${runStatus['completed']} completed</li>
+                                <li>${runStatus['canceled']} canceled</li>
+                                <li>${runStatus['internal_error']} error</li>
                               </ul>
                               `,
                               type,

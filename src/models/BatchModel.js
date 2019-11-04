@@ -47,19 +47,18 @@ export default class BatchModel extends ResultModel {
   }
 
   runIndex (run) {
-    return this.runFiles.indexOf(run.file)
+    return this.runFiles.indexOf(run.path) + 1
   }
 
   runsStatusCount () {
     let status = []
+    status['in_progress'] = 0
+    status['waiting'] = 0
+    status['completed'] = 0
+    status['canceled'] = 0
+    status['internal_error'] = 0
 
-    for (let run in this.runs) {
-      if (!status[this.run.status]) {
-        status[this.run.status] = 1
-      } else {
-        status[this.run.status]++
-      }
-    }
+    this.runs.forEach(run => status[run.status]++)
 
     return status
   }

@@ -79,3 +79,17 @@ dl.in-line dd {
   margin-inline-start: initial;
   align-self: center;
 }
+
+/* Notifications */
+.el-notification__content {
+  text-align: initial !important;
+}
+
+.el-notification__content ul {
+  margin-top: 7px;
+  margin-bottom: 7px;
+}
+
+.el-notification .el-icon-info {
+  color: #409EFF !important;
+}
