@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-row>
-      <el-col :lg="12">
+      <el-col :md="12">
         <dl class="in-line">
           <dt>Default Semantic</dt>
           <dd>
@@ -15,7 +15,9 @@
               {{ userConfig.distributed }}
             </helper>
             <span class="computed-conf" v-if="userConfig.distributed === 'auto' && computedConfig">
-              ({{ computedConfig.distributed }})
+              (<helper helper-str="Value computed during the run"
+                       :helper-id="`runOptions.distributed.${computedConfig.distributed}`"
+                       text-content>{{ computedConfig.distributed }}</helper>)
             </span>
           </dd>
           <dt>POR</dt>
@@ -26,20 +28,21 @@
           </dd>
         </dl>
       </el-col>
-      <el-col :lg="12" v-if="isDistributed">
+      <el-col :md="12" v-if="isDistributed">
         <dl class="in-line">
           <dt>Number of Jobs</dt>
           <dd>
             {{ userConfig.nbJobs.auto ? 'auto' : userConfig.nbJobs.value }}
             <span class="computed-conf" v-if="userConfig.nbJobs.auto && computedConfig">
-              ({{ computedConfig.nbJobs.value }})
+              (<helper helper-str="Value computed during the run"
+                       text-content>{{ computedConfig.nbJobs.value }}</helper>)
             </span>
           </dd>
           <dt>Local Workers</dt>
           <dd>
             {{ userConfig.localWorkers.auto ? 'auto' : userConfig.localWorkers.value }}
             <span class="computed-conf" v-if="userConfig.localWorkers.auto && computedConfig">
-              ({{ computedConfig.localWorkers.value }})
+              (<helper helper-str="Value computed during the run" text-content>{{ computedConfig.localWorkers.value }}</helper>)
             </span>
           </dd>
           <dt>Round Timer</dt>
@@ -58,17 +61,19 @@
       </el-row>
       <!-- Servers listing -->
       <el-row>
+        <!-- The guy who decide to start the "for i in range" from 1 deserve to burn in hell -->
         <el-col :sm="12" :lg="6" v-for="i in nbServer">
-          <dl>
+          <dl class="in-line">
             <dt>Host</dt>
-            <dd>{{ userConfig.servers[i].host }}</dd>
+            <dd>{{ userConfig.servers[i - 1].host }}</dd>
             <dt>Path</dt>
-            <dd>{{ userConfig.servers[i].path }}</dd>
+            <dd>{{ userConfig.servers[i - 1].path }}</dd>
             <dt>Workers</dt>
             <dd>
-              {{ userConfig.servers[i].workers.auto ? 'auto' : userConfig.servers[i].workers.value }}
-              <span class="computed-conf" v-if="userConfig.servers[i].workers.auto && computedConfig">
-                ({{ computedConfig.servers[i].workers.value }})
+              {{ userConfig.servers[i - 1].workers.auto ? 'auto' : userConfig.servers[i - 1].workers.value }}
+              <span class="computed-conf" v-if="userConfig.servers[i - 1].workers.auto && computedConfig">
+                (<helper helper-str="Value computed during the run"
+                         text-content>{{ computedConfig.servers[i - 1].workers.value }}</helper>)
               </span>
             </dd>
           </dl>

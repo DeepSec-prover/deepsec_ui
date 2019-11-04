@@ -21,7 +21,7 @@
         <!-- Run Options -->
         <el-tab-pane>
           <span slot="label"><i class="el-icon-set-up"></i> Run Options</span>
-          <run-config :user-config="batch.commandOptions" :computed-config="batch.commandOptions"></run-config>
+          <run-config :user-config="batch.commandOptions" :computed-config="batch.computedOptions"></run-config>
         </el-tab-pane>
         <!-- Deepsec Version -->
         <el-tab-pane>

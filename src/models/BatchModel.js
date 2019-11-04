@@ -9,6 +9,7 @@ export default class BatchModel extends ResultModel {
     this.gitBranch = json.git_branch
     this.gitHash = json.git_hash
     this.commandOptions = RunConfigModel.loadFromJson(json.command_options)
+    this.computedOptions = RunConfigModel.loadFromJson(json.computed_options)
 
     this.runs = null // Not loaded yet
     this.runFiles = json.run_files

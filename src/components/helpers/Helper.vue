@@ -1,9 +1,9 @@
 <template>
-  <el-tooltip :content="helperContent(helperId)"
-              :placement="helper.placement"
+  <el-tooltip :placement="helper.placement"
               :effect="helper.effect"
               :open-delay="helper.openDelay"
               :disabled="helper.disable">
+    <div slot="content" v-html="helperContent"></div>
     <!-- If text add span and class for cursor -->
     <span v-if="textContent" :class="{'label-helper' : !helper.disable}">
       <slot></slot>

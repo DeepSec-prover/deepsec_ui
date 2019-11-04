@@ -39,11 +39,11 @@ export default class RunConfigModel {
   nbDistantWorkers () {
     let sum = 0
 
-    for (let s in this.servers) {
-      if (s.workers.auto) {
+    for (let i = 0; i < this.servers.length; i++) {
+      if (this.servers[i].workers.auto) {
         return 'auto'
       }
-      sum += s.workers.value
+      sum += this.servers[i].workers.value
     }
 
     return sum
@@ -109,7 +109,7 @@ export default class RunConfigModel {
 
     if (json.distant_workers) {
       config.servers = json.distant_workers.map(s => {
-        RunConfigServerModel.loadFromJson(s, ++config.serversId)
+        return RunConfigServerModel.loadFromJson(s, ++config.serversId)
       })
     }
 

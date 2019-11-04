@@ -33,7 +33,7 @@ Format of name: `timestamp_random.json`
     "default_semantics": "private" | "classic" | "eavesdrop",
     "distributed": <bool> | "auto",
     "nb_jobs": <int> | "auto",
-    "local_workers": <int> | "auto"
+    "local_workers": <int> | "auto",
     "round_timer": <int>,
     "por": <bool>,
     "distant_workers": [
@@ -41,6 +41,22 @@ Format of name: `timestamp_random.json`
         "host": <string>, // Format "<login>@<host>"
         "path": <string>,
         "workers": <int> | "auto"
+      },
+       ...
+     ],
+  },
+  "computed_options": {
+    "default_semantics": "private" | "classic" | "eavesdrop",
+    "distributed": <bool>,
+    "nb_jobs": <int>,
+    "local_workers": <int>,
+    "round_timer": <int>,
+    "por": <bool>,
+    "distant_workers": [
+      {
+        "host": <string>, // Format "<login>@<host>"
+        "path": <string>,
+        "workers": <int>
       },
        ...
      ],

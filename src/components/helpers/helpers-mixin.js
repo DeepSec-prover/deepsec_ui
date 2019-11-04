@@ -5,7 +5,12 @@ import userSettings from 'electron-settings'
 const mixin = {
   props: {
     helperId: {
-      type: String
+      type: String,
+      default: null
+    },
+    helperStr: {
+      type: String,
+      default: null
     }
   },
   data () {
@@ -18,28 +23,39 @@ const mixin = {
       }
     }
   },
-  methods: {
+  computed: {
     /**
      * Fetch the helper text from the id.
      *
-     * @param {String} id The unique id of the helper as object attribute ("path.to.string")
-     * @return {String|null} The content of the helper
+     * @return {String|null} A list of content string
      * @see ../text-content/helpers
      */
-    helperContent (id) {
-      let idParts = id.split('.')
-      let content = helpers
+    helperContent: function () {
+      let content = []
 
-      for (let part in idParts) {
-        content = content[idParts[part]]
+      // Fixed content
+      if (this.helperStr !== null) {
+        content.push(this.helperStr)
       }
 
-      if (typeof content === 'string' || content instanceof String) {
-        return content
-      } else {
-        logger.error(`Can't find the id "${id}" in the helpers file`)
-        return null
+      // Content from helper file
+      if (this.helperId) {
+        let helperContent = helpers
+        let idParts = this.helperId.split('.')
+
+        for (let part in idParts) {
+          helperContent = helperContent[idParts[part]]
+        }
+
+        if (typeof helperContent === 'string' || helperContent instanceof String) {
+          content.push(helperContent)
+        } else {
+          logger.error(`Can't find the id "${id}" in the helpers file`)
+          return null
+        }
       }
+
+      return content.join('<br>')
     }
   }
 }
