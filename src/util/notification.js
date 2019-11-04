@@ -37,10 +37,10 @@ export default function notification (title,
   }
 
   // If link add click event and css class
-  let customClass = ''
+  let customClasses = ['background-' + type]
   let onClick = null
   if (link) {
-    customClass = 'clickable'
+    customClasses.push('clickable')
     onClick = function () {
       router.push(link)
       this.close()
@@ -54,7 +54,7 @@ export default function notification (title,
                  type: type,
                  duration: userSettings.get('notificationDuration') * 1000, // Seconds to ms
                  onClick: onClick,
-                 customClass: customClass,
+                 customClass: customClasses.join(' '),
                  dangerouslyUseHTMLString: true // Never a problem
                })
 }

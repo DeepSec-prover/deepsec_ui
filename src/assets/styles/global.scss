@@ -35,6 +35,26 @@ h3 {
   cursor: pointer;
 }
 
+.background-success {
+  background-color: #e1f3d8 !important;
+}
+
+.background-default {
+  background-color: initial !important;
+}
+
+.background-error {
+  background-color: #fccfcf !important;
+}
+
+.background-warning {
+  background-color: rgb(249, 233, 210) !important;
+}
+
+.background-info {
+  background-color: rgb(230, 242, 255) !important;
+}
+
 /* Run, Query and Batch status */
 
 .color-completed {
