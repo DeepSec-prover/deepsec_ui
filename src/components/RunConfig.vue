@@ -12,18 +12,18 @@
           <dt>Distributed</dt>
           <dd>
             <helper :helper-id="`runOptions.distributed.${userConfig.distributed}`" text-content>
-              {{ userConfig.distributed }}
+              {{ userConfig.distributedStr() }}
             </helper>
             <span class="computed-conf" v-if="userConfig.distributed === 'auto' && computedConfig">
               (<helper helper-str="Value computed during the run"
                        :helper-id="`runOptions.distributed.${computedConfig.distributed}`"
-                       text-content>{{ computedConfig.distributed }}</helper>)
+                       text-content>{{ computedConfig.distributedStr() }}</helper>)
             </span>
           </dd>
           <dt>POR</dt>
           <dd>
             <helper :helper-id="`runOptions.por`" text-content>
-              {{ userConfig.por ? 'yes' : 'no' }}
+              {{ userConfig.porStr() }}
             </helper>
           </dd>
         </dl>
@@ -32,17 +32,18 @@
         <dl class="in-line">
           <dt>Number of Jobs</dt>
           <dd>
-            {{ userConfig.nbJobs.auto ? 'auto' : userConfig.nbJobs.value }}
+            {{ userConfig.nbJobsStr() }}
             <span class="computed-conf" v-if="userConfig.nbJobs.auto && computedConfig">
               (<helper helper-str="Value computed during the run"
-                       text-content>{{ computedConfig.nbJobs.value }}</helper>)
+                       text-content>{{ computedConfig.nbJobsStr() }}</helper>)
             </span>
           </dd>
           <dt>Local Workers</dt>
           <dd>
-            {{ userConfig.localWorkers.auto ? 'auto' : userConfig.localWorkers.value }}
+            {{ userConfig.localWorkersStr() }}
             <span class="computed-conf" v-if="userConfig.localWorkers.auto && computedConfig">
-              (<helper helper-str="Value computed during the run" text-content>{{ computedConfig.localWorkers.value }}</helper>)
+              (<helper helper-str="Value computed during the run"
+                       text-content>{{ computedConfig.localWorkersStr() }}</helper>)
             </span>
           </dd>
           <dt>Round Timer</dt>
@@ -70,10 +71,10 @@
             <dd>{{ userConfig.servers[i - 1].path }}</dd>
             <dt>Workers</dt>
             <dd>
-              {{ userConfig.servers[i - 1].workers.auto ? 'auto' : userConfig.servers[i - 1].workers.value }}
+              {{ userConfig.servers[i - 1].workersStr() }}
               <span class="computed-conf" v-if="userConfig.servers[i - 1].workers.auto && computedConfig">
                 (<helper helper-str="Value computed during the run"
-                         text-content>{{ computedConfig.servers[i - 1].workers.value }}</helper>)
+                         text-content>{{ computedConfig.servers[i - 1].workersStr() }}</helper>)
               </span>
             </dd>
           </dl>
@@ -105,7 +106,7 @@
     computed: {
       isDistributed: function () {
         if (this.computedConfig) {
-          return this.computedConfig.distributed === 'yes'
+          return this.computedConfig.distributed === true
         } else {
           return this.userConfig.distributed !== 'no'
         }

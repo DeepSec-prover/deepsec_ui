@@ -25,7 +25,7 @@
           <el-col :span="14" class="border-right">
             <!-- Default Semantic -->
             <form-item-helper label="Default Semantic" class="label-top" helper-id="runOptions.defaultSemantic">
-              <el-radio-group v-model="runConf.defaultSemantic">
+              <el-radio-group v-model="currentConf.defaultSemantic">
                 <helper helper-id="semantics.private">
                   <el-radio-button label="private">Private</el-radio-button>
                 </helper>
@@ -39,41 +39,41 @@
             </form-item-helper>
             <!-- Distributed -->
             <el-form-item label="Distributed :" class="label-top" helper-id="runOptions.distributed">
-              <el-radio-group v-model="runConf.distributed">
+              <el-radio-group v-model="currentConf.distributed">
                 <helper helper-id="runOptions.distributed.auto">
                   <el-radio-button label="auto">Auto</el-radio-button>
                 </helper>
-                <helper helper-id="runOptions.distributed.yes">
+                <helper helper-id="runOptions.distributed.true">
                   <el-radio-button :label="true">Yes</el-radio-button>
                 </helper>
-                <helper helper-id="runOptions.distributed.no">
+                <helper helper-id="runOptions.distributed.false">
                   <el-radio-button :label="false">No</el-radio-button>
                 </helper>
               </el-radio-group>
             </el-form-item>
-            <div v-show="runConf.distributed === true">
+            <div v-show="currentConf.distributed === true">
               <!-- Nb jobs -->
               <form-item-helper label="Number jobs" helper-id="runOptions.nbJobs">
-                <el-checkbox class="auto" v-model="runConf.nbJobs.auto">Auto</el-checkbox>
-                <el-input-number v-show="!runConf.nbJobs.auto"
-                                 v-model="runConf.nbJobs.value"
+                <el-checkbox class="auto" v-model="currentConf.nbJobs.auto">Auto</el-checkbox>
+                <el-input-number v-show="!currentConf.nbJobs.auto"
+                                 v-model="currentConf.nbJobs.value"
                                  :min="nbWorkers === Number.POSITIVE_INFINITY ? 1 : nbWorkers"
                                  controls-position="right"></el-input-number>
               </form-item-helper>
               <!-- Nb local workers -->
               <form-item-helper label="Local workers" helper-id="runOptions.localWorkers">
-                <el-checkbox class="auto" v-model="runConf.localWorkers.auto">Auto</el-checkbox>
-                <el-input-number v-show="!runConf.localWorkers.auto"
-                                 v-model="runConf.localWorkers.value"
+                <el-checkbox class="auto" v-model="currentConf.localWorkers.auto">Auto</el-checkbox>
+                <el-input-number v-show="!currentConf.localWorkers.auto"
+                                 v-model="currentConf.localWorkers.value"
                                  :min="1"
                                  controls-position="right"></el-input-number>
               </form-item-helper>
               <!-- Timer -->
               <form-item-helper label="Round timer" helper-id="runOptions.roundTimer" id="round-timer">
-                <el-input-number v-model="runConf.roundTimer" :min="1" controls-position="right"></el-input-number>
+                <el-input-number v-model="currentConf.roundTimer" :min="1" controls-position="right"></el-input-number>
               </form-item-helper>
               <div class="centred-content">
-                <el-tag v-show="runConf.nbServer() > 0" class="counter-tag" size="small" effect="plain">
+                <el-tag v-show="currentConf.nbServer() > 0" class="counter-tag" size="small" effect="plain">
                   Total worker <b>{{ nbWorkers === Number.POSITIVE_INFINITY ? 'Auto' : nbWorkers }}</b>
                 </el-tag>
               </div>
@@ -86,19 +86,19 @@
           <file-issues-list :files-issues="filesIssues"></file-issues-list>
         </el-row>
       </el-col>
-      <el-col :span="9" v-show="runConf.distributed === true">
+      <el-col :span="9" v-show="currentConf.distributed === true">
         <!-- Add Distant server -->
-        <el-button type="primary" icon="el-icon-plus" @click="runConf.addServer()" size="mini">
+        <el-button type="primary" icon="el-icon-plus" @click="currentConf.addServer()" size="mini">
           Add Distant Server
         </el-button>
-        <el-tag class="counter-tag" id="server-count" size="small" effect="plain">{{ runConf.nbServer() }}</el-tag>
-        <div v-if="runConf.nbServer() > 0">
+        <el-tag class="counter-tag" id="server-count" size="small" effect="plain">{{ currentConf.nbServer() }}</el-tag>
+        <div v-if="currentConf.nbServer() > 0">
           <transition-group name="el-zoom-in-top" tag="div" :duration="{ enter: 20 }">
-            <el-card class="server-card" shadow="hover" v-for="server in runConf.servers" :key="server.id">
+            <el-card class="server-card" shadow="hover" v-for="server in currentConf.servers" :key="server.id">
               <!-- Remove Server -->
               <el-link class="remove-server"
                        :underline="false"
-                       @click.prevent="runConf.removeServer(server)"
+                       @click.prevent="currentConf.removeServer(server)"
                        icon="el-icon-close"
                        size="small">
               </el-link>
@@ -136,6 +136,16 @@
 
   export default {
     name: 'start-run',
+    props: {
+      /**
+       * Used as default run configuration.
+       * This object never change.
+       */
+      config: {
+        type: Object,
+        default: null
+      }
+    },
     components: {
       SpecFilesSelection,
       FormItemHelper,
@@ -145,7 +155,7 @@
     data () {
       return {
         files: [],
-        runConf: new RunConfigModel(),
+        currentConf: null,
         runStarting: false,
         globalErrorMsg: '',
         filesIssues: []
@@ -153,17 +163,17 @@
     },
     computed: {
       nbWorkers: function () {
-        if (this.runConf.localWorkers.auto) {
+        if (this.currentConf.localWorkers.auto) {
           return Number.POSITIVE_INFINITY
         }
 
-        let sum = this.runConf.localWorkers.value
+        let sum = this.currentConf.localWorkers.value
 
-        for (let i = 0; i < this.runConf.nbServer(); i++) {
-          if (this.runConf.servers[i].workers.auto) {
+        for (let i = 0; i < this.currentConf.nbServer(); i++) {
+          if (this.currentConf.servers[i].workers.auto) {
             return Number.POSITIVE_INFINITY
           }
-          sum += this.runConf.servers[i].workers.value
+          sum += this.currentConf.servers[i].workers.value
         }
 
         return sum
@@ -179,7 +189,7 @@
         ipcRenderer.send('deepsec-api:run', {
           'command': 'start_run',
           'input_files': this.files,
-          'command_options': this.runConf.toJson()
+          'command_options': this.currentConf.toJson()
         })
 
         // Wait for the run confirmation or error message
@@ -205,6 +215,9 @@
       runStarted () {
         // TODO reset files list
       }
+    },
+    beforeMount () {
+      this.currentConf = this.config ? this.config : new RunConfigModel()
     }
   }
 </script>

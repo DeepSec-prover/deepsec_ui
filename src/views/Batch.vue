@@ -1,5 +1,15 @@
 <template>
   <result-layout :result-object="batch">
+
+    <!-- Actions -->
+    <template slot="actions">
+      <router-link :to="{name: 'start-run', params: { config: batch.computedOptions }}">
+        <el-button type="primary" size="small" icon="el-icon-refresh-right" plain>
+          Run Batch
+        </el-button>
+      </router-link>
+    </template>
+
     <!-- Summary -->
     <template slot="summary">
       <el-tabs type="border-card">
@@ -45,6 +55,7 @@
         </el-tab-pane>
       </el-tabs>
     </template>
+
     <!-- Details -->
     <template slot="details">
       <el-collapse v-model="openedRun">

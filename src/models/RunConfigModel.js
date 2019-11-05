@@ -50,6 +50,50 @@ export default class RunConfigModel {
   }
 
   /**
+   * @returns {string} The printable distributed value
+   */
+  distributedStr () {
+    if (this.distributed === 'auto') {
+      return 'auto'
+    }
+
+    if (this.distributed === true) {
+      return 'yes'
+    }
+
+    return 'no'
+  }
+
+  /**
+   * @returns {string} The printable nb jobs value
+   */
+  nbJobsStr () {
+    if (this.nbJobs.auto) {
+      return 'auto'
+    }
+
+    return this.nbJobs.value.toString()
+  }
+
+  /**
+   * @returns {string} The printable nb workers value
+   */
+  localWorkersStr () {
+    if (this.localWorkers.auto) {
+      return 'auto'
+    }
+
+    return this.localWorkers.value.toString()
+  }
+
+  /**
+   * @returns {string} The printable POR value
+   */
+  porStr () {
+    return this.por ? 'yes' : 'no'
+  }
+
+  /**
    * Convert to a json object usable for DeepSec API command.
    *
    * @returns {Object} The json object
@@ -123,6 +167,17 @@ class RunConfigServerModel {
     this.host = ''
     this.path = ''
     this.workers = { auto: true, value: 10 }
+  }
+
+  /**
+   * @returns {string} The printable workers value
+   */
+  workersStr () {
+    if (this.workers.auto) {
+      return 'auto'
+    }
+
+    return this.workers.value.toString()
   }
 
   static loadFromJson (json, id) {

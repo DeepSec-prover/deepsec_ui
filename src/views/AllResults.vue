@@ -37,7 +37,6 @@
     },
     methods: {
       rowClick (batch, column, event) {
-        console.log(batch.path)
         this.$router.push({ name: 'batch', params: { 'path': batch.path } })
       }
     },

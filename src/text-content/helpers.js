@@ -3,8 +3,8 @@ const helpers = {
     defaultSemantic: 'TODO description of defaultSemantic',
     distributed: {
       auto: 'TODO description of distributed auto',
-      yes: 'TODO description of distributed yes',
-      no: 'TODO description of distributed no',
+      true: 'TODO description of distributed yes',
+      false: 'TODO description of distributed no',
     },
     nbJobs: 'TODO description of nbJobs',
     localWorkers: 'TODO description of localWorkers',

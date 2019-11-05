@@ -10,6 +10,10 @@
       <slot name="post-title"></slot>
     </h2>
 
+    <div id="actions" v-if="this.$slots.actions">
+      <slot name="actions"></slot>
+    </div>
+
     <div id="summary">
       <slot name="summary"></slot>
     </div>
@@ -99,5 +103,10 @@
 
   #summary {
     margin-bottom: 30px;
+  }
+
+  #actions {
+    margin-bottom: 15px;
+    margin-left: 20px;
   }
 </style>
