@@ -52,7 +52,8 @@
                 </helper>
               </el-radio-group>
             </el-form-item>
-            <div v-show="currentConf.distributed === true">
+            <!-- TODO Change v-if to v-show when this issue is solved : https://github.com/ElemeFE/element/issues/17617 -->
+            <div v-if="currentConf.distributed === true">
               <!-- Nb jobs -->
               <form-item-helper label="Number jobs" helper-id="runOptions.nbJobs">
                 <el-checkbox class="auto" v-model="currentConf.nbJobs.auto">Auto</el-checkbox>
