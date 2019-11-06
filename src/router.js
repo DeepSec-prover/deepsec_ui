@@ -23,7 +23,7 @@ export default new Router({
       component: Home
     },
     {
-      path: '/start-run/:config?',
+      path: '/start-run/:config?/:files*',
       name: 'start-run',
       component: StartRun,
       props: true

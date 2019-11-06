@@ -2,7 +2,7 @@
   <el-form :disabled="runStarting" id="start-run" size="mini" label-width="auto">
     <el-row>
       <!-- Files selection -->
-      <spec-files-selection :disabled="runStarting" :files="files"></spec-files-selection>
+      <spec-files-selection :disabled="runStarting" :files="currentFiles"></spec-files-selection>
     </el-row>
     <el-row :gutter="20">
       <el-col :span="15">
@@ -18,8 +18,8 @@
                     :closable="false"
                     show-icon></el-alert>
             <!-- Submit -->
-            <el-button :loading="runStarting" :disabled="files.length === 0" size="default" type="success" icon="el-icon-video-play" @click="submitForm()">
-              Start{{ files.length > 1 ? ' Batch' : ' Run' }}
+            <el-button :loading="runStarting" :disabled="currentFiles.length === 0" size="default" type="success" icon="el-icon-video-play" @click="submitForm()">
+              Start{{ currentFiles.length > 1 ? ' Batch' : ' Run' }}
             </el-button>
           </el-col>
           <el-col :span="14" class="border-right">
@@ -139,10 +139,14 @@
     props: {
       /**
        * Used as default run configuration.
-       * This object never change.
+       * These objects never change.
        */
       config: {
         type: Object,
+        default: null
+      },
+      files: {
+        type: Array,
         default: null
       }
     },
@@ -154,7 +158,7 @@
     },
     data () {
       return {
-        files: [],
+        currentFiles: [],
         currentConf: null,
         runStarting: false,
         globalErrorMsg: '',
@@ -188,7 +192,7 @@
         // Send the run order
         ipcRenderer.send('deepsec-api:run', {
           'command': 'start_run',
-          'input_files': this.files,
+          'input_files': this.currentFiles,
           'command_options': this.currentConf.toJson()
         })
 
@@ -217,6 +221,8 @@
       }
     },
     beforeMount () {
+      // Load default values (from props)
+      this.currentFiles = this.files ? this.files : []
       this.currentConf = this.config ? this.config : new RunConfigModel()
     }
   }
