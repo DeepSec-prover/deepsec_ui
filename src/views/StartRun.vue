@@ -8,15 +8,6 @@
       <el-col :span="15">
         <el-row :gutter="20">
           <el-col :span="10">
-            <!-- Error message -->
-            <el-alert
-                    id="failed-error-msg"
-                    v-show="globalErrorMsg"
-                    title="Fail to start run"
-                    type="error"
-                    :description="globalErrorMsg"
-                    :closable="false"
-                    show-icon></el-alert>
             <!-- Submit -->
             <el-button :loading="runStarting" :disabled="currentFiles.length === 0" size="default" type="success" icon="el-icon-video-play"
                        @click="submitForm()">
@@ -88,9 +79,21 @@
             </div>
           </el-col>
         </el-row>
+        <!-- Global error message -->
+        <el-row v-show="globalErrorMsg">
+          <el-divider></el-divider>
+          <el-alert
+                  id="failed-error-msg"
+                  title="Fail to start run"
+                  type="error"
+                  :description="globalErrorMsg"
+                  :closable="false"
+                  show-icon></el-alert>
+        </el-row>
+        <!-- Files issues -->
         <el-row v-show="filesIssues.length > 0">
           <el-divider></el-divider>
-          <!-- Files issues -->
+          <h3>Files errors :</h3>
           <file-issues-list :files-issues="filesIssues"></file-issues-list>
         </el-row>
       </el-col>
@@ -286,10 +289,6 @@
   .border-right {
     border-left: 1px solid #E4E7ED;
     border-right: 1px solid #E4E7ED;
-  }
-
-  #failed-error-msg {
-    margin-bottom: 30px;
   }
 
   .auto {
