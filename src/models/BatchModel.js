@@ -46,6 +46,10 @@ export default class BatchModel extends ResultModel {
     return this.path.replace(/\.json$/ui, '')
   }
 
+  specFiles () {
+    return this.runs.map(r => r.inputFile)
+  }
+
   runsStatusCount () {
     let status = []
     status['in_progress'] = 0
