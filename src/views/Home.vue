@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <spec-code v-bind:code="code"/>
+    TODO : put something in the home page
   </div>
 </template>
 
