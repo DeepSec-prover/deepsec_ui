@@ -22,6 +22,7 @@ Format of name: `timestamp_random.json`
   "start_time": <int> // Timestamp.
   "import_date": <int>, (optional) // Timestamp. Only if imported
   "deepsec_version": <string>, // Format as "X.X.X"
+  "ocaml_version": <string>,
   "git_branch": <string>,
   "git_hash": <string>,
   "run_files": [
