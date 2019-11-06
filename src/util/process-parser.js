@@ -1,4 +1,4 @@
-import rename from './rename-table'
+import AtomicRenamer from './AtomicRenamer'
 import logger from 'electron-log'
 
 /**
@@ -12,26 +12,29 @@ const BREAK_POINT = '\u200B' // zero-width space
  * Format an action list as a string of visible attack trace.
  *
  * @param {Array} actions The list of action of this attack
- * @param {Array} atomicTable The table of atomic data
+ * @param {Array} atomicData The table of atomic data
  * @returns {string} The string of visible attack trace
  */
-export function formatTrace (actions, atomicTable) {
+export function formatTrace (actions, atomicData) {
+  // New rename table
+  const atomic = new AtomicRenamer(atomicData)
+
   let axiomId = 1
   let res = ''
 
   actions.forEach(action => {
     switch (action.type) {
       case 'input':
-        res += 'in(' + formatRecipe(action.channel, atomicTable) + ',' +
-          formatRecipe(action.term, atomicTable) + ');' + BREAK_POINT
+        res += 'in(' + formatRecipe(action.channel, atomic) + ',' +
+          formatRecipe(action.term, atomic) + ');' + BREAK_POINT
         break
       case 'output':
-        res += 'out(' + formatRecipe(action.channel, atomicTable) + ',ax_' + axiomId++ + ');' +
+        res += 'out(' + formatRecipe(action.channel, atomic) + ',ax_' + axiomId++ + ');' +
           BREAK_POINT
         break
       case 'eavesdrop':
-        res += 'eavesdrop(' + formatRecipe(action.channel, atomicTable) + ',ax_' + axiomId++ +
-          ');\u200B' + BREAK_POINT
+        res += 'eavesdrop(' + formatRecipe(action.channel, atomic) + ',ax_' + axiomId++ +
+          ');' + BREAK_POINT
         break
       // Skip others cases because not visible
     }
@@ -44,14 +47,16 @@ export function formatTrace (actions, atomicTable) {
  * Format a process from a Json format to a readable string
  *
  * @param {Object} process - The structured process
- * @param {Array} atomicTable - The table of atomic data
+ * @param {Array} atomicData - The table of atomic data
  * @returns {string} A readable string which describe the process
  * @see doc/process_structure.md for process structure
  */
-export function formatProcess (process, atomicTable) {
-  logger.debug(`[Start] Parsing a process (atomic data size: ${atomicTable.length})`)
+export function formatProcess (process, atomicData) {
+  logger.debug(`[Start] Parsing a process (atomic data size: ${atomicData.length})`)
+  // New rename table
+  const atomic = new AtomicRenamer(atomicData)
   // Start recursive formatting
-  const res = format(process, atomicTable, 0)
+  const res = format(process, atomic, 0)
   logger.debug('[Done] Parsing a process')
   return res
 }
@@ -60,11 +65,11 @@ export function formatProcess (process, atomicTable) {
  * Select the correct formatting function and indent lines
  *
  * @param {Object|undefined} subProcess - A structured sub-process
- * @param {Array} atomicTable - The table of atomic data
+ * @param {Object} atomic - The table of atomic data
  * @param {number} indent - The number of indentation character for the current sub-process (>1)
  * @returns {string} A readable string which describe the sub-process and its children
  */
-function format (subProcess, atomicTable, indent) {
+function format (subProcess, atomic, indent) {
   const linePrefix = strIndent(indent)
 
   if (!subProcess) {
@@ -73,27 +78,27 @@ function format (subProcess, atomicTable, indent) {
 
   switch (subProcess.type) {
     case 'Atomic':
-      return formatAtomic(subProcess, atomicTable, indent)
+      return formatAtomic(subProcess, atomic, indent)
     case 'Function':
-      return formatFunction(subProcess, atomicTable, indent)
+      return formatFunction(subProcess, atomic, indent)
     case 'Equality':
-      return formatEquality(subProcess, atomicTable, indent)
+      return formatEquality(subProcess, atomic, indent)
     case 'Axiom':
-      return formatAxiom(subProcess, atomicTable, indent)
+      return formatAxiom(subProcess)
     case 'New':
-      return linePrefix + formatNew(subProcess, atomicTable, indent)
+      return linePrefix + formatNew(subProcess, atomic, indent)
     case 'LetInElse':
-      return linePrefix + formatLetInElse(subProcess, atomicTable, indent)
+      return linePrefix + formatLetInElse(subProcess, atomic, indent)
     case 'Output':
-      return linePrefix + formatOutput(subProcess, atomicTable, indent)
+      return linePrefix + formatOutput(subProcess, atomic, indent)
     case 'Par':
-      return linePrefix + formatPar(subProcess, atomicTable, indent)
+      return linePrefix + formatPar(subProcess, atomic, indent)
     case 'Input':
-      return linePrefix + formatInput(subProcess, atomicTable, indent)
+      return linePrefix + formatInput(subProcess, atomic, indent)
     case 'IfThenElse':
-      return linePrefix + formatIfThenElse(subProcess, atomicTable, indent)
+      return linePrefix + formatIfThenElse(subProcess, atomic, indent)
     case 'Bang':
-      return linePrefix + formatBang(subProcess, atomicTable, indent)
+      return linePrefix + formatBang(subProcess, atomic, indent)
     case null:
       return linePrefix + '0\n'
     default:
@@ -121,36 +126,36 @@ function strIndent (count) {
  *  Format "New" type to readable string
  *
  * @param {Object} subProcess - A structured sub-process
- * @param {Array} atomicTable - The table of atomic data
+ * @param {Object} atomic - The table of atomic data
  * @param {number} indent - The number of indentation character for the current sub-process (>1)
  * @returns {string} A readable string which describe the sub-process and its children
  */
-function formatNew (subProcess, atomicTable, indent) {
-  return `new ${atomicTable[subProcess.name].label};\n` +
-    format(subProcess.process, atomicTable, indent)
+function formatNew (subProcess, atomic, indent) {
+  return `new ${atomic.getAndRename(subProcess.name)};\n` +
+    format(subProcess.process, atomic, indent)
 }
 
 /**
  *  Format "LetInElse" type to readable string
  *
  * @param {Object} subProcess - A structured sub-process
- * @param {Array} atomicTable - The table of atomic data
+ * @param {Object} atomic - The table of atomic data
  * @param {number} indent - The number of indentation character for the current sub-process (>1)
  * @returns {string} A readable string which describe the sub-process and its children
  */
-function formatLetInElse (subProcess, atomicTable, indent) {
-  let res = 'let ' + format(subProcess.pattern, atomicTable, indent) + ' = ' +
-    format(subProcess.term, atomicTable, indent) + ' in \n'
+function formatLetInElse (subProcess, atomic, indent) {
+  let res = 'let ' + format(subProcess.pattern, atomic, indent) + ' = ' +
+    format(subProcess.term, atomic, indent) + ' in \n'
 
   // No "else" so no indent "in"
   if (subProcess.process_else === undefined) {
-    res += format(subProcess.process_then, atomicTable, indent)
+    res += format(subProcess.process_then, atomic, indent)
   }
   // With "else" so no indent all
   else {
-    res += format(subProcess.process_then, atomicTable, indent + 1)
+    res += format(subProcess.process_then, atomic, indent + 1)
     res += strIndent(indent) + 'else\n' +
-      format(subProcess.process_else, atomicTable, indent + 1)
+      format(subProcess.process_else, atomic, indent + 1)
   }
 
   return res
@@ -160,38 +165,32 @@ function formatLetInElse (subProcess, atomicTable, indent) {
  *  Format "Atomic" type to readable string
  *
  * @param {Object} subProcess - A structured sub-process
- * @param {Array} atomicTable - The table of atomic data
+ * @param {Object} atomic - The table of atomic data
  * @param {number} indent - The number of indentation character for the current sub-process (>1)
  * @returns {string} A readable string which describe the sub-process and its children
  */
-function formatAtomic (subProcess, atomicTable, indent) {
+function formatAtomic (subProcess, atomic, indent) {
   // Fetch subProcess in the atomic table
-  subProcess = atomicTable[subProcess.id]
-
-  if (subProcess.type === 'Name' || subProcess.type === 'Variable') {
-    return rename(subProcess.label, subProcess.index)
-  }
-
-  throw Error(`Unexpected type ${subProcess.type}`)
+  return atomic.getAndRename(subProcess.id)
 }
 
 /**
  *  Format "Function" type to readable string
  *
  * @param {Object} subProcess - A structured sub-process
- * @param {Array} atomicTable - The table of atomic data
+ * @param {Object} atomic - The table of atomic data
  * @param {number} indent - The number of indentation character for the current sub-process (>1)
  * @returns {string} A readable string which describe the sub-process and its children
  */
-function formatFunction (subProcess, atomicTable, indent) {
-  const symbol = atomicTable[subProcess.symbol]
+function formatFunction (subProcess, atomic, indent) {
+  const symbol = atomic.get(subProcess.symbol)
 
   if (symbol.category === 'Tuple') {
-    return '(' + subProcess.args.map(value => format(value, atomicTable, indent)).join(',') + ')'
+    return '(' + subProcess.args.map(value => format(value, atomic, indent)).join(',') + ')'
   } else {
     let res = symbol.label
 
-    res += '(' + subProcess.args.map(value => format(value, atomicTable, indent)).join(',') + ')'
+    res += '(' + subProcess.args.map(value => format(value, atomic, indent)).join(',') + ')'
 
     return res
   }
@@ -201,18 +200,18 @@ function formatFunction (subProcess, atomicTable, indent) {
  *  Format "Output" type to readable string
  *
  * @param {Object} subProcess - A structured sub-process
- * @param {Array} atomicTable - The table of atomic data
+ * @param {Object} atomic - The table of atomic data
  * @param {number} indent - The number of indentation character for the current sub-process (>1)
  * @returns {string} A readable string which describe the sub-process and its children
  */
-function formatOutput (subProcess, atomicTable, indent) {
-  let res = 'out(' + format(subProcess.channel, atomicTable, indent) + ',' +
-    format(subProcess.term, atomicTable, indent) + ')'
+function formatOutput (subProcess, atomic, indent) {
+  let res = 'out(' + format(subProcess.channel, atomic, indent) + ',' +
+    format(subProcess.term, atomic, indent) + ')'
 
   if (subProcess.process === undefined) {
     res += '\n'
   } else {
-    res += ';\n' + format(subProcess.process, atomicTable, indent)
+    res += ';\n' + format(subProcess.process, atomic, indent)
   }
 
   return res
@@ -222,13 +221,13 @@ function formatOutput (subProcess, atomicTable, indent) {
  *  Format "Par" type to readable string
  *
  * @param {Object} subProcess - A structured sub-process
- * @param {Array} atomicTable - The table of atomic data
+ * @param {Object} atomic - The table of atomic data
  * @param {number} indent - The number of indentation character for the current sub-process (>1)
  * @returns {string} A readable string which describe the sub-process and its children
  */
-function formatPar (subProcess, atomicTable, indent) {
+function formatPar (subProcess, atomic, indent) {
   return '(\n' + subProcess.process_list.map(process => {
-    return format(process, atomicTable, indent + 1)
+    return format(process, atomic, indent + 1)
   }).join(strIndent(indent) + ')|(\n') + strIndent(indent) + ')\n'
 }
 
@@ -236,18 +235,18 @@ function formatPar (subProcess, atomicTable, indent) {
  *  Format "Input" type to readable string
  *
  * @param {Object} subProcess - A structured sub-process
- * @param {Array} atomicTable - The table of atomic data
+ * @param {Object} atomic - The table of atomic data
  * @param {number} indent - The number of indentation character for the current sub-process (>1)
  * @returns {string} A readable string which describe the sub-process and its children
  */
-function formatInput (subProcess, atomicTable, indent) {
-  let res = 'in(' + format(subProcess.channel, atomicTable, indent) + ',' +
-    format(subProcess.pattern, atomicTable, indent) + ')'
+function formatInput (subProcess, atomic, indent) {
+  let res = 'in(' + format(subProcess.channel, atomic, indent) + ',' +
+    format(subProcess.pattern, atomic, indent) + ')'
 
   if (subProcess.process === undefined) {
     res += '\n'
   } else {
-    res += ';\n' + format(subProcess.process, atomicTable, indent)
+    res += ';\n' + format(subProcess.process, atomic, indent)
   }
 
   return res
@@ -257,23 +256,23 @@ function formatInput (subProcess, atomicTable, indent) {
  *  Format "IfThenElse" type to readable string
  *
  * @param {Object} subProcess - A structured sub-process
- * @param {Array} atomicTable - The table of atomic data
+ * @param {Object} atomic - The table of atomic data
  * @param {number} indent - The number of indentation character for the current sub-process (>1)
  * @returns {string} A readable string which describe the sub-process and its children
  */
-function formatIfThenElse (subProcess, atomicTable, indent) {
-  let res = 'if ' + format(subProcess.term1, atomicTable, indent) + ' = ' +
-    format(subProcess.term2, atomicTable, indent) + ' then\n'
+function formatIfThenElse (subProcess, atomic, indent) {
+  let res = 'if ' + format(subProcess.term1, atomic, indent) + ' = ' +
+    format(subProcess.term2, atomic, indent) + ' then\n'
 
   // No "else" so no indent "then"
   if (subProcess.process_else === undefined) {
-    res += format(subProcess.process_then, atomicTable, indent)
+    res += format(subProcess.process_then, atomic, indent)
   }
   // With "else" so indent all
   else {
-    res += format(subProcess.process_then, atomicTable, indent + 1) +
+    res += format(subProcess.process_then, atomic, indent + 1) +
       strIndent(indent) + 'else\n' +
-      format(subProcess.process_else, atomicTable, indent + 1)
+      format(subProcess.process_else, atomic, indent + 1)
   }
 
   return res
@@ -283,27 +282,33 @@ function formatIfThenElse (subProcess, atomicTable, indent) {
  *  Format "Bang" type to readable string
  *
  * @param {Object} subProcess - A structured sub-process
- * @param {Array} atomicTable - The table of atomic data
+ * @param {Object} atomic - The table of atomic data
  * @param {number} indent - The number of indentation character for the current sub-process (>1)
  * @returns {string} A readable string which describe the sub-process and its children
  */
-function formatBang (subProcess, atomicTable, indent) {
-  return `!~${subProcess.multiplicity}\n` + format(subProcess.process, atomicTable, indent)
+function formatBang (subProcess, atomic, indent) {
+  return `!~${subProcess.multiplicity}\n` + format(subProcess.process, atomic, indent)
 }
 
 /**
  *  Format "Equality" type to readable string
  *
  * @param {Object} subProcess - A structured sub-process
- * @param {Array} atomicTable - The table of atomic data
+ * @param {Object} atomic - The table of atomic data
  * @param {number} indent - The number of indentation character for the current sub-process (>1)
  * @returns {string} A readable string which describe the sub-process and its children
  */
-function formatEquality (subProcess, atomicTable, indent) {
-  return '=' + format(subProcess.term, atomicTable, indent)
+function formatEquality (subProcess, atomic, indent) {
+  return '=' + format(subProcess.term, atomic, indent)
 }
 
-function formatAxiom (subProcess, atomicTable, indent) {
+/**
+ * Format "Axiom" type to readable string
+ *
+ * @param subProcess
+ * @returns {string}
+ */
+function formatAxiom (subProcess) {
   return 'ax_' + subProcess.id
 }
 
@@ -312,14 +317,14 @@ function formatAxiom (subProcess, atomicTable, indent) {
  * Only use for attack trace
  *
  * @param {Object} recipe The recipe to parse
- * @param {Array} atomicTable The table of atomic data
+ * @param {Object} atomic The table of atomic data
  * @returns {string} A readable string which describe the recipe
  */
-function formatRecipe (recipe, atomicTable) {
+function formatRecipe (recipe, atomic) {
   if (recipe.type === 'Axiom') {
     return 'ax_' + recipe.id
   } else if (recipe.type === 'Function') {
-    return formatProcess(recipe, atomicTable)
+    return format(recipe, atomic, 0)
   } else {
     // Do not stop the app but log an error
     logger.error(`Try to parse an unknown recipe type ${recipe.type}`)
