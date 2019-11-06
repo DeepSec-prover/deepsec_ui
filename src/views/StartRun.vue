@@ -18,7 +18,8 @@
                     :closable="false"
                     show-icon></el-alert>
             <!-- Submit -->
-            <el-button :loading="runStarting" :disabled="currentFiles.length === 0" size="default" type="success" icon="el-icon-video-play" @click="submitForm()">
+            <el-button :loading="runStarting" :disabled="currentFiles.length === 0" size="default" type="success" icon="el-icon-video-play"
+                       @click="submitForm()">
               Start{{ currentFiles.length > 1 ? ' Batch' : ' Run' }}
             </el-button>
           </el-col>
@@ -77,6 +78,12 @@
                   Total worker <b>{{ nbWorkers === Number.POSITIVE_INFINITY ? 'Auto' : nbWorkers }}</b>
                 </el-tag>
               </div>
+            </div>
+            <!-- Reset Config -->
+            <div id="reset-config" class="centred-content">
+              <el-link slot="reference" :underline="false" icon="el-icon-refresh-left" type="danger" @click="resetConf()">
+                Reset
+              </el-link>
             </div>
           </el-col>
         </el-row>
@@ -200,8 +207,7 @@
         ipcRenderer.once('deepsec-api:result', (event, result) => {
           if (result.success) {
             this.runStarted()
-          }
-          else {
+          } else {
             // Global error
             if (result.error) {
               this.globalErrorMsg = result.error
@@ -218,6 +224,9 @@
       },
       runStarted () {
         // TODO reset files list
+      },
+      resetConf () {
+        this.currentConf = new RunConfigModel()
       }
     },
     beforeMount () {
@@ -282,5 +291,9 @@
   .auto {
     line-height: 29px;
     margin-right: 10px !important;
+  }
+
+  #reset-config {
+    margin-top: 40px;
   }
 </style>

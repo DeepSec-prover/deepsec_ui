@@ -20,7 +20,7 @@
       <el-col v-if="hasSelectedFile" class="right-align">
         <el-tag effect="plain" class="file-count"><b>{{ files.length }}</b> file{{ files.length > 1 ? "s" : "" }}</el-tag>
         <el-button size="small" icon="el-icon-delete" :disabled="files.length === 0" @click="resetFiles">
-          Reset
+          Clear file{{ files.length > 1 ? "s" : "" }}
         </el-button>
       </el-col>
     </el-row>
