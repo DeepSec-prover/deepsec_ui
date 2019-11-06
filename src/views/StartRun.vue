@@ -192,6 +192,7 @@
     },
     methods: {
       submitForm () {
+        // TODO check if files exists
         this.runStarting = true
         this.globalErrorMsg = ''
         this.filesIssues = []

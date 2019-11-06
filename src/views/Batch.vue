@@ -42,9 +42,14 @@
             <dd>{{ batch.deepsecVersion }}</dd>
             <dt>Git Branch</dt>
             <dd>
-              <a :href="branchUrl" target="_blank" @click.prevent="openExternalBrowser">
-                {{ batch.gitBranch }}
-              </a>
+              <template v-if="batch.gitBranch.includes('HEAD detached')">
+                {{ batch.gitBranch }} <!-- No link if detached -->
+              </template>
+              <template v-else>
+                <a :href="branchUrl" target="_blank" @click.prevent="openExternalBrowser">
+                  {{ batch.gitBranch }}
+                </a>
+              </template>
             </dd>
             <dt>Git Hash</dt>
             <dd>
