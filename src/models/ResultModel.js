@@ -5,6 +5,11 @@ import path from 'path'
 import fs from 'fs'
 
 /**
+ * @type {number} Number of retry when opening an empty file
+ */
+const MAX_RETRY = 3
+
+/**
  * Abstract class to load result models
  */
 export default class ResultModel {
@@ -79,7 +84,8 @@ export default class ResultModel {
    * Load a result file as a JSON object
    *
    * @param {String} relativePath The path to the result file relative to the result directory
-   * @returns {JSON} A json object
+   * @returns {Object} A json object
+   * @throws Error If any problem with the file
    */
   static loadResultFile (relativePath) {
     let dirPath = userSettings.get('resultsDirPath').toString()
@@ -101,8 +107,36 @@ export default class ResultModel {
       throw Error(`Result file path is not valid : ${filePath}`)
     }
 
-    let rawContent = fs.readFileSync(filePath)
-    logger.debug(`Result file loaded : ${filePath}`)
-    return JSON.parse(rawContent)
+    let rawContent = ''
+    let success = false
+    let nbTry = 0
+
+    // If the result file is empty try several times because it could open the file exactly when
+    // the file is being written. This should be very rare.
+    do {
+      nbTry++
+      rawContent = fs.readFileSync(filePath)
+      logger.debug(`Result file loaded : ${filePath}`)
+
+      success = !isEmptyOrBlankStr(rawContent.toString())
+      if (!success) {
+        logger.error(
+          `Result file empty "${filePath}" but content expected. Can be ignored if occurs very rarely.
+          Retry ${nbTry}/${MAX_RETRY}`)
+      }
+    } while (!success && nbTry <= MAX_RETRY)
+
+    if (!success) {
+      logger.error(`Fail to open "${filePath}" after maximal retry (${MAX_RETRY}), still empty.`)
+      throw Error(`Fail to open "${filePath}" after maximal retry (${MAX_RETRY}), still empty.`)
+    }
+
+    try {
+      return JSON.parse(rawContent)
+    } catch (e) {
+      logger.error(
+        `Fail to parse result file "${filePath}" with content : ${rawContent.toString()}`, e)
+      throw e
+    }
   }
 }
