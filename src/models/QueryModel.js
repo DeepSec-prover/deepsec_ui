@@ -6,7 +6,6 @@ import text from '../text-content/text'
 export default class QueryModel extends ResultModel {
   mapJsonFile (json) {
     // Mandatory fields
-    this.status = json.status
     this.index = json.index
     this.atomicData = json.atomic_data.data
     this.semantics = json.semantics
@@ -18,19 +17,6 @@ export default class QueryModel extends ResultModel {
 
     this.run = null // Not loaded yet
     this.runFile = json.run_file
-
-    // Optional fields
-    if (json.start_time) {
-      this.startTime = new Date(json.start_time * 1000)
-    } else {
-      this.startTime = null
-    }
-
-    if (json.end_time) {
-      this.endTime = new Date(json.end_time * 1000)
-    } else {
-      this.endTime = null
-    }
 
     if (json.error_msg) {
       this.errorMsg = json.error_msg

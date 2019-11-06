@@ -2,7 +2,7 @@
   <result-layout :result-object="query">
 
     <!-- Post Title -->
-    <template slot="post-title">
+    <template slot="post-title" v-if="query.isCompleted()" >
       <el-tag size="medium" effect="dark" class="query-result" :type="query.attackFound() ? 'danger' : 'success'">
         {{ query.shortResultDescription() }}
       </el-tag>

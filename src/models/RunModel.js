@@ -5,7 +5,6 @@ import path from 'path'
 
 export default class RunModel extends ResultModel {
   mapJsonFile (json) {
-    this.status = json.status
     this.inputFile = json.input_file
 
     this.batch = null // Not loaded yet
@@ -15,18 +14,6 @@ export default class RunModel extends ResultModel {
     this.queryFiles = json.query_files
 
     // Optional fields
-    if (json.start_time) {
-      this.startTime = new Date(json.start_time * 1000)
-    } else {
-      this.startTime = null
-    }
-
-    if (json.end_time) {
-      this.endTime = new Date(json.end_time * 1000)
-    } else {
-      this.endTime = null
-    }
-
     if (json.warnings) {
       this.warnings = json.warnings
     } else {

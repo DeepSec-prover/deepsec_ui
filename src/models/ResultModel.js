@@ -19,11 +19,36 @@ export default class ResultModel {
     this.path = resultFilePath
 
     let json = ResultModel.loadResultFile(resultFilePath)
+    this.status = json.status
+
+    // Optional fields
+    if (json.start_time) {
+      this.startTime = new Date(json.start_time * 1000)
+    } else {
+      this.startTime = null
+    }
+
+    if (json.end_time) {
+      this.endTime = new Date(json.end_time * 1000)
+    } else {
+      this.endTime = null
+    }
+
+    // Mapping specific for each result type
     this.mapJsonFile(json)
 
     if (loadRelations) {
       this.loadRelations()
     }
+  }
+
+  /**
+   * Check if the result status is completed
+   *
+   * @returns {boolean} True if the current status is competed, False if any other status
+   */
+  isCompleted () {
+    return this.status === 'completed'
   }
 
   /**

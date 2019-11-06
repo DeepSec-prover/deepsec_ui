@@ -4,7 +4,6 @@ import RunConfigModel from './RunConfigModel'
 
 export default class BatchModel extends ResultModel {
   mapJsonFile (json) {
-    this.status = json.status
     this.deepsecVersion = json.deepsec_version
     this.gitBranch = json.git_branch
     this.gitHash = json.git_hash
@@ -13,15 +12,6 @@ export default class BatchModel extends ResultModel {
 
     this.runs = null // Not loaded yet
     this.runFiles = json.run_files
-
-    this.startTime = new Date(json.start_time * 1000)
-
-    // Optional fields
-    if (json.end_time) {
-      this.endTime = new Date(json.end_time * 1000)
-    } else {
-      this.endTime = null
-    }
 
     if (json.import_date) {
       this.importTime = new Date(json.import_date * 1000)

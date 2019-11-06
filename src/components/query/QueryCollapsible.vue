@@ -3,7 +3,7 @@
     <template slot="title">
       <h3>
         <result-status :status="query.status" tooltip></result-status> Query {{ query.index }}
-        <el-tag size="small" class="query-result" :type="query.attackFound() ? 'danger' : 'success'">
+        <el-tag v-if="query.isCompleted()" size="small" class="query-result" :type="query.attackFound() ? 'danger' : 'success'">
           {{ query.shortResultDescription() }}
         </el-tag>
         <el-button size="mini" class="open-query" @click="openQuery(query.path)">

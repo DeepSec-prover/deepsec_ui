@@ -95,7 +95,7 @@
         </dl>
       </el-col>
     </el-row>
-    <el-row v-if="query.status === 'completed'">
+    <el-row v-if="query.isCompleted()">
       <el-divider></el-divider>
       <p>{{ query.longResultDescription() }}</p>
       <spec-code in-line v-if="query.attackTrace" :code="formattedAttackTrace"></spec-code>
