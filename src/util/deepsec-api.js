@@ -55,12 +55,14 @@ function runCmd (cmd, event, mainWindow) {
 
   // Stderr messages catching, should never happen
   process.stderr.on('data', data => {
-    logger.error(`Error message from DeepSec API : ${data.toString()}`)
+    unexpectedError(event, mainWindow,
+                    `Error message from DeepSec API : ${data.toString()}`)
   })
 
   // Abnormal behaviours from the process
   process.on('error', err => {
-    logger.error(`Error detected from DeepSec API : ${err.name} - ${err.message}`)
+    unexpectedError(event, mainWindow,
+                    `Error detected from DeepSec API : ${err.name} - ${err.message}`)
   })
 
   // Process exit signal
@@ -83,7 +85,7 @@ function handleAnswer (answer, process, event, mainWindow) {
   try {
     answer = JSON.parse(answer)
   } catch (e) {
-    logger.error(`Error in DeepSec API answer parsing : ${answer}`)
+    unexpectedError(event, mainWindow, `Parsing error of DeepSec API answer : ${answer}`)
     return
   }
 
@@ -323,6 +325,27 @@ function userError (answer, event) {
     ${nbFilesIssue} file${nbFilesIssue > 1 ? 's' : ''}`,
     'files_issues': answer.error_runs
   })
+}
+
+/**
+ * For any unexpected behaviours during the run process (should not happen in production).
+ *
+ * @param event The start run event
+ * @param mainWindow The main window for notification
+ * @param message The error message
+ */
+function unexpectedError (event, mainWindow, message) {
+  logger.error(message)
+
+  // Send bad result to the Start Run page (if already for an answer this will be ignored)
+  event.reply('deepsec-api:result', { 'success': false, 'error': message })
+
+  // Send ui notification
+  mainWindow.webContents.send('notification:show',
+                              'Unexpected error',
+                              message,
+                              'error',
+                              'default')
 }
 
 // ======================== Exit Answer =======================

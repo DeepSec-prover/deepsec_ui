@@ -141,6 +141,7 @@
   import FileIssuesList from '../components/FileIssuesList'
   import { ipcRenderer } from 'electron'
   import RunConfigModel from '../models/RunConfigModel'
+  import logger from 'electron-log'
 
   export default {
     name: 'start-run',
@@ -207,6 +208,7 @@
 
         // Wait for the run confirmation or error message
         ipcRenderer.once('deepsec-api:result', (event, result) => {
+          logger.silly(`Run starting confirmation : ${JSON.stringify(result)}`)
           if (result.success) {
             this.runStarted()
           } else {
