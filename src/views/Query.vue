@@ -1,10 +1,23 @@
 <template>
   <result-layout :result-object="query">
+
+    <!-- Post Title -->
     <template slot="post-title">
       <el-tag size="medium" effect="dark" class="query-result" :type="query.attackFound() ? 'danger' : 'success'">
         {{ query.shortResultDescription() }}
       </el-tag>
     </template>
+
+    <!-- Actions -->
+    <template slot="actions">
+      <router-link :to="{name: 'start-run',
+      params: { config: query.batch.computedOptions, files: [query.run.path] }}">
+        <el-button type="primary" size="small" icon="el-icon-refresh-right" plain>
+          Restart Run
+        </el-button>
+      </router-link>
+    </template>
+
     <!-- Summary -->
     <template slot="summary">
       <el-card>
@@ -12,6 +25,7 @@
         <query-summary :query="query"></query-summary>
       </el-card>
     </template>
+
     <!-- Details -->
     <template slot="details">
       <el-row type="flex" :gutter="10" justify="center">

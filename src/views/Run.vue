@@ -1,5 +1,16 @@
 <template>
   <result-layout :result-object="run">
+
+    <!-- Actions -->
+    <template slot="actions">
+      <router-link :to="{name: 'start-run',
+      params: { config: run.batch.computedOptions, files: [run.path] }}">
+        <el-button type="primary" size="small" icon="el-icon-refresh-right" plain>
+          Restart Run
+        </el-button>
+      </router-link>
+    </template>
+
     <!-- Summary -->
     <template slot="summary">
       <el-card>
@@ -24,6 +35,7 @@
         </dl>
       </el-card>
     </template>
+
     <!-- Details -->
     <template slot="details">
       <!-- TODO show warnings -->
