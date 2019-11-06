@@ -4,7 +4,7 @@
     <!-- Actions -->
     <template slot="actions">
       <router-link :to="{name: 'start-run',
-      params: { config: run.batch.computedOptions, files: [run.inputFile] }}">
+      params: { config: run.batch.computedOptions, files: [run.inputFileAbsolutePath()] }}">
         <el-button type="primary" size="small" icon="el-icon-refresh-right" plain>
           Restart Run
         </el-button>

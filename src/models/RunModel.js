@@ -1,3 +1,4 @@
+import userSettings from 'electron-settings'
 import ResultModel from './ResultModel'
 import BatchModel from './BatchModel'
 import QueryModel from './QueryModel'
@@ -52,5 +53,12 @@ export default class RunModel extends ResultModel {
 
   nbQueries () {
     return this.queryFiles.length
+  }
+
+  /**
+   * @returns {String} Input (spec) file absolute paths
+   */
+  inputFileAbsolutePath () {
+    return path.join(userSettings.get('resultsDirPath'), this.inputFile)
   }
 }

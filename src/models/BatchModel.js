@@ -46,8 +46,11 @@ export default class BatchModel extends ResultModel {
     return this.path.replace(/\.json$/ui, '')
   }
 
-  specFiles () {
-    return this.runs.map(r => r.inputFile)
+  /**
+   * @returns {Array} All input (spec) files absolute paths
+   */
+  inputFilesAbsolutePaths() {
+    return this.runs.map(r => r.inputFileAbsolutePath())
   }
 
   runsStatusCount () {
