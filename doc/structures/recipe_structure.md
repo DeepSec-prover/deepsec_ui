@@ -20,3 +20,10 @@ or
   ]
 }
 ```
+or
+```
+{
+  "type": "Attacker",
+  "label": <string>
+}
+```
