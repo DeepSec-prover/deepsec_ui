@@ -1,3 +1,5 @@
+import { isEmptyOrBlankStr } from '../util/misc'
+
 export default class RunConfigModel {
   constructor () {
     this.defaultSemantic = 'private'
@@ -7,6 +9,7 @@ export default class RunConfigModel {
     this.roundTimer = 120
     this.por = true // show in the ui only if false
     this.servers = []
+    this.title = ''
 
     // To give an id to every server
     this.serversId = 0
@@ -94,6 +97,17 @@ export default class RunConfigModel {
   }
 
   /**
+   * Clean user inputs (eg: trim, multiple spaces ...)
+   */
+  preProcessData () {
+    this.title = this.title.trim().replace(/\s+/, " ")
+    this.servers.forEach(s => {
+      s.host = s.host.trim()
+      s.path = s.path.trim()
+    })
+  }
+
+  /**
    * Convert to a json object usable for DeepSec API command.
    *
    * @returns {Object} The json object
@@ -103,6 +117,10 @@ export default class RunConfigModel {
       'default_semantics': this.defaultSemantic,
       'distributed': this.distributed,
       'por': this.por
+    }
+
+    if (!isEmptyOrBlankStr(this.title)) {
+      json['title'] = this.title
     }
 
     if (this.distributed === true) {
@@ -132,6 +150,10 @@ export default class RunConfigModel {
     config.defaultSemantic = json.default_semantics
     config.distributed = json.distributed
     config.por = json.por
+
+    if (json.title) {
+      config.title = json.title
+    }
 
     if (json.nb_jobs) {
       config.nbJobs.auto = json.nb_jobs === 'auto'

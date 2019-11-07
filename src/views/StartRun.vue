@@ -8,8 +8,12 @@
       <el-col :span="15">
         <el-row :gutter="20">
           <el-col :span="10">
+            <el-input size="small" v-model="currentConf.title" placeholder="Optional title"
+                      :maxlength="40" clearable>
+            </el-input>
             <!-- Submit -->
-            <el-button :loading="runStarting" :disabled="currentFiles.length === 0" size="default" type="success" icon="el-icon-video-play"
+            <el-button :loading="runStarting" :disabled="currentFiles.length === 0"
+                       size="default" type="success" icon="el-icon-video-play" id="submit-run"
                        @click="submitForm()">
               Start{{ currentFiles.length > 1 ? ' Batch' : ' Run' }}
             </el-button>
@@ -202,6 +206,9 @@
         this.globalErrorMsg = ''
         this.filesIssues = []
 
+        // Clean user inputs (eg: trim)
+        this.currentConf.preProcessData()
+
         // Send the run order
         ipcRenderer.send('deepsec-api:run', {
           'command': 'start_run',
@@ -298,5 +305,9 @@
 
   #reset-config {
     margin-top: 40px;
+  }
+
+  #submit-run {
+    margin-top: 20px;
   }
 </style>
