@@ -19,20 +19,38 @@
         <!-- Show error message if present -->
         <el-alert v-if="run.errorMsg" title="Error" type="error" :description="run.errorMsg" show-icon :closable="false"></el-alert>
 
-        <dl class="in-line">
-          <dt>File</dt>
-          <dd>{{ run.inputFileName() }}</dd> <!-- TODO open file link -->
-          <dt>Nb query</dt>
-          <dd>{{ run.nbQueries() }}</dd>
-          <template v-if="run.startTime">
-            <dt>Start time</dt>
-            <dd>{{ run.startTime.toLocaleDateString() }} {{ run.startTime.toLocaleTimeString() }}</dd>
-            <dt>Running time</dt>
-            <dd>
-              <duration :start-time="run.startTime" :end-time="run.endTime"></duration>
-            </dd>
-          </template>
-        </dl>
+        <el-row>
+          <el-col :lg="12">
+            <dl class="in-line">
+              <dt>File</dt>
+              <dd>{{ run.inputFileName() }}</dd> <!-- TODO open file link -->
+              <dt>Nb query</dt>
+              <dd>{{ run.nbQueries() }}</dd>
+              <template v-if="run.batch.debug">
+                <dt>Debug</dt>
+                <dd><el-tag size="mini" type="danger"><i class="el-icon-view"></i> yes</el-tag></dd>
+              </template>
+            </dl>
+          </el-col>
+          <el-col :lg="12" v-if="run.startTime">
+            <dl class="in-line">
+              <dt>Start time</dt>
+              <dd>
+                <date :date="run.startTime"></date>
+              </dd>
+              <template v-if="run.endTime">
+                <dt>End time</dt>
+                <dd>
+                  <date :date="run.endTime"></date>
+                </dd>
+              </template>
+              <dt>Running time</dt>
+              <dd>
+                <duration :start-time="run.startTime" :end-time="run.endTime"></duration>
+              </dd>
+            </dl>
+          </el-col>
+        </el-row>
       </el-card>
     </template>
 
@@ -47,6 +65,7 @@
 </template>
 
 <script>
+  import Date from '../components/Date'
   import Duration from '../components/Duration'
   import QueryCollapsible from '../components/query/QueryCollapsible'
   import ResultLayout from '../components/results/ResultLayout'
@@ -55,6 +74,7 @@
     name: 'run',
     components: {
       Duration,
+      Date,
       QueryCollapsible,
       ResultLayout
     },

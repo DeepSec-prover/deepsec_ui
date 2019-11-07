@@ -14,8 +14,8 @@
     <!-- Show error message if present -->
     <el-alert v-if="query.errorMsg" title="Error" type="error" :description="query.errorMsg" show-icon :closable="false"></el-alert>
     <!-- General information -->
-    <el-row>
-      <el-col :span="12">
+    <el-row class="details">
+      <el-col :sm="12">
         <dl class="in-line">
           <dt>Semantics</dt>
           <dd>
@@ -27,10 +27,14 @@
           </dd>
         </dl>
       </el-col>
-      <el-col :span="12" v-if="query.startTime">
+      <el-col :sm="12" v-if="query.startTime">
         <dl class="in-line">
           <dt>Start time</dt>
-          <dd>{{ query.startTime.toLocaleDateString() }} {{ query.startTime.toLocaleTimeString() }}</dd>
+          <dd><date :date="query.startTime"></date></dd>
+          <template v-if="query.endTime">
+            <dt>End time</dt>
+            <dd><date :date="query.endTime"></date></dd>
+          </template>
           <dt>Running time</dt>
           <dd>
             <duration :start-time="query.startTime" :end-time="query.endTime"></duration>
@@ -44,6 +48,7 @@
 <script>
   import text from '../../text-content/text'
   import ResultStatus from '../results/ResultStatus'
+  import Date from '../Date'
   import Helper from '../helpers/Helper'
   import Duration from '../Duration'
 
@@ -51,6 +56,7 @@
     name: 'query-collapsible',
     components: {
       Helper,
+      Date,
       Duration,
       ResultStatus
     },
@@ -73,5 +79,9 @@
 <style scoped>
   .open-query, .query-result {
     margin-left: 12px;
+  }
+
+  .details dl {
+    line-height: initial;
   }
 </style>

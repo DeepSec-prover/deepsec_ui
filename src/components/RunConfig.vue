@@ -9,15 +9,12 @@
               {{ userConfig.defaultSemantic }}
             </helper>
           </dd>
-          <dt>Distributed</dt>
+          <dt>Title</dt>
           <dd>
-            <helper :helper-id="`runOptions.distributed.${userConfig.distributed}`" text-content>
-              {{ userConfig.distributedStr() }}
-            </helper>
-            <span class="computed-conf" v-if="userConfig.distributed === 'auto' && computedConfig">
+            {{ userConfig.title ? `"${userConfig.title}"` : '-' }}
+            <span class="computed-conf" v-if="computedConfig && userConfig.title !== computedConfig.title">
               (<helper helper-str="Value computed during the run"
-                       :helper-id="`runOptions.distributed.${computedConfig.distributed}`"
-                       text-content>{{ computedConfig.distributedStr() }}</helper>)
+                       text-content>{{ `"${computedConfig.title}"` }}</helper>)
             </span>
           </dd>
           <dt>POR</dt>
@@ -30,6 +27,17 @@
       </el-col>
       <el-col :md="12" v-if="isDistributed">
         <dl class="in-line">
+          <dt>Distributed</dt>
+          <dd>
+            <helper :helper-id="`runOptions.distributed.${userConfig.distributed}`" text-content>
+              {{ userConfig.distributedStr() }}
+            </helper>
+            <span class="computed-conf" v-if="userConfig.distributed === 'auto' && computedConfig">
+              (<helper helper-str="Value computed during the run"
+                       :helper-id="`runOptions.distributed.${computedConfig.distributed}`"
+                       text-content>{{ computedConfig.distributedStr() }}</helper>)
+            </span>
+          </dd>
           <dt>Number of Jobs</dt>
           <dd>
             {{ userConfig.nbJobsStr() }}

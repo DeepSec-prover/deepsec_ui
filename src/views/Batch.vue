@@ -16,48 +16,74 @@
       <el-tabs type="border-card">
         <el-tab-pane>
           <span slot="label"><i class="el-icon-s-data"></i> Summary</span>
-          <dl class="in-line">
-            <dt>Nb run</dt>
-            <dd>{{ batch.nbRun() }}</dd>
-            <dt>Local ID</dt>
-            <dd>{{ batch.localId() }}</dd>
-            <dt>Start time</dt>
-            <dd>{{ batch.startTime.toLocaleDateString() }} {{ batch.startTime.toLocaleTimeString() }}</dd>
-            <dt>Running time</dt>
-            <dd>
-              <duration :start-time="batch.startTime" :end-time="batch.endTime"></duration>
-            </dd>
-          </dl>
+          <el-row>
+            <el-col :md="12">
+              <dl class="in-line">
+                <dt>Local ID</dt>
+                <dd>{{ batch.localId() }}</dd>
+                <dt>Nb run</dt>
+                <dd>{{ batch.nbRun() }}</dd>
+                <template v-if="batch.debug">
+                  <dt>Debug</dt>
+                  <dd><el-tag size="mini" type="danger"><i class="el-icon-view"></i> yes</el-tag></dd>
+                </template>
+              </dl>
+            </el-col>
+            <el-col :md="12">
+              <dl class="in-line">
+                <dt>Start time</dt>
+                <dd><date :date="batch.startTime"></date></dd>
+                <template v-if="batch.endTime">
+                  <dt>End time</dt>
+                  <dd><date :date="batch.endTime"></date></dd>
+                </template>
+                <dt>Running time</dt>
+                <dd>
+                  <duration :start-time="batch.startTime" :end-time="batch.endTime"></duration>
+                </dd>
+              </dl>
+            </el-col>
+          </el-row>
         </el-tab-pane>
         <!-- Run Options -->
         <el-tab-pane>
           <span slot="label"><i class="el-icon-set-up"></i> Run Options</span>
           <run-config :user-config="batch.commandOptions" :computed-config="batch.computedOptions"></run-config>
         </el-tab-pane>
-        <!-- Deepsec Version -->
+        <!-- Versions -->
         <el-tab-pane>
-          <span slot="label"><i class="el-icon-monitor"></i> DeepSec version</span>
-          <dl class="in-line">
-            <dt>Version</dt>
-            <dd>{{ batch.deepsecVersion }}</dd>
-            <dt>Git Branch</dt>
-            <dd>
-              <template v-if="batch.gitBranch.includes('HEAD detached')">
-                {{ batch.gitBranch }} <!-- No link if detached -->
-              </template>
-              <template v-else>
-                <a :href="branchUrl" target="_blank" @click.prevent="openExternalBrowser">
-                  {{ batch.gitBranch }}
-                </a>
-              </template>
-            </dd>
-            <dt>Git Hash</dt>
-            <dd>
-              <a :href="hashUrl" target="_blank" @click.prevent="openExternalBrowser">
-                {{ batch.gitHash }}
-              </a>
-            </dd>
-          </dl>
+          <span slot="label"><i class="el-icon-monitor"></i> Versions</span>
+          <el-row>
+            <el-col :lg="9">
+              <dl class="in-line">
+                <dt>DeepSec Version</dt>
+                <dd>{{ batch.deepsecVersion }}<span v-if="batch.debug"> (debug)</span></dd>
+                <dt>OCaml Version</dt>
+                <dd>{{ batch.ocamlVersion }}</dd>
+              </dl>
+            </el-col>
+            <el-col :lg="15">
+              <dl class="in-line">
+                <dt>Git Branch</dt>
+                <dd>
+                  <template v-if="batch.gitBranch.includes('HEAD detached')">
+                    {{ batch.gitBranch }} <!-- No link if detached -->
+                  </template>
+                  <template v-else>
+                    <a :href="branchUrl" target="_blank" @click.prevent="openExternalBrowser">
+                      {{ batch.gitBranch }}
+                    </a>
+                  </template>
+                </dd>
+                <dt>Git Hash</dt>
+                <dd>
+                  <a :href="hashUrl" target="_blank" @click.prevent="openExternalBrowser">
+                    {{ batch.gitHash }}
+                  </a>
+                </dd>
+              </dl>
+            </el-col>
+          </el-row>
         </el-tab-pane>
       </el-tabs>
     </template>
@@ -70,7 +96,8 @@
                           :name="run.path">
           <template slot="title">
             <h3>
-              <result-status :status="run.status" tooltip></result-status> {{ run.title() }}
+              <result-status :status="run.status" tooltip></result-status>
+              {{ run.title() }}
             </h3>
             <span class="run-info">
             {{ run.nbQueries() }} {{ run.nbQueries() > 1 ? 'queries' : 'query' }}
@@ -93,6 +120,7 @@
   import ResultLayout from '../components/results/ResultLayout'
   import QueryCollapsible from '../components/query/QueryCollapsible'
   import RunConfig from '../components/RunConfig'
+  import Date from '../components/Date'
   import settings from '../../settings'
   import path from 'path'
 
@@ -105,7 +133,8 @@
       ResultLayout,
       QueryCollapsible,
       ResultStatus,
-      RunConfig
+      RunConfig,
+      Date
     },
     props: {
       batch: Object
