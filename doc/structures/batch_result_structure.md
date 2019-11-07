@@ -26,12 +26,13 @@ Format of name: `timestamp_random.json`
   "ocaml_version": <string>,
   "git_branch": <string>,
   "git_hash": <string>,
-  "debug": <bool>, // = false when not defined
+  "debug": <bool>,
   "run_files": [
     <string>,
     ...,
     <string>
   ],
+  // All options are optional
   "command_options": { // See deepsec documentation for command details
     "default_semantics": "private" | "classic" | "eavesdrop",
     "distributed": <bool> | "auto",
@@ -52,11 +53,11 @@ Format of name: `timestamp_random.json`
   "computed_options": {
     "default_semantics": "private" | "classic" | "eavesdrop",
     "distributed": <bool>,
-    "nb_jobs": <int>,
-    "local_workers": <int>,
-    "round_timer": <int>,
+    "nb_jobs": <int>, // (optional if distributed = false)
+    "local_workers": <int>, // (optional if distributed = false)
+    "round_timer": <int>, // (optional if distributed = false)
     "por": <bool>,
-    "distant_workers": [
+    "distant_workers": [ // (optional if distributed = false)
       {
         "host": <string>, // Format "<login>@<host>"
         "path": <string>,
@@ -64,7 +65,7 @@ Format of name: `timestamp_random.json`
       },
        ...
      ],
-    "title": <string>
+    "title": <string> // (optional)
   }
 }
 ```
