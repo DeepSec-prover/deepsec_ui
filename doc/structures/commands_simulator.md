@@ -22,8 +22,7 @@ Starting a trace display: UI -> API
 ```
 {
   "command": "start_display_trace",
-  "query_file": <string>, // Path of the query result json file
-
+  "query_file": <string>, // Relative path of the query result json file
 }
 ```
 
@@ -31,12 +30,6 @@ When the query file does not contain an attack trace: API -> UI
 
 ```
 { "command": "no_attack_trace" }
-```
-
-When the query file contains an attack trace and finished loading: API -> UI
-
-```
-{ "command": "display_trace_started" }
 ```
 
 Displaying next step: UI -> API
@@ -57,12 +50,6 @@ Displaying previous step: UI -> API
 }
 ```
 
-When no step is available (next of prev): API -> UI
-
-```
-{ "command": "step_unavailable" }
-```
-
 Display of a step: API -> UI
 
 ```
@@ -70,6 +57,6 @@ Display of a step: API -> UI
   "command": "current_step",
   "process": <process>,
   "frame": [ <term>,...,<term> ],
-  "trace": [ <action>,...,<action> ]
+  "trace": <int> // action index in attack_trace.action_sequence
 }
 ```
