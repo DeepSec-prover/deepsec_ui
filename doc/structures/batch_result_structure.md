@@ -21,10 +21,12 @@ Format of name: `timestamp_random.json`
   "status": "in_progress",
   "start_time": <int> // Timestamp.
   "import_date": <int>, (optional) // Timestamp. Only if imported
+  "title": <string>, (optional)
   "deepsec_version": <string>, // Format as "X.X.X"
   "ocaml_version": <string>,
   "git_branch": <string>,
   "git_hash": <string>,
+  "debug": <bool>, // = false when not defined
   "run_files": [
     <string>,
     ...,
@@ -45,6 +47,7 @@ Format of name: `timestamp_random.json`
       },
        ...
      ],
+    "title": <string>
   },
   "computed_options": {
     "default_semantics": "private" | "classic" | "eavesdrop",
@@ -61,6 +64,7 @@ Format of name: `timestamp_random.json`
       },
        ...
      ],
+    "title": <string>
   }
 }
 ```

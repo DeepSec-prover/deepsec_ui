@@ -24,7 +24,8 @@ Starting a run: UI -> DeepSec
         "workers": <int> | "auto"
       },
        ...
-     ]
+     ],
+    "title": <string>
   }
 }
 ```
