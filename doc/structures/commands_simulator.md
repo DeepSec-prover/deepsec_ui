@@ -57,6 +57,6 @@ Display of a step: API -> UI
   "command": "current_step",
   "process": <process>,
   "frame": [ <term>,...,<term> ],
-  "trace": <int> // action index in attack_trace.action_sequence
+  "current_action": <int> // action index in attack_trace.action_sequence. Start from -1.s
 }
 ```
