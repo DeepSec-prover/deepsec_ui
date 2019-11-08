@@ -29,6 +29,8 @@ export default class QueryModel extends ResultModel {
     } else {
       this.attackTrace = null
     }
+
+    this.progression = json.progression
   }
 
   loadRelations () {
@@ -42,6 +44,51 @@ export default class QueryModel extends ResultModel {
 
   title () {
     return this.index.toString()
+  }
+
+  progressionPercent () {
+    if (this.status === 'completed') {
+      return 100
+    }
+
+    if (!this.progression) {
+      return 0
+    }
+
+    if (this.progression.generation) {
+      return Math.floor(this.progression.generation.jobs_created /
+                          this.progression.generation.minimum_jobs)
+    }
+
+    if (this.progression.verification) {
+      return this.progression.verification.percent
+    }
+  }
+
+  /**
+   * Progression estimation for the all query processing
+   */
+  absoluteProgressionPercent () {
+    const GENERATION_WEIGHT = 0.1
+    const VERIF_WEIGHT = 0.9
+
+    if (this.status === 'completed') {
+      return 100
+    }
+
+    if (!this.progression) {
+      return 0
+    }
+
+    if (this.progression.generation) {
+      return Math.floor(this.progression.generation.jobs_created /
+                          this.progression.generation.minimum_jobs * GENERATION_WEIGHT)
+    }
+
+    if (this.progression.verification) {
+      return Math.floor((this.progression.verification.percent * VERIF_WEIGHT) +
+                          (100 * GENERATION_WEIGHT))
+    }
   }
 
   /**
@@ -69,8 +116,8 @@ export default class QueryModel extends ResultModel {
         description = text.query.results.attack[this.type].long
       }
 
-      description = description.replace('%p', this.attackTrace.index_process).
-        replace('%q', (this.attackTrace.index_process % 2) + 1)
+      description = description.replace('%p', this.attackTrace.index_process)
+                               .replace('%q', (this.attackTrace.index_process % 2) + 1)
     } else {
       if (short) {
         description = text.query.results.no_attack[this.type].short

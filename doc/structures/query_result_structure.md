@@ -64,6 +64,7 @@ waiting +
   ...
   "start_time": <int> (optional), // Timestamp. Not defined if the query was canceled before to start
   "end_time": <int>, // Timestamp. When is has been canceled
+  // (Optional) No progression if canceled before to start
   "progression": {
      "round": <int>, // Single core = 0
      "verification": {
@@ -89,6 +90,7 @@ waiting +
   "start_time": <int>, // Timestamp
   "end_time": <int>, // Timestamp. When the error occurs
   "error_msg": <string>,
+  // (Optional) No progression if error before to start
   "progression": {
      "round": <int>, // Single core = 0
      "verification": {

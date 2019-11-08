@@ -2,7 +2,7 @@
   <result-layout :result-object="query">
 
     <!-- Post Title -->
-    <template slot="post-title" v-if="query.isCompleted()" >
+    <template slot="post-title" v-if="query.isCompleted()">
       <el-tag size="medium" effect="dark" class="query-result" :type="query.attackFound() ? 'danger' : 'success'">
         {{ query.shortResultDescription() }}
       </el-tag>
@@ -25,6 +25,9 @@
         <query-summary :query="query"></query-summary>
       </el-card>
     </template>
+
+    <!-- Progression -->
+    <template slot="progression">{{ progressionStepStr }}</template>
 
     <!-- Details -->
     <template slot="details">
@@ -57,6 +60,25 @@
     computed: {
       processesStr: function () {
         return this.query.processes.map(p => formatProcess(p, this.query.atomicData))
+      },
+      progressionStepStr: function () {
+        if (this.query.status === 'completed') {
+          return 'Done'
+        }
+
+        if (!this.query.progression) {
+          return 'Not started'
+        }
+
+        if (this.query.progression.generation) {
+          return `Round ${this.query.progression.round + 1} - Jobs generation
+          (${this.query.progression.generation.jobs_created}/${this.query.progression.generation.minimum_jobs})`
+        }
+
+        if (this.query.progression.verification) {
+          return `Round ${this.query.progression.round + 1} - Verification processing
+           (jobs remaining: ${this.query.progression.verification.jobs_remaining})`
+        }
       }
     }
   }

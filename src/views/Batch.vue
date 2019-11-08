@@ -88,6 +88,11 @@
       </el-tabs>
     </template>
 
+    <!-- Progression -->
+    <template slot="progression">
+      Runs completed : {{batch.nbRunCompleted()}}/{{batch.nbRun()}}
+    </template>
+
     <!-- Details -->
     <template slot="details">
       <el-collapse v-model="openedRun">

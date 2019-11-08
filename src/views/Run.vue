@@ -11,6 +11,11 @@
       </router-link>
     </template>
 
+    <!-- Progression -->
+    <template slot="progression">
+      Queries completed : {{run.nbQueriesCompleted()}}/{{run.nbQueries()}}
+    </template>
+
     <!-- Summary -->
     <template slot="summary">
       <el-card>

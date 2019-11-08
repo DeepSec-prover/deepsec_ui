@@ -17,6 +17,17 @@
     <div id="summary">
       <slot name="summary"></slot>
     </div>
+
+    <div v-if="this.$slots.progression">
+      <div id="progression">
+        <h3><slot name="progression"></slot></h3>
+        <el-progress :stroke-width="10"
+                     :percentage="resultObject.progressionPercent()"
+                     :color="progressionColor"></el-progress>
+      </div>
+      <el-divider></el-divider>
+    </div>
+
     <div id="details">
       <slot name="details"></slot>
     </div>
@@ -86,6 +97,20 @@
         if (this.resultObject instanceof QueryModel) {
           return 'Query'
         }
+      },
+      progressionColor: function () {
+        switch (this.resultObject.status) {
+          case 'completed':
+            return '#67C23A'
+          case 'in_progress':
+            return '#409EFF'
+          case 'internal_error':
+            return '#F56C6C'
+          case 'canceled':
+            return '#E6A23C'
+          default:
+            return ''
+        }
       }
     }
   }
@@ -108,5 +133,9 @@
   #actions {
     margin-bottom: 15px;
     margin-left: 20px;
+  }
+
+  #progression {
+    margin: 20px
   }
 </style>

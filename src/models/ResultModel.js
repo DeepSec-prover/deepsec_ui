@@ -81,6 +81,13 @@ export default class ResultModel {
   }
 
   /**
+   * @return {Number} The current progression, integer between 0-100
+   */
+  progressionPercent () {
+    throw new TypeError('Must override method')
+  }
+
+  /**
    * Load a result file as a JSON object
    *
    * @param {String} relativePath The path to the result file relative to the result directory

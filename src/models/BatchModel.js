@@ -49,8 +49,26 @@ export default class BatchModel extends ResultModel {
     return this.startTime.toLocaleDateString() + ' ' + this.startTime.toLocaleTimeString()
   }
 
+  progressionPercent () {
+    if (this.isCompleted()) {
+      return 100
+    }
+
+    if (this.status === 'waiting') {
+      return 0
+    }
+
+    const runsProgression = this.runs.reduce((sum, r) => sum + r.progressionPercent(), 0)
+
+    return Math.floor(runsProgression / this.nbRun())
+  }
+
   nbRun () {
     return this.runFiles.length
+  }
+
+  nbRunCompleted () {
+    return this.runs.filter(r => r.isCompleted()).length
   }
 
   runIndex (run) {

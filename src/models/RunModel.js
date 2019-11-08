@@ -47,12 +47,31 @@ export default class RunModel extends ResultModel {
     return this.inputFileName().replace(/\.dps$/ui, '')
   }
 
+  progressionPercent () {
+    if (this.isCompleted()) {
+      return 100
+    }
+
+    if (this.status === 'waiting') {
+      return 0
+    }
+
+    const queriesProgression = this.queries.reduce(
+      (sum, q) => sum + q.absoluteProgressionPercent(), 0)
+
+    return Math.floor(queriesProgression / this.nbQueries())
+  }
+
   inputFileName () {
     return path.basename(this.inputFile)
   }
 
   nbQueries () {
     return this.queryFiles.length
+  }
+
+  nbQueriesCompleted () {
+    return this.queries.filter(q => q.isCompleted()).length
   }
 
   /**
