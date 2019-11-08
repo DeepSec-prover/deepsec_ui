@@ -84,15 +84,22 @@
           </el-col>
         </el-row>
         <!-- Global error message -->
-        <el-row v-show="globalErrorMsg">
+        <el-row v-if="globalError">
           <el-divider></el-divider>
           <el-alert
                   id="failed-error-msg"
                   title="Fail to start run"
                   type="error"
-                  :description="globalErrorMsg"
+                  :title="globalError.title"
                   :closable="false"
-                  show-icon></el-alert>
+                  effect="dark"
+                  show-icon>
+            <span v-html="globalError.message"></span>
+            <template v-if="globalError.isInternal">
+              <br>
+              Please report the problem in the <a :href="settings.deepsecIssueUrl" @click.prevent="$openExternalLink">issue tracker</a>.
+            </template>
+          </el-alert>
         </el-row>
         <!-- Files issues -->
         <el-row v-show="filesIssues.length > 0">
@@ -142,10 +149,11 @@
 </template>
 
 <script>
-  import SpecFilesSelection from '../components/SpecFilesSelection'
+  import SpecFilesSelection from '../components/spec-files/SpecFilesSelection'
   import FormItemHelper from '../components/helpers/FormItemHelper'
   import Helper from '../components/helpers/Helper'
-  import FileIssuesList from '../components/FileIssuesList'
+  import FileIssuesList from '../components/spec-files/FileIssuesList'
+  import settings from '../../settings'
   import { ipcRenderer } from 'electron'
   import RunConfigModel from '../models/RunConfigModel'
   import logger from 'electron-log'
@@ -177,8 +185,9 @@
         currentFiles: [],
         currentConf: null,
         runStarting: false,
-        globalErrorMsg: '',
-        filesIssues: []
+        globalError: null,
+        filesIssues: [],
+        settings: settings
       }
     },
     computed: {
@@ -201,9 +210,8 @@
     },
     methods: {
       submitForm () {
-        // TODO check if files exists
         this.runStarting = true
-        this.globalErrorMsg = ''
+        this.globalError = null
         this.filesIssues = []
 
         // Clean user inputs (eg: trim)
@@ -219,28 +227,42 @@
         // Wait for the run confirmation or error message
         ipcRenderer.once('deepsec-api:result', (event, result) => {
           logger.silly(`Run starting confirmation : ${JSON.stringify(result)}`)
-          if (result.success) {
-            this.runStarted()
-          } else {
-            // Global error
-            if (result.error) {
-              this.globalErrorMsg = result.error
-            } else {
-              this.globalErrorMsg = 'Unknown error.'
-            }
-            // Error or warning per files
-            if (result.files_issues) {
-              this.filesIssues = result.files_issues
-            }
+          if (!result.success) {
+            this.showGlobalError(result)
           }
           this.runStarting = false
         })
       },
-      runStarted () {
-        // TODO reset files list
-      },
       resetConf () {
         this.currentConf = new RunConfigModel()
+      },
+      showGlobalError (result) {
+        let error = {}
+        // Save internal flag for display tips
+        error.isInternal = result.isInternal
+
+        // Error title
+        if (result.isInternal) {
+          error.title = 'Internal error'
+        } else {
+          error.title = 'User error'
+        }
+
+        if (result.errorMsg) {
+          // Error message
+          error.message = result.errorMsg
+        } else {
+          // Unknown error message
+          error.message = 'No error message. Please check logs.'
+        }
+
+        // Error or warning per files
+        if (result.files_issues) {
+          this.filesIssues = result.files_issues
+        }
+
+        // Set at the end to have only one UI update
+        this.globalError = error
       }
     },
     beforeMount () {

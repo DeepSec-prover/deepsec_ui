@@ -35,6 +35,15 @@ h3 {
   cursor: pointer;
 }
 
+/* Alert message */
+
+.el-alert__content a {
+  color: inherit;
+  font-weight: bold;
+}
+
+/* Background */
+
 .background-success {
   background-color: #e1f3d8 !important;
 }

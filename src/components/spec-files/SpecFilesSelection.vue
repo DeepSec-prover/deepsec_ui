@@ -36,7 +36,7 @@
 </template>
 
 <script>
-  import { openSpecFilesRenderer } from '../util/open-files-dialogs'
+  import { openSpecFilesRenderer } from '../../util/open-files-dialogs'
   import FilesList from './FilesList'
 
   export default {

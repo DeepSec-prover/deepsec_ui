@@ -3,7 +3,8 @@ const common = {
   env: process.env.NODE_ENV || 'production',
   isDevelopment: process.env.NODE_ENV !== 'production',
   appRoot: __dirname, // Does not work if packaged
-  deepsecGitUrl: 'https://github.com/DeepSec-prover/deepsec'
+  deepsecGitUrl: 'https://github.com/DeepSec-prover/deepsec',
+  deepsecIssueUrl: 'https://github.com/DeepSec-prover/deepsec/issues'
 }
 
 const dev = {

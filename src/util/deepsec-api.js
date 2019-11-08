@@ -67,7 +67,12 @@ function runCmd (cmd, event, mainWindow) {
 
   // Process exit signal
   process.on('exit', code => {
-    logger.info(`DeepSec API process exit with code ${code}`)
+    if (code === 0) {
+      logger.info(`DeepSec API process end correctly with exit code ${code}`)
+    } else {
+      unexpectedError(event, mainWindow,
+                      `DeepSec API process end badly with exit code ${code}`)
+    }
   })
 
   // Process disconnected signal
@@ -114,8 +119,8 @@ function handleAnswer (answer, process, event, mainWindow) {
       processExit(process) // Silent for the user
       break
     // --- Error ---
-    case 'init_internal_error':
-      initInternalError(answer, event) // Event reply
+    case 'init_error':
+      initError(answer, event) // Event reply
       break
     case 'user_error':
       userError(answer, event) // Event reply
@@ -298,9 +303,10 @@ function batchEnded (answer, mainWindow) {
 
 // ======================= Error Answers ======================
 
-function initInternalError (answer, event) {
+function initError (answer, event) {
   // Send bad result to the Start Run page
-  event.reply('deepsec-api:result', { 'success': false, 'error': answer.error_msg })
+  event.reply('deepsec-api:result',
+              { 'success': false, 'errorMsg': answer.error_msg, 'isInternal':  answer.is_internal})
 }
 
 function userError (answer, event) {
@@ -320,9 +326,10 @@ function userError (answer, event) {
   // Send bad result to the Start Run page
   event.reply('deepsec-api:result', {
     'success': false,
-    'error': `${nbTotalError} error${nbTotalError > 1 ? 's' : ''} and
+    'isInternal': false,
+    'errorMsg': `${nbTotalError} error${nbTotalError > 1 ? 's' : ''} and
     ${nbTotalWarnings} warning${nbTotalWarnings > 1 ? 's' : ''} in
-    ${nbFilesIssue} file${nbFilesIssue > 1 ? 's' : ''}`,
+    ${nbFilesIssue} file${nbFilesIssue > 1 ? 's' : ''}.`,
     'files_issues': answer.error_runs
   })
 }

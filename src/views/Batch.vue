@@ -70,14 +70,14 @@
                     {{ batch.gitBranch }} <!-- No link if detached -->
                   </template>
                   <template v-else>
-                    <a :href="branchUrl" target="_blank" @click.prevent="openExternalBrowser">
+                    <a :href="branchUrl" target="_blank" @click.prevent="$openExternalLink">
                       {{ batch.gitBranch }}
                     </a>
                   </template>
                 </dd>
                 <dt>Git Hash</dt>
                 <dd>
-                  <a :href="hashUrl" target="_blank" @click.prevent="openExternalBrowser">
+                  <a :href="hashUrl" target="_blank" @click.prevent="$openExternalLink">
                     {{ batch.gitHash }}
                   </a>
                 </dd>
@@ -124,8 +124,6 @@
   import settings from '../../settings'
   import path from 'path'
 
-  const { remote } = require('electron')
-
   export default {
     name: 'batch',
     components: {
@@ -142,11 +140,6 @@
     data () {
       return {
         openedRun: []
-      }
-    },
-    methods: {
-      openExternalBrowser (e) {
-        remote.shell.openExternal(e.target.href)
       }
     },
     computed: {

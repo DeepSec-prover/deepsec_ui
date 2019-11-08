@@ -2,8 +2,7 @@
   <el-collapse :value="openFile">
     <el-collapse-item v-for="fileIssues in filesIssues" :name="fileIssues.file">
       <template slot="title">
-        <!-- TODO spec file name -->
-        The spec file name
+        {{ fileName(fileIssues.file) }}
         <el-tag class="tag-status" v-if="fileIssues.error_msg" effect="dark" type="danger" size="mini">
           1 <i class="el-icon-error"></i>
         </el-tag>
@@ -18,8 +17,11 @@
 </template>
 
 <script>
+  import SpecFileMixin from './spec-files-mixin'
+
   export default {
     name: 'file-issues-list',
+    mixins: [SpecFileMixin],
     props: {
       filesIssues: Array
     },

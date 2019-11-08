@@ -3,14 +3,13 @@
 <template>
   <transition-group tag="ul" :class="[ 'el-upload-list', 'el-upload-list--text', { 'is-disabled': disabled } ]" name="el-list"
                     :duration="{ leave: 100 }">
-    <li
-      v-for="file in files"
-      :class="['el-upload-list__item', focusing ? 'focusing' : '']"
-      :key="file"
-      @keydown.delete="!disabled && $emit('remove', file)"
-      @focus="focusing = true"
-      @blur="focusing = false"
-      @click="focusing = false"
+    <li v-for="file in files"
+        :class="['el-upload-list__item', focusing ? 'focusing' : '']"
+        :key="file"
+        @keydown.delete="!disabled && $emit('remove', file)"
+        @focus="focusing = true"
+        @blur="focusing = false"
+        @click="focusing = false"
     >
       <slot :file="file">
         <a class="el-upload-list__item-name" @click="handleClick(file)">
@@ -24,18 +23,17 @@
 
 <script>
   import ElProgress from 'element-ui/packages/progress'
-  import path from 'path'
+  import SpecFileMixin from './spec-files-mixin'
 
   export default {
     name: 'files-list',
-
+    mixins: [SpecFileMixin],
     data () {
       return {
         focusing: false
       }
     },
     components: { ElProgress },
-
     props: {
       files: {
         type: Array,
@@ -48,13 +46,9 @@
         default: false
       }
     },
-
     methods: {
       handleClick (file) {
         this.handlePreview && this.handlePreview(file)
-      },
-      fileName (filePath) {
-        return path.basename(filePath).replace(/\.dps$/ui, '')
       }
     }
   }
