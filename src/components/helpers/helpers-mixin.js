@@ -43,14 +43,19 @@ const mixin = {
         let helperContent = helpers
         let idParts = this.helperId.split('.')
 
-        for (let part in idParts) {
-          helperContent = helperContent[idParts[part]]
+        try {
+          for (let part in idParts) {
+            helperContent = helperContent[idParts[part]]
+          }
+        } catch (e) {
+          logger.error(`Can't find the id "${this.helperId}" in the helpers file`)
+          return null
         }
 
         if (typeof helperContent === 'string' || helperContent instanceof String) {
           content.push(helperContent)
         } else {
-          logger.error(`Can't find the id "${id}" in the helpers file`)
+          logger.error(`Can't find the id "${this.helperId}" in the helpers file`)
           return null
         }
       }
