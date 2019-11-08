@@ -85,6 +85,8 @@ function format (subProcess, atomic, indent) {
       return formatEquality(subProcess, atomic, indent)
     case 'Axiom':
       return formatAxiom(subProcess)
+    case 'Attacker':
+      return formatAttacker(subProcess)
     case 'New':
       return linePrefix + formatNew(subProcess, atomic, indent)
     case 'LetInElse':
@@ -185,7 +187,7 @@ function formatAtomic (subProcess, atomic, indent) {
 function formatFunction (subProcess, atomic, indent) {
   const symbol = atomic.get(subProcess.symbol)
 
-  if (symbol.category === 'Tuple') {
+  if (symbol.category.type === 'Tuple') {
     return '(' + subProcess.args.map(value => format(value, atomic, indent)).join(',') + ')'
   } else {
     let res = symbol.label
@@ -305,11 +307,21 @@ function formatEquality (subProcess, atomic, indent) {
 /**
  * Format "Axiom" type to readable string
  *
- * @param subProcess
+ * @param subProcess A structured sub-process
  * @returns {string}
  */
 function formatAxiom (subProcess) {
   return 'ax_' + subProcess.id
+}
+
+/**
+ * Format "Attacker" type to a readable string
+ *
+ * @param subProcess A structured sub-process
+ * @returns {string}
+ */
+function formatAttacker (subProcess) {
+  return subProcess.label
 }
 
 /**
@@ -323,7 +335,7 @@ function formatAxiom (subProcess) {
 function formatRecipe (recipe, atomic) {
   if (recipe.type === 'Axiom') {
     return 'ax_' + recipe.id
-  } else if (recipe.type === 'Function') {
+  } else if (recipe.type === 'Function' || recipe.type === 'Attacker') {
     return format(recipe, atomic, 0)
   } else {
     // Do not stop the app but log an error
