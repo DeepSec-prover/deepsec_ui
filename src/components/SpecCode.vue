@@ -1,7 +1,7 @@
 <template>
   <code v-if="inLine" class="language-deepsec match-braces" ref="code"></code>
   <simplebar v-else class="code-block language-deepsec match-braces line-numbers">
-    <pre class="test"><code ref="code"></code></pre>
+    <pre><code ref="code"></code></pre>
   </simplebar>
 </template>
 
@@ -87,5 +87,9 @@
   /* TODO remove horizontal scroll in <pre> for Simplebar */
   .code-block {
     max-height: 80vh; /* 80% of the window height */
+  }
+
+  pre {
+    margin: 0;
   }
 </style>
