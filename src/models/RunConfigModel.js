@@ -56,7 +56,9 @@ export default class RunConfigModel {
    * Clean user inputs (eg: trim, multiple spaces ...)
    */
   preProcessData () {
-    this.title = this.title.trim().replace(/\s+/, " ")
+    if (this.title) {
+      this.title = this.title.trim().replace(/\s+/, " ")
+    }
     this.servers.forEach(s => {
       s.host = s.host.trim()
       s.path = s.path.trim()
