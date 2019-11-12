@@ -53,50 +53,6 @@ export default class RunConfigModel {
   }
 
   /**
-   * @returns {string} The printable distributed value
-   */
-  distributedStr () {
-    if (this.distributed === 'auto') {
-      return 'auto'
-    }
-
-    if (this.distributed === true) {
-      return 'yes'
-    }
-
-    return 'no'
-  }
-
-  /**
-   * @returns {string} The printable nb jobs value
-   */
-  nbJobsStr () {
-    if (this.nbJobs.auto) {
-      return 'auto'
-    }
-
-    return this.nbJobs.value.toString()
-  }
-
-  /**
-   * @returns {string} The printable nb workers value
-   */
-  localWorkersStr () {
-    if (this.localWorkers.auto) {
-      return 'auto'
-    }
-
-    return this.localWorkers.value.toString()
-  }
-
-  /**
-   * @returns {string} The printable POR value
-   */
-  porStr () {
-    return this.por ? 'yes' : 'no'
-  }
-
-  /**
    * Clean user inputs (eg: trim, multiple spaces ...)
    */
   preProcessData () {
@@ -150,33 +106,33 @@ export default class RunConfigModel {
     config.defaultSemantic = json.default_semantics
     config.distributed = json.distributed
     config.por = json.por
+    config.title = json.title
+    config.roundTimer = json.round_timer
 
-    if (json.title) {
-      config.title = json.title
-    }
-
-    if (json.nb_jobs) {
+    if (json.nb_jobs !== null && json.nb_jobs !== undefined) {
       config.nbJobs.auto = json.nb_jobs === 'auto'
       if (!config.nbJobs.auto) {
         config.nbJobs.value = json.nb_jobs
       }
+    } else {
+      config.nbJobs = undefined
     }
 
-    if (json.local_workers) {
+    if (json.local_workers !== null && json.local_workers !== undefined) {
       config.localWorkers.auto = json.local_workers === 'auto'
       if (!config.localWorkers.auto) {
         config.localWorkers.value = json.local_workers
       }
+    } else {
+      config.localWorkers = undefined
     }
 
-    if (json.round_timer) {
-      config.roundTimer = json.round_timer
-    }
-
-    if (json.distant_workers) {
+    if (json.distant_workers !== null && json.distant_workers !== undefined) {
       config.servers = json.distant_workers.map(s => {
         return RunConfigServerModel.loadFromJson(s, ++config.serversId)
       })
+    } else {
+      config.servers = []
     }
 
     return config
@@ -189,17 +145,6 @@ class RunConfigServerModel {
     this.host = ''
     this.path = ''
     this.workers = { auto: true, value: 10 }
-  }
-
-  /**
-   * @returns {string} The printable workers value
-   */
-  workersStr () {
-    if (this.workers.auto) {
-      return 'auto'
-    }
-
-    return this.workers.value.toString()
   }
 
   static loadFromJson (json, id) {
