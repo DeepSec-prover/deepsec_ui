@@ -49,7 +49,7 @@
           <!-- Private -->
           <span v-if="privateConstructors">
               <el-tag size="mini" effect="plain" class="tag">Private :</el-tag>
-              <spec-code in-line :code="publicConstructors"></spec-code>
+              <spec-code in-line :code="privateConstructors"></spec-code>
             </span>
           <!-- None -->
           <span v-if="!publicConstructors && !privateConstructors">
@@ -66,7 +66,7 @@
           <!-- Private -->
           <span v-if="privateDestructors">
               <el-tag size="mini" effect="plain" class="tag">Private :</el-tag>
-              <spec-code in-line :code="publicDestructors"></spec-code>
+              <spec-code in-line :code="privateDestructors"></spec-code>
             </span>
           <!-- None -->
           <span v-if="!publicDestructors && !privateDestructors">
@@ -83,7 +83,7 @@
           <!-- Private -->
           <span v-if="privateNames">
               <el-tag size="mini" effect="plain" class="tag">Private :</el-tag>
-              <spec-code in-line :code="publicNames"></spec-code>
+              <spec-code in-line :code="privateNames"></spec-code>
             </span>
           <!-- None -->
           <span v-if="!publicNames && !privateNames">
