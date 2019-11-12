@@ -70,13 +70,15 @@
           return 'Not started'
         }
 
+        const roundStr = this.query.progression.round === 0 ? '' : `Round ${this.query.progression.round} - `
+
         if (this.query.progression.generation) {
-          return `Round ${this.query.progression.round + 1} - Jobs generation
+          return `${roundStr}Jobs generation
           (${this.query.progression.generation.jobs_created}/${this.query.progression.generation.minimum_jobs})`
         }
 
         if (this.query.progression.verification) {
-          return `Round ${this.query.progression.round + 1} - Verification processing
+          return `${roundStr}Verification processing
            (jobs remaining: ${this.query.progression.verification.jobs_remaining})`
         }
       }
