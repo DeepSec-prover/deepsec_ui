@@ -188,13 +188,12 @@
 
         let rewriteRulesStr = []
 
-        // Create a shared atomic renamer for every rewriting system
-        const atomic = new AtomicRenamer(this.query.atomicData)
-
         destructors.forEach(d => {
           d.category.rewrite_rules.forEach(r => {
-            let rhs = formatProcess(r.rhs, atomic)
+            // Create a shared atomic renamer for every part of the rewriting system
+            const atomic = new AtomicRenamer(this.query.atomicData)
             let lhs = r.lhs.map(x => formatProcess(x, atomic)).join(',' + BREAK_POINT)
+            let rhs = formatProcess(r.rhs, atomic)
             rewriteRulesStr.push(`${d.label}(${lhs}) -> ${rhs}`)
           })
         })
