@@ -6,9 +6,10 @@
           <!-- Default Semantic -->
           <dt>Default Semantic</dt>
           <dd>
-            <helper :helper-id="`semantics.${userConfig.defaultSemantic}`" text-content>
-              {{ userConfig.defaultSemantic === undefined ? '-' : userConfig.defaultSemantic }}
+            <helper v-if="userConfig.defaultSemantic" :helper-id="`semantics.${userConfig.defaultSemantic}`" text-content>
+              {{ userConfig.defaultSemantic }}
             </helper>
+            <template v-else>-</template>
             <span v-if="userConfig.defaultSemantic !== computedConfig.defaultSemantic" class="computed-conf">
               (<helper helper-str="Value computed during the run." :helper-id="`semantics.${computedConfig.defaultSemantic}`"
                        text-content>{{ computedConfig.defaultSemantic }}</helper>)
@@ -37,9 +38,10 @@
           <!-- Distributed -->
           <dt>Distributed</dt>
           <dd>
-            <helper :helper-id="`runOptions.distributed.${userConfig.distributed}`" text-content>
+            <helper v-if="userConfig.distributed !== undefined" :helper-id="`runOptions.distributed.${userConfig.distributed}`" text-content>
               {{ userDistributedStr }}
             </helper>
+            <template v-else>-</template>
             <span class="computed-conf" v-if="userConfig.distributed !== computedConfig.distributed">
               (<helper helper-str="Value computed during the run."
                        :helper-id="`runOptions.distributed.${computedConfig.distributed}`"
