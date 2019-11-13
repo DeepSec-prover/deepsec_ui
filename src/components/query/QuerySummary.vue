@@ -122,6 +122,8 @@
   import { formatProcess, formatTrace } from '../../util/process-parser'
   import AtomicRenamer from '../../util/AtomicRenamer'
 
+  const BREAK_POINT = '\u200B' // zero-width space
+
   export default {
     name: 'query-summary',
     components: {
@@ -140,7 +142,7 @@
             && a.category.type === 'Constructor'
             && a.representation === 'UserDefined'
             && a.is_public
-        }).map(a => `${a.label}/${a.arity}`).join(',')
+        }).map(a => `${a.label}/${a.arity}`).join(',' + BREAK_POINT)
       },
       privateConstructors: function () {
         return this.query.atomicData.filter(a => {
@@ -148,35 +150,35 @@
             && a.category.type === 'Constructor'
             && a.representation === 'UserDefined'
             && !a.is_public
-        }).map(a => `${a.label}/${a.arity}`).join(',')
+        }).map(a => `${a.label}/${a.arity}`).join(',' + BREAK_POINT)
       },
       publicDestructors: function () {
         return this.query.atomicData.filter(a => {
           return a.type === 'Symbol'
             && a.category.type === 'Destructor'
             && a.is_public
-        }).map(a => `${a.label}/${a.arity}`).join(',')
+        }).map(a => `${a.label}/${a.arity}`).join(',' + BREAK_POINT)
       },
       privateDestructors: function () {
         return this.query.atomicData.filter(a => {
           return a.type === 'Symbol'
             && a.category.type === 'Destructor'
             && !a.is_public
-        }).map(a => `${a.label}/${a.arity}`).join(',')
+        }).map(a => `${a.label}/${a.arity}`).join(',' + BREAK_POINT)
       },
       publicNames: function () {
         return this.query.atomicData.filter(a => {
           return a.type === 'Symbol'
             && a.representation === 'UserName'
             && a.is_public
-        }).map(a => a.label).join(',')
+        }).map(a => a.label).join(',' + BREAK_POINT)
       },
       privateNames: function () {
         return this.query.atomicData.filter(a => {
           return a.type === 'Symbol'
             && a.representation === 'UserName'
             && !a.is_public
-        }).map(a => a.label).join(',')
+        }).map(a => a.label).join(',' + BREAK_POINT)
       },
       rewritingSystem: function () {
         let destructors = this.query.atomicData.filter(a => {
@@ -192,7 +194,7 @@
         destructors.forEach(d => {
           d.category.rewrite_rules.forEach(r => {
             let rhs = formatProcess(r.rhs, atomic)
-            let lhs = r.lhs.map(x => formatProcess(x, atomic)).join(',')
+            let lhs = r.lhs.map(x => formatProcess(x, atomic)).join(',' + BREAK_POINT)
             rewriteRulesStr.push(`${d.label}(${lhs}) -> ${rhs}`)
           })
         })
