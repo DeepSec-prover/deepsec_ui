@@ -44,17 +44,21 @@ export function formatTrace (actions, atomicData) {
 }
 
 /**
- * Format a process from a Json format to a readable string
+ * Format a process from a Json format to a readable string.
  *
  * @param {Object} process - The structured process
- * @param {Array} atomicData - The table of atomic data
+ * @param {Array|AtomicRenamer} atomicData - The table of atomic data. If it's an array then wrap
+ * it with a new Renamer. If it's already a Renamer keep the reference. So this way the Renamer
+ * reference can be shared.
  * @returns {string} A readable string which describe the process
  * @see doc/process_structure.md for process structure
  */
 export function formatProcess (process, atomicData) {
   logger.debug(`[Start] Parsing a process (atomic data size: ${atomicData.length})`)
-  // New rename table
-  const atomic = new AtomicRenamer(atomicData)
+
+  // If the atomic parameter is already a renamer keep it, if not create one
+  const atomic = atomicData instanceof AtomicRenamer ? atomicData : new AtomicRenamer(atomicData)
+
   // Start recursive formatting
   const res = format(process, atomic, 0)
   logger.debug('[Done] Parsing a process')

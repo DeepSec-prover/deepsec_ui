@@ -120,6 +120,7 @@
   import Duration from '../Duration'
   import text from '../../text-content/text'
   import { formatProcess, formatTrace } from '../../util/process-parser'
+  import AtomicRenamer from '../../util/AtomicRenamer'
 
   export default {
     name: 'query-summary',
@@ -185,10 +186,13 @@
 
         let rewriteRulesStr = []
 
+        // Create a shared atomic renamer for every rewriting system
+        const atomic = new AtomicRenamer(this.query.atomicData)
+
         destructors.forEach(d => {
           d.category.rewrite_rules.forEach(r => {
-            let rhs = formatProcess(r.rhs, this.query.atomicData)
-            let lhs = r.lhs.map(x => formatProcess(x, this.query.atomicData)).join(',')
+            let rhs = formatProcess(r.rhs, atomic)
+            let lhs = r.lhs.map(x => formatProcess(x, atomic)).join(',')
             rewriteRulesStr.push(`${d.label}(${lhs}) -> ${rhs}`)
           })
         })
