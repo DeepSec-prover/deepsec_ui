@@ -216,8 +216,8 @@ Possible errors:
 or
 ```
 {
-  "command": "error_recipe",
-  "recipe": <recipe>
+  "command": "error_function"
+  "function": <string>
 }
 ```
 or
@@ -226,6 +226,13 @@ or
   "command": "error_axiom",
   "recipe": <recipe>,
   "axiom": <int>
+}
+```
+or
+```
+{
+  "command": "error_recipe",
+  "recipe": <recipe>
 }
 ```
 or
