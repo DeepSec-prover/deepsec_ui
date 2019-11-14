@@ -101,6 +101,17 @@ export default class QueryModel extends ResultModel {
   }
 
   /**
+   * @returns {null|Object} The process where the attack trace was found. Null if no attack
+   */
+  getAttackedProcess () {
+    if (!this.attackFound()) {
+      return null
+    }
+
+    return this.processes[this.attackTrace.index_process]
+  }
+
+  /**
    * Return a human readable description for this query result.
    * See text dictionary file for description mapping.
    *

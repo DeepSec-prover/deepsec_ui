@@ -19,28 +19,44 @@ export function formatTrace (actions, atomicData) {
   // New rename table
   const atomic = new AtomicRenamer(atomicData)
 
-  let axiomId = 1
-  let res = ''
+  let axiomIdRef = { value : 1}
+  let res = []
 
   actions.forEach(action => {
-    switch (action.type) {
-      case 'input':
-        res += 'in(' + formatRecipe(action.channel, atomic) + ',' +
-          formatRecipe(action.term, atomic) + ');' + BREAK_POINT
-        break
-      case 'output':
-        res += 'out(' + formatRecipe(action.channel, atomic) + ',ax_' + axiomId++ + ');' +
-          BREAK_POINT
-        break
-      case 'eavesdrop':
-        res += 'eavesdrop(' + formatRecipe(action.channel, atomic) + ',ax_' + axiomId++ +
-          ');' + BREAK_POINT
-        break
-      // Skip others cases because not visible
+    if (action.type === 'input' || action.type === 'output' || action.type === 'eavesdrop') {
+      res.push(formatAction(action, atomic, axiomIdRef))
     }
   })
 
-  return res
+  return res.join(';' + BREAK_POINT)
+}
+
+/**
+ * Format a single action as a string.
+ *
+ * @param {Object} action The action to format
+ * @param {AtomicRenamer} atomic The atomic data wrapped with renamer association
+ * @param {Object} axiomIdRef Reference of counter object to keep track of axioms id
+ * @returns {string} The formatted string
+ */
+export function formatAction (action, atomic, axiomIdRef) {
+  switch (action.type) {
+    case 'input':
+      return 'in(' + formatRecipe(action.channel, atomic) + ','
+        + formatRecipe(action.term, atomic) + ')'
+    case 'output':
+      return 'out(' + formatRecipe(action.channel, atomic) + ',ax_' + axiomIdRef.value++ + ')'
+    case 'eavesdrop':
+      return 'eavesdrop(' + formatRecipe(action.channel, atomic) + ',ax_' + axiomIdRef.value++ + ')'
+    case 'tau':
+      return 'tau'
+    case 'comm':
+      return 'comm'
+    case 'bang':
+      return 'bang'
+    case 'choice':
+      return 'choice'
+  }
 }
 
 /**

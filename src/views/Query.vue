@@ -37,6 +37,10 @@
           <spec-code :code="process"></spec-code>
         </el-col>
       </el-row>
+      <template v-if="query.attackTrace">
+        <el-divider></el-divider>
+        <query-trace :query="query"></query-trace>
+      </template>
     </template>
   </result-layout>
 </template>
@@ -46,10 +50,12 @@
   import ResultLayout from '../components/results/ResultLayout'
   import QuerySummary from '../components/query/QuerySummary'
   import SpecCode from '../components/SpecCode'
+  import QueryTrace from '../components/query/QueryTrace'
 
   export default {
     name: 'query',
     components: {
+      QueryTrace,
       QuerySummary,
       SpecCode,
       ResultLayout
