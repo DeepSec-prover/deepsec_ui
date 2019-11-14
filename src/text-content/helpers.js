@@ -29,6 +29,11 @@ const helpers = {
     private: 'TODO description of private',
     classic: 'TODO description of classic',
     eavesdrop: 'TODO description of eavesdrop'
+  },
+  traceLevel: {
+    default: 'TODO default description',
+    io: 'TODO IO description',
+    all: 'TODO All description'
   }
 }
 
