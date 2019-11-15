@@ -48,10 +48,38 @@ export default class QueryTraceModel {
   }
 
   nextAction (level) {
-    this.gotoAction(this.currentAction + 1)
+    for (let i = this.currentAction + 1; i < this.nbSteps(); i++) {
+      if (QueryTraceModel.filterAction(this.actions[i], level)) {
+        this.gotoAction(i)
+        return
+      }
+    }
+
+    this.gotoLastAction()
   }
 
   previousAction (level) {
-    this.gotoAction(this.currentAction - 1)
+    for (let i = this.currentAction - 1; i > -1; i--) {
+      if (QueryTraceModel.filterAction(this.actions[i], level)) {
+        this.gotoAction(i)
+        return
+      }
+    }
+
+    this.gotoFirstAction()
+  }
+
+  static filterAction (action, level) {
+    switch (level) {
+      case 'default':
+        return action.type === 'output' || action.type === 'input' || action.type === 'eavesdrop'
+          || action.type === 'bang'
+      case 'io':
+        return action.type === 'output' || action.type === 'input' || action.type === 'eavesdrop'
+      case 'all':
+        return true
+      default:
+        throw new Error(`Invalid filter level : ${level}`)
+    }
   }
 }

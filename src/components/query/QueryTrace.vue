@@ -64,8 +64,9 @@
           <div id="trace-actions">
             <template v-for="i in queryTrace.actions.length" v-if="visibleActions[i-1]">
               <span class="action-index">{{ i }}</span>
-              <span class="action-description" @click="queryTrace.gotoAction(i-1)">
+              <span class="action-description">
                 <spec-code in-line :code="actionsStr[i-1]"
+                           @click.native="queryTrace.gotoAction(i-1)"
                            :class="{'clickable': true, 'tau': isTauAction(queryTrace.actions[i-1])}"></spec-code>
               </span>
             </template>
@@ -139,17 +140,7 @@
           if (i > this.queryTrace.currentAction) {
             currentAction = false
           } else {
-            switch (this.traceLevel) {
-              case 'default':
-                currentAction = a.type === 'output' || a.type === 'input' || a.type === 'eavesdrop'
-                break
-              case 'io':
-                currentAction = a.type === 'output' || a.type === 'input' || a.type === 'eavesdrop'
-                break
-              case 'all':
-                currentAction = true
-                break
-            }
+            currentAction = QueryTraceModel.filterAction(a, this.traceLevel)
           }
 
           actions.push(currentAction)
