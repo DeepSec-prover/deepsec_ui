@@ -27,12 +27,12 @@
                      @click="queryTrace.gotoFirstAction()"
                      icon="el-icon-d-arrow-left">
           </el-button>
-          <el-button :disabled="!queryTrace.hasPreviousAction(traceLevel)"
+          <el-button :disabled="!queryTrace.hasPreviousAction()"
                      @click="queryTrace.previousAction(traceLevel)"
                      icon="el-icon-arrow-left">
             Prev
           </el-button>
-          <el-button :disabled="!queryTrace.hasNextAction(traceLevel)"
+          <el-button :disabled="!queryTrace.hasNextAction()"
                      @click="queryTrace.nextAction(traceLevel)">
             Next
             <i class="el-icon-arrow-right"></i>
@@ -140,7 +140,7 @@
           if (i > this.queryTrace.currentAction) {
             currentAction = false
           } else {
-            currentAction = QueryTraceModel.filterAction(a, this.traceLevel)
+            currentAction = QueryTraceModel.isVisibleAction(a, this.traceLevel)
           }
 
           actions.push(currentAction)
