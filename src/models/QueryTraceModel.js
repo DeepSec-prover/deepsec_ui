@@ -22,16 +22,28 @@ export default class QueryTraceModel {
     this.process = this.query.getAttackedProcess()
   }
 
+  nbSteps () {
+    return this.actions.length
+  }
+
   gotoAction (id) {
     // TODO go to action
     this.currentAction = id
   }
 
-  hasNextAction (level) {
+  gotoFirstAction () {
+    this.gotoAction(-1)
+  }
+
+  gotoLastAction () {
+    this.gotoAction(this.actions.length - 1)
+  }
+
+  hasNextAction (level = 'all') {
     return this.currentAction < this.actions.length - 1;
   }
 
-  hasPreviousAction (level) {
+  hasPreviousAction (level = 'all') {
     return this.currentAction > -1
   }
 

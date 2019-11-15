@@ -6,49 +6,71 @@
     </el-col>
     <el-col :md="8">
 
-      <!-- Trace level selection -->
-      <el-radio-group v-model="traceLevel">
-        <helper helper-id="traceLevel.default">
-          <el-radio-button label="default">Default</el-radio-button>
-        </helper>
-        <helper helper-id="traceLevel.io">
-          <el-radio-button label="io">IO</el-radio-button>
-        </helper>
-        <helper helper-id="traceLevel.all">
-          <el-radio-button label="all">All</el-radio-button>
-        </helper>
-      </el-radio-group>
-      <br>
+      <div id="trace-buttons" class="centred-content">
+        <!-- Trace level selection -->
+        <el-radio-group v-model="traceLevel">
+          <helper helper-id="traceLevel.default">
+            <el-radio-button label="default">Default</el-radio-button>
+          </helper>
+          <helper helper-id="traceLevel.io">
+            <el-radio-button label="io">I/O</el-radio-button>
+          </helper>
+          <helper helper-id="traceLevel.all">
+            <el-radio-button label="all">All</el-radio-button>
+          </helper>
+        </el-radio-group>
+        <br>
 
-      <!-- Navigation buttons -->
-      <el-button-group>
-        <el-button :disabled="!queryTrace.hasPreviousAction(traceLevel)"
-                   @click="queryTrace.previousAction(traceLevel)"
-                   icon="el-icon-arrow-left">
-          Prev
-        </el-button>
-        <el-button :disabled="!queryTrace.hasNextAction(traceLevel)"
-                   @click="queryTrace.nextAction(traceLevel)">
-          Next
-          <i class="el-icon-arrow-right"></i>
-        </el-button>
-      </el-button-group>
+        <!-- Navigation buttons -->
+        <el-button-group>
+          <el-button :disabled="!queryTrace.hasPreviousAction()"
+                     @click="queryTrace.gotoFirstAction()"
+                     icon="el-icon-d-arrow-left">
+          </el-button>
+          <el-button :disabled="!queryTrace.hasPreviousAction(traceLevel)"
+                     @click="queryTrace.previousAction(traceLevel)"
+                     icon="el-icon-arrow-left">
+            Prev
+          </el-button>
+          <el-button :disabled="!queryTrace.hasNextAction(traceLevel)"
+                     @click="queryTrace.nextAction(traceLevel)">
+            Next
+            <i class="el-icon-arrow-right"></i>
+          </el-button>
+          <el-button :disabled="!queryTrace.hasNextAction()"
+                     @click="queryTrace.gotoLastAction()">
+            <i class="el-icon-d-arrow-right"></i>
+          </el-button>
+        </el-button-group>
+      </div>
 
+      <!-- Trace actions -->
       <el-card>
         <template slot="header">
-          Trace{{ queryTrace.currentAction === -1 ? '' : ` - Step n°${queryTrace.currentAction + 1}` }}
+          <template v-if="queryTrace.currentAction === -1">
+            Trace - {{ queryTrace.nbSteps() }} Step{{ queryTrace.nbSteps() > 1 ? 's' : '' }}
+          </template>
+          <template v-else>
+            Trace - Step {{ queryTrace.currentAction + 1 }} / {{ queryTrace.nbSteps() }}
+          </template>
         </template>
         <div v-if="queryTrace.currentAction === -1" class="centred-content info-text">
-          Initial step
+          Initial state
         </div>
         <div v-else-if="noActionVisible" class="centred-content info-text">
-          Nothing visible at this level
+          Nothing visible with this detail level
         </div>
-        <ol v-else>
-          <li v-for="i in queryTrace.actions.length" v-if="visibleActions[i-1]">
-            <spec-code in-line :code="actionsStr[i-1]"></spec-code>
-          </li>
-        </ol>
+        <simplebar v-else>
+          <div id="trace-actions">
+            <template v-for="i in queryTrace.actions.length" v-if="visibleActions[i-1]">
+              <span class="action-index">{{ i }}</span>
+              <span class="action-description" @click="queryTrace.gotoAction(i-1)">
+                <spec-code in-line :code="actionsStr[i-1]"
+                           :class="{'clickable': true, 'tau': isTauAction(queryTrace.actions[i-1])}"></spec-code>
+              </span>
+            </template>
+          </div>
+        </simplebar>
       </el-card>
       <h3>Frame</h3>
     </el-col>
@@ -58,6 +80,7 @@
 <script>
   import QueryModel from '../../models/QueryModel'
   import QueryTraceModel from '../../models/QueryTraceModel'
+  import Simplebar from 'simplebar-vue'
   import Helper from '../helpers/Helper'
   import SpecCode from '../SpecCode'
   import { formatAction, formatProcess } from '../../util/process-parser'
@@ -66,7 +89,8 @@
     name: 'query-trace',
     components: {
       SpecCode,
-      Helper
+      Helper,
+      Simplebar
     },
     props: {
       query: {
@@ -114,8 +138,7 @@
           let a = this.queryTrace.actions[i]
           if (i > this.queryTrace.currentAction) {
             currentAction = false
-          } else
-          {
+          } else {
             switch (this.traceLevel) {
               case 'default':
                 currentAction = a.type === 'output' || a.type === 'input' || a.type === 'eavesdrop'
@@ -137,8 +160,11 @@
         this.noActionVisible = !oneActionVisible
         this.visibleActions = actions
       },
+      isTauAction (action) {
+        return ['tau', 'comm', 'bang', 'choice'].includes(action.type)
+      }
     },
-    watch : {
+    watch: {
       // Manual trigger visible actions because computed method fail to detect changes.
       traceLevel: function () {
         this.computeVisibleActions()
@@ -159,4 +185,34 @@
     font-style: italic;
     color: #909399;
   }
+
+  #trace-actions {
+    list-style-type: none;
+    display: grid;
+    grid-template-columns: minmax(40px, max-content) 1fr
+  }
+
+  #trace-actions .action-index {
+    text-align: right;
+    margin-right: 5px;
+    color: #909399;
+    align-self: center;
+  }
+
+  #trace-actions .action-index:after {
+    content: " - ";
+  }
+
+  #trace-buttons > * {
+    margin-bottom: 15px;
+  }
+
+  #trace-buttons {
+    margin-bottom: 20px;
+  }
+
+  .tau {
+    opacity: 0.5;
+  }
+
 </style>
