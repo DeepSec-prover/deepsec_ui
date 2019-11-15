@@ -60,7 +60,7 @@
         <div v-else-if="noActionVisible" class="centred-content info-text">
           Nothing visible with this detail level
         </div>
-        <simplebar v-else>
+        <simplebar v-else id="steps">
           <div id="trace-actions">
             <template v-for="i in queryTrace.actions.length" v-if="visibleActions[i-1]">
               <span class="action-index">{{ i }}</span>
@@ -208,6 +208,7 @@
   }
 
   #trace-buttons {
+    margin-top: 20px;
     margin-bottom: 20px;
   }
 
@@ -215,4 +216,7 @@
     opacity: 0.5;
   }
 
+  #steps {
+    max-height: 50vh;
+  }
 </style>

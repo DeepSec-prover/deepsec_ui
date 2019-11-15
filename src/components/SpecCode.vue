@@ -51,15 +51,15 @@
 </script>
 
 <style>
-  .token.hidden {
+  .language-deepsec .token.hidden {
     display: none;
   }
 
-  .token.in-out {
+  .language-deepsec .token.in-out {
     color: lightgreen;
   }
 
-  .token.punctuation.brace-selected, .token.punctuation.brace-hover {
+  .language-deepsec .token.punctuation.brace-selected, .token.punctuation.brace-hover {
     /*outline: unset;*/
     outline-color: rgba(255, 255, 0, 0.50);
     color: rgba(255, 255, 0, 0.90);
@@ -68,17 +68,17 @@
   }
 
   /* To avoid different line high and bad line number */
-  sup {
+  .language-deepsec sup {
     vertical-align: top;
   }
 
   /* To avoid different line high and bad line number */
-  sub {
+  .language-deepsec sub {
     vertical-align: bottom;
   }
 
   /* Scroll bar color */
-  .simplebar-scrollbar.simplebar-visible:before {
+  .code-block .simplebar-scrollbar.simplebar-visible:before {
     background-color: white;
   }
 </style>
