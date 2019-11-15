@@ -13,7 +13,6 @@ or
   "term": <term>,
   "position": <position>,
   "process": <process>, (optional) // When not defined the process is Nil
-  "highlight": <bool> (optional)
 }
 ```
 or
@@ -24,7 +23,6 @@ or
   "pattern": <pattern>,
   "position": <position>,
   "process": <process>, (optional) // When not defined the process is Nil
-  "highlight": <bool> (optional)
 }
 ```
 or
@@ -36,7 +34,6 @@ or
   "position": <position>,
   "process_then": <process>, (optional) // When not defined the process is Nil
   "process_else": <process>, (optional) // When not defined the process is Nil
-  "highlight": <bool> (optional)
 }
 ```
 or
@@ -48,7 +45,6 @@ or
   "position": <position>,
   "process_then": <process>, (optional) // When not defined the process is Nil
   "process_else": <process>, (optional) // When not defined the else branch is Nil
-  "highlight": <bool> (optional)
 }
 ```
 or
@@ -58,7 +54,6 @@ or
   "name": <int>,
   "position": <position>,
   "process": <process>, (optional) // When not defined the process is Nil
-  "highlight": <bool> (optional)
 }
 ```
 or
@@ -79,7 +74,6 @@ or
   "multiplicity": <int>,
   "position": <position>,
   "process": <process>, (optional) // When not defined the process is Nil
-  "highlight": <bool> (optional)
 }
 ```
 or
@@ -89,6 +83,5 @@ or
   "position": <position>,
   "process1" : <process>, (optional) // When not defined the process is Nil
   "process2" : <process>, (optional) // When not defined the process is Nil
-  "highlight": <bool> (optional)
 }
 ```
