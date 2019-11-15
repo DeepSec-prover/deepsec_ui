@@ -45,7 +45,7 @@
       </div>
 
       <!-- Trace actions -->
-      <el-card>
+      <el-card class="steps-frame">
         <template slot="header">
           <template v-if="queryTrace.currentAction === -1">
             Trace - {{ queryTrace.nbSteps() }} Step{{ queryTrace.nbSteps() > 1 ? 's' : '' }}
@@ -73,7 +73,15 @@
           </div>
         </simplebar>
       </el-card>
-      <h3>Frame</h3>
+
+      <!-- Trace Frame -->
+      <el-card header="Frame">
+        <ul>
+          <li v-for="term in queryTrace.frame">
+            <spec-code in-line :code="'TODO'"></spec-code>
+          </li>
+        </ul>
+      </el-card>
     </el-col>
   </el-row>
 </template>
@@ -209,5 +217,9 @@
 
   #steps {
     max-height: 50vh;
+  }
+
+  .steps-frame {
+    margin-bottom: 20px;
   }
 </style>
