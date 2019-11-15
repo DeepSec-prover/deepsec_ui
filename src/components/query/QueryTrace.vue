@@ -77,8 +77,8 @@
       <!-- Trace Frame -->
       <el-card header="Frame">
         <ul>
-          <li v-for="term in queryTrace.frame">
-            <spec-code in-line :code="'TODO'"></spec-code>
+          <li v-for="i in queryTrace.frame.length">
+            ax<sub>{{i}}</sub> <spec-code in-line :code="'TODO'"></spec-code>
           </li>
         </ul>
       </el-card>
