@@ -36,17 +36,8 @@ Displaying next step: UI -> API
 
 ```
 {
-  "command": "next_step",
-  "detail": "standard" | "io_only" | "full" // Indicates the level of detail
-}
-```
-
-Displaying previous step: UI -> API
-
-```
-{
-  "command": "previous_step",
-  "detail": "standard" | "io_only" | "full" // Indicates the level of detail
+  "command": "goto_step",
+  "id": <int>
 }
 ```
 
@@ -57,7 +48,7 @@ Display of a step: API -> UI
   "command": "current_step",
   "process": <process>,
   "frame": [ <term>,...,<term> ],
-  "current_action": <int> // action index in attack_trace.action_sequence. Start from -1.
+  "current_id": <int> // action index in attack_trace.action_sequence. Start from -1.
 }
 ```
 
@@ -161,7 +152,7 @@ Current simulator step: API -> UI
   "on_attack_trace": true,
   "process": <process>,
   "frame": [ <term>,...,<term> ],
-  "current_action": <int> // action index in attack_trace.action_sequence. Start from -1.
+  "current_id": <int> // action index in attack_trace.action_sequence. Start from -1.
 }
 ```
 or
@@ -172,9 +163,9 @@ or
   "process": <process>,
   "frame": [ <term>,...,<term> ],
   "simulated_trace": [ <action>,...,<action> ],
-  "minimum_current_action": <int> // action index in attack_trace.action_sequence. Start from -1.
-  "full_available_actions": [ <available_actions> ,..., <available_actions> ],
-  "io_available_actions": [ <available_actions> ,..., <available_actions> ],
+  "minimum_current_id": <int> // action index in attack_trace.action_sequence. Start from -1.
+  "all_available_actions": [ <available_actions> ,..., <available_actions> ],
+  "default_available_actions": [ <available_actions> ,..., <available_actions> ],
   "status_equiv": <status_static_equivalence>
 }
 ```
@@ -184,7 +175,7 @@ When the label `"on_attack_trace"` is at `true`, the current step represents the
 
 For the simulated trace, `"simulated_trace"` represents the list of actions so far chosen by the user. The label `"minimum_current_action"` indicates the minimal action index of that the attack trace that can be shown. That is: User is free to show the attack trace from `"minimum_current_action"` to the last one.
 
-The available actions correspond to all the actions that the user can select for the next step. Note that there are two versions: `"full_available_actions"` represents the actions when the detail level is `"full"`; `"io_available_actions"` represents the actions when the detail level is `"io_only"` or `"standard"`. Thus, in this case, there is no difference between the detail levels `"io_only"` and `"standard"`.
+The available actions correspond to all the actions that the user can select for the next step. Note that there are two versions: `"full_available_actions"` represents the actions when the detail level is `"all"`; `"io_available_actions"` represents the actions when the detail level is `"io_only"` or `"default"`. Thus, in this case, there is no difference between the detail levels `"io_only"` and `"default"`.
 
 In an available action, the label `"position"` is the position of the process and the label `"tau_positions"` is the list of tau action positions that can be automatically performed in order to apply the available action. Note that in the actions of `"full_available_actions"`, the lists `"tau_positions"` are always empty since the user must select himself all the tau actions.
 
@@ -206,7 +197,7 @@ Apply a next step: UI -> API
 {
   "command": "next_step",
   "on_attack_trace": <bool>,
-  "detail": "standard" | "io_only" | "full", // Indicates the level of detail
+  "detail": "default" | "io_only" | "all", // Indicates the level of detail
   "selected_action": <action_simulator> // Only when "on_attack_trace" is false.
 }
 ```
@@ -217,7 +208,7 @@ Apply the previous step: UI -> API
 {
   "command": "previous_step",
   "on_attack_trace": <bool>,
-  "detail": "standard" | "io_only" | "full" // Indicates the level of detail
+  "detail": "default" | "io_only" | "all" // Indicates the level of detail
 }
 ```
 
@@ -331,7 +322,7 @@ Send the current step: API -> UI
   "process": <process>,
   "frame": [ <term>,...,<term> ],
   "minimum_current_action": <int> // Only when "on_attack_trace" = false
-  "current_action": <int> // action index from the trace. Start from -1.
+  "current_id": <int> // action index from the trace. Start from -1.
 }
 ```
 
@@ -342,7 +333,7 @@ Apply a next step: UI -> API
 {
   "command": "next_step",
   "on_attack_trace": <bool>, // Only in phase 2
-  "detail": "standard" | "io_only" | "full", // Indicates the level of detail
+  "detail": "default" | "io_only" | "all", // Indicates the level of detail
   "selected_action": <action_simulator> // Only in phase 1
 }
 ```
@@ -353,7 +344,7 @@ Apply the previous step: UI -> API
 {
   "command": "previous_step",
   "on_attack_trace": <bool>, // Only in phase 2
-  "detail": "standard" | "io_only" | "full" // Indicates the level of detail
+  "detail": "default" | "io_only" | "all" // Indicates the level of detail
 }
 ```
 

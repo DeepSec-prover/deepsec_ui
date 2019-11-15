@@ -1,4 +1,4 @@
-# Action 
+# Action simulator
 
 Definition of `<action_simulator>` :
 

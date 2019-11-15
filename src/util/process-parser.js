@@ -49,7 +49,7 @@ export function formatAction (action, atomic, axiomIdRef) {
     case 'eavesdrop':
       return 'eavesdrop(' + formatRecipe(action.channel, atomic) + ',ax_' + axiomIdRef.value++ + ')'
     case 'tau':
-      return 'τ action'
+      return 'τ step'
     case 'comm':
       return 'τ internal communication'
     case 'bang':
