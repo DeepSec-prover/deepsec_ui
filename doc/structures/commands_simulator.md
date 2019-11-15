@@ -48,7 +48,7 @@ Display of a step: API -> UI
   "command": "current_step",
   "process": <process>,
   "frame": [ <term>,...,<term> ],
-  "current_id": <int> // action index in attack_trace.action_sequence. Start from -1.
+  "current_action_id": <int> // action index in attack_trace.action_sequence. Start from -1.
 }
 ```
 
@@ -91,8 +91,9 @@ Available actions: `<available_action>`:
 ```
 {
   "type": "input" | "output",
+  "channel": <term>,
   "position": <position>,
-  "tau_positions": [<position>,...,<position>], //
+  "tau_positions": [<position>,...,<position>],
   "transitions": [<available_transition>,...,<available_transition>]
 }
 ```
@@ -101,7 +102,7 @@ or
 {
   "type": "bang" | "choice",
   "position": <position>,
-  "tau_positions": [<position>,...,<position>] //
+  "tau_positions": [<position>,...,<position>]
 }
 ```
 or
@@ -124,7 +125,7 @@ or
   "status": "non_equivalent_message",
   "recipe": <recipe>,
   "term": <term>,
-  "on_attack_trace": <bool>
+  "process_id": <int>
 }
 ```
 or
@@ -136,7 +137,7 @@ or
   "term_equal": <term>,
   "term1": <term>,
   "term2": <term>,
-  "on_attack_trace": <bool>
+  "process_id": <int>
 }
 ```
 The status of static equivalence indicates whether the the corresponding traces are statically equivalent or not. When they are not equivalent, we have two types of witness.
@@ -148,8 +149,8 @@ Current simulator step: API -> UI
 
 ```
 {
-  "command": "current_step",
-  "on_attack_trace": true,
+  "command": "current_step_attacked",
+  "process_id": <int>,
   "process": <process>,
   "frame": [ <term>,...,<term> ],
   "current_id": <int> // action index in attack_trace.action_sequence. Start from -1.
@@ -158,12 +159,11 @@ Current simulator step: API -> UI
 or
 ```
 {
-  "command": "current_step",
-  "on_attack_trace": false,
+  "command": "current_step_simulated",
+  "process_id": <int>,
   "process": <process>,
   "frame": [ <term>,...,<term> ],
-  "simulated_trace": [ <action>,...,<action> ],
-  "minimum_current_id": <int> // action index in attack_trace.action_sequence. Start from -1.
+  "new_actions": [ <action>,...,<action> ],
   "all_available_actions": [ <available_actions> ,..., <available_actions> ],
   "default_available_actions": [ <available_actions> ,..., <available_actions> ],
   "status_equiv": <status_static_equivalence>
@@ -173,7 +173,7 @@ or
 This is the core data structure. As we give the possibility to the user to simultaneously display the simulated process and the attacked process, we need to keep the state of the processes and their frame in the different current step.
 When the label `"on_attack_trace"` is at `true`, the current step represents the state of the attack trace whereas the current step represents the state of the simulated trace when `"on_attack_trace"` is at `false`. Note that the current step for the attack trace has the same functionalities as in the trace display.
 
-For the simulated trace, `"simulated_trace"` represents the list of actions so far chosen by the user. The label `"minimum_current_action"` indicates the minimal action index of that the attack trace that can be shown. That is: User is free to show the attack trace from `"minimum_current_action"` to the last one.
+For the simulated trace, `"new_actions"` represents the list of new actions chosen by the user. The label `"minimum_current_action"` indicates the minimal action index of that the attack trace that can be shown. That is: User is free to show the attack trace from `"minimum_current_action"` to the last one.
 
 The available actions correspond to all the actions that the user can select for the next step. Note that there are two versions: `"full_available_actions"` represents the actions when the detail level is `"all"`; `"io_available_actions"` represents the actions when the detail level is `"io_only"` or `"default"`. Thus, in this case, there is no difference between the detail levels `"io_only"` and `"default"`.
 
@@ -195,10 +195,9 @@ Finally, when the user chose an I/O (resp. input) amongst the available action t
 Apply a next step: UI -> API
 ```
 {
-  "command": "next_step",
-  "on_attack_trace": <bool>,
+  "command": "next_step_simulated",
   "detail": "default" | "io_only" | "all", // Indicates the level of detail
-  "selected_action": <action_simulator> // Only when "on_attack_trace" is false.
+  "selected_action": <action> // TODO maybe custom type to remove recipes
 }
 ```
 
@@ -206,9 +205,9 @@ Apply the previous step: UI -> API
 
 ```
 {
-  "command": "previous_step",
-  "on_attack_trace": <bool>,
-  "detail": "default" | "io_only" | "all" // Indicates the level of detail
+  "command": "goto_step",
+  "process_id": <int>,
+  "id": <int>
 }
 ```
 
@@ -277,7 +276,7 @@ phase 1 of the simulator.
 ```
 {
   "command": "select_trace",
-  "restart": <int> // 0,1 or 2 : If 0 then the the simulator restart at the same the current attack trace was
+  "start": <int> // 0, 1 or 2 : If 0 then the the simulator restart at the same the current attack trace was
     // if 1 then the simulator restarts from the initial process 1
     // if 2 then the simulator restarts from the initial process 2
 }
@@ -306,9 +305,9 @@ Send the current step: API -> UI
   "command": "current_step",
   "process": <process>,
   "frame": [ <term>,...,<term> ],
-  "simulated_trace": [ <action>,...,<action> ],
-  "full_available_actions": [ <available_actions> ,..., <available_actions> ],
-  "io_available_actions": [ <available_actions> ,..., <available_actions> ]
+  "new_actions": [ <action>,...,<action> ],
+  "default_available_actions": [ <available_actions> ,..., <available_actions> ],
+  "all_available_actions": [ <available_actions> ,..., <available_actions> ]
 }
 ```
 
@@ -318,33 +317,22 @@ Send the current step: API -> UI
 ```
 {
   "command": "current_step",
-  "on_attack_trace": true,
+  "process_id": <int>,
   "process": <process>,
   "frame": [ <term>,...,<term> ],
-  "minimum_current_action": <int> // Only when "on_attack_trace" = false
-  "current_id": <int> // action index from the trace. Start from -1.
+  "current_action_id": <int> // action index from the trace. Start from -1.
 }
 ```
 
 ### Browsing commands
 
-Apply a next step: UI -> API
-```
-{
-  "command": "next_step",
-  "on_attack_trace": <bool>, // Only in phase 2
-  "detail": "default" | "io_only" | "all", // Indicates the level of detail
-  "selected_action": <action_simulator> // Only in phase 1
-}
-```
-
-Apply the previous step: UI -> API
+Go to a specific step: UI -> API
 
 ```
 {
-  "command": "previous_step",
-  "on_attack_trace": <bool>, // Only in phase 2
-  "detail": "default" | "io_only" | "all" // Indicates the level of detail
+  "command": "goto_step",
+  "id": <int>,
+  "process_id": <int>
 }
 ```
 
