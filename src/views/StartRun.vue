@@ -77,7 +77,7 @@
             </div>
             <!-- Reset Config -->
             <div id="reset-config" class="centred-content">
-              <el-link slot="reference" :underline="false" icon="el-icon-refresh-left" type="danger" @click="resetConf()">
+              <el-link :disabled="runStarting" slot="reference" :underline="false" icon="el-icon-refresh-left" type="danger" @click="resetConf()">
                 Reset
               </el-link>
             </div>
