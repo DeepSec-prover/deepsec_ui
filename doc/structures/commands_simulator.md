@@ -163,7 +163,7 @@ or
   "process_id": <int>,
   "process": <process>,
   "frame": [ <term>,...,<term> ],
-  "new_actions": [ <action>,...,<action> ],
+  "new_actions": [ <action>,...,<action> ], // Only in response to "next_step_simulated". Empty in response of "goto_step".
   "all_available_actions": [ <available_actions> ,..., <available_actions> ],
   "default_available_actions": [ <available_actions> ,..., <available_actions> ],
   "status_equiv": <status_static_equivalence>
@@ -196,7 +196,6 @@ Apply a next step: UI -> API
 ```
 {
   "command": "next_step_simulated",
-  "detail": "default" | "io_only" | "all", // Indicates the level of detail
   "selected_action": <action> // TODO maybe custom type to remove recipes
 }
 ```
