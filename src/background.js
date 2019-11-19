@@ -84,9 +84,9 @@ app.on('ready', async () => {
     }
   }
 
-  const startRun = new ApiStartRun()
   // Listener for Deepsec API call from renderers
   ipcMain.on('deepsec-api:run', (event, cmd) => {
+    const startRun = new ApiStartRun()
     // Run the command then return the result
     startRun.start(cmd, event, mainWindow)
   })

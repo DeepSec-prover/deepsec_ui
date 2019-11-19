@@ -13,10 +13,41 @@ export class ApiManager {
    */
   constructor (namespace, detached = false) {
     this.process = null
+    this.event = null
+    this.mainWindow = null
     this.namespace = namespace
     this.detached = detached
     this.answerHandlers = []
     this.registerAllAnswers()
+  }
+
+  /**
+   * Reply to the event.
+   *
+   * @param {Object} content The content of the reply.
+   */
+  eventReply (content) {
+    this.event.reply(`deepsec-api:${this.namespace}`, content)
+  }
+
+  /**
+   * Push a notification signal (will be caught by the main layer).
+   *
+   * @param {String} title The title of the notification
+   * @param {String} message The content message of the notification (HTML)
+   * @param {String} type The type of notification (success/warning/info/error)
+   * @param {String} topic The name of the topic, for filter
+   * @param {Object} link The route description for vue-router
+   * @param {Object} router The vue router to use
+   */
+  pushNotification (title,
+                    message = '',
+                    type = 'info',
+                    topic = 'default',
+                    link = null,
+                    router = null) {
+    this.mainWindow.webContents.send('notification:show',
+                                     title, message, type, topic, link, router)
   }
 
   /**
@@ -32,19 +63,19 @@ export class ApiManager {
       throw Error('Can\'t start a process twice.')
     }
 
+    this.event = event
+    this.mainWindow = mainWindow
     const apiPath = String(userSettings.get('deepsecApiPath'))
 
     // Check Deepsec API path
     if (isEmptyOrBlankStr(apiPath)) {
       // Send bad result to the Start Run page
-      event.reply(`deepsec-api:${this.namespace}`,
-                  { 'success': false, 'error': 'DeepSec API path is not set' })
+      this.eventReply({ 'success': false, 'error': 'DeepSec API path is not set' })
       logger.warn('Try to start a command but the DeepSec API path is not set')
       return
     } else if (!isFile(apiPath)) {
       // Send bad result to the Start Run page
-      event.reply(`deepsec-api:${this.namespace}`,
-                  { 'success': false, 'error': `Incorrect DeepSec API path (${apiPath})` })
+      this.eventReply({ 'success': false, 'error': `Incorrect DeepSec API path (${apiPath})` })
       logger.warn(
         `Try to start a command but the DeepSec API path is incorrect (${apiPath})`)
       return
@@ -70,21 +101,19 @@ export class ApiManager {
 
       answers.forEach((a) => {
         if (!isEmptyOrBlankStr(a)) {
-          this.handleAnswer(a, event, mainWindow)
+          this.handleAnswer(a)
         }
       })
     })
 
     // Stderr messages catching, should never happen
     this.process.stderr.on('data', data => {
-      this.unexpectedError(event, mainWindow,
-                           `Error message from DeepSec API : ${data.toString()}`)
+      this.unexpectedError(`Error message from DeepSec API : ${data.toString()}`)
     })
 
     // Abnormal behaviours from the process
     this.process.on('error', err => {
-      this.unexpectedError(event, mainWindow,
-                      `Error detected from DeepSec API : ${err.name} - ${err.message}`)
+      this.unexpectedError(`Error detected from DeepSec API : ${err.name} - ${err.message}`)
     })
 
     // Process exit signal
@@ -92,8 +121,7 @@ export class ApiManager {
       if (code === 0) {
         logger.info(`DeepSec API process end correctly with exit code ${code}`)
       } else {
-        this.unexpectedError(event, mainWindow,
-                        `DeepSec API process end badly with exit code ${code}`)
+        this.unexpectedError(`DeepSec API process end badly with exit code ${code}`)
       }
       this.processExit()
     })
@@ -113,16 +141,13 @@ export class ApiManager {
    * Handle a new answer from the API.
    *
    * @param {String} answer A json object as a raw string.
-   * @param {Object} event The internal event that trigger the start (required for reply).
-   * @param {Object} mainWindow The reference to the main window (required for notifications).
    */
-  handleAnswer (answer, event, mainWindow) {
+  handleAnswer (answer) {
     // Parse the answer to json
     try {
       answer = JSON.parse(answer)
     } catch (e) {
-      this.unexpectedError(event, mainWindow,
-                           `Parsing error of DeepSec API answer : ${answer}`)
+      this.unexpectedError(`Parsing error of DeepSec API answer : ${answer}`)
       return
     }
 
@@ -130,29 +155,23 @@ export class ApiManager {
       logger.error(`Unknown DeepSec API answer command : ${answer.command} for ${this.namespace}`)
     } else {
       logger.debug(`Processing command ${answer.command} for ${this.namespace}`)
-      this.answerHandlers[answer.command](answer, event, mainWindow)
+      this.answerHandlers[answer.command](answer)
     }
   }
 
   /**
    * For any unexpected behaviours during the run process (should not happen in production).
    *
-   * @param {Object} event The internal event that trigger the start (required for reply).
-   * @param {Object} mainWindow The reference to the main window (required for notifications).
    * @param {String} message The error message
    */
-  unexpectedError (event, mainWindow, message) {
+  unexpectedError (message) {
     logger.error(message)
 
     // Send bad result to the Start Run page (if already for an answer this will be ignored)
-    event.reply(`deepsec-api:${this.namespace}`, { 'success': false, 'error': message })
+    this.eventReply({ 'success': false, 'error': message })
 
     // Send ui notification
-    mainWindow.webContents.send('notification:show',
-                                'Unexpected error',
-                                message,
-                                'error',
-                                'default')
+    this.pushNotification('Unexpected error', message, 'error', 'default')
   }
 
   /**
@@ -168,15 +187,15 @@ export class ApiManager {
    * Register an answer handler for a specific command.
    *
    * @param {String} command The name of the answer command to handle.
-   * @param {Function} handler The function to run when the command is received. Should have 3
-   * parameters : the answer object, the event, the reference to the main window
+   * @param {Function} handler The function to run when the command is received. Will have the
+   * answer as parameter (an object).
    */
   addAnswerHandler (command, handler) {
     if (this.answerHandlers[command] !== undefined) {
       throw Error(`An answer can only have one handler (${command}).`)
     }
 
-    this.answerHandlers[command] = handler
+    this.answerHandlers[command] = handler.bind(this) // bind "this" to fix the good context
   }
 
   /**

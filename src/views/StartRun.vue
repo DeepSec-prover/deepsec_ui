@@ -225,7 +225,7 @@
         })
 
         // Wait for the run confirmation or error message
-        ipcRenderer.once('deepsec-api:result', (event, result) => {
+        ipcRenderer.once('deepsec-api:start-run', (event, result) => {
           logger.silly(`Run starting confirmation : ${JSON.stringify(result)}`)
           if (!result.success) {
             this.showGlobalError(result)
