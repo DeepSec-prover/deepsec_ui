@@ -1,0 +1,189 @@
+import userSettings from 'electron-settings'
+import logger from 'electron-log'
+import { isEmptyOrBlankStr, isFile } from '../util/misc'
+import { spawn } from 'child_process'
+
+export class ApiManager {
+  /**
+   * Create an API manager for a specific scenario.
+   * Will start a command and handle the answers.
+   *
+   * @param {String} namespace The namespace of this manager, used in internal signals.
+   * @param {Boolean} detached If true the started process won't stop when the UI is closed.
+   */
+  constructor (namespace, detached = false) {
+    this.process = null
+    this.namespace = namespace
+    this.detached = detached
+    this.answerHandlers = []
+    this.registerAllAnswers()
+  }
+
+  /**
+   * Start a command through Deepsec API.
+   * Should reply to the event exactly one time.
+   *
+   * @param {Object} options Process options as a JSON object.
+   * @param {Object} event The internal event that trigger the start (required for reply).
+   * @param {Object} mainWindow The reference to the main window (required for notifications).
+   */
+  start (options, event, mainWindow) {
+    if (this.process !== null) {
+      throw Error('Can\'t start a process twice.')
+    }
+
+    const apiPath = String(userSettings.get('deepsecApiPath'))
+
+    // Check Deepsec API path
+    if (isEmptyOrBlankStr(apiPath)) {
+      // Send bad result to the Start Run page
+      event.reply(`deepsec-api:${this.namespace}`,
+                  { 'success': false, 'error': 'DeepSec API path is not set' })
+      logger.warn('Try to start a command but the DeepSec API path is not set')
+      return
+    } else if (!isFile(apiPath)) {
+      // Send bad result to the Start Run page
+      event.reply(`deepsec-api:${this.namespace}`,
+                  { 'success': false, 'error': `Incorrect DeepSec API path (${apiPath})` })
+      logger.warn(
+        `Try to start a command but the DeepSec API path is incorrect (${apiPath})`)
+      return
+    }
+
+    logger.info(`Start DeepSec API process with command : ${apiPath}`)
+    // TODO set env
+    this.process = spawn(apiPath, {
+      detached: this.detached,
+      windowsHide: true
+    })
+
+    // Allow the application to close even if the process is still running
+    if (this.detached) {this.process.unref()}
+
+    // Stdout messages catching
+    this.process.stdout.on('data', (data) => {
+      // Convert buffer to string
+      data = data.toString()
+      logger.silly(`DeepSec API answer : ${data}`)
+      // Split if many commands at once
+      const answers = data.split('\n')
+
+      answers.forEach((a) => {
+        if (!isEmptyOrBlankStr(a)) {
+          this.handleAnswer(a, event, mainWindow)
+        }
+      })
+    })
+
+    // Stderr messages catching, should never happen
+    this.process.stderr.on('data', data => {
+      this.unexpectedError(event, mainWindow,
+                           `Error message from DeepSec API : ${data.toString()}`)
+    })
+
+    // Abnormal behaviours from the process
+    this.process.on('error', err => {
+      this.unexpectedError(event, mainWindow,
+                      `Error detected from DeepSec API : ${err.name} - ${err.message}`)
+    })
+
+    // Process exit signal
+    this.process.on('exit', code => {
+      if (code === 0) {
+        logger.info(`DeepSec API process end correctly with exit code ${code}`)
+      } else {
+        this.unexpectedError(event, mainWindow,
+                        `DeepSec API process end badly with exit code ${code}`)
+      }
+      this.processExit()
+    })
+
+    // Process disconnected signal
+    this.process.on('disconnect', () => {
+      logger.debug(`DeepSec API process disconnect to current process`)
+    })
+
+    // Send first
+    let cmdStr = JSON.stringify(options)
+    logger.info(`Send first command to API : ${cmdStr}`)
+    this.process.stdin.write(cmdStr + '\n')
+  }
+
+  /**
+   * Handle a new answer from the API.
+   *
+   * @param {String} answer A json object as a raw string.
+   * @param {Object} event The internal event that trigger the start (required for reply).
+   * @param {Object} mainWindow The reference to the main window (required for notifications).
+   */
+  handleAnswer (answer, event, mainWindow) {
+    // Parse the answer to json
+    try {
+      answer = JSON.parse(answer)
+    } catch (e) {
+      this.unexpectedError(event, mainWindow,
+                           `Parsing error of DeepSec API answer : ${answer}`)
+      return
+    }
+
+    if (this.answerHandlers[answer.command] === undefined) {
+      logger.error(`Unknown DeepSec API answer command : ${answer.command} for ${this.namespace}`)
+    } else {
+      logger.debug(`Processing command ${answer.command} for ${this.namespace}`)
+      this.answerHandlers[answer.command](answer, event, mainWindow)
+    }
+  }
+
+  /**
+   * For any unexpected behaviours during the run process (should not happen in production).
+   *
+   * @param {Object} event The internal event that trigger the start (required for reply).
+   * @param {Object} mainWindow The reference to the main window (required for notifications).
+   * @param {String} message The error message
+   */
+  unexpectedError (event, mainWindow, message) {
+    logger.error(message)
+
+    // Send bad result to the Start Run page (if already for an answer this will be ignored)
+    event.reply(`deepsec-api:${this.namespace}`, { 'success': false, 'error': message })
+
+    // Send ui notification
+    mainWindow.webContents.send('notification:show',
+                                'Unexpected error',
+                                message,
+                                'error',
+                                'default')
+  }
+
+  /**
+   * Close the communication with the process.
+   */
+  processExit () {
+    logger.info('Close the communication with the API process.')
+    this.process.stdin.end()
+    this.process = null
+  }
+
+  /**
+   * Register an answer handler for a specific command.
+   *
+   * @param {String} command The name of the answer command to handle.
+   * @param {Function} handler The function to run when the command is received. Should have 3
+   * parameters : the answer object, the event, the reference to the main window
+   */
+  addAnswerHandler (command, handler) {
+    if (this.answerHandlers[command] !== undefined) {
+      throw Error(`An answer can only have one handler (${command}).`)
+    }
+
+    this.answerHandlers[command] = handler
+  }
+
+  /**
+   * Override and register every command handler here.
+   */
+  registerAllAnswers () {
+    // Use addAnswerHandler to register every command here
+    throw new TypeError('Must override method')
+  }
+}

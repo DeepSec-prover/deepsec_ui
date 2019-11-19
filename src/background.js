@@ -6,7 +6,7 @@ import setupDefaultLogger from './util/setup-logging'
 import logger from 'electron-log'
 import { unsetToDefault } from './util/default-user-settings'
 import userSettings from 'electron-settings'
-import runCmd from './util/deepsec-api'
+import { ApiStartRun } from './deepsec-api/ApiStartRun'
 
 // Init default logger
 setupDefaultLogger()
@@ -84,11 +84,11 @@ app.on('ready', async () => {
     }
   }
 
+  const startRun = new ApiStartRun()
   // Listener for Deepsec API call from renderers
   ipcMain.on('deepsec-api:run', (event, cmd) => {
-    logger.silly(`Received Deepsec API command: ${JSON.stringify(cmd)}`)
     // Run the command then return the result
-    runCmd(cmd, event, mainWindow)
+    startRun.start(cmd, event, mainWindow)
   })
 
   createWindow()
