@@ -51,10 +51,27 @@ export class ApiManager {
   }
 
   /**
+   * Send a command to the running process.
+   *
+   * @param {Object} command The command with options to send.
+   */
+  sendCommand (command) {
+    let cmdStr = JSON.stringify(command)
+    try {
+      this.process.stdin.write(cmdStr + '\n')
+      logger.info(`Command sent to API : ${cmdStr}`)
+    } catch (e) {
+      this.unexpectedError(
+        `Impossible to communicate with the process. Fail to send the command : ${cmdStr}
+        Error : ${e.toString()}`)
+    }
+  }
+
+  /**
    * Start a command through Deepsec API.
    * Should reply to the event exactly one time.
    *
-   * @param {Object} options Process options as a JSON object.
+   * @param {Object} options Process command with options as a JSON object.
    * @param {Object} event The internal event that trigger the start (required for reply).
    * @param {Object} mainWindow The reference to the main window (required for notifications).
    */
@@ -131,10 +148,8 @@ export class ApiManager {
       logger.debug(`DeepSec API process disconnect to current process`)
     })
 
-    // Send first
-    let cmdStr = JSON.stringify(options)
-    logger.info(`Send first command to API : ${cmdStr}`)
-    this.process.stdin.write(cmdStr + '\n')
+    // Send first command
+    this.sendCommand(options)
   }
 
   /**

@@ -10,6 +10,18 @@ export class ApiStartRun extends ApiManager {
     super('start-run', true)
   }
 
+  cancelBatch () {
+    this.sendCommand({command: 'cancel_batch'})
+  }
+
+  cancelRun (runPath) {
+    this.sendCommand({command: 'cancel_run', file: runPath})
+  }
+
+  cancelQuery (queryPath) {
+    this.sendCommand({command: 'cancel_query', file: queryPath})
+  }
+
   registerAllAnswers () {
     // Normal answers
     this.addAnswerHandler('batch_started', this.batchStarted)

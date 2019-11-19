@@ -8,12 +8,6 @@ Kill the API: UI -> API
 { "command": "die" }
 ```
 
-API is dead: API -> UI
-
-```
-{ "command": "exit" }
-```
-
 
 ## Trace display
 

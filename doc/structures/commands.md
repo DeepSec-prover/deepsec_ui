@@ -110,12 +110,6 @@ Canceling a batch: UI -> DeepSec
   "command": "cancel_batch"
 }
 ```
-
-```
-{
-  "command": "exit"
-}
-```
 The two previous commands behave similarly.
 
 
