@@ -7,6 +7,7 @@ import logger from 'electron-log'
 import { unsetToDefault } from './util/default-user-settings'
 import userSettings from 'electron-settings'
 import { ApiStartRun } from './deepsec-api/ApiStartRun'
+import { ApiDisplayTrace } from './deepsec-api/ApiDisplayTrace'
 
 // Init default logger
 setupDefaultLogger()
@@ -89,6 +90,12 @@ app.on('ready', async () => {
     const startRun = new ApiStartRun()
     // Run the command then return the result
     startRun.start(cmd, event, mainWindow)
+  })
+
+  ipcMain.on('deepsec-api:start-display-trace', (event, cmd) => {
+    const displayTrace = new ApiDisplayTrace(cmd.query_file)
+    // Run the command then return the result
+    displayTrace.start(cmd, event, mainWindow)
   })
 
   createWindow()

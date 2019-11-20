@@ -23,21 +23,21 @@
 
         <!-- Navigation buttons -->
         <el-button-group>
-          <el-button :disabled="!queryTrace.hasPreviousAction()"
+          <el-button :disabled="queryTrace.loading || !queryTrace.hasPreviousAction()"
                      @click="queryTrace.gotoFirstAction()"
                      icon="el-icon-d-arrow-left">
           </el-button>
-          <el-button :disabled="!queryTrace.hasPreviousAction()"
+          <el-button :disabled="queryTrace.loading || !queryTrace.hasPreviousAction()"
                      @click="queryTrace.previousAction(traceLevel)"
                      icon="el-icon-arrow-left">
             Prev
           </el-button>
-          <el-button :disabled="!queryTrace.hasNextAction()"
+          <el-button :disabled="queryTrace.loading || !queryTrace.hasNextAction()"
                      @click="queryTrace.nextAction(traceLevel)">
             Next
             <i class="el-icon-arrow-right"></i>
           </el-button>
-          <el-button :disabled="!queryTrace.hasNextAction()"
+          <el-button :disabled="queryTrace.loading || !queryTrace.hasNextAction()"
                      @click="queryTrace.gotoLastAction()">
             <i class="el-icon-d-arrow-right"></i>
           </el-button>
@@ -116,6 +116,9 @@
     },
     computed: {
       processStr: function () {
+        if (!this.queryTrace.process)
+          return 'loading ...'
+
         return formatProcess(this.queryTrace.process, this.query.atomicData)
       },
       actionsStr: function () {
@@ -174,6 +177,7 @@
     },
     beforeMount () {
       this.queryTrace = new QueryTraceModel(this.query)
+      this.queryTrace.start()
       this.computeVisibleActions()
     }
   }

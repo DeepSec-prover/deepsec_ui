@@ -1,4 +1,7 @@
 import AtomicRenamer from '../util/AtomicRenamer'
+import ApiRemote from '../deepsec-api/ApiRemote'
+import { ipcRenderer } from 'electron'
+import logger from 'electron-log'
 
 export default class QueryTraceModel {
   /**
@@ -13,13 +16,35 @@ export default class QueryTraceModel {
     }
 
     this.query = query
+    this.apiRemote = new ApiRemote('display-trace', this.query.path)
     this.frame = []
     this.currentAction = -1
     // Unique rename table for the all trace and process
     this.atomic = new AtomicRenamer(this.query.atomicData)
     // Just shortcuts
     this.actions = this.query.attackTrace.action_sequence
-    this.process = this.query.getAttackedProcess()
+    this.process = null
+    this.loading = true
+  }
+
+  start () {
+    // Send the display trace order
+    ipcRenderer.send('deepsec-api:start-display-trace', {
+      'command': 'start_display_trace',
+      'query_file': this.query.path
+    })
+
+    ipcRenderer.once('deepsec-api:display-trace', (event, result) => {
+      if (result.success) {
+        this.currentAction = result.current_action_id
+        this.frame = result.frame
+        this.process = result.process
+      } else {
+        logger.error(`Display trace bad result : ${JSON.stringify(result)}`)
+      }
+
+      this.loading = false
+    })
   }
 
   /**
@@ -35,8 +60,20 @@ export default class QueryTraceModel {
    * @param {Number} id The id of the action
    */
   gotoAction (id) {
-    // TODO go to action
-    this.currentAction = id
+    this.loading = true
+    this.apiRemote.sendQuery('goto_step', id)
+
+    ipcRenderer.once('deepsec-api:display-trace', (event, result) => {
+      if (result.success) {
+        this.currentAction = result.current_action_id
+        this.frame = result.frame
+        this.process = result.process
+      } else {
+        logger.error(`Display trace bad result : ${JSON.stringify(result)}`)
+      }
+
+      this.loading = false
+    })
   }
 
   /**
