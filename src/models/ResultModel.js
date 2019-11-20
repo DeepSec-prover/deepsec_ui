@@ -57,6 +57,16 @@ export default class ResultModel {
   }
 
   /**
+   * Check if the result status match with an active one (in_progress or waiting).
+   * Is active if the status is not final and can change.
+   *
+   * @returns {boolean} True if is active, False if not.
+   */
+  isActive () {
+    return this.status === 'in_progress' || this.status === 'waiting'
+  }
+
+  /**
    * Map the result json file to this model fields.
    *
    * @param json

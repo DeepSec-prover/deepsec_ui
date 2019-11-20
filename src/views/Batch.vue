@@ -9,6 +9,10 @@
           Restart Batch
         </el-button>
       </router-link>
+      <el-button type="warning" size="small" icon="el-icon-close" plain
+                 v-if="batch.isActive()" @click="cancelBatch">
+        Cancel
+      </el-button>
     </template>
 
     <!-- Summary -->
@@ -120,6 +124,7 @@
 </template>
 
 <script>
+  import { ipcRenderer } from 'electron'
   import ResultStatus from '../components/results/ResultStatus'
   import Duration from '../components/Duration'
   import ResultLayout from '../components/results/ResultLayout'
@@ -153,6 +158,11 @@
       },
       hashUrl: function () {
         return path.join(settings.deepsecGitUrl, 'tree', this.batch.gitHash)
+      }
+    },
+    methods: {
+      cancelBatch () {
+        ipcRenderer.send(`deepsec-api:start-run:${this.batch.path}:cancel-batch`)
       }
     },
     beforeMount () {

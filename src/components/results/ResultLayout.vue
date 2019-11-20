@@ -135,6 +135,10 @@
     margin-left: 20px;
   }
 
+  #actions * + * {
+    margin-left: 7px;
+  }
+
   #progression {
     margin: 20px
   }

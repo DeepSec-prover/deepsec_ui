@@ -2,6 +2,7 @@ import userSettings from 'electron-settings'
 import logger from 'electron-log'
 import { isEmptyOrBlankStr, isFile } from '../util/misc'
 import { spawn } from 'child_process'
+import { ipcMain } from 'electron'
 
 export class ApiManager {
   /**
@@ -10,15 +11,19 @@ export class ApiManager {
    *
    * @param {String} namespace The namespace of this manager, used in internal signals.
    * @param {Boolean} detached If true the started process won't stop when the UI is closed.
+   * @param {String} ipcId Unique identifier to send ipc command on this object.
    */
-  constructor (namespace, detached = false) {
+  constructor (namespace, detached, ipcId) {
     this.process = null
     this.event = null
     this.mainWindow = null
     this.namespace = namespace
+    this.ipcId = ipcId
     this.detached = detached
     this.answerHandlers = []
+    this.queryHandlers = []
     this.registerAllAnswers()
+    this.registerAllQueries()
   }
 
   /**
@@ -58,8 +63,8 @@ export class ApiManager {
   sendCommand (command) {
     let cmdStr = JSON.stringify(command)
     try {
+      logger.info(`Send command to API : ${cmdStr}`)
       this.process.stdin.write(cmdStr + '\n')
-      logger.info(`Command sent to API : ${cmdStr}`)
     } catch (e) {
       this.unexpectedError(
         `Impossible to communicate with the process. Fail to send the command : ${cmdStr}
@@ -199,7 +204,7 @@ export class ApiManager {
   }
 
   /**
-   * Register an answer handler for a specific command.
+   * Register an answer handler for a specific command. (API -> UI)
    *
    * @param {String} command The name of the answer command to handle.
    * @param {Function} handler The function to run when the command is received. Will have the
@@ -219,5 +224,30 @@ export class ApiManager {
   registerAllAnswers () {
     // Use addAnswerHandler to register every command here
     throw new TypeError('Must override method')
+  }
+
+  /**
+   * Register an query handler for a specific command. (UI -> API)
+   *
+   * @param {String} command The name of the query command to handle.
+   * @param {Function} handler The function to run when the command is received. Will have
+   * no parameter.
+   */
+  addQueryHandler (command, handler) {
+    if (this.queryHandlers[command] !== undefined) {
+      throw Error(`A query can only have one handler (${command}).`)
+    }
+
+    ipcMain.on(`deepsec-api:${this.namespace}:${this.ipcId}:${command}`,
+               handler.bind(this)) // bind "this" to fix the good context
+
+    this.queryHandlers[command] = true // Just to keep track
+  }
+
+  /**
+   * Override and register every query handler here.
+   */
+  registerAllQueries () {
+    // Use addQueryHandler to register every command here
   }
 }

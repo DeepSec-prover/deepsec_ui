@@ -7,7 +7,7 @@ import { ApiManager } from './ApiManager'
 
 export class ApiStartRun extends ApiManager {
   constructor () {
-    super('start-run', true)
+    super('start-run', true, null) // We don't know the id at the beginning
   }
 
   cancelBatch () {
@@ -40,6 +40,12 @@ export class ApiStartRun extends ApiManager {
   // ====================== Normal Answers ======================
 
   batchStarted (answer) {
+    // Save IPC id and setup queries handlers
+    this.ipcId = answer.file
+    this.addQueryHandler('cancel-batch', this.cancelBatch)
+    this.addQueryHandler('cancel-run', this.cancelRun)
+    this.addQueryHandler('cancel-query', this.cancelQuery)
+
     // Send good result to the Start Run page
     this.eventReply({ 'success': true })
 
