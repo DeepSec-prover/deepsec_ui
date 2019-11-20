@@ -250,10 +250,7 @@ export class ApiManager {
       throw Error(`A query can only have one handler (${command}).`)
     }
 
-    ipcMain.on(`deepsec-api:${this.namespace}:${this.ipcId}:${command}`,
-               (event, arg) => {
-                  (handler(event, arg)).bind(this) // bind "this" to fix the good context
-               })
+    ipcMain.on(`deepsec-api:${this.namespace}:${this.ipcId}:${command}`, handler.bind(this))
 
     this.queryHandlers[command] = true // Just to keep track
   }
