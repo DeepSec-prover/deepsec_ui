@@ -8,7 +8,8 @@ const defaultUserSettings = {
   notificationDuration: 5, // seconds
   showBatchNotif: true,
   showRunNotif: true,
-  showQueryNotif: false
+  showQueryNotif: false,
+  stickyErrorNotif: true
 }
 
 /**

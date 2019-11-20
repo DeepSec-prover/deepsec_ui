@@ -21,6 +21,7 @@
           <setting-item label="Batch notifications" settings-path="showBatchNotif"></setting-item>
           <setting-item label="Run notifications" settings-path="showRunNotif"></setting-item>
           <setting-item label="Query notifications" settings-path="showQueryNotif"></setting-item>
+          <setting-item label="No auto dismiss error" settings-path="stickyErrorNotif"></setting-item>
           <!-- Reset Settings -->
           <div id="reset-settings" class="centred-content">
             <el-popover placement="top" v-model="resetConfirm">

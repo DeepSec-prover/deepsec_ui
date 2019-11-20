@@ -36,6 +36,14 @@ export default function notification (title,
     }
   }
 
+  // Set time
+  let time // in ms
+  if (type === 'error' && userSettings.get('stickyErrorNotif')) {
+    time = 0 // no auto dismiss
+  } else {
+    time = userSettings.get('notificationDuration') * 1000 // Seconds to ms
+  }
+
   // If link add click event and css class
   let customClasses = ['background-' + type]
   let onClick = null
@@ -52,7 +60,7 @@ export default function notification (title,
                  title: title,
                  message: message,
                  type: type,
-                 duration: userSettings.get('notificationDuration') * 1000, // Seconds to ms
+                 duration: time,
                  onClick: onClick,
                  customClass: customClasses.join(' '),
                  dangerouslyUseHTMLString: true // Never a problem
