@@ -23,28 +23,36 @@
 
         <!-- Navigation buttons -->
         <el-button-group>
-          <el-button :disabled="queryTrace.loading || !queryTrace.hasPreviousAction()"
-                     @click="firstAction"
-                     icon="el-icon-d-arrow-left"
-                     v-shortkey="['ctrl', 'arrowleft']" @shortkey.native="firstAction">
-          </el-button>
-          <el-button :disabled="queryTrace.loading || !queryTrace.hasPreviousAction()"
-                     @click="previousAction"
-                     icon="el-icon-arrow-left"
-                     v-shortkey="['arrowleft']" @shortkey.native="previousAction">
-            Prev
-          </el-button>
-          <el-button :disabled="queryTrace.loading || !queryTrace.hasNextAction()"
-                     @click="nextAction"
-                     v-shortkey="['arrowright']" @shortkey.native="nextAction">
-            Next
-            <i class="el-icon-arrow-right"></i>
-          </el-button>
-          <el-button :disabled="queryTrace.loading || !queryTrace.hasNextAction()"
-                     @click="lastAction"
-                     v-shortkey="['ctrl', 'arrowright']" @shortkey.native="lastAction">
-            <i class="el-icon-d-arrow-right"></i>
-          </el-button>
+          <helper helper-str="Go to initial state.<br><b>Short Key</b> : ctrl + ⇦">
+            <el-button :disabled="queryTrace.loading || !queryTrace.hasPreviousAction()"
+                       @click="firstAction"
+                       icon="el-icon-d-arrow-left"
+                       v-shortkey="['ctrl', 'arrowleft']" @shortkey.native="firstAction">
+            </el-button>
+          </helper>
+          <helper helper-str="Go to previous action.<br><b>Short Key</b> : ⇦">
+            <el-button :disabled="queryTrace.loading || !queryTrace.hasPreviousAction()"
+                       @click="previousAction"
+                       icon="el-icon-arrow-left"
+                       v-shortkey="['arrowleft']" @shortkey.native="previousAction">
+              Prev
+            </el-button>
+          </helper>
+          <helper helper-str="Go to next action.<br><b>Short Key</b> : ⇨">
+            <el-button :disabled="queryTrace.loading || !queryTrace.hasNextAction()"
+                       @click="nextAction"
+                       v-shortkey="['arrowright']" @shortkey.native="nextAction">
+              Next
+              <i class="el-icon-arrow-right"></i>
+            </el-button>
+          </helper>
+          <helper helper-str="Go to last action.<br><b>Short Key</b> : ctrl + ⇨">
+            <el-button :disabled="queryTrace.loading || !queryTrace.hasNextAction()"
+                       @click="lastAction"
+                       v-shortkey="['ctrl', 'arrowright']" @shortkey.native="lastAction">
+              <i class="el-icon-d-arrow-right"></i>
+            </el-button>
+          </helper>
         </el-button-group>
       </div>
 
