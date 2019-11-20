@@ -243,7 +243,7 @@ export class ApiManager {
    *
    * @param {String} command The name of the query command to handle.
    * @param {Function} handler The function to run when the command is received. Will have
-   * no parameter.
+   * 2 parameters : the event and the arguments.
    */
   addQueryHandler (command, handler) {
     if (this.queryHandlers[command] !== undefined) {
@@ -251,7 +251,9 @@ export class ApiManager {
     }
 
     ipcMain.on(`deepsec-api:${this.namespace}:${this.ipcId}:${command}`,
-               handler.bind(this)) // bind "this" to fix the good context
+               (event, arg) => {
+                  (handler(event, arg)).bind(this) // bind "this" to fix the good context
+               })
 
     this.queryHandlers[command] = true // Just to keep track
   }

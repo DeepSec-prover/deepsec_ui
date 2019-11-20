@@ -163,7 +163,7 @@
     methods: {
       cancelBatch () {
         const remote = new ApiRemote('start-run', this.batch.path)
-        remote.sendCommand('cancel-batch')
+        remote.sendQuery('cancel-batch')
       }
     },
     beforeMount () {

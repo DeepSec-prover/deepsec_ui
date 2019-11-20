@@ -14,11 +14,11 @@ export class ApiStartRun extends ApiManager {
     this.sendCommand({command: 'cancel_batch'})
   }
 
-  cancelRun (runPath) {
+  cancelRun (_, runPath) {
     this.sendCommand({command: 'cancel_run', file: runPath})
   }
 
-  cancelQuery (queryPath) {
+  cancelQuery (_, queryPath) {
     this.sendCommand({command: 'cancel_query', file: queryPath})
   }
 
@@ -104,7 +104,7 @@ export class ApiStartRun extends ApiManager {
     let type
     const query = new QueryModel(answer.file)
     query.loadRun()
-    switch (answer.status) {
+    switch (query.status) {
       case 'completed':
         title = `Query ${query.title()} completed`
         type = 'success'
@@ -118,8 +118,8 @@ export class ApiStartRun extends ApiManager {
         type = 'error'
         break
       default:
-        logger.error(`Unknown query status : ${answer.status}`)
-        title = `Query ${query.title()} ended (${answer.status})`
+        logger.error(`Unknown query status : ${query.status}`)
+        title = `Query ${query.title()} ended (${query.status})`
         type = 'error'
     }
 
@@ -137,7 +137,7 @@ export class ApiStartRun extends ApiManager {
     let type
     const run = new RunModel(answer.file)
     run.loadBatch()
-    switch (answer.status) {
+    switch (run.status) {
       case 'completed':
         title = `Run ${run.title()} completed`
         type = 'success'
@@ -151,8 +151,8 @@ export class ApiStartRun extends ApiManager {
         type = 'error'
         break
       default:
-        logger.error(`Unknown run status : ${answer.status}`)
-        title = `Run ${run.title()} ended (${answer.status})`
+        logger.error(`Unknown run status : ${run.status}`)
+        title = `Run ${run.title()} ended (${run.status})`
         type = 'error'
     }
 
@@ -173,7 +173,7 @@ export class ApiStartRun extends ApiManager {
     const nbRun = batch.nbRun()
     const runStatus = batch.runsStatusCount()
 
-    switch (answer.status) {
+    switch (batch.status) {
       case 'completed':
         title = `Batch ${batch.title()} completed`
         type = 'success'
@@ -187,8 +187,8 @@ export class ApiStartRun extends ApiManager {
         type = 'error'
         break
       default:
-        logger.error(`Unknown batch status : ${answer.status}`)
-        title = `Batch ${batch.title()} ended (${answer.status})`
+        logger.error(`Unknown batch status : ${batch.status}`)
+        title = `Batch ${batch.title()} ended (${batch.status})`
         type = 'error'
     }
 

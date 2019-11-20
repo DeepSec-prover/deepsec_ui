@@ -23,7 +23,7 @@ export default class ApiRemote {
    * @param {String} command The command to send to the target.
    * @param {Object} options The options for the command.
    */
-  sendCommand (command, options = null) {
+  sendQuery (command, options = null) {
     ipcRenderer.send(`deepsec-api:${this.namespace}:${this.ipcId}:${command}`, options)
   }
 }
