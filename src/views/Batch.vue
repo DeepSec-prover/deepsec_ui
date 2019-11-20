@@ -124,7 +124,7 @@
 </template>
 
 <script>
-  import { ipcRenderer } from 'electron'
+  import ApiRemote from '../deepsec-api/ApiRemote'
   import ResultStatus from '../components/results/ResultStatus'
   import Duration from '../components/Duration'
   import ResultLayout from '../components/results/ResultLayout'
@@ -162,7 +162,8 @@
     },
     methods: {
       cancelBatch () {
-        ipcRenderer.send(`deepsec-api:start-run:${this.batch.path}:cancel-batch`)
+        const remote = new ApiRemote('start-run', this.batch.path)
+        remote.sendCommand('cancel-batch')
       }
     },
     beforeMount () {

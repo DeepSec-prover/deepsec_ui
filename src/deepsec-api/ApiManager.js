@@ -4,6 +4,11 @@ import { isEmptyOrBlankStr, isFile } from '../util/misc'
 import { spawn } from 'child_process'
 import { ipcMain } from 'electron'
 
+/**
+ * To communicate with DeepSec API.
+ * Can be used only on the main process. For renderer side use ApiRemote.
+ * @see ApiRemote
+ */
 export class ApiManager {
   /**
    * Create an API manager for a specific scenario.
@@ -62,6 +67,13 @@ export class ApiManager {
    */
   sendCommand (command) {
     let cmdStr = JSON.stringify(command)
+
+    if (this.process === null) {
+      this.unexpectedError(`Fail to send the command : ${cmdStr} because the process is
+       closed or never started.`)
+      return
+    }
+
     try {
       logger.info(`Send command to API : ${cmdStr}`)
       this.process.stdin.write(cmdStr + '\n')
