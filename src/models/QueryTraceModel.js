@@ -48,6 +48,13 @@ export default class QueryTraceModel {
   }
 
   /**
+   * Ask to the process to stop.
+   */
+  stop () {
+    this.apiRemote.sendQuery('die')
+  }
+
+  /**
    * @returns {Number} The total number of step in this trace
    */
   nbSteps () {

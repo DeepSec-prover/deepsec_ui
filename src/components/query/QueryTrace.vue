@@ -219,8 +219,14 @@
     },
     beforeMount () {
       this.queryTrace = new QueryTraceModel(this.query)
+      // Start the display trace process
       this.queryTrace.start()
       this.computeVisibleActions()
+    },
+    // Called when the user change to an other view.
+    destroyed () {
+      // Stop the display trace process
+      this.queryTrace.stop()
     }
   }
 </script>

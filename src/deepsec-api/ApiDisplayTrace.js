@@ -12,6 +12,7 @@ export class ApiDisplayTrace extends ApiManager {
 
   registerAllQueries () {
     this.addQueryHandler('goto_step', this.gotoStep)
+    this.addQueryHandler('die', this.die)
   }
 
   currentStep (answer) {
@@ -32,5 +33,9 @@ export class ApiDisplayTrace extends ApiManager {
 
   gotoStep (event, stepId) {
     this.sendCommand({ command: 'goto_step', id: stepId })
+  }
+
+  die () {
+    this.sendCommand({ command: 'die' })
   }
 }
