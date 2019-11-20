@@ -1,7 +1,8 @@
 <template>
   <el-table id="result-table" :data="batches" @row-click="rowClick"
-            empty-text="No batch found in the result folder.">
-    <el-table-column label="Status">
+            empty-text="No batch found in the result folder."
+            :default-sort = "{prop: 'startTime', order: 'descending'}">
+    <el-table-column label="Status" prop="status" sortable>
       <template slot-scope="scope">
         <result-status :status="scope.row.status" tag></result-status>
         <span v-if="scope.row.debug" class="debug-logo">
@@ -21,7 +22,7 @@
         {{ scope.row.nbRun() }}
       </template>
     </el-table-column>
-    <el-table-column label="Date">
+    <el-table-column label="Date" prop="startTime" sortable>
       <template slot-scope="scope">
         <date :date="scope.row.startTime" strict></date>
       </template>
