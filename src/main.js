@@ -4,12 +4,15 @@ import router from './router'
 import 'element-ui/lib/theme-chalk/index.css'
 import Element from 'element-ui' // TODO import only used components
 import notification from './util/notification'
+import VueShortKey from 'vue-shortkey'
 
 const { remote } = require('electron')
 
 Vue.config.productionTip = false
 
 Vue.use(Element)
+Vue.use(VueShortKey)
+
 
 // Setup prototype for global use
 Vue.prototype.$notification = notification

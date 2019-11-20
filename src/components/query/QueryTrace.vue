@@ -24,21 +24,25 @@
         <!-- Navigation buttons -->
         <el-button-group>
           <el-button :disabled="queryTrace.loading || !queryTrace.hasPreviousAction()"
-                     @click="queryTrace.gotoFirstAction()"
-                     icon="el-icon-d-arrow-left">
+                     @click="firstAction"
+                     icon="el-icon-d-arrow-left"
+                     v-shortkey="['ctrl', 'arrowleft']" @shortkey.native="firstAction">
           </el-button>
           <el-button :disabled="queryTrace.loading || !queryTrace.hasPreviousAction()"
-                     @click="queryTrace.previousAction(traceLevel)"
-                     icon="el-icon-arrow-left">
+                     @click="previousAction"
+                     icon="el-icon-arrow-left"
+                     v-shortkey="['arrowleft']" @shortkey.native="previousAction">
             Prev
           </el-button>
           <el-button :disabled="queryTrace.loading || !queryTrace.hasNextAction()"
-                     @click="queryTrace.nextAction(traceLevel)">
+                     @click="nextAction"
+                     v-shortkey="['arrowright']" @shortkey.native="nextAction">
             Next
             <i class="el-icon-arrow-right"></i>
           </el-button>
           <el-button :disabled="queryTrace.loading || !queryTrace.hasNextAction()"
-                     @click="queryTrace.gotoLastAction()">
+                     @click="lastAction"
+                     v-shortkey="['ctrl', 'arrowright']" @shortkey.native="lastAction">
             <i class="el-icon-d-arrow-right"></i>
           </el-button>
         </el-button-group>
@@ -78,7 +82,8 @@
       <el-card header="Frame">
         <ul>
           <li v-for="i in queryTrace.frame.length">
-            ax<sub>{{i}}</sub> <spec-code in-line :code="'TODO'"></spec-code>
+            ax<sub>{{i}}</sub>
+            <spec-code in-line :code="'TODO'"></spec-code>
           </li>
         </ul>
       </el-card>
@@ -93,6 +98,7 @@
   import Helper from '../helpers/Helper'
   import SpecCode from '../SpecCode'
   import { formatAction, formatProcess } from '../../util/process-parser'
+  import logger from 'electron-log'
 
   export default {
     name: 'query-trace',
@@ -164,6 +170,34 @@
       },
       isTauAction (action) {
         return ['tau', 'comm', 'bang', 'choice'].includes(action.type)
+      },
+      firstAction () {
+        if (!this.queryTrace.loading && this.queryTrace.hasPreviousAction()) {
+          this.queryTrace.gotoFirstAction()
+        } else {
+          logger.debug('Go to first action method call to fast (still loading)')
+        }
+      },
+      previousAction () {
+        if (!this.queryTrace.loading && this.queryTrace.hasPreviousAction()) {
+          this.queryTrace.previousAction(this.traceLevel)
+        } else {
+          logger.debug('Go to previous action method call to fast (still loading)')
+        }
+      },
+      nextAction () {
+        if (!this.queryTrace.loading && this.queryTrace.hasNextAction()) {
+          this.queryTrace.nextAction(this.traceLevel)
+        } else {
+          logger.debug('Go to next action method call to fast (still loading)')
+        }
+      },
+      lastAction () {
+        if (!this.queryTrace.loading && this.queryTrace.hasNextAction()) {
+          this.queryTrace.gotoLastAction()
+        } else {
+          logger.debug('Go to last action method call to fast (still loading)')
+        }
       }
     },
     watch: {
