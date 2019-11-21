@@ -4,6 +4,8 @@ import { isEmptyOrBlankStr, isFile } from '../util/misc'
 import { spawn } from 'child_process'
 import { ipcMain } from 'electron'
 
+let stdoutBuffer = ''
+
 /**
  * To communicate with DeepSec API.
  * Can be used only on the main process. For renderer side use ApiRemote.
@@ -127,11 +129,19 @@ export class ApiManager {
 
     // Stdout messages catching
     this.process.stdout.on('data', (data) => {
-      // Convert buffer to string
-      data = data.toString()
-      logger.silly(`DeepSec API answer : ${data}`)
+      data = data.toString() // Convert buffer to string
+      logger.silly(`DeepSec API answer chunk : ${data}`)
+
+      // Add too buffer but no process util the end
+      stdoutBuffer += data
+
       // Split if many commands at once
-      const answers = data.split('\n')
+      const answers = stdoutBuffer.split('\n')
+
+      // Send the last part to the buffer.
+      // If the end was '\n' so the buffer will be set back with an empty string.
+      // If their is no '\n' so the buffer won't be consumed and answers will be empty.
+      stdoutBuffer = answers.pop()
 
       answers.forEach((a) => {
         if (!isEmptyOrBlankStr(a)) {
