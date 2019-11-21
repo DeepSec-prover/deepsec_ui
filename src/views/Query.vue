@@ -31,42 +31,49 @@
 
     <!-- Details -->
     <template slot="details">
-      <el-row type="flex" :gutter="10" justify="center">
-        <el-col :span="12" v-for="(process, index) in processesStr">
-          <h3>Process {{ index + 1 }}</h3>
-          <spec-code :code="process"></spec-code>
-        </el-col>
-      </el-row>
-      <template v-if="query.attackTrace">
-        <el-divider></el-divider>
-        <query-trace :query="query"></query-trace>
-      </template>
+      <el-tabs v-model="activeDetail">
+        <!-- Processes -->
+        <el-tab-pane label="Processes" name="processes" :lazy="true">
+          <query-processes :query="query"></query-processes>
+        </el-tab-pane>
+        <template v-if="query.attackTrace">
+          <!-- Display attack trace -->
+          <el-tab-pane label="Attack Trace" name="trace" :lazy="true">
+            <query-trace :query="query"></query-trace>
+          </el-tab-pane>
+        </template>
+        <!-- Simulator -->
+        <el-tab-pane label="Simulator" name="simulator" :lazy="true">
+          TODO
+        </el-tab-pane>
+      </el-tabs>
     </template>
   </result-layout>
 </template>
 
 <script>
-  import { formatProcess } from '../util/process-parser'
   import ResultLayout from '../components/results/ResultLayout'
   import QuerySummary from '../components/query/QuerySummary'
-  import SpecCode from '../components/SpecCode'
   import QueryTrace from '../components/query/QueryTrace'
+  import QueryProcesses from '../components/query/QueryProcesses'
 
   export default {
     name: 'query',
     components: {
+      QueryProcesses,
       QueryTrace,
       QuerySummary,
-      SpecCode,
       ResultLayout
     },
     props: {
       query: Object
     },
+    data () {
+      return {
+        activeDetail: 'processes'
+      }
+    },
     computed: {
-      processesStr: function () {
-        return this.query.processes.map(p => formatProcess(p, this.query.atomicData))
-      },
       progressionStepStr: function () {
         if (this.query.status === 'completed') {
           return 'Done'
@@ -87,6 +94,12 @@
           return `${roundStr}Verification processing
            (jobs remaining: ${this.query.progression.verification.jobs_remaining})`
         }
+      }
+    },
+    beforeMount () {
+      // If has attack trace auto switch to this tab
+      if (this.query.attackTrace) {
+        this.activeDetail = 'trace'
       }
     }
   }
