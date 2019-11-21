@@ -133,7 +133,7 @@
         if (!this.queryTrace.process)
           return 'loading ...'
 
-        return formatProcess(this.queryTrace.process, this.query.atomicData)
+        return formatProcess(this.queryTrace.process, this.queryTrace.atomic)
       },
       actionsStr: function () {
         let axiomIdRef = { value: 1 }
