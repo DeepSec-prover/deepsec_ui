@@ -109,9 +109,11 @@
               {{ run.title() }}
             </h3>
             <span class="run-info">
-            {{ run.nbQueries() }} {{ run.nbQueries() > 1 ? 'queries' : 'query' }}
-            &ndash;
-            <duration :start-time="run.startTime" :end-time="run.endTime"></duration>
+              {{ run.nbQueries() }} {{ run.nbQueries() > 1 ? 'queries' : 'query' }}
+              <template v-if="run.startTime">
+                &ndash;
+                <duration :start-time="run.startTime" :end-time="run.endTime"></duration>
+              </template>
           </span>
           </template>
           <el-collapse>
