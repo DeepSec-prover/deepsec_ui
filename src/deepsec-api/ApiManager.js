@@ -12,38 +12,46 @@ let stdoutBuffer = ''
  * @see ApiRemote
  */
 export class ApiManager {
+
+  /**
+   * Should be override by children classes.
+   *
+   * @type {string} The namespace of this manager, used in internal signals.
+   */
+  static namespace () { return 'default' }
+
   /**
    * Create an API manager for a specific scenario.
    * Will start a command and handle the answers.
    *
-   * @param {String} namespace The namespace of this manager, used in internal signals.
    * @param {Boolean} detached If true the started process won't stop when the UI is closed.
+   * @param {Object} event The internal event that trigger the start (required for reply).
+   * @param {Object} mainWindow The reference to the main window (required for notifications).
    * @param {String} ipcId Unique identifier to send ipc command on this object.
    */
-  constructor (namespace, detached, ipcId) {
+  constructor (detached, event, mainWindow, ipcId) {
     this.process = null
-    this.event = null
-    this.mainWindow = null
-    this.namespace = namespace
+    this.event = event
+    this.mainWindow = mainWindow
     this.ipcId = ipcId
     this.detached = detached
-    this.answerHandlers = []
-    this.queryHandlers = []
+    this.answerHandlers = new Map()
+    this.queryHandlers = new Set()
     this.registerAllAnswers()
     this.registerAllQueries()
   }
 
   /**
-   * Reply to the event.
+   * Reply to the event. (Main -> renderer)
    *
    * @param {Object} content The content of the reply.
    */
   eventReply (content) {
-    this.event.reply(`deepsec-api:${this.namespace}`, content)
+    this.event.reply(`deepsec-api:${this.constructor.namespace()}:reply`, content)
   }
 
   /**
-   * Push a notification signal (will be caught by the main layer).
+   * Push a notification signal (will be caught by the main layer). (Main -> renderer)
    *
    * @param {String} title The title of the notification
    * @param {String} message The content message of the notification (HTML)
@@ -63,7 +71,7 @@ export class ApiManager {
   }
 
   /**
-   * Send a command to the running process.
+   * Send a command to the running process. (renderer -> main -> api)
    *
    * @param {Object} command The command with options to send.
    */
@@ -71,8 +79,8 @@ export class ApiManager {
     let cmdStr = JSON.stringify(command)
 
     if (this.process === null) {
-      this.unexpectedError(`Fail to send the command : ${cmdStr} because the process is
-       closed or never started.`)
+      this.unexpectedError(
+        `Fail to send the command : ${cmdStr} because the process is closed or never started.`)
       return
     }
 
@@ -91,16 +99,12 @@ export class ApiManager {
    * Should reply to the event exactly one time.
    *
    * @param {Object} options Process command with options as a JSON object.
-   * @param {Object} event The internal event that trigger the start (required for reply).
-   * @param {Object} mainWindow The reference to the main window (required for notifications).
    */
-  start (options, event, mainWindow) {
+  start (options) {
     if (this.process !== null) {
       throw Error('Can\'t start a process twice.')
     }
 
-    this.event = event
-    this.mainWindow = mainWindow
     const apiPath = String(userSettings.get('deepsecApiPath'))
 
     // Check Deepsec API path
@@ -108,17 +112,20 @@ export class ApiManager {
       // Send bad result to the Start Run page
       this.eventReply({ 'success': false, 'error': 'DeepSec API path is not set' })
       logger.warn('Try to start a command but the DeepSec API path is not set')
+      this.processExit()
       return
     } else if (!isFile(apiPath)) {
       // Send bad result to the Start Run page
       this.eventReply({ 'success': false, 'error': `Incorrect DeepSec API path (${apiPath})` })
       logger.warn(
         `Try to start a command but the DeepSec API path is incorrect (${apiPath})`)
+      this.processExit()
       return
     }
 
     logger.info(`Start DeepSec API process with command : ${apiPath}`)
     // TODO set env
+    // TODO test what append if bad executable, does this.processExit() trigger ?
     this.process = spawn(apiPath, {
       detached: this.detached,
       windowsHide: true
@@ -129,13 +136,13 @@ export class ApiManager {
 
     // Stdout messages catching
     this.process.stdout.on('data', (data) => {
-      data = data.toString() // Convert buffer to string
+      data = data.toString() // Convert chunk to string
       logger.silly(`DeepSec API answer chunk : ${data}`)
 
       // Add too buffer but no process util the end
       stdoutBuffer += data
 
-      // Split if many commands at once
+      // Split if several commands at once
       const answers = stdoutBuffer.split('\n')
 
       // Send the last part to the buffer.
@@ -193,11 +200,12 @@ export class ApiManager {
       return
     }
 
-    if (this.answerHandlers[answer.command] === undefined) {
-      logger.error(`Unknown DeepSec API answer command : ${answer.command} for ${this.namespace}`)
+    if (!this.answerHandlers.has(answer.command)) {
+      logger.error(
+        `Unknown DeepSec API answer command : ${answer.command} for ${this.constructor.namespace()}`)
     } else {
-      logger.debug(`Processing command ${answer.command} for ${this.namespace}`)
-      this.answerHandlers[answer.command](answer)
+      logger.debug(`Processing command ${answer.command} for ${this.constructor.namespace()}`)
+      this.answerHandlers.get(answer.command)(answer)
     }
   }
 
@@ -220,8 +228,17 @@ export class ApiManager {
    * Close the communication with the process.
    */
   processExit () {
-    logger.info('Close the communication with the API process.')
-    this.process.stdin.end()
+    logger.info('Close the communication with the API process and between IPC processes.')
+    // Remove handler in ipcMain
+    this.removeAllHandlers()
+    if (this.event) {
+      // Ask to remove all handler in remote ipcRenderer
+      this.event.reply(`deepsec-api:${this.constructor.namespace()}:exit`)
+    }
+    if (this.process) {
+      // Stop process pip
+      this.process.stdin.end()
+    }
     this.process = null
   }
 
@@ -233,11 +250,11 @@ export class ApiManager {
    * answer as parameter (an object).
    */
   addAnswerHandler (command, handler) {
-    if (this.answerHandlers[command] !== undefined) {
+    if (this.answerHandlers.has(command)) {
       throw Error(`An answer can only have one handler (${command}).`)
     }
 
-    this.answerHandlers[command] = handler.bind(this) // bind "this" to fix the good context
+    this.answerHandlers.set(command, handler.bind(this))
   }
 
   /**
@@ -256,13 +273,14 @@ export class ApiManager {
    * 2 parameters : the event and the arguments.
    */
   addQueryHandler (command, handler) {
-    if (this.queryHandlers[command] !== undefined) {
+    if (this.queryHandlers.has(command)) {
       throw Error(`A query can only have one handler (${command}).`)
     }
 
-    ipcMain.on(`deepsec-api:${this.namespace}:${this.ipcId}:${command}`, handler.bind(this))
+    ipcMain.on(`deepsec-api:${this.constructor.namespace()}:${this.ipcId}:${command}`,
+               handler.bind(this))
 
-    this.queryHandlers[command] = true // Just to keep track
+    this.queryHandlers.add(command) // Just to keep track
   }
 
   /**
@@ -270,5 +288,38 @@ export class ApiManager {
    */
   registerAllQueries () {
     // Use addQueryHandler to register every command here
+  }
+
+  /**
+   * Remove all query and answer handler.
+   * Used when the API process exit.
+   */
+  removeAllHandlers () {
+    this.queryHandlers.forEach(command => {
+      ipcMain.removeAllListeners(
+        `deepsec-api:${this.constructor.namespace()}:${this.ipcId}:${command}`)
+    })
+
+    this.queryHandlers.clear()
+    this.answerHandlers.clear()
+  }
+
+  /**
+   * Register a list of api manager classes.
+   *
+   * @param {[Function]} managerClasses The list of api manager classes.
+   * @param {Function} mainWindow A function that return the reference to the main window
+   * (required for notifications). Need to be a function because it's undefined before the
+   * application is fully started.
+   */
+  static registerManagers (managerClasses, mainWindow) {
+    managerClasses.forEach(manager => {
+      ipcMain.on(
+        `deepsec-api:${manager.namespace()}:start`,
+        (event, cmd, ipcId) => {
+          const a = new manager(event, mainWindow(), ipcId)
+          a.start(cmd)
+        })
+    })
   }
 }

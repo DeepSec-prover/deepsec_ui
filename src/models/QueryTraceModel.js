@@ -1,6 +1,5 @@
 import AtomicRenamer from '../util/AtomicRenamer'
 import ApiRemote from '../deepsec-api/ApiRemote'
-import { ipcRenderer } from 'electron'
 import logger from 'electron-log'
 
 export default class QueryTraceModel {
@@ -23,28 +22,58 @@ export default class QueryTraceModel {
     this.atomic = new AtomicRenamer(this.query.atomicData)
     // Just shortcuts
     this.actions = this.query.attackTrace.action_sequence
+    /* TODO init with the current process and start only on the first next, but make sure than
+    the all process object is not watched by vue */
     this.process = null
     this.loading = true
   }
 
+  /**
+   * Start the communication with the API.
+   */
   start () {
+    // Wait for the next reply
+    this.apiRemote.onReply(this.updateFromResult.bind(this))
+
     // Send the display trace order
-    ipcRenderer.send('deepsec-api:start-display-trace', {
-      'command': 'start_display_trace',
-      'query_file': this.query.path
-    })
+    this.apiRemote.start(
+      {
+        'command': 'start_display_trace',
+        'query_file': this.query.path
+      })
+  }
 
-    ipcRenderer.once('deepsec-api:display-trace', (event, result) => {
-      if (result.success) {
-        this.currentAction = result.current_action_id
-        this.frame = result.frame
-        this.process = result.process
-      } else {
-        logger.error(`Display trace bad result : ${JSON.stringify(result)}`)
-      }
+  /**
+   * Go to a specific action, load the process state and the frame from DeepSec API.
+   *
+   * @param {Number} id The id of the action
+   */
+  gotoAction (id) {
+    this.loading = true
 
-      this.loading = false
-    })
+    // Wait for the next reply
+    this.apiRemote.onReply(this.updateFromResult.bind(this))
+
+    this.apiRemote.sendQuery('goto_step', id)
+  }
+
+  /**
+   * Update model content from API answer.
+   *
+   * @param _ Useless event object.
+   * @param {Object} result The result object from the API.
+   */
+  updateFromResult (_, result) {
+    if (result.success) {
+      logger.silly(`Received trace display ${result.current_action_id}`)
+      this.currentAction = result.current_action_id
+      this.frame = result.frame
+      this.process = result.process
+    } else {
+      logger.error(`Display trace bad result : ${JSON.stringify(result)}`)
+    }
+
+    this.loading = false
   }
 
   /**
@@ -59,28 +88,6 @@ export default class QueryTraceModel {
    */
   nbSteps () {
     return this.actions.length
-  }
-
-  /**
-   * Go to a specific action, load the process state and the frame from DeepSec API.
-   *
-   * @param {Number} id The id of the action
-   */
-  gotoAction (id) {
-    this.loading = true
-    this.apiRemote.sendQuery('goto_step', id)
-
-    ipcRenderer.once('deepsec-api:display-trace', (event, result) => {
-      if (result.success) {
-        this.currentAction = result.current_action_id
-        this.frame = result.frame
-        this.process = result.process
-      } else {
-        logger.error(`Display trace bad result : ${JSON.stringify(result)}`)
-      }
-
-      this.loading = false
-    })
   }
 
   /**
@@ -105,7 +112,7 @@ export default class QueryTraceModel {
    * @returns {boolean} True if there is at least one more action.
    */
   hasNextAction () {
-    return this.currentAction < this.actions.length - 1;
+    return this.currentAction < this.actions.length - 1
   }
 
   /**

@@ -154,9 +154,9 @@
   import Helper from '../components/helpers/Helper'
   import FileIssuesList from '../components/spec-files/FileIssuesList'
   import settings from '../../settings'
-  import { ipcRenderer } from 'electron'
   import RunConfigModel from '../models/RunConfigModel'
   import logger from 'electron-log'
+  import ApiRemote from '../deepsec-api/ApiRemote'
 
   export default {
     name: 'start-run',
@@ -217,21 +217,26 @@
         // Clean user inputs (eg: trim)
         this.currentConf.preProcessData()
 
-        // Send the run order
-        ipcRenderer.send('deepsec-api:run', {
-          'command': 'start_run',
-          'input_files': this.currentFiles,
-          'command_options': this.currentConf.toJson()
-        })
+        // No ipc Id for now because we don't know the id of the batch.
+        // It will be set on the batch started.
+        const remote = new ApiRemote('start-run', null)
 
         // Wait for the run confirmation or error message
-        ipcRenderer.once('deepsec-api:start-run', (event, result) => {
+        remote.onReply((event, result) => {
           logger.silly(`Run starting confirmation : ${JSON.stringify(result)}`)
           if (!result.success) {
             this.showGlobalError(result)
           }
           this.runStarting = false
         })
+
+        // Send the run start order
+        remote.start(
+          {
+            'command': 'start_run',
+            'input_files': this.currentFiles,
+            'command_options': this.currentConf.toJson()
+          })
       },
       resetConf () {
         this.currentConf = new RunConfigModel()

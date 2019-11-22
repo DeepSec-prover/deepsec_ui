@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Menu, protocol } from 'electron'
+import { app, BrowserWindow, Menu, protocol } from 'electron'
 import { createProtocol, installVueDevtools } from 'vue-cli-plugin-electron-builder/lib'
 import mainMenuTemplate from './electron-menu'
 import settings from '../settings'
@@ -8,6 +8,7 @@ import { unsetToDefault } from './util/default-user-settings'
 import userSettings from 'electron-settings'
 import { ApiStartRun } from './deepsec-api/ApiStartRun'
 import { ApiDisplayTrace } from './deepsec-api/ApiDisplayTrace'
+import { ApiManager } from './deepsec-api/ApiManager'
 
 // Init default logger
 setupDefaultLogger()
@@ -23,14 +24,14 @@ protocol.registerSchemesAsPrivileged(
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 1000,
-    minWidth: 1000,
-    minHeight: 600,
-    webPreferences: {
-      nodeIntegration: true // To use node in the client side
-    }
-  })
+                                   width: 1200,
+                                   height: 1000,
+                                   minWidth: 1000,
+                                   minHeight: 600,
+                                   webPreferences: {
+                                     nodeIntegration: true // To use node in the client side
+                                   }
+                                 })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -55,7 +56,7 @@ function createWindow () {
     mainWindow.webContents.openDevTools()
   }
 
-  logger.verbose('Main windows created')
+  logger.info('Main windows created')
 }
 
 // This method will be called when Electron has finished
@@ -85,18 +86,9 @@ app.on('ready', async () => {
     }
   }
 
-  // Listener for Deepsec API call from renderers
-  ipcMain.on('deepsec-api:run', (event, cmd) => {
-    const startRun = new ApiStartRun()
-    // Run the command then return the result
-    startRun.start(cmd, event, mainWindow)
-  })
-
-  ipcMain.on('deepsec-api:start-display-trace', (event, cmd) => {
-    const displayTrace = new ApiDisplayTrace(cmd.query_file)
-    // Run the command then return the result
-    displayTrace.start(cmd, event, mainWindow)
-  })
+  // Every API manager that you want to use has to be in this list.
+  ApiManager.registerManagers([ApiStartRun, ApiDisplayTrace],
+                              () => mainWindow)
 
   createWindow()
 })

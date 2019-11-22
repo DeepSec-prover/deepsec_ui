@@ -6,8 +6,11 @@ import QueryModel from '../models/QueryModel'
 import { ApiManager } from './ApiManager'
 
 export class ApiStartRun extends ApiManager {
-  constructor () {
-    super('start-run', true, null) // We don't know the id at the beginning
+
+  static namespace() { return 'start-run' }
+
+  constructor (event, mainWindow) {
+    super(true, event, mainWindow, null) // We don't know the id at the beginning
   }
 
   cancelBatch () {

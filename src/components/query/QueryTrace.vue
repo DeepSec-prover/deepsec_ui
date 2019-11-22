@@ -1,7 +1,7 @@
 <template>
   <el-row :gutter="20">
     <el-col :md="16">
-      <h3>Attack on Process {{ queryTrace.query.attackTrace.index_process + 1 }}</h3>
+      <h3>Attack on Process {{ queryTrace.query.attackTrace.index_process }}</h3>
       <spec-code :code="processStr"></spec-code>
     </el-col>
     <el-col :md="8">

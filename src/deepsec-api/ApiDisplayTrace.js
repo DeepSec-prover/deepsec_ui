@@ -1,8 +1,11 @@
 import { ApiManager } from './ApiManager'
 
 export class ApiDisplayTrace extends ApiManager {
-  constructor (ipcId) {
-    super('display-trace', false, ipcId)
+
+  static namespace() { return 'display-trace' }
+
+  constructor (event, mainWindow, ipcId) {
+    super(false, event, mainWindow, ipcId)
   }
 
   registerAllAnswers () {
