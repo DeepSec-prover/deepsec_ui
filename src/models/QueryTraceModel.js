@@ -68,7 +68,7 @@ export default class QueryTraceModel {
       logger.silly(`Received trace display ${result.current_action_id}`)
       this.currentAction = result.current_action_id
       this.frame = result.frame
-      this.process = result.process
+      this.process = JSON.parse(result.process)
     } else {
       logger.error(`Display trace bad result : ${JSON.stringify(result)}`)
     }

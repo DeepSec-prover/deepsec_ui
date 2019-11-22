@@ -2,7 +2,7 @@ import { ApiManager } from './ApiManager'
 
 export class ApiDisplayTrace extends ApiManager {
 
-  static namespace() { return 'display-trace' }
+  static namespace () { return 'display-trace' }
 
   constructor (event, mainWindow, ipcId) {
     super(false, event, mainWindow, ipcId)
@@ -21,7 +21,9 @@ export class ApiDisplayTrace extends ApiManager {
   currentStep (answer) {
     this.eventReply({
                       success: true,
-                      process: answer.process,
+                      // Stringify necessary for big process, if not some bug occurs
+                      // TODO reproduce the bug and report it
+                      process: JSON.stringify(answer.process),
                       frame: answer.frame,
                       current_action_id: answer.current_action_id
                     })
