@@ -5,7 +5,8 @@ Definition of `<term>` :
 ```
 {
   "type": "Atomic";
-  "id": <int>
+  "id": <int>;
+  "bang": [ <int>,...,<int> ] // optional
 }
 ```
 or
@@ -17,7 +18,7 @@ or
     <term>,
     ...,
     <term>
-  ]
+  ] // optional
 }
 ```
 or

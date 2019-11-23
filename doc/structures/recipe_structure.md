@@ -17,7 +17,7 @@ or
     <recipe>,
     ...,
     <recipe>
-  ]
+  ] // optional
 }
 ```
 or
