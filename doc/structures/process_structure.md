@@ -52,6 +52,7 @@ or
 {
   "type": "New",
   "name": <int>,
+  "bang": [ <int>,...,<int> ] // optional
   "position": <position>,
   "process": <process>, (optional) // When not defined the process is Nil
 }
