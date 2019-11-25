@@ -7,22 +7,22 @@ import { ApiManager } from './ApiManager'
 
 export class ApiStartRun extends ApiManager {
 
-  static namespace() { return 'start-run' }
+  static namespace () { return 'start-run' }
 
   constructor (event, mainWindow) {
     super(true, event, mainWindow, null) // We don't know the id at the beginning
   }
 
   cancelBatch () {
-    this.sendCommand({command: 'cancel_batch'})
+    this.sendCommand({ command: 'cancel_batch' })
   }
 
   cancelRun (_, runPath) {
-    this.sendCommand({command: 'cancel_run', file: runPath})
+    this.sendCommand({ command: 'cancel_run', file: runPath })
   }
 
   cancelQuery (_, queryPath) {
-    this.sendCommand({command: 'cancel_query', file: queryPath})
+    this.sendCommand({ command: 'cancel_query', file: queryPath })
   }
 
   registerAllAnswers () {
@@ -33,6 +33,7 @@ export class ApiStartRun extends ApiManager {
     this.addAnswerHandler('query_ended', this.queryEnded)
     this.addAnswerHandler('run_ended', this.runEnded)
     this.addAnswerHandler('batch_ended', this.batchEnded)
+    this.addAnswerHandler('query_progression', this.queryProgression)
     // Error answers
     this.addAnswerHandler('init_error', this.initError)
     this.addAnswerHandler('user_error', this.userError)
@@ -75,6 +76,8 @@ export class ApiStartRun extends ApiManager {
         'batch',
         { name: 'batch', params: { 'path': answer.file } })
     }
+
+    this.sendSignalToRemote('update', answer.file)
   }
 
   runStarted (answer) {
@@ -88,6 +91,8 @@ export class ApiStartRun extends ApiManager {
       'info',
       'run',
       { name: 'run', params: { 'path': answer.file } })
+
+    this.sendSignalToRemote('update', answer.file)
   }
 
   queryStarted (answer) {
@@ -100,6 +105,8 @@ export class ApiStartRun extends ApiManager {
       'info',
       'query',
       { name: 'query', params: { 'path': answer.file } })
+
+    this.sendSignalToRemote('update', answer.file)
   }
 
   queryEnded (answer) {
@@ -133,6 +140,8 @@ export class ApiStartRun extends ApiManager {
       type,
       'query',
       { name: 'query', params: { 'path': answer.file } })
+
+    this.sendSignalToRemote('update', answer.file)
   }
 
   runEnded (answer) {
@@ -167,6 +176,8 @@ export class ApiStartRun extends ApiManager {
       type,
       'run',
       { name: 'run', params: { 'path': answer.file } })
+
+    this.sendSignalToRemote('update', answer.file)
   }
 
   batchEnded (answer) {
@@ -209,6 +220,12 @@ export class ApiStartRun extends ApiManager {
       type,
       'batch',
       { name: 'batch', params: { 'path': answer.file } })
+
+    this.sendSignalToRemote('update', answer.file)
+  }
+
+  queryProgression (answer) {
+    this.sendSignalToRemote('progression', answer.file)
   }
 
 // ======================= Error Answers ======================

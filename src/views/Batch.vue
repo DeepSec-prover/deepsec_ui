@@ -169,6 +169,7 @@
       }
     },
     beforeMount () {
+      this.batch.enableUpdateListener()
       this.batch.runs.forEach(r => r.loadQueries())
 
       if (this.batch.nbRun() === 1) {

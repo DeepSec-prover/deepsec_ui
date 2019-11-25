@@ -5,6 +5,9 @@ import { isEmptyOrBlankStr } from '../util/misc'
 
 export default class BatchModel extends ResultModel {
   mapJsonFile (json) {
+    // Load generic field with parent method
+    super.mapJsonFile(json)
+
     this.deepsecVersion = json.deepsec_version
     this.gitBranch = json.git_branch
     this.gitHash = json.git_hash

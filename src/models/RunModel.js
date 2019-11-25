@@ -6,6 +6,9 @@ import path from 'path'
 
 export default class RunModel extends ResultModel {
   mapJsonFile (json) {
+    // Load generic field with parent method
+    super.mapJsonFile(json)
+
     this.inputFile = json.input_file
 
     this.batch = null // Not loaded yet

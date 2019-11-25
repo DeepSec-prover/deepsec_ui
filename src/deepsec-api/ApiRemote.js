@@ -14,6 +14,7 @@ export default class ApiRemote {
     this.started = false
     this.stopped = false
     this.namespace = namespace
+    this.signalHandler = new Set()
     this.ipcId = ipcId
   }
 
@@ -29,7 +30,7 @@ export default class ApiRemote {
 
     this.started = true
 
-    ipcRenderer.once(`deepsec-api:${this.namespace}:exit`, this.exit)
+    ipcRenderer.once(`deepsec-api:${this.namespace}:exit`, this.exit.bind(this))
 
     ipcRenderer.send(`deepsec-api:${this.namespace}:start`, command, this.ipcId)
   }
@@ -57,7 +58,7 @@ export default class ApiRemote {
   /**
    * Wait the event reply to trigger an action.
    *
-   * @param {Function} lambda Action to trigger on the reply. Parameters : event, data
+   * @param {Function} lambda The action to trigger on the reply. Parameters : event, data
    * @param {Boolean} onlyOnce If true the action trigger only after the first reply.
    */
   onReply (lambda, onlyOnce = true) {
@@ -73,11 +74,35 @@ export default class ApiRemote {
   }
 
   /**
+   * Wait a signal to trigger an action.
+   *
+   * @param {String} label The label of the signal
+   * @param {Function} lambda The action to trigger on the reply. Parameters : event, data
+   * @param {Boolean} onlyOnce If true the action trigger only after the first reply.
+   */
+  onSignal (label, lambda, onlyOnce = true) {
+    // Save the handler for remove later
+    this.signalHandler.add(label)
+
+    if (onlyOnce) {
+      ipcRenderer.once(`deepsec-api:${this.namespace}:${this.ipcId}:${label}`, lambda)
+    } else {
+      ipcRenderer.on(`deepsec-api:${this.namespace}:${this.ipcId}:${label}`, lambda)
+    }
+  }
+
+  /**
    * Trigger when the remote process exit.
    * Remove all reply listener.
    */
   exit () {
     ipcRenderer.removeAllListeners(`deepsec-api:${this.namespace}:reply`)
+
+    this.signalHandler.forEach(s => {
+      ipcRenderer.removeAllListeners(`deepsec-api:${this.namespace}:${this.ipcId}:${s}`)
+    })
+    this.signalHandler.clear()
+
     this.stopped = true
   }
 }

@@ -4,6 +4,8 @@ import logger from 'electron-log'
 import path from 'path'
 import fs from 'fs'
 
+import ApiRemote from '../deepsec-api/ApiRemote'
+
 /**
  * @type {number} Number of retry when opening an empty file
  */
@@ -19,31 +21,43 @@ export default class ResultModel {
    *
    * @param {string} resultFilePath The path to the json file to load
    * @param {Boolean} loadRelations If true load related result (batch, run, queries ...)
+   * @param {Boolean} updateListener If true wait for updates from IPC signal, will be ignored if
+   * status is not waiting or in progress
    */
-  constructor (resultFilePath, loadRelations = false) {
+  constructor (resultFilePath, loadRelations = false, updateListener = false) {
     this.path = resultFilePath
-
-    let json = ResultModel.loadResultFile(resultFilePath)
-    this.status = json.status
-
-    // Optional fields
-    if (json.start_time) {
-      this.startTime = new Date(json.start_time * 1000)
-    } else {
-      this.startTime = null
-    }
-
-    if (json.end_time) {
-      this.endTime = new Date(json.end_time * 1000)
-    } else {
-      this.endTime = null
-    }
+    this.apiRemote = null
 
     // Mapping specific for each result type
+    const json = ResultModel.loadResultFile(this.path)
     this.mapJsonFile(json)
 
     if (loadRelations) {
       this.loadRelations()
+    }
+
+    if (updateListener) {
+      this.enableUpdateListener()
+    }
+  }
+
+  /**
+   * Enable the update listener for this result. Will reload data from file whenever a change
+   * is notified by the IPC signal.
+   * This method do nothing if the listener has been set before or if the status can't change.
+   */
+  enableUpdateListener () {
+    // Set update listener if never set before and status could change
+    if (!this.updateListener && this.isActive()) {
+      this.updateListener = true
+
+      // FIXME problem : won't receive the exit signal
+      this.apiRemote = new ApiRemote('start-run', this.path)
+      this.apiRemote.onSignal('update', () => {
+        logger.silly(`Update result : ${this.path}`)
+        const json = ResultModel.loadResultFile(this.path)
+        this.mapJsonFile(json)
+      })
     }
   }
 
@@ -68,11 +82,22 @@ export default class ResultModel {
 
   /**
    * Map the result json file to this model fields.
-   *
-   * @param json
    */
   mapJsonFile (json) {
-    throw new TypeError('Must override method')
+    this.status = json.status
+
+    // Optional fields
+    if (json.start_time) {
+      this.startTime = new Date(json.start_time * 1000)
+    } else {
+      this.startTime = null
+    }
+
+    if (json.end_time) {
+      this.endTime = new Date(json.end_time * 1000)
+    } else {
+      this.endTime = null
+    }
   }
 
   /**

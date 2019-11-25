@@ -5,6 +5,9 @@ import text from '../text-content/text'
 
 export default class QueryModel extends ResultModel {
   mapJsonFile (json) {
+    // Load generic field with parent method
+    super.mapJsonFile(json)
+
     // Mandatory fields
     this.index = json.index
     this.atomicData = json.atomic_data.data
