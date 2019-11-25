@@ -18,8 +18,8 @@ Prism.languages.deepsec = {
   },
   'no-args': /\(\)/,
   punctuation: /[(),;]/u,
-  sup: /(?<=\w)~\d+(?=\b)/,
-  sub: /(?<=\w)_\d+(?=\b)/
+  sup: /(?<=\w)~\d+(-\d+)*(?=\s|$|_)/,
+  sub: /(?<=\w)_\d+(?=\b|~)/
 }
 
 // Create hook before rendering code
