@@ -75,7 +75,9 @@ export default class QueryTraceModel {
    * Ask to the process to stop.
    */
   stop () {
-    this.apiRemote.sendQuery('die')
+    if (!this.apiRemote.stopped) {
+      this.apiRemote.sendQuery('die')
+    }
   }
 
   /**
