@@ -17,7 +17,6 @@ export default class BatchModel extends ResultModel {
     this.commandOptions = RunConfigModel.loadFromJson(json.command_options)
     this.computedOptions = RunConfigModel.loadFromJson(json.computed_options)
 
-    this.runs = null // Not loaded yet
     this.runFiles = json.run_files
 
     if (!isEmptyOrBlankStr(json.title)) {

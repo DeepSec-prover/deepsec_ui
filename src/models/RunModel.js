@@ -10,11 +10,7 @@ export default class RunModel extends ResultModel {
     super.mapJsonFile(json)
 
     this.inputFile = json.input_file
-
-    this.batch = null // Not loaded yet
     this.batchFile = json.batch_file
-
-    this.queries = null // Not loaded yet
     this.queryFiles = json.query_files
 
     // Optional fields

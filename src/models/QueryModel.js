@@ -15,10 +15,7 @@ export default class QueryModel extends ResultModel {
     this.type = json.type
     this.processes = json.processes
 
-    this.batch = null // Not loaded yet
     this.batchFile = json.batch_file
-
-    this.run = null // Not loaded yet
     this.runFile = json.run_file
 
     if (json.error_msg) {
