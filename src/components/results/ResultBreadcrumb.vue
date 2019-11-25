@@ -73,11 +73,11 @@
       },
       run: {
         type: Object,
-        default: null
+        default: undefined
       },
       query: {
         type: Object,
-        default: null
+        default: undefined
       }
     },
     methods: {
@@ -99,7 +99,7 @@
        * @returns {Array} List if runs
        */
       otherRuns: function () {
-        if (this.batch.runs === null) {
+        if (this.batch.runs === undefined) {
           // Load runs
           // Also reload the current one but it's not big deal
           this.batch.loadRelations()
@@ -119,7 +119,7 @@
        * @returns {Array} List if queries
        */
       otherQueries: function () {
-        if (this.run.queries === null) {
+        if (this.run.queries === undefined) {
           // Also reload the current one but it's not big deal
           this.run.loadQueries()
         }

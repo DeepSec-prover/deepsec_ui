@@ -22,29 +22,14 @@ export default class QueryTraceModel {
     this.atomic = new AtomicRenamer(this.query.atomicData)
     // Just shortcuts
     this.actions = this.query.attackTrace.action_sequence
-    /* TODO init with the current process and start only on the first next, but make sure than
-    the all process object is not watched by vue */
-    this.process = null
-    this.loading = true
-  }
-
-  /**
-   * Start the communication with the API.
-   */
-  start () {
-    // Wait for the next reply
-    this.apiRemote.onReply(this.updateFromResult.bind(this))
-
-    // Send the display trace order
-    this.apiRemote.start(
-      {
-        'command': 'start_display_trace',
-        'query_file': this.query.path
-      })
+    this.process = this.query.getAttackedProcess()
+    this.loading = false
+    this.started = false
   }
 
   /**
    * Go to a specific action, load the process state and the frame from DeepSec API.
+   * Send the start call to the API if necessary.
    *
    * @param {Number} id The id of the action
    */
@@ -54,7 +39,17 @@ export default class QueryTraceModel {
     // Wait for the next reply
     this.apiRemote.onReply(this.updateFromResult.bind(this))
 
-    this.apiRemote.sendQuery('goto_step', id)
+    if (this.started) {
+      this.apiRemote.sendQuery('goto_step', id)
+    } else {
+      // Send the fist display trace order
+      this.apiRemote.start(
+        {
+          'command': 'start_display_trace',
+          'query_file': this.query.path,
+          'id': id
+        })
+    }
   }
 
   /**
