@@ -132,6 +132,7 @@ Progression: DeepSec -> UI
 ```
 {
   "command": "query_progression",
+  "file": <string>,
   "round": <int>, // Single core = 0
   "verification": {
     "percent": <int>, // 0-100
