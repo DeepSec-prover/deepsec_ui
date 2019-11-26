@@ -153,8 +153,15 @@ function strIndent (count) {
  * @returns {string} A readable string which describe the sub-process and its children
  */
 function formatNew (subProcess, atomic, indent) {
-  return `new ${atomic.getAndRename(subProcess.name)};\n` +
-    format(subProcess.process, atomic, indent)
+  let res = `new ${atomic.getAndRename(subProcess.name)}`
+
+  if (subProcess.bang) {
+    res += '~' + subProcess.bang.join('-')
+  }
+
+  res += ';\n' + format(subProcess.process, atomic, indent)
+
+  return res
 }
 
 /**
@@ -193,7 +200,13 @@ function formatLetInElse (subProcess, atomic, indent) {
  */
 function formatAtomic (subProcess, atomic, indent) {
   // Fetch subProcess in the atomic table
-  return atomic.getAndRename(subProcess.id)
+  let res = atomic.getAndRename(subProcess.id)
+
+  if (subProcess.bang) {
+    res += '~' + subProcess.bang.join('-')
+  }
+
+  return res
 }
 
 /**

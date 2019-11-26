@@ -39,12 +39,6 @@ export default class AtomicRenamer {
 
     const label = this.dataTable[id].label
     const index = this.dataTable[id].index
-    const bang = this.dataTable[id].bang
-
-    let bangStr = ''
-    if (bang) {
-      bangStr = '~' + bang.join('-')
-    }
 
     // Existing label
     if (this.renameTable.has(label)) {
@@ -55,7 +49,7 @@ export default class AtomicRenamer {
         if (newId === 0) {
           return label
         } else {
-          return label + '_' + (newId + 1) + bangStr
+          return label + '_' + (newId + 1)
         }
       }
       // Existing label but new index
@@ -63,13 +57,13 @@ export default class AtomicRenamer {
         const labelTable = this.renameTable.get(label)
         const newId = labelTable.size
         labelTable.set(index, newId)
-        return label + '_' + (newId + 1) + bangStr
+        return label + '_' + (newId + 1)
       }
     }
     // New label in the table
     else {
       this.renameTable.set(label, new Map([[index, 0]]))
-      return label + bangStr // Hide "0"
+      return label // Hide "0"
     }
   }
 }
