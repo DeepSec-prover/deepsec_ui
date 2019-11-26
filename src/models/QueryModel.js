@@ -101,10 +101,6 @@ export default class QueryModel extends ResultModel {
       return 100
     }
 
-    if (!this.progression) {
-      return 0
-    }
-
     if (this.progression.generation) {
       return Math.floor(this.progression.generation.jobs_created /
                           this.progression.generation.minimum_jobs * GENERATION_WEIGHT)
@@ -114,6 +110,9 @@ export default class QueryModel extends ResultModel {
       return Math.floor((this.progression.verification.percent * VERIF_WEIGHT) +
                           (100 * GENERATION_WEIGHT))
     }
+
+    // No progression
+    return 0
   }
 
   /**

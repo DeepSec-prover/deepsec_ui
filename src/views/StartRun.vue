@@ -219,7 +219,7 @@
 
         // No ipc Id for now because we don't know the id of the batch.
         // It will be set on the batch started.
-        const remote = new ApiRemote('start-run', null)
+        const remote = new ApiRemote('start-run', null, false)
 
         // Wait for the run confirmation or error message
         remote.onReply((event, result) => {

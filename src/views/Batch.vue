@@ -132,7 +132,6 @@
 </template>
 
 <script>
-  import ApiRemote from '../deepsec-api/ApiRemote'
   import ResultStatus from '../components/results/ResultStatus'
   import Duration from '../components/Duration'
   import ResultLayout from '../components/results/ResultLayout'
@@ -172,8 +171,7 @@
     },
     methods: {
       cancelBatch () {
-        const remote = new ApiRemote('start-run', this.batch.path)
-        remote.sendQuery('cancel-batch')
+        this.batch.apiRemote.sendQuery('cancel-batch')
       }
     },
     beforeMount () {

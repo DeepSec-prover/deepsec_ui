@@ -9,9 +9,10 @@ export default class ApiRemote {
    *
    * @param {String} namespace The namespace of the manager to reach.
    * @param {String} ipcId The ipc id of the specific instance of manager to reach.
+   * @param {Boolean} started Flag to set the process as already started
    */
-  constructor (namespace, ipcId) {
-    this.started = false
+  constructor (namespace, ipcId, started) {
+    this.started = started
     this.stopped = false
     this.namespace = namespace
     this.signalHandler = new Set()

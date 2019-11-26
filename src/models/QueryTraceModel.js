@@ -15,7 +15,7 @@ export default class QueryTraceModel {
     }
 
     this.query = query
-    this.apiRemote = new ApiRemote('display-trace', this.query.path)
+    this.apiRemote = new ApiRemote('display-trace', this.query.path, false)
     this.frame = []
     this.currentAction = -1
     // Unique rename table for the all trace and process
