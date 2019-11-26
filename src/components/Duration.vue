@@ -13,7 +13,7 @@
   ]
 
   export default {
-    name: 'Duration',
+    name: 'duration',
     props: {
       /**
        * Start time, should be set if duration is not.
@@ -32,6 +32,14 @@
         default: null
       },
       /**
+       * Duration in seconds, should be set if start time is not.
+       * If duration and start time are set, the start time is ignored.
+       */
+      duration: {
+        type: Number,
+        default: null
+      },
+      /**
        * The number of unit to show in the string.
        * If 0 then use maximal precision.
        * Eg: 1 hour 10 minutes 5 seconds
@@ -43,39 +51,36 @@
       precision: {
         type: Number,
         default: 2
-      },
-      /**
-       * Duration in seconds, should be set if start time is not.
-       * If duration and start time are set, the start time is ignored.
-       */
-      duration: {
-        type: Number,
-        default: null
+      }
+    },
+    data () {
+      return {
+        /**
+         * Computed duration in seconds.
+         */
+        realtimeDuration: -1,
+        /**
+         * Time interval reference to clear when it's over.
+         */
+        timeInterval: undefined
       }
     },
     computed: {
       durationStr: function () {
-        let s = -1
-        if (this.duration === null) {
-          let end = this.endTime ? this.endTime : new Date(Date.now())
-          s = (end - this.startTime) / 1000
-        } else {
-          s = this.duration
-        }
-
-        if (s < 0 ) {
-          logger.error(`Bad value for duration : ${s}s`)
+        if (this.realtimeDuration < 0) {
+          logger.error(`Bad value for duration : ${this.realtimeDuration}s`)
           return '-'
         }
 
         // Null duration, we assume that is under 1s
-        if (s === 0) {
+        if (this.realtimeDuration === 0) {
           return '< 1 second'
         }
 
         let strings = []
         let precisionCount = 0
         let i = 0
+        let s = this.realtimeDuration
         while (i < PERIODS.length) {
           let periodLabel = PERIODS[i][0]
           let periodSec = PERIODS[i][1]
@@ -98,6 +103,31 @@
         }
 
         return strings.join(' ')
+      }
+    },
+    watch: {
+      endTime: function (newVal, oldVal) {
+        // If the val is set for the first time
+        if (!oldVal && newVal) {
+          // Stop the duration incrementation
+          clearInterval(this.timeInterval)
+        }
+      }
+    },
+    beforeMount () {
+      if (this.duration) {
+        // Direct duration
+        this.realtimeDuration = this.duration
+      } else {
+        if (this.endTime) {
+          // Start and end time set
+          this.realtimeDuration = (this.endTime - this.startTime) / 1000
+        } else {
+          // Still in progress
+          this.realtimeDuration = (new Date(Date.now()) - this.startTime) / 1000
+          // Update the duration every second
+          this.timeInterval = setInterval(() => this.realtimeDuration++, 1000)
+        }
       }
     }
   }
