@@ -108,7 +108,7 @@ export default class QueryModel extends ResultModel {
       return null
     }
 
-    return this.processes[this.attackTrace.index_process]
+    return this.processes[this.attackTrace.index_process - 1]
   }
 
   /**
