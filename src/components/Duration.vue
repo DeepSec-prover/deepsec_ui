@@ -111,6 +111,7 @@
         if (!oldVal && newVal) {
           // Stop the duration incrementation
           clearInterval(this.timeInterval)
+          this.realtimeDuration = (newVal - this.startTime) / 1000
         }
       }
     },
