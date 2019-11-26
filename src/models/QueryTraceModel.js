@@ -24,7 +24,7 @@ export default class QueryTraceModel {
     this.actions = this.query.attackTrace.action_sequence
     this.process = this.query.getAttackedProcess()
     this.loading = false
-    this.started = false
+    this.running = false
   }
 
   /**
@@ -39,9 +39,10 @@ export default class QueryTraceModel {
     // Wait for the next reply
     this.apiRemote.onReply(this.updateFromResult.bind(this))
 
-    if (this.started) {
+    if (this.running) {
       this.apiRemote.sendQuery('goto_step', id)
     } else {
+      this.running = true
       // Send the fist display trace order
       this.apiRemote.start(
         {
@@ -60,7 +61,6 @@ export default class QueryTraceModel {
    */
   updateFromResult (_, result) {
     if (result.success) {
-      this.started = true
       logger.silly(`Received trace display ${result.current_action_id}`)
       this.currentAction = result.current_action_id
       this.frame = result.frame
@@ -76,8 +76,8 @@ export default class QueryTraceModel {
    * Ask to the process to stop.
    */
   stop () {
-    if (!this.apiRemote.stopped) {
-      this.started = false
+    if (this.running) {
+      this.running = false
       this.apiRemote.sendQuery('die')
     }
   }
