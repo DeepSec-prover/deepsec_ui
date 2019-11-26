@@ -60,6 +60,7 @@ export default class QueryTraceModel {
    */
   updateFromResult (_, result) {
     if (result.success) {
+      this.started = true
       logger.silly(`Received trace display ${result.current_action_id}`)
       this.currentAction = result.current_action_id
       this.frame = result.frame
@@ -76,6 +77,7 @@ export default class QueryTraceModel {
    */
   stop () {
     if (!this.apiRemote.stopped) {
+      this.started = false
       this.apiRemote.sendQuery('die')
     }
   }
