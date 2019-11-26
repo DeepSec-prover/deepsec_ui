@@ -29,17 +29,23 @@
                 <dd>{{ batch.nbRun() }}</dd>
                 <template v-if="batch.debug">
                   <dt>Debug</dt>
-                  <dd><el-tag size="mini" type="danger"><i class="el-icon-view"></i> yes</el-tag></dd>
+                  <dd>
+                    <el-tag size="mini" type="danger"><i class="el-icon-view"></i> yes</el-tag>
+                  </dd>
                 </template>
               </dl>
             </el-col>
             <el-col :md="12">
               <dl class="in-line">
                 <dt>Start time</dt>
-                <dd><date :date="batch.startTime"></date></dd>
+                <dd>
+                  <date :date="batch.startTime"></date>
+                </dd>
                 <template v-if="batch.endTime">
                   <dt>End time</dt>
-                  <dd><date :date="batch.endTime"></date></dd>
+                  <dd>
+                    <date :date="batch.endTime"></date>
+                  </dd>
                 </template>
                 <dt>Running time</dt>
                 <dd>
@@ -172,7 +178,11 @@
     },
     beforeMount () {
       this.batch = new BatchModel(this.path, true, true)
-      this.batch.runs.forEach(r => r.loadQueries())
+      // Load query and enable all listeners
+      this.batch.runs.forEach(r => {
+        r.enableUpdateListener()
+        r.loadQueries(true)
+      })
 
       if (this.batch.nbRun() === 1) {
         this.openedRun.push(this.batch.runs[0].path)

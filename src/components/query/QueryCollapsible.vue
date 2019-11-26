@@ -10,6 +10,12 @@
           Details <i class="el-icon-top-right"></i>
         </el-button>
       </h3>
+      <span v-if="query.isActive()" class="query-progress">
+        &ndash;
+        <template v-if="query.progression.generation">Generation </template>
+        <template v-if="query.progression.verification">Verification </template>
+        {{ query.progressionPercent() }}%
+      </span>
     </template>
     <!-- Show error message if present -->
     <el-alert v-if="query.errorMsg" title="Error" type="error" :description="query.errorMsg" show-icon :closable="false"></el-alert>
@@ -83,5 +89,10 @@
 
   .details dl {
     line-height: initial;
+  }
+
+  .query-progress {
+    margin-left: 5px;
+    color: #909399;
   }
 </style>

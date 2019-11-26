@@ -33,9 +33,10 @@ export default class RunModel extends ResultModel {
                                          new QueryModel(queryFile, false))
   }
 
-  loadQueries () {
-    this.queries = this.queryFiles.map(queryFile =>
-                                         new QueryModel(queryFile, false))
+  loadQueries (updateListener = false) {
+    this.queries = this.queryFiles.map(
+      queryFile => new QueryModel(queryFile, false, updateListener)
+    )
   }
 
   loadBatch () {
