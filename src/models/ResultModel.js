@@ -50,14 +50,8 @@ export default class ResultModel {
     // Set update listener if never set before and status could change
     if (!this.updateListener && this.isActive()) {
       this.updateListener = true
-
-      // FIXME problem : won't receive the exit signal
-      this.apiRemote = new ApiRemote('start-run', this.path)
-      this.apiRemote.onSignal('update', () => {
-        logger.silly(`Update result : ${this.path}`)
-        const json = ResultModel.loadResultFile(this.path)
-        this.mapJsonFile(json)
-      })
+      this.apiRemote = new ApiRemote('start-run', this.getIpcId())
+      this.updateTrigger()
     }
   }
 
@@ -120,6 +114,28 @@ export default class ResultModel {
    */
   progressionPercent () {
     throw new TypeError('Must override method')
+  }
+
+  /**
+   * Get the result IPC id for update. Should be the batch result path.
+   * @See ../deepsec-api/ApiStartRun.js
+   * @return {String} The IPC id.
+   */
+  getIpcId () {
+    throw new TypeError('Must override method')
+  }
+
+  /**
+   * Register what signals to catch and what action to do.
+   */
+  updateTrigger () {
+    this.apiRemote.onSignal('update', (_, content) => {
+      if (this.path === content.file) {
+        logger.silly(`Update result : ${this.path}`)
+        const json = ResultModel.loadResultFile(this.path)
+        this.mapJsonFile(json)
+      }
+    }, false)
   }
 
   /**

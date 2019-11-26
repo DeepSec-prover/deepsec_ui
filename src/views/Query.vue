@@ -97,6 +97,8 @@
       }
     },
     beforeMount () {
+      this.query.enableUpdateListener()
+
       // If has attack trace auto switch to this tab
       if (this.query.attackTrace) {
         this.activeDetail = 'trace'

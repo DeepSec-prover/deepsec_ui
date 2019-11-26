@@ -51,6 +51,10 @@ export default class BatchModel extends ResultModel {
     return this.startTime.toLocaleDateString() + ' ' + this.startTime.toLocaleTimeString()
   }
 
+  getIpcId () {
+    return this.path
+  }
+
   progressionPercent () {
     if (this.isCompleted()) {
       return 100

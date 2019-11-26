@@ -77,7 +77,8 @@ export class ApiStartRun extends ApiManager {
         { name: 'batch', params: { 'path': answer.file } })
     }
 
-    this.sendSignalToRemote('update', answer.file)
+    // Send update signal with the result file name as content
+    this.sendSignalToRemote('update', { file: answer.file })
   }
 
   runStarted (answer) {
@@ -92,7 +93,8 @@ export class ApiStartRun extends ApiManager {
       'run',
       { name: 'run', params: { 'path': answer.file } })
 
-    this.sendSignalToRemote('update', answer.file)
+    // Send update signal with the result file name as content
+    this.sendSignalToRemote('update', { file: answer.file })
   }
 
   queryStarted (answer) {
@@ -106,7 +108,8 @@ export class ApiStartRun extends ApiManager {
       'query',
       { name: 'query', params: { 'path': answer.file } })
 
-    this.sendSignalToRemote('update', answer.file)
+    // Send update signal with the result file name as content
+    this.sendSignalToRemote('update', { file: answer.file })
   }
 
   queryEnded (answer) {
@@ -141,7 +144,8 @@ export class ApiStartRun extends ApiManager {
       'query',
       { name: 'query', params: { 'path': answer.file } })
 
-    this.sendSignalToRemote('update', answer.file)
+    // Send update signal with the result file name as content
+    this.sendSignalToRemote('update', { file: answer.file })
   }
 
   runEnded (answer) {
@@ -177,7 +181,8 @@ export class ApiStartRun extends ApiManager {
       'run',
       { name: 'run', params: { 'path': answer.file } })
 
-    this.sendSignalToRemote('update', answer.file)
+    // Send update signal with the result file name as content
+    this.sendSignalToRemote('update', { file: answer.file })
   }
 
   batchEnded (answer) {
@@ -221,11 +226,15 @@ export class ApiStartRun extends ApiManager {
       'batch',
       { name: 'batch', params: { 'path': answer.file } })
 
-    this.sendSignalToRemote('update', answer.file)
+    // Send update signal with the result file name as content
+    this.sendSignalToRemote('update', { file: answer.file })
   }
 
   queryProgression (answer) {
-    this.sendSignalToRemote('progression', answer.file)
+    this.sendSignalToRemote('progression', {
+      file: answer.file,
+      progression: answer
+    })
   }
 
 // ======================= Error Answers ======================

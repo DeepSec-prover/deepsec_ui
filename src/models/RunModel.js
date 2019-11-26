@@ -46,6 +46,10 @@ export default class RunModel extends ResultModel {
     return this.inputFileName().replace(/\.dps$/ui, '')
   }
 
+  getIpcId () {
+    return this.batchFile
+  }
+
   progressionPercent () {
     if (this.isCompleted()) {
       return 100
