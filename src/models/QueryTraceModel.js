@@ -76,10 +76,10 @@ export default class QueryTraceModel {
    * Ask to the process to stop.
    */
   stop () {
-    if (this.running) {
-      this.running = false
+    if (this.running && this.apiRemote.started && !this.apiRemote.stopped) {
       this.apiRemote.sendQuery('die')
     }
+    this.running = false
   }
 
   /**

@@ -70,10 +70,10 @@ export function formatAction (action, atomic, axiomIdRef) {
  * @see doc/process_structure.md for process structure
  */
 export function formatProcess (process, atomicData) {
-  logger.debug(`[Start] Parsing a process (atomic data size: ${atomicData.length})`)
-
   // If the atomic parameter is already a renamer keep it, if not create one
   const atomic = atomicData instanceof AtomicRenamer ? atomicData : new AtomicRenamer(atomicData)
+
+  logger.debug(`[Start] Parsing a process (atomic data size: ${atomic.dataTable.length})`)
 
   // Start recursive formatting
   const res = format(process, atomic, 0)

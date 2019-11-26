@@ -30,7 +30,17 @@ export default class QueryModel extends ResultModel {
       this.attackTrace = null
     }
 
-    this.progression = json.progression
+    // Progression
+    this.progression = {}
+    if (json.progression) {
+      this.progression.round = json.progression.round
+      this.progression.generation = json.progression.generation
+      this.progression.verification = json.progression.verification
+    } else {
+      this.progression.round = undefined
+      this.progression.generation = undefined
+      this.progression.verification = undefined
+    }
   }
 
   loadRelations () {
@@ -46,13 +56,25 @@ export default class QueryModel extends ResultModel {
     return this.index.toString()
   }
 
+  getIpcId () {
+    return this.batchFile
+  }
+
+  updateTrigger () {
+    super.updateTrigger()
+
+    this.apiRemote.onSignal('progression', (_, content) => {
+      if (this.path === content.file) {
+        this.progression.round = content.progression.round
+        this.progression.generation = content.progression.generation
+        this.progression.verification = content.progression.verification
+      }
+    }, false)
+  }
+
   progressionPercent () {
     if (this.status === 'completed') {
       return 100
-    }
-
-    if (!this.progression) {
-      return 0
     }
 
     if (this.progression.generation) {
@@ -63,6 +85,9 @@ export default class QueryModel extends ResultModel {
     if (this.progression.verification) {
       return this.progression.verification.percent
     }
+
+    // No progression
+    return 0
   }
 
   /**

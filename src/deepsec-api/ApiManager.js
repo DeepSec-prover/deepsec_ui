@@ -98,20 +98,14 @@ export class ApiManager {
    * Send an IPC signal to a passive remote.
    *
    * @param {String} label The label of the signal.
-   * @param {String} ipcId The IPC id to communicate with (could be different than the current one).
-   * If missing the current IPC id will be set.
    * @param {Object} content Some data if necessary.
    */
-  sendSignalToRemote (label, ipcId = null, content = null) {
-    if (!ipcId) {
-      ipcId = this.ipcId
-    }
-
+  sendSignalToRemote (label, content = null) {
     logger.silly(
-      `Send signal ${label} to remote "deepsec-api:${this.constructor.namespace()}:${ipcId}"`)
+      `Send signal ${label} to remote "deepsec-api:${this.constructor.namespace()}:${this.ipcId}"`)
 
     this.mainWindow.webContents.send(
-      `deepsec-api:${this.constructor.namespace()}:${ipcId}:${label}`, content)
+      `deepsec-api:${this.constructor.namespace()}:${this.ipcId}:${label}`, content)
   }
 
   /**

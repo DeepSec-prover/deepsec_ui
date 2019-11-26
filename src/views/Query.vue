@@ -56,6 +56,7 @@
   import QuerySummary from '../components/query/QuerySummary'
   import QueryTrace from '../components/query/QueryTrace'
   import QueryProcesses from '../components/query/QueryProcesses'
+  import QueryModel from '../models/QueryModel'
 
   export default {
     name: 'query',
@@ -66,11 +67,12 @@
       ResultLayout
     },
     props: {
-      query: Object
+      path: String
     },
     data () {
       return {
-        activeDetail: 'processes'
+        activeDetail: 'processes',
+        query: undefined
       }
     },
     computed: {
@@ -97,6 +99,8 @@
       }
     },
     beforeMount () {
+      this.query = new QueryModel(this.path, true, true)
+
       // If has attack trace auto switch to this tab
       if (this.query.attackTrace) {
         this.activeDetail = 'trace'
