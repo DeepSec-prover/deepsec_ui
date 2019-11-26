@@ -74,6 +74,7 @@
   import Duration from '../components/Duration'
   import QueryCollapsible from '../components/query/QueryCollapsible'
   import ResultLayout from '../components/results/ResultLayout'
+  import RunModel from '../models/RunModel'
 
   export default {
     name: 'run',
@@ -84,14 +85,16 @@
       ResultLayout
     },
     props: {
-      run: Object
+      path: String
     },
     data () {
       return {
-        openedSummary: []
+        openedSummary: [],
+        run: undefined
       }
     },
     beforeMount () {
+      this.run = new RunModel(this.path, true, true)
       // If few query show all summaries
       if (this.run.nbQueries() <= 5) {
         this.openedSummary = this.run.queries.map(q => q.path)

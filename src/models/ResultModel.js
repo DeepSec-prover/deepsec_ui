@@ -49,6 +49,7 @@ export default class ResultModel {
   enableUpdateListener () {
     // Set update listener if never set before and status could change
     if (!this.updateListener && this.isActive()) {
+      logger.info(`Start to listen update for result : ${this.path}`)
       this.updateListener = true
       this.apiRemote = new ApiRemote('start-run', this.getIpcId())
       this.updateTrigger()

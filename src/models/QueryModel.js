@@ -65,13 +65,9 @@ export default class QueryModel extends ResultModel {
 
     this.apiRemote.onSignal('progression', (_, content) => {
       if (this.path === content.file) {
-        if (!this.progression) {
-          this.progression = {}
-        }
-
-        this.progression.round = content.round
-        this.progression.generation = content.generation
-        this.progression.verification = content.verification
+        this.progression.round = content.progression.round
+        this.progression.generation = content.progression.generation
+        this.progression.verification = content.progression.verification
       }
     }, false)
   }

@@ -135,6 +135,7 @@
   import Date from '../components/Date'
   import settings from '../../settings'
   import path from 'path'
+  import BatchModel from '../models/BatchModel'
 
   export default {
     name: 'batch',
@@ -147,11 +148,12 @@
       Date
     },
     props: {
-      batch: Object
+      path: String
     },
     data () {
       return {
-        openedRun: []
+        openedRun: [],
+        batch: undefined
       }
     },
     computed: {
@@ -169,7 +171,7 @@
       }
     },
     beforeMount () {
-      this.batch.enableUpdateListener()
+      this.batch = new BatchModel(this.path, true, true)
       this.batch.runs.forEach(r => r.loadQueries())
 
       if (this.batch.nbRun() === 1) {
