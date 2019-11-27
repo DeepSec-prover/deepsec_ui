@@ -88,10 +88,9 @@
 
       <!-- Trace Frame -->
       <el-card header="Frame">
-        <ul>
+        <ul class="no-bullet">
           <li v-for="i in queryTrace.frame.length">
-            ax<sub>{{i}}</sub>
-            <spec-code in-line :code="'TODO'"></spec-code>
+            <spec-code in-line :code="`ax_${i} -> ${ termsStr[i-1] }`"></spec-code>
           </li>
         </ul>
       </el-card>
@@ -145,6 +144,9 @@
         })
 
         return actionsStr
+      },
+      termsStr: function () {
+        return this.queryTrace.frame.map(q => formatProcess(q, this.queryTrace.atomic))
       }
     },
     methods: {
@@ -272,5 +274,11 @@
 
   .steps-frame {
     margin-bottom: 20px;
+  }
+
+  .no-bullet {
+    list-style-type: none;
+    padding: 0;
+    margin: 0 0 0 10px;
   }
 </style>
