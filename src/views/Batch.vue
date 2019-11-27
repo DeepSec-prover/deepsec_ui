@@ -182,6 +182,10 @@
         r.loadQueries(true)
       })
 
+      /* Link all queries directly in the batch field because Vue fail to make it reactive behind the
+      * array of runs. */
+      this.batch.linkQueries()
+
       if (this.batch.nbRun() === 1) {
         this.openedRun.push(this.batch.runs[0].path)
       }

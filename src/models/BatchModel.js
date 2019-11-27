@@ -36,10 +36,23 @@ export default class BatchModel extends ResultModel {
     } else {
       this.errorMsg = null
     }
+
+    // List of all runs' queries
+    this.runsQueries = []
   }
 
   loadRelations () {
     this.runs = this.runFiles.map(file => new RunModel(file, false))
+  }
+
+  /**
+   * Link all queries from all run of this batch.
+   * Used to be sure they are observable.
+   */
+  linkQueries () {
+    this.runs.forEach(r => {
+      r.queries.forEach(q => this.runsQueries.push(q))
+    })
   }
 
   title () {
@@ -88,7 +101,7 @@ export default class BatchModel extends ResultModel {
   /**
    * @returns {Array} All input (spec) files absolute paths
    */
-  inputFilesAbsolutePaths() {
+  inputFilesAbsolutePaths () {
     return this.runs.map(r => r.inputFileAbsolutePath())
   }
 
