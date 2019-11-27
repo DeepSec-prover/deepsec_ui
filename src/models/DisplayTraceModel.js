@@ -2,7 +2,7 @@ import AtomicRenamer from '../util/AtomicRenamer'
 import ApiRemote from '../deepsec-api/ApiRemote'
 import logger from 'electron-log'
 
-export default class QueryTraceModel {
+export default class DisplayTraceModel {
   /**
    * Create a new query trace model.
    *
@@ -131,7 +131,7 @@ export default class QueryTraceModel {
    */
   nextAction (level) {
     for (let i = this.currentAction + 1; i < this.nbSteps(); i++) {
-      if (QueryTraceModel.isVisibleAction(this.actions[i], level)) {
+      if (DisplayTraceModel.isVisibleAction(this.actions[i], level)) {
         this.gotoAction(i)
         return
       }
@@ -149,7 +149,7 @@ export default class QueryTraceModel {
    */
   previousAction (level) {
     for (let i = this.currentAction - 1; i > -1; i--) {
-      if (QueryTraceModel.isVisibleAction(this.actions[i], level)) {
+      if (DisplayTraceModel.isVisibleAction(this.actions[i], level)) {
         this.gotoAction(i)
         return
       }

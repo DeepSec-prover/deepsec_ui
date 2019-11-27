@@ -54,7 +54,7 @@
 <script>
   import ResultLayout from '../components/results/ResultLayout'
   import QuerySummary from '../components/query/QuerySummary'
-  import QueryTrace from '../components/query/QueryTrace'
+  import QueryTrace from '../components/simulators/DisplayTrace'
   import QueryProcesses from '../components/query/QueryProcesses'
   import QueryModel from '../models/QueryModel'
 

@@ -57,59 +57,35 @@
       </div>
 
       <!-- Trace actions -->
-      <el-card class="steps-frame">
-        <template slot="header">
-          <template v-if="queryTrace.currentAction === -1">
-            Trace - {{ queryTrace.nbSteps() }} Step{{ queryTrace.nbSteps() > 1 ? 's' : '' }}
-          </template>
-          <template v-else>
-            Trace - Step {{ queryTrace.currentAction + 1 }} / {{ queryTrace.nbSteps() }}
-          </template>
-        </template>
-        <div v-if="queryTrace.currentAction === -1" class="centred-content info-text">
-          Initial state
-        </div>
-        <div v-else-if="noActionVisible" class="centred-content info-text">
-          Nothing visible with this detail level
-        </div>
-        <simplebar v-else id="steps">
-          <div id="trace-actions">
-            <template v-for="i in queryTrace.actions.length" v-if="visibleActions[i-1]">
-              <span class="action-index">{{ i }}</span>
-              <span class="action-description">
-                <spec-code in-line :code="actionsStr[i-1]"
-                           @click.native="queryTrace.gotoAction(i-1)"
-                           :class="{'clickable': true, 'tau': isTauAction(queryTrace.actions[i-1])}"></spec-code>
-              </span>
-            </template>
-          </div>
-        </simplebar>
-      </el-card>
+      <sim-trace :actions="queryTrace.actions"
+                 :atomic="queryTrace.atomic"
+                 :current-action="queryTrace.currentAction"
+                 :trace-level="traceLevel"
+                 determinate
+                 v-on:goto="gotoAction"></sim-trace>
 
       <!-- Trace Frame -->
-      <el-card header="Frame">
-        <ul class="no-bullet">
-          <li v-for="i in queryTrace.frame.length">
-            <spec-code in-line :code="`ax_${i} -> ${ termsStr[i-1] }`"></spec-code>
-          </li>
-        </ul>
-      </el-card>
+      <sim-frame :frame="queryTrace.frame" :atomic="queryTrace.atomic"></sim-frame>
     </el-col>
   </el-row>
 </template>
 
 <script>
   import QueryModel from '../../models/QueryModel'
-  import QueryTraceModel from '../../models/QueryTraceModel'
+  import DisplayTraceModel from '../../models/DisplayTraceModel'
   import Simplebar from 'simplebar-vue'
   import Helper from '../helpers/Helper'
   import SpecCode from '../SpecCode'
-  import { formatAction, formatProcess } from '../../util/process-parser'
+  import { formatProcess } from '../../util/process-parser'
   import logger from 'electron-log'
+  import SimFrame from './SimFrame'
+  import SimTrace from './SimTrace'
 
   export default {
     name: 'query-trace',
     components: {
+      SimTrace,
+      SimFrame,
       SpecCode,
       Helper,
       Simplebar
@@ -133,54 +109,9 @@
           return 'loading ...'
 
         return formatProcess(this.queryTrace.process, this.queryTrace.atomic)
-      },
-      actionsStr: function () {
-        let axiomIdRef = { value: 1 }
-        let actionsStr = []
-
-        // Format all actions
-        this.queryTrace.actions.forEach(a => {
-          actionsStr.push(formatAction(a, this.queryTrace.atomic, axiomIdRef))
-        })
-
-        return actionsStr
-      },
-      termsStr: function () {
-        return this.queryTrace.frame.map(q => formatProcess(q, this.queryTrace.atomic))
       }
     },
     methods: {
-      /**
-       * Filter action by visibility status.
-       * An action is not visible if it hasn't been executed yet or if it isn't in the scope of the
-       * current trace level.
-       *
-       * @returns {[Boolean]} An array of boolean where every position match with an action of the trace.
-       */
-      computeVisibleActions () {
-        let actions = []
-        let oneActionVisible = false
-        let currentAction
-
-        for (let i = 0; i < this.queryTrace.actions.length; i++) {
-          let a = this.queryTrace.actions[i]
-          if (i > this.queryTrace.currentAction) {
-            currentAction = false
-          } else {
-            currentAction = QueryTraceModel.isVisibleAction(a, this.traceLevel)
-          }
-
-          actions.push(currentAction)
-          oneActionVisible = oneActionVisible || currentAction
-        }
-
-        // Set at the end to avoid multiple update
-        this.noActionVisible = !oneActionVisible
-        this.visibleActions = actions
-      },
-      isTauAction (action) {
-        return ['tau', 'comm', 'bang', 'choice'].includes(action.type)
-      },
       firstAction () {
         if (!this.queryTrace.loading && this.queryTrace.hasPreviousAction()) {
           this.queryTrace.gotoFirstAction()
@@ -208,21 +139,18 @@
         } else {
           logger.debug('Go to last action method call to fast (still loading)')
         }
-      }
-    },
-    watch: {
-      // Manual trigger visible actions because computed method fail to detect changes.
-      traceLevel: function () {
-        this.computeVisibleActions()
       },
-      'queryTrace.currentAction': function () {
-        this.computeVisibleActions()
+      gotoAction (id) {
+        if (!this.queryTrace.loading) {
+          this.queryTrace.gotoAction(id)
+        } else {
+          logger.debug('Go to action method call to fast (still loading)')
+        }
       }
     },
     beforeMount () {
       // Create the model but don't start the API util the first call.
-      this.queryTrace = new QueryTraceModel(this.query)
-      this.computeVisibleActions()
+      this.queryTrace = new DisplayTraceModel(this.query)
     },
     // Called when the user change to an other view.
     destroyed () {
@@ -233,28 +161,6 @@
 </script>
 
 <style scoped>
-  .info-text {
-    font-style: italic;
-    color: #909399;
-  }
-
-  #trace-actions {
-    list-style-type: none;
-    display: grid;
-    grid-template-columns: minmax(40px, max-content) 1fr
-  }
-
-  #trace-actions .action-index {
-    text-align: right;
-    margin-right: 5px;
-    color: #909399;
-    align-self: center;
-  }
-
-  #trace-actions .action-index:after {
-    content: " - ";
-  }
-
   #trace-buttons > * {
     margin-bottom: 15px;
   }
@@ -262,23 +168,5 @@
   #trace-buttons {
     margin-top: 20px;
     margin-bottom: 20px;
-  }
-
-  .tau {
-    opacity: 0.5;
-  }
-
-  #steps {
-    max-height: 50vh;
-  }
-
-  .steps-frame {
-    margin-bottom: 20px;
-  }
-
-  .no-bullet {
-    list-style-type: none;
-    padding: 0;
-    margin: 0 0 0 10px;
   }
 </style>
