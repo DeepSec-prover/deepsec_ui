@@ -112,6 +112,12 @@
             return ''
         }
       }
+    },
+    destroyed () {
+      if (this.resultObject.apiRemote) {
+        // Disconnect all listeners
+        this.resultObject.apiRemote.exit()
+      }
     }
   }
 </script>

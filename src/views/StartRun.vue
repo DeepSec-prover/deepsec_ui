@@ -187,7 +187,8 @@
         runStarting: false,
         globalError: null,
         filesIssues: [],
-        settings: settings
+        settings: settings,
+        apiRemote: null
       }
     },
     computed: {
@@ -219,19 +220,21 @@
 
         // No ipc Id for now because we don't know the id of the batch.
         // It will be set on the batch started.
-        const remote = new ApiRemote('start-run', null, false)
+        this.apiRemote = new ApiRemote('start-run', null, false)
 
         // Wait for the run confirmation or error message
-        remote.onReply((event, result) => {
+        this.apiRemote.onReply((event, result) => {
           logger.silly(`Run starting confirmation : ${JSON.stringify(result)}`)
           if (!result.success) {
             this.showGlobalError(result)
           }
           this.runStarting = false
+          this.apiRemote.exit()
+          this.apiRemote = null
         })
 
         // Send the run start order
-        remote.start(
+        this.apiRemote.start(
           {
             'command': 'start_run',
             'input_files': this.currentFiles,
@@ -274,6 +277,11 @@
       // Load default values (from props)
       this.currentFiles = this.files ? this.files : []
       this.currentConf = this.config ? this.config : new RunConfigModel()
+    },
+    destroyed () {
+      if (this.apiRemote) {
+        this.apiRemote.exit()
+      }
     }
   }
 </script>

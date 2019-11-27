@@ -1,4 +1,5 @@
 import { ipcRenderer } from 'electron'
+import logger from 'electron-log'
 
 /**
  * Class to easily communicate with the API from any renderer.
@@ -105,5 +106,6 @@ export default class ApiRemote {
     this.signalHandler.clear()
 
     this.stopped = true
+    logger.silly('API Remote disconnected.')
   }
 }
