@@ -17,13 +17,13 @@ Requirements : [Node.js](https://nodejs.org/en/download/) (which comes with [npm
 git clone https://github.com/DeepSec-prover/deepsec_ui
 
 # Go into the repository
-cd electron-quick-start
+cd deepsec_ui
 
 # Install dependencies
 npm install
 
 # Run the app
-npm start
+npm run electron:serve
 ```
 
 Note: If you're using Linux Bash for Windows, [see this guide](https://www.howtogeek.com/261575/how-to-run-graphical-linux-desktop-applications-from-windows-10s-bash-shell/) or use `node` from the command prompt.
@@ -36,11 +36,11 @@ Note: If you're using Linux Bash for Windows, [see this guide](https://www.howto
 
 ### Commands
 
-- `npm start` : Run the application (and set `NODE_ENV` as `dev`)
-- `npm check` : Check the code syntax
-- `package-mac` : Build and package the application for MacOS (all architectures)
-- `package-win` : Build and package the application for Windows  (all architectures)
-- `package-linux` : Build and package the application for Linux  (all architectures)
+- `npm run electron:serve` : Run the application (and set `NODE_ENV` as `dev`)
+- `npm run check` : Check the code syntax
+- `npm run package:mac` : Build and package the application for MacOS (all architectures)
+- `npm run package:win` : Build and package the application for Windows  (all architectures)
+- `npm run package:linux` : Build and package the application for Linux  (all architectures)
 
 ## File structure
 
