@@ -1,11 +1,21 @@
 <template>
   <el-card class="steps-frame">
     <template slot="header">
-      <template v-if="currentAction === -1">
-        Trace - {{ actions.length }} Step{{ actions.length > 1 ? 's' : '' }}
+      <template v-if="determinate">
+        <template v-if="currentAction === -1">
+          Trace - {{ actions.length }} Step{{ actions.length > 1 ? 's' : '' }}
+        </template>
+        <template v-else>
+          Trace - Step {{ currentAction + 1 }} / {{ actions.length }}
+        </template>
       </template>
       <template v-else>
-        Trace - Step {{ currentAction + 1 }} / {{ actions.length }}
+        <template v-if="currentAction === -1">
+          Trace
+        </template>
+        <template v-else>
+          Trace - Step {{ currentAction + 1 }}
+        </template>
       </template>
     </template>
     <div v-if="currentAction === -1" class="centred-content info-text">
