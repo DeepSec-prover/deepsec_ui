@@ -36,16 +36,24 @@
         <el-tab-pane label="Processes" name="processes" :lazy="true">
           <query-processes :query="query"></query-processes>
         </el-tab-pane>
-        <template v-if="query.attackTrace">
-          <!-- Display attack trace -->
-          <el-tab-pane label="Attack Trace" name="trace" :lazy="true">
-            <query-trace :query="query"></query-trace>
-          </el-tab-pane>
+        <template v-if="query.isCompleted()">
+          <template v-if="query.attackFound()">
+            <!-- Display attack trace -->
+            <el-tab-pane label="Attack Trace" name="trace" :lazy="true">
+              <display-trace :query="query"></display-trace>
+            </el-tab-pane>
+            <!-- Attack simulator -->
+            <el-tab-pane label="Attack Simulator" name="attack-sim" :lazy="true">
+              <attack-sim :query="query"></attack-sim>
+            </el-tab-pane>
+          </template>
+          <template v-else>
+            <!-- Equivalence simulator -->
+            <el-tab-pane label="Equivalence Simulator" name="equivalence-sim" :lazy="true">
+              <equivalence-sim></equivalence-sim>
+            </el-tab-pane>
+          </template>
         </template>
-        <!-- Simulator -->
-        <el-tab-pane label="Simulator" name="simulator" :lazy="true">
-          TODO
-        </el-tab-pane>
       </el-tabs>
     </template>
   </result-layout>
@@ -54,15 +62,19 @@
 <script>
   import ResultLayout from '../components/results/ResultLayout'
   import QuerySummary from '../components/query/QuerySummary'
-  import QueryTrace from '../components/simulators/DisplayTrace'
+  import DisplayTrace from '../components/simulators/DisplayTrace'
   import QueryProcesses from '../components/query/QueryProcesses'
   import QueryModel from '../models/QueryModel'
+  import AttackSim from '../components/simulators/AttackSim'
+  import EquivalenceSim from '../components/simulators/EquivalenceSim'
 
   export default {
     name: 'query',
     components: {
+      EquivalenceSim,
+      AttackSim,
       QueryProcesses,
-      QueryTrace,
+      DisplayTrace,
       QuerySummary,
       ResultLayout
     },
@@ -102,7 +114,7 @@
       this.query = new QueryModel(this.path, true, true)
 
       // If has attack trace auto switch to this tab
-      if (this.query.attackTrace) {
+      if (this.query.isCompleted() && this.query.attackFound()) {
         this.activeDetail = 'trace'
       }
     }

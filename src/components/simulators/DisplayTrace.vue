@@ -1,5 +1,5 @@
 <template>
-  <el-row :gutter="20">
+  <el-row :gutter="10">
     <el-col :md="16">
       <h3>Attack on Process {{ queryTrace.query.attackTrace.index_process }}</h3>
       <spec-code :code="processStr"></spec-code>

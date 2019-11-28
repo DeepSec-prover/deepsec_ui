@@ -125,14 +125,27 @@ export default class QueryModel extends ResultModel {
   }
 
   /**
-   * @returns {null|Object} The process where the attack trace was found. Null if no attack
+   * @returns {Object} The process where the attack trace was found.
+   * @throws Error if the query doesn't have detected attack.
    */
   getAttackedProcess () {
     if (!this.attackFound()) {
-      return null
+      throw new Error('Can\'t get attacked process from a non attacked query.')
     }
 
     return this.processes[this.attackTrace.index_process - 1]
+  }
+
+  /**
+   * @returns {Object} The other process where the attack trace was found.
+   * @throws Error if the query doesn't have detected attack.
+   */
+  getNotAttackedProcess () {
+    if (!this.attackFound()) {
+      throw new Error('Can\'t get not attacked process from a non attacked query.')
+    }
+
+    return this.processes[this.attackTrace.index_process % 2]
   }
 
   /**

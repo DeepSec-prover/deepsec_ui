@@ -10,11 +10,11 @@
         </template>
       </template>
       <template v-else>
-        <template v-if="currentAction === -1">
+        <template v-if="actions.length === 0">
           Trace
         </template>
         <template v-else>
-          Trace - Step {{ currentAction + 1 }}
+          Trace - Step {{ actions.length }}
         </template>
       </template>
     </template>
@@ -60,11 +60,21 @@
       }
     },
     props: {
-      actions: Array,
-      currentAction: Number,
-      traceLevel: String,
+      actions: {
+        type: Array,
+        required: true
+      },
+      currentAction: {
+        type: Number,
+        default: -1
+      },
+      traceLevel: {
+        type: String,
+        required: true
+      },
       atomic: {
-        type: AtomicRenamer
+        type: AtomicRenamer,
+        required: true
       },
       /**
        * Determinate means that the list of action won't change.

@@ -18,6 +18,8 @@ export class ApiDisplayTrace extends ApiManager {
     this.addQueryHandler('die', this.die)
   }
 
+  // ==================== Answers ====================
+
   currentStep (answer) {
     this.eventReply({
                       success: true,
@@ -35,6 +37,8 @@ export class ApiDisplayTrace extends ApiManager {
                       error: 'No attack trace for this query.'
                     })
   }
+
+  // ==================== Queries ====================
 
   gotoStep (event, stepId) {
     this.sendCommand({ command: 'goto_step', id: stepId })

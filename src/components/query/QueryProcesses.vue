@@ -17,12 +17,13 @@
       SpecCode
     },
     props: {
-      query: Object
+      query: Object,
+      required: true
     },
     computed: {
       processesStr: function () {
         return this.query.processes.map(p => formatProcess(p, this.query.atomicData))
-      },
+      }
     }
   }
 </script>

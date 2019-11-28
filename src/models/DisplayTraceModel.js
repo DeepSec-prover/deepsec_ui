@@ -10,7 +10,7 @@ export default class DisplayTraceModel {
    * @throws Error if the query has no attack.
    */
   constructor (query) {
-    if (!query.attackTrace) {
+    if (!query.attackFound()) {
       throw new Error('Impossible to load the trace of a query with no attack.')
     }
 
