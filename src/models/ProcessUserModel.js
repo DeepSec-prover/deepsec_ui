@@ -6,6 +6,8 @@ export default class ProcessUserModel extends ProcessModel {
 
     this.availableActions = { default: [], all: [] }
     this.statusEquivalence = null
+
+    this.actionsHistory = []
   }
 
   update (answer) {
@@ -15,19 +17,64 @@ export default class ProcessUserModel extends ProcessModel {
     this.actions.concat(answer.new_actions)
   }
 
+  gotoAction (actionId, saveHistory = true) {
+    this.loading = true
+
+    // Remove actions from the list
+    const removedAction = this.actions.slice(actionId + 1)
+
+    if (saveHistory) {
+      this.actionsHistory.concat(
+        () => this.executeActions(removedAction, false)
+      )
+    }
+    super.gotoAction(actionId)
+  }
+
   /**
    * Send a list of actions to execute in the current process state to the API.
    *
    * @param {Array} actions One or several actions.
+   * @param {boolean} saveHistory If true this action can be save in the history (for undo).
    */
-  simulateActions (actions) {
+  executeActions (actions, saveHistory = true) {
     this.loading = true
+
+    if (saveHistory) {
+      // Save reverse action
+      this.actionsHistory.push(
+        () => this.gotoAction(this.actions.length - 1, false)
+      )
+    }
 
     // Wait for the next reply
     this.apiRemote.onReply(this.handleUpdateAnswer.bind(this))
 
     // Send query
-    this.apiRemote.sendQuery('next_step_simulated', actions)
+    this.apiRemote.sendQuery('next_steps', actions)
+  }
+
+  /**
+   * Send the next action selected by the user from current available action.
+   *
+   * @param {Array} action One action selected by the user.
+   * @param {boolean} saveHistory If true this action can be save in the history (for undo).
+   */
+  nextUserAction (action, saveHistory = true) {
+    this.loading = true
+
+    if (saveHistory) {
+      // Save reverse action
+      this.actionsHistory.push(
+        () => this.gotoAction(this.actions.length - 1, false)
+      )
+    }
+
+    // Wait for the next reply
+    this.apiRemote.onReply(this.handleUpdateAnswer.bind(this))
+
+    // Send query
+    this.apiRemote.sendQuery('next_step_user', action)
   }
 
   /**
@@ -36,7 +83,7 @@ export default class ProcessUserModel extends ProcessModel {
    * @returns {boolean} True if it's possible to undo the last use action.
    */
   hasBackHistory () {
-    return this.actions.length > 0
+    return this.actionsHistory.length > 0
   }
 
   /**
@@ -53,7 +100,10 @@ export default class ProcessUserModel extends ProcessModel {
    * Undo the last action in the action history.
    */
   undo () {
+    this.loading = true
 
+    const reverseAction = this.actionsHistory.pop()
+    reverseAction()
   }
 
   /**

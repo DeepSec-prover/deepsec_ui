@@ -26,9 +26,10 @@ export default class ProcessModel {
    * Go to a specific action, load the process state and the frame from DeepSec API.
    * Send the start call to the API if necessary.
    *
-   * @param {Number} actionId The id of the action
+   * @param {Number} actionId The id of the action.
+   * @param {boolean} saveHistory If true this action can be save in the history (for undo).
    */
-  gotoAction (actionId) {
+  gotoAction (actionId, saveHistory = true) {
     this.loading = true
 
     // Wait for the next reply

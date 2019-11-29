@@ -216,10 +216,10 @@
           this.processDisplayed.gotoAction(id)
         }
       },
-      simulateActions (actions) {
+      simulateAction (action) {
         if (!this.processDisplayed.loading && !this.processUser.loading) {
           this.startRemoteIfNeeded()
-          this.processUser.simulateActions(actions)
+          this.processUser.nextUserAction(action)
         }
       },
       undo () {
