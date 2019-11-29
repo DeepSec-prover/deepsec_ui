@@ -1,11 +1,11 @@
-# Action simulator
+# Selected action
 
-Definition of `<action_simulator>` :
+Definition of `<selected_action>` :
 
 ```
 {
   "type": "output",
-  "channel": <string>
+  "channel": <string>, // Optional (only for equivalence simulator)
   "position": <position>
 }
 ```
@@ -13,8 +13,8 @@ or
 ```
 {
   "type": "input",
-  "channel": <string>,
-  "term": <string>,
+  "channel": <string>, // Optional (only for equivalence simulator)
+  "term": <string>, // Optional (only for equivalence simulator)
   "position": <position>
 }
 ```

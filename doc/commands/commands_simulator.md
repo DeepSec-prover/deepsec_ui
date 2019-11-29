@@ -20,12 +20,6 @@ Starting a trace display: UI -> API
 }
 ```
 
-When the query file does not contain an attack trace: API -> UI
-
-```
-{ "command": "no_attack_trace" }
-```
-
 Displaying next step: UI -> API
 
 ```
