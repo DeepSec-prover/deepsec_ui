@@ -8,7 +8,7 @@
 
       <div id="trace-buttons" class="centred-content">
         <!-- Trace level selection -->
-        <el-radio-group v-model="traceLevel">
+        <el-radio-group v-model="traceLevel" size="small">
           <helper helper-id="traceLevel.default">
             <el-radio-button label="default">Default</el-radio-button>
           </helper>

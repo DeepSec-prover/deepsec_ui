@@ -111,7 +111,7 @@
         let currentAction
 
         for (let i = 0; i < this.actions.length; i++) {
-          let a = this.actions[i]
+          const a = this.actions[i]
           if (i > this.currentAction) {
             currentAction = false
           } else {

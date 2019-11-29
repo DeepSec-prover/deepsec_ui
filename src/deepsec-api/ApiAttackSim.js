@@ -9,26 +9,27 @@ export class ApiAttackSim extends ApiManager {
   }
 
   registerAllAnswers () {
-    this.addAnswerHandler('current_step_simulated', this.currentStepSimulated)
-    this.addAnswerHandler('current_step_attacked', this.currentStepAttacked)
+    this.addAnswerHandler('current_step_user', this.currentStepUser)
+    this.addAnswerHandler('current_step_displayed', this.currentStepDisplayed)
   }
 
   registerAllQueries () {
     this.addQueryHandler('goto_step', this.gotoStep)
-    this.addQueryHandler('next_step_simulated', this.nextStepSimulated)
+    this.addQueryHandler('next_step_user', this.nextStepUser)
+    this.addQueryHandler('next_steps', this.nextSteps)
     this.addQueryHandler('die', this.die)
   }
 
   // ==================== Answers ====================
 
-  currentStepSimulated (answer) {
+  currentStepUser (answer) {
     this.eventReply({
                       success: true,
                       content: answer
                     })
   }
 
-  currentStepAttacked (answer) {
+  currentStepDisplayed (answer) {
     this.eventReply({
                       success: true,
                       content: answer
@@ -37,18 +38,25 @@ export class ApiAttackSim extends ApiManager {
 
   // ==================== Queries ====================
 
-  gotoStep (_, stepId, processId) {
+  gotoStep (_, options) {
     this.sendCommand({
                        command: 'goto_step',
-                       id: stepId,
-                       process_id: processId
+                       id: options.stepId,
+                       process_id: options.processId
                      })
   }
 
-  nextStepSimulated (_, action) {
+  nextStepUser (_, action) {
     this.sendCommand({
-                       command: 'next_step_simulated',
-                       selected_action: action
+                       command: 'next_step_user',
+                       action: action
+                     })
+  }
+
+  nextSteps (_, actions) {
+    this.sendCommand({
+                       command: 'next_steps',
+                       actions: actions
                      })
   }
 
