@@ -160,7 +160,7 @@ Reply to the start of generic equivalence simulator: API -> UI
 
 ```
 {
-  "command": "generic_simulator"_started,
+  "command": "generic_simulator_started",
   "query_result": <query_result>
 }
 ```
