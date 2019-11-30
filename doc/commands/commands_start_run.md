@@ -29,76 +29,44 @@ Starting a run: UI -> DeepSec
   }
 }
 ```
-Reply to start a run : DeepSec -> UI
+Reply to start of a batch : DeepSec -> UI
 
 ```
 {
   "command": "batch_started",
+  "file": <string> // Path,
+  "warning_runs": [
+    {
+      "file": <string>,
+      "warnings": [<string>]
+    }
+  ]
+}
+```
+
+Reply to start of a run / query : DeepSec -> UI
+
+```
+{
+  "command": "run_started" | "query_started",
   "file": <string> // Path
 }
 ```
 
-Reply to start a run : DeepSec -> UI
+Command sent when a batch / run / query has ended : DeepSec -> UI
 
 ```
 {
-  "command": "run_started",
+  "command": "batch_ended" | "run_ended" | "query_ended",
   "file": <string> // Path
 }
 ```
 
-Reply to start a run : DeepSec -> UI
+Canceling a run / query : UI -> DeepSec
 
 ```
 {
-  "command": "query_started",
-  "file": <string> // Path
-}
-```
-
-Reply to start a run : DeepSec -> UI
-
-```
-{
-  "command": "run_ended",
-  "status": "user_error" | "internal_error" | "completed" | "canceled",
-  "file": <string> // Path
-}
-```
-
-Reply to start a run : DeepSec -> UI
-
-```
-{
-  "command": "query_ended",
-  "status": "internal_error" | "completed" | "canceled",
-  "file": <string> // Path
-}
-```
-
-Ending all run : DeepSec -> UI
-
-```
-{
-  "command": "batch_ended"
-}
-```
-
-
-Canceling a run : UI -> DeepSec
-
-```
-{
-  "command": "cancel_run",
-  "file": <string> // Path
-}
-```
-
-Canceling a query : UI -> DeepSec
-
-```
-{
-  "command": "cancel_query",
+  "command": "cancel_run" | "cancel_query",
   "file": <string> // Path
 }
 ```
