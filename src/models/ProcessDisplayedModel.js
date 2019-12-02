@@ -58,7 +58,7 @@ export default class ProcessDisplayedModel extends ProcessModel {
    */
   gotoNextAction () {
     for (let i = this.currentAction + 1; i < this.nbSteps(); i++) {
-      if (this.isVisibleAction(this.actions[i])) {
+      if (ProcessModel.isVisibleAction(this.actions[i], this.traceLevel)) {
         this.gotoAction(i)
         return
       }
@@ -74,7 +74,7 @@ export default class ProcessDisplayedModel extends ProcessModel {
    */
   gotoPreviousAction () {
     for (let i = this.currentAction - 1; i > -1; i--) {
-      if (this.isVisibleAction(this.actions[i])) {
+      if (ProcessModel.isVisibleAction(this.actions[i], this.traceLevel)) {
         this.gotoAction(i)
         return
       }
@@ -94,7 +94,7 @@ export default class ProcessDisplayedModel extends ProcessModel {
     let count = 0
 
     for (let i = 0; i < this.actions.length; i++) {
-      if (this.isVisibleAction(this.actions[i], 'io')) {
+      if (ProcessModel.isVisibleAction(this.actions[i], 'io')) {
         count++
       }
       if (count === nb) {
@@ -113,7 +113,7 @@ export default class ProcessDisplayedModel extends ProcessModel {
       if (i > this.currentAction) {
         break
       }
-      if (this.isVisibleAction(this.actions[i], 'io')) {
+      if (ProcessModel.isVisibleAction(this.actions[i], 'io')) {
         count++
       }
     }

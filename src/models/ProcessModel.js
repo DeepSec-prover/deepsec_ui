@@ -75,16 +75,11 @@ export default class ProcessModel {
    * Check if an action is visible depending of the current detail level.
    *
    * @param {Object} action The action to check
-   * @param {"default"|"io"|"all"|null} level The trace level, if not specified use the model's
-   * trace level.
+   * @param {"default"|"io"|"all"} level The trace level
    * @returns {boolean} True if the action is visible with the current detail level, false if this
    * action should be hidden.
    */
-  isVisibleAction (action, level = null) {
-    if (!level) {
-      level = this.traceLevel
-    }
-
+  static isVisibleAction (action, level) {
     switch (level) {
       case 'default':
         return action.type === 'output' || action.type === 'input' || action.type === 'eavesdrop'

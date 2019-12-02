@@ -260,7 +260,11 @@
                                               this.query.getNotAttackedProcess(),
                                               this.query.atomicData,
                                               this.apiRemote)
-      console.log(this.processDisplayed)
+    },
+    // Called when the user change to an other view.
+    destroyed () {
+      // Stop the attack simulator process
+      this.apiRemote.exit()
     }
   }
 </script>

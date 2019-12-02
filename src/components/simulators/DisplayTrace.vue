@@ -1,14 +1,14 @@
 <template>
   <el-row :gutter="10">
     <el-col :md="16">
-      <h3>Attack on Process {{ queryTrace.query.attackTrace.index_process }}</h3>
+      <h3>Attack on Process {{ processDisplayed.processId + 1 }}</h3>
       <spec-code :code="processStr"></spec-code>
     </el-col>
     <el-col :md="8">
 
       <div id="trace-buttons" class="centred-content">
         <!-- Trace level selection -->
-        <el-radio-group v-model="traceLevel" size="small">
+        <el-radio-group v-model="processDisplayed.traceLevel" size="small">
           <helper helper-id="traceLevel.default">
             <el-radio-button label="default">Default</el-radio-button>
           </helper>
@@ -24,14 +24,14 @@
         <!-- Navigation buttons -->
         <el-button-group>
           <helper helper-str="Go to initial state.<br><b>Short Key</b> : ctrl + ⇦">
-            <el-button :disabled="queryTrace.loading || !queryTrace.hasPreviousAction()"
+            <el-button :disabled="processDisplayed.loading || !processDisplayed.hasPreviousAction()"
                        @click="firstAction"
                        icon="el-icon-d-arrow-left"
                        v-shortkey="['ctrl', 'arrowleft']" @shortkey.native="firstAction">
             </el-button>
           </helper>
           <helper helper-str="Go to previous action.<br><b>Short Key</b> : ⇦">
-            <el-button :disabled="queryTrace.loading || !queryTrace.hasPreviousAction()"
+            <el-button :disabled="processDisplayed.loading || !processDisplayed.hasPreviousAction()"
                        @click="previousAction"
                        icon="el-icon-arrow-left"
                        v-shortkey="['arrowleft']" @shortkey.native="previousAction">
@@ -39,7 +39,7 @@
             </el-button>
           </helper>
           <helper helper-str="Go to next action.<br><b>Short Key</b> : ⇨">
-            <el-button :disabled="queryTrace.loading || !queryTrace.hasNextAction()"
+            <el-button :disabled="processDisplayed.loading || !processDisplayed.hasNextAction()"
                        @click="nextAction"
                        v-shortkey="['arrowright']" @shortkey.native="nextAction">
               Next
@@ -47,7 +47,7 @@
             </el-button>
           </helper>
           <helper helper-str="Go to last action.<br><b>Short Key</b> : ctrl + ⇨">
-            <el-button :disabled="queryTrace.loading || !queryTrace.hasNextAction()"
+            <el-button :disabled="processDisplayed.loading || !processDisplayed.hasNextAction()"
                        @click="lastAction"
                        v-shortkey="['ctrl', 'arrowright']" @shortkey.native="lastAction">
               <i class="el-icon-d-arrow-right"></i>
@@ -57,22 +57,21 @@
       </div>
 
       <!-- Trace actions -->
-      <sim-trace :actions="queryTrace.actions"
-                 :atomic="queryTrace.atomic"
-                 :current-action="queryTrace.currentAction"
-                 :trace-level="traceLevel"
+      <sim-trace :actions="processDisplayed.actions"
+                 :atomic="processDisplayed.atomic"
+                 :current-action="processDisplayed.currentAction"
+                 :trace-level="processDisplayed.traceLevel"
                  determinate
                  v-on:goto="gotoAction"></sim-trace>
 
       <!-- Trace Frame -->
-      <sim-frame :frame="queryTrace.frame" :atomic="queryTrace.atomic"></sim-frame>
+      <sim-frame :frame="processDisplayed.frame" :atomic="processDisplayed.atomic"></sim-frame>
     </el-col>
   </el-row>
 </template>
 
 <script>
   import QueryModel from '../../models/QueryModel'
-  import DisplayTraceModel from '../../models/DisplayTraceModel'
   import Simplebar from 'simplebar-vue'
   import Helper from '../helpers/Helper'
   import SpecCode from '../SpecCode'
@@ -80,6 +79,8 @@
   import logger from 'electron-log'
   import SimFrame from './SimFrame'
   import SimTrace from './SimTrace'
+  import ProcessDisplayedModel from '../../models/ProcessDisplayedModel'
+  import ApiRemote from '../../deepsec-api/ApiRemote'
 
   export default {
     name: 'query-trace',
@@ -97,65 +98,80 @@
     },
     data () {
       return {
-        queryTrace: null,
-        traceLevel: 'default', // default or io or full
+        processDisplayed: undefined,
+        apiRemote: undefined,
         visibleActions: [],
         noActionVisible: true
       }
     },
     computed: {
       processStr: function () {
-        if (!this.queryTrace.process)
+        if (!this.processDisplayed.process)
           return 'loading ...'
 
-        return formatProcess(this.queryTrace.process, this.queryTrace.atomic)
+        return formatProcess(this.processDisplayed.process, this.processDisplayed.atomic)
       }
     },
     methods: {
       firstAction () {
-        if (!this.queryTrace.loading && this.queryTrace.hasPreviousAction()) {
-          this.queryTrace.gotoFirstAction()
+        if (!this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
+          this.startRemoteIfNeeded()
+          this.processDisplayed.gotoFirstAction()
         } else {
           logger.debug('Go to first action method call to fast (still loading)')
         }
       },
       previousAction () {
-        if (!this.queryTrace.loading && this.queryTrace.hasPreviousAction()) {
-          this.queryTrace.previousAction(this.traceLevel)
+        if (!this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
+          this.startRemoteIfNeeded()
+          this.processDisplayed.gotoPreviousAction()
         } else {
           logger.debug('Go to previous action method call to fast (still loading)')
         }
       },
       nextAction () {
-        if (!this.queryTrace.loading && this.queryTrace.hasNextAction()) {
-          this.queryTrace.nextAction(this.traceLevel)
+        if (!this.processDisplayed.loading && this.processDisplayed.hasNextAction()) {
+          this.startRemoteIfNeeded()
+          this.processDisplayed.gotoNextAction()
         } else {
           logger.debug('Go to next action method call to fast (still loading)')
         }
       },
       lastAction () {
-        if (!this.queryTrace.loading && this.queryTrace.hasNextAction()) {
-          this.queryTrace.gotoLastAction()
+        if (!this.processDisplayed.loading && this.processDisplayed.hasNextAction()) {
+          this.startRemoteIfNeeded()
+          this.processDisplayed.gotoLastAction()
         } else {
           logger.debug('Go to last action method call to fast (still loading)')
         }
       },
       gotoAction (id) {
-        if (!this.queryTrace.loading) {
-          this.queryTrace.gotoAction(id)
+        if (!this.processDisplayed.loading) {
+          this.startRemoteIfNeeded()
+          this.processDisplayed.gotoAction(id)
         } else {
           logger.debug('Go to action method call to fast (still loading)')
+        }
+      },
+      startRemoteIfNeeded () {
+        if (!this.apiRemote.started) {
+          this.apiRemote.start({ query_file: this.query.path })
         }
       }
     },
     beforeMount () {
       // Create the model but don't start the API util the first call.
-      this.queryTrace = new DisplayTraceModel(this.query)
+      this.apiRemote = new ApiRemote('display-trace', this.query.path, false)
+      this.processDisplayed = new ProcessDisplayedModel(this.query.getAttackedProcessId(),
+                                                        this.query.getAttackedProcess(),
+                                                        this.query.atomicData,
+                                                        this.query.attackTrace.action_sequence,
+                                                        this.apiRemote)
     },
     // Called when the user change to an other view.
     destroyed () {
       // Stop the display trace process
-      this.queryTrace.stop()
+      this.apiRemote.exit()
     }
   }
 </script>

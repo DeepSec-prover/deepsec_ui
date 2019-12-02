@@ -44,8 +44,8 @@
   import Simplebar from 'simplebar-vue'
   import SpecCode from '../SpecCode'
   import { formatAction } from '../../util/process-parser'
-  import DisplayTraceModel from '../../models/DisplayTraceModel'
   import AtomicRenamer from '../../util/AtomicRenamer'
+  import ProcessModel from '../../models/ProcessModel'
 
   export default {
     name: 'sim-trace',
@@ -115,7 +115,7 @@
           if (i > this.currentAction) {
             currentAction = false
           } else {
-            currentAction = DisplayTraceModel.isVisibleAction(a, this.traceLevel)
+            currentAction = ProcessModel.isVisibleAction(a, this.traceLevel)
           }
 
           actions.push(currentAction)

@@ -114,14 +114,6 @@ export default class ProcessUserModel extends ProcessModel {
   }
 
   nbVisibleAction () {
-    let count = 0
-
-    this.actions.forEach(a => {
-      if (this.isVisibleAction(a, 'io')) {
-        count++
-      }
-    })
-
-    return count
+    return this.actions.filter(a => ProcessModel.isVisibleAction(a, 'io')).length
   }
 }
