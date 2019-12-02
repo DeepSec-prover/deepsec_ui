@@ -149,6 +149,30 @@ export default class QueryModel extends ResultModel {
   }
 
   /**
+   * @returns {Object} The process id where the attack trace was found.
+   * @throws Error if the query doesn't have detected attack.
+   */
+  getAttackedProcessId () {
+    if (!this.attackFound()) {
+      throw new Error('Can\'t get attacked process if from a non attacked query.')
+    }
+
+    return this.attackTrace.index_process - 1
+  }
+
+  /**
+   * @returns {Object} The other process where the attack trace was found.
+   * @throws Error if the query doesn't have detected attack.
+   */
+  getNotAttackedProcessId () {
+    if (!this.attackFound()) {
+      throw new Error('Can\'t get not attacked process id from a non attacked query.')
+    }
+
+    return this.attackTrace.index_process % 2
+  }
+
+  /**
    * Return a human readable description for this query result.
    * See text dictionary file for description mapping.
    *

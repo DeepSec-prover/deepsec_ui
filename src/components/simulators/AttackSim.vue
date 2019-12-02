@@ -249,14 +249,17 @@
     },
     beforeMount () {
       this.apiRemote = new ApiRemote('attack-simulator', this.query.path, false)
-      this.processDisplayed = new ProcessDisplayedModel(this.query.getAttackedProcess(),
+      this.processDisplayed = new ProcessDisplayedModel(this.query.getAttackedProcessId(),
+                                                        this.query.getAttackedProcess(),
                                                         this.query.atomicData,
                                                         this.query.attackTrace.action_sequence,
                                                         this.apiRemote)
 
-      this.processUser = new ProcessUserModel(this.query.getNotAttackedProcess(),
+      this.processUser = new ProcessUserModel(this.query.getNotAttackedProcessId(),
+                                              this.query.getNotAttackedProcess(),
                                               this.query.atomicData,
                                               this.apiRemote)
+      console.log(this.processDisplayed)
     }
   }
 </script>
