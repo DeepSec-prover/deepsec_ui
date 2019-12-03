@@ -1,7 +1,7 @@
 <template>
   <el-row :gutter="10">
     <el-col :md="16">
-      <h3>Attack on Process {{ processDisplayed.processId + 1 }}</h3>
+      <h3>Attack on Process {{ processDisplayed.processId }}</h3>
       <spec-code :code="processStr"></spec-code>
     </el-col>
     <el-col :md="8">
@@ -71,18 +71,18 @@
 </template>
 
 <script>
-  import QueryModel from '../../models/QueryModel'
-  import Simplebar from 'simplebar-vue'
-  import Helper from '../helpers/Helper'
-  import SpecCode from '../SpecCode'
-  import { formatProcess } from '../../util/process-parser'
-  import logger from 'electron-log'
-  import SimFrame from './SimFrame'
-  import SimTrace from './SimTrace'
-  import ProcessDisplayedModel from '../../models/ProcessDisplayedModel'
-  import ApiRemote from '../../deepsec-api/ApiRemote'
+import QueryModel from '../../models/QueryModel'
+import Simplebar from 'simplebar-vue'
+import Helper from '../helpers/Helper'
+import SpecCode from '../SpecCode'
+import { formatProcess } from '../../util/process-parser'
+import logger from 'electron-log'
+import SimFrame from './SimFrame'
+import SimTrace from './SimTrace'
+import ProcessDisplayedModel from '../../models/ProcessDisplayedModel'
+import ApiRemote from '../../deepsec-api/ApiRemote'
 
-  export default {
+export default {
     name: 'query-trace',
     components: {
       SimTrace,

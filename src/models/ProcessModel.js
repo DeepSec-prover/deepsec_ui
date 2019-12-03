@@ -60,7 +60,7 @@ export default class ProcessModel {
    * @param {Object} answer The API answer.
    */
   handleUpdateAnswer (_, answer) {
-    if (answer.content.process_id === (this.processId + 1)) {
+    if (answer.content.process_id === this.processId) {
       if (answer.success) {
         logger.silly('Process update from API.')
         this.update(answer.content)
