@@ -32,6 +32,7 @@ export class ApiAttackSim extends ApiManager {
   // ==================== Answers ====================
 
   currentStepUser (answer) {
+    answer.process = JSON.stringify(answer.process)
     this.eventReply({
                       success: true,
                       content: answer
@@ -39,6 +40,7 @@ export class ApiAttackSim extends ApiManager {
   }
 
   currentStepDisplayed (answer) {
+    answer.process = JSON.stringify(answer.process)
     this.eventReply({
                       success: true,
                       content: answer
