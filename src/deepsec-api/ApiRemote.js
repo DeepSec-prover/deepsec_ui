@@ -1,4 +1,4 @@
-import { ipcRenderer } from 'electron'
+import {ipcRenderer} from 'electron'
 import logger from 'electron-log'
 
 /**
@@ -98,14 +98,16 @@ export default class ApiRemote {
    * Remove all reply listener.
    */
   exit () {
-    ipcRenderer.removeAllListeners(`deepsec-api:${this.namespace}:reply`)
+    if (this.started && !this.stopped) {
+      ipcRenderer.removeAllListeners(`deepsec-api:${this.namespace}:reply`)
 
-    this.signalHandler.forEach(s => {
-      ipcRenderer.removeAllListeners(`deepsec-api:${this.namespace}:${this.ipcId}:${s}`)
-    })
-    this.signalHandler.clear()
+      this.signalHandler.forEach(s => {
+        ipcRenderer.removeAllListeners(`deepsec-api:${this.namespace}:${this.ipcId}:${s}`)
+      })
+      this.signalHandler.clear()
 
-    this.stopped = true
-    logger.silly('API Remote disconnected.')
+      this.stopped = true
+      logger.silly(`API Remote ${this.namespace} disconnected.`)
+    }
   }
 }
