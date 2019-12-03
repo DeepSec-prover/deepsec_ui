@@ -112,7 +112,7 @@
                 <helper helper-str="Restore previous reversed action.<br><b>Short Key</b> : ctrl + maj + z">
                   <el-button :disabled="!processUser.hasNextHistory() || processDisplayed.loading || processUser.loading"
                              @click="redo"
-                             v-shortkey="['ctrl', 'maj', 'z']" @shortkey.native="redo"
+                             v-shortkey="['ctrl', 'shift', 'z']" @shortkey.native="redo"
                              size="small">
                     Redo
                     <i class="el-icon-refresh-right"></i>
