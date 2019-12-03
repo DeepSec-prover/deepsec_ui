@@ -122,12 +122,12 @@
             </div>
           </div>
           <!-- Trace -->
-          <sim-trace :atomic="this.processUser.atomic"
-                     :trace-level="this.processUser.traceLevel"
-                     :actions="this.processUser.actions"></sim-trace>
+          <sim-trace :atomic="processUser.atomic"
+                     :trace-level="processUser.traceLevel"
+                     :actions="processUser.actions"></sim-trace>
           <!-- Frame -->
-          <sim-frame :atomic="this.processUser.atomic" :frame="this.processUser.frame"></sim-frame>
-          <button @click="simulateAction(this.processUser.availableActions.all[0])">Test next action</button>
+          <sim-frame :atomic="processUser.atomic" :frame="processUser.frame"></sim-frame>
+          <button @click="simulateAction(processUser.availableActions.all[0])">Test next action</button>
         </el-col>
         <el-col :span="16">
           <!-- Process code -->
@@ -139,17 +139,17 @@
 </template>
 
 <script>
-  import QueryModel from '../../models/QueryModel'
-  import SpecCode from '../SpecCode'
-  import { formatProcess } from '../../util/process-parser'
-  import ProcessDisplayedModel from '../../models/ProcessDisplayedModel'
-  import ProcessUserModel from '../../models/ProcessUserModel'
-  import SimFrame from './SimFrame'
-  import SimTrace from './SimTrace'
-  import Helper from '../helpers/Helper'
-  import ApiRemote from '../../deepsec-api/ApiRemote'
+import QueryModel from '../../models/QueryModel'
+import SpecCode from '../SpecCode'
+import { formatProcess } from '../../util/process-parser'
+import ProcessDisplayedModel from '../../models/ProcessDisplayedModel'
+import ProcessUserModel from '../../models/ProcessUserModel'
+import SimFrame from './SimFrame'
+import SimTrace from './SimTrace'
+import Helper from '../helpers/Helper'
+import ApiRemote from '../../deepsec-api/ApiRemote'
 
-  export default {
+export default {
     name: 'attack-sim',
     components: { Helper, SimTrace, SimFrame, SpecCode },
     data () {
@@ -189,55 +189,42 @@
     methods: {
       firstAction () {
         if (!this.syncProcesses && !this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
-          this.startRemoteIfNeeded()
           this.processDisplayed.gotoFirstAction()
         }
       },
       previousAction () {
         if (!this.syncProcesses && !this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
-          this.startRemoteIfNeeded()
           this.processDisplayed.gotoPreviousAction()
         }
       },
       nextAction () {
         if (!this.syncProcesses && !this.processDisplayed.loading && this.processDisplayed.hasNextAction()) {
-          this.startRemoteIfNeeded()
           this.processDisplayed.gotoNextAction()
         }
       },
       lastAction () {
         if (!this.syncProcesses && !this.processDisplayed.loading && this.processDisplayed.hasNextAction()) {
-          this.startRemoteIfNeeded()
           this.processDisplayed.gotoLastAction()
         }
       },
       gotoAction (id) {
         if (!this.syncProcesses && !this.processDisplayed.loading) {
-          this.startRemoteIfNeeded()
           this.processDisplayed.gotoAction(id)
         }
       },
       simulateAction (action) {
         if (!this.processDisplayed.loading && !this.processUser.loading) {
-          this.startRemoteIfNeeded()
           this.processUser.nextUserAction(action)
         }
       },
       undo () {
         if (!this.processDisplayed.loading && !this.processUser.loading && this.processUser.hasBackHistory()) {
-          this.startRemoteIfNeeded()
           this.processUser.undo()
         }
       },
       redo () {
         if (!this.processDisplayed.loading && !this.processUser.loading && this.processUser.hasNextHistory()) {
-          this.startRemoteIfNeeded()
           this.processUser.redo()
-        }
-      },
-      startRemoteIfNeeded () {
-        if (!this.apiRemote.started) {
-          this.apiRemote.start({ query_file: this.query.path })
         }
       },
       forceSyncProcesses () {
@@ -260,6 +247,9 @@
                                               this.query.getNotAttackedProcess(),
                                               this.query.atomicData,
                                               this.apiRemote)
+
+      // Start the attack simulator process
+      this.processUser.startProcess({ query_file: this.query.path })
     },
     // Called when the user change to an other view.
     destroyed () {
