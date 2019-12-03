@@ -169,7 +169,7 @@ export default class QueryModel extends ResultModel {
       throw new Error('Can\'t get not attacked process id from a non attacked query.')
     }
 
-    return this.attackTrace.index_process
+    return this.attackTrace.index_process % 2 + 1
   }
 
   /**

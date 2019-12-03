@@ -127,7 +127,7 @@
                      :actions="processUser.actions"></sim-trace>
           <!-- Frame -->
           <sim-frame :atomic="processUser.atomic" :frame="processUser.frame"></sim-frame>
-          <button @click="simulateAction(processUser.availableActions.all[0])">Test next action</button>
+          <el-button @click="simulateAction(processUser.availableActions.all[0])">Test next action</el-button>
         </el-col>
         <el-col :span="16">
           <!-- Process code -->
