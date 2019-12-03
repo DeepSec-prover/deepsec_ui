@@ -106,6 +106,11 @@ export default class ProcessDisplayedModel extends ProcessModel {
    * @throws Error If it's impossible to reach this number of visible action.
    */
   gotoNbVisibleAction (nb) {
+    if (nb === 0) {
+      this.gotoFirstAction()
+      return
+    }
+
     let count = 0
 
     for (let i = 0; i < this.actions.length; i++) {

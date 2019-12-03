@@ -70,13 +70,13 @@
             </div>
           </div>
           <!-- Trace -->
-          <sim-trace :atomic="this.processDisplayed.atomic"
-                     :trace-level="this.processDisplayed.traceLevel"
-                     :current-action="this.processDisplayed.currentAction"
-                     :actions="this.processDisplayed.actions"
+          <sim-trace :atomic="processDisplayed.atomic"
+                     :trace-level="processDisplayed.traceLevel"
+                     :current-action="processDisplayed.currentAction"
+                     :actions="processDisplayed.actions"
                      determinate></sim-trace>
           <!-- Frame -->
-          <sim-frame :atomic="this.processDisplayed.atomic" :frame="this.processDisplayed.frame"></sim-frame>
+          <sim-frame :atomic="processDisplayed.atomic" :frame="processDisplayed.frame"></sim-frame>
         </el-col>
       </el-row>
     </el-col>
@@ -157,7 +157,7 @@ export default {
         processDisplayed: undefined,
         processUser: undefined,
         apiRemote: undefined,
-        syncProcesses: false
+        syncProcesses: true
       }
     },
     props: {
