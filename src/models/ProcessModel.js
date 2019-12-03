@@ -60,10 +60,10 @@ export default class ProcessModel {
    * @param {Object} answer The API answer.
    */
   handleUpdateAnswer (_, answer) {
-    if (answer.process_id === this.processId) {
+    if (answer.content.process_id === (this.processId + 1)) {
       if (answer.success) {
         logger.silly('Process update from API.')
-        this.update(answer)
+        this.update(answer.content)
       } else {
         logger.error(`Process update failed : ${JSON.stringify(answer)}`)
       }
@@ -78,7 +78,7 @@ export default class ProcessModel {
    * @param {Object} answer The API answer.
    */
   update (answer) {
-    this.process = answer.process
+    this.process = JSON.parse(answer.process)
     this.frame = answer.frame
   }
 

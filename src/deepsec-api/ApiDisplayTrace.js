@@ -31,13 +31,12 @@ export class ApiDisplayTrace extends ApiManager {
   // ==================== Answers ====================
 
   currentStepDisplayed (answer) {
+    // Stringify necessary for big process, if not some bug occurs
+    // TODO reproduce the bug and report it
+    answer.process = JSON.stringify(answer.process)
     this.eventReply({
                       success: true,
-                      // Stringify necessary for big process, if not some bug occurs
-                      // TODO reproduce the bug and report it
-                      process: JSON.stringify(answer.process),
-                      frame: answer.frame,
-                      current_action_id: answer.current_action_id
+                      content: answer
                     })
   }
 
