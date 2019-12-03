@@ -43,9 +43,9 @@ export default class ApiRemote {
    * then nothing will happen.
    *
    * @param {String} command The command to send to the target.
-   * @param {Object} options The options for the command.
+   * @param {any} options The options for the command.
    */
-  sendQuery (command, options = null) {
+  sendQuery (command, ...options) {
     if (!this.started) {
       throw new Error('Can\'t send a query before to start an API manager with this remote.')
     }
@@ -54,7 +54,7 @@ export default class ApiRemote {
       throw new Error('Can\'t send a query after the end of the API process.')
     }
 
-    ipcRenderer.send(`deepsec-api:${this.namespace}:${this.ipcId}:${command}`, options)
+    ipcRenderer.send(`deepsec-api:${this.namespace}:${this.ipcId}:${command}`, ...options)
   }
 
   /**

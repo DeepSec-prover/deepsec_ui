@@ -8,6 +8,15 @@ export class ApiAttackSim extends ApiManager {
     super(false, event, mainWindow, ipcId)
   }
 
+  start (options) {
+    options = {
+      command: 'start_attack_simulator',
+      query_file: options.query_file
+    }
+
+    return super.start(options)
+  }
+
   registerAllAnswers () {
     this.addAnswerHandler('current_step_user', this.currentStepUser)
     this.addAnswerHandler('current_step_displayed', this.currentStepDisplayed)
@@ -38,11 +47,11 @@ export class ApiAttackSim extends ApiManager {
 
   // ==================== Queries ====================
 
-  gotoStep (_, options) {
+  gotoStep (_, stepId, processId) {
     this.sendCommand({
                        command: 'goto_step',
-                       id: options.stepId,
-                       process_id: options.processId
+                       id: stepId,
+                       process_id: processId
                      })
   }
 

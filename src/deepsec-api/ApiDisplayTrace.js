@@ -8,8 +8,18 @@ export class ApiDisplayTrace extends ApiManager {
     super(false, event, mainWindow, ipcId)
   }
 
+  start (options) {
+    options = {
+      command: 'start_display_trace',
+      query_file: options.query_file,
+      id: options.id
+    }
+
+    return super.start(options)
+  }
+
   registerAllAnswers () {
-    this.addAnswerHandler('current_step', this.currentStep)
+    this.addAnswerHandler('current_step_displayed', this.currentStepDisplayed)
     this.addAnswerHandler('no_attack_trace', this.noAttackTrace)
   }
 
@@ -20,7 +30,7 @@ export class ApiDisplayTrace extends ApiManager {
 
   // ==================== Answers ====================
 
-  currentStep (answer) {
+  currentStepDisplayed (answer) {
     this.eventReply({
                       success: true,
                       // Stringify necessary for big process, if not some bug occurs
@@ -40,7 +50,7 @@ export class ApiDisplayTrace extends ApiManager {
 
   // ==================== Queries ====================
 
-  gotoStep (event, stepId) {
+  gotoStep (_, stepId) {
     this.sendCommand({ command: 'goto_step', id: stepId })
   }
 

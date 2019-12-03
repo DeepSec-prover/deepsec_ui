@@ -236,7 +236,6 @@
         // Send the run start order
         this.apiRemote.start(
           {
-            'command': 'start_run',
             'input_files': this.currentFiles,
             'command_options': this.currentConf.toJson()
           })

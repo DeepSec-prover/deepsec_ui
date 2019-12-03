@@ -37,7 +37,7 @@ export default class ProcessDisplayedModel extends ProcessModel {
   }
 
   /**
-   * Go to the last action of this trace. Shortcut for gotoAction with the last id.
+   * Go to the initial state of this trace. Shortcut for gotoAction with the id -1.
    * @see gotoAction
    */
   gotoFirstAction () {
@@ -45,11 +45,11 @@ export default class ProcessDisplayedModel extends ProcessModel {
   }
 
   /**
-   * Go to the initial state of this trace. Shortcut for gotoAction with the id -1.
+   * Go to the last action of this trace. Shortcut for gotoAction with the last id.
    * @see gotoAction
    */
   gotoLastAction () {
-    this.gotoAction(this.actions.length - 1)
+    this.gotoAction(this.getLastActionId())
   }
 
   /**
@@ -57,15 +57,7 @@ export default class ProcessDisplayedModel extends ProcessModel {
    * @see gotoAction
    */
   gotoNextAction () {
-    for (let i = this.currentAction + 1; i < this.nbSteps(); i++) {
-      if (ProcessModel.isVisibleAction(this.actions[i], this.traceLevel)) {
-        this.gotoAction(i)
-        return
-      }
-    }
-
-    // If nothing match go to the last one
-    this.gotoLastAction()
+    this.gotoAction(this.getNextActionId())
   }
 
   /**
@@ -82,6 +74,29 @@ export default class ProcessDisplayedModel extends ProcessModel {
 
     // If nothing match go to the first one
     this.gotoFirstAction()
+  }
+
+  /**
+   * @returns {number} The last action id.
+   */
+  getLastActionId () {
+    return this.actions.length - 1
+  }
+
+  /**
+   * Get the next action id depending of a detail level.
+   *
+   * @returns {number} The next action id.
+   */
+  getNextActionId () {
+    for (let i = this.currentAction + 1; i < this.nbSteps(); i++) {
+      if (ProcessModel.isVisibleAction(this.actions[i], this.traceLevel)) {
+        return i
+      }
+    }
+
+    // If nothing match go to the last one
+    return this.getLastActionId()
   }
 
   /**

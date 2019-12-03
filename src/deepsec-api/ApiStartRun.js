@@ -13,6 +13,16 @@ export class ApiStartRun extends ApiManager {
     super(true, event, mainWindow, null) // We don't know the id at the beginning
   }
 
+  start (options) {
+    options = {
+      command: 'start_run',
+      input_files: options.input_files,
+      command_options: options.command_options
+    }
+
+    return super.start(options)
+  }
+
   cancelBatch () {
     this.sendCommand({ command: 'cancel_batch' })
   }

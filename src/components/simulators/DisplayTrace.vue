@@ -115,7 +115,6 @@
     methods: {
       firstAction () {
         if (!this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
-          this.startRemoteIfNeeded()
           this.processDisplayed.gotoFirstAction()
         } else {
           logger.debug('Go to first action method call to fast (still loading)')
@@ -123,7 +122,6 @@
       },
       previousAction () {
         if (!this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
-          this.startRemoteIfNeeded()
           this.processDisplayed.gotoPreviousAction()
         } else {
           logger.debug('Go to previous action method call to fast (still loading)')
@@ -131,31 +129,39 @@
       },
       nextAction () {
         if (!this.processDisplayed.loading && this.processDisplayed.hasNextAction()) {
-          this.startRemoteIfNeeded()
-          this.processDisplayed.gotoNextAction()
+          if (this.apiRemote.started) {
+            this.processDisplayed.gotoNextAction()
+          } else {
+            this.processDisplayed.startProcess(
+              {
+                query_file: this.query.path,
+                id: this.processDisplayed.getNextActionId()
+              })
+          }
         } else {
           logger.debug('Go to next action method call to fast (still loading)')
         }
       },
       lastAction () {
         if (!this.processDisplayed.loading && this.processDisplayed.hasNextAction()) {
-          this.startRemoteIfNeeded()
-          this.processDisplayed.gotoLastAction()
+          if (this.apiRemote.started) {
+            this.processDisplayed.gotoLastAction()
+          } else {
+            this.processDisplayed.startProcess(
+              {
+                query_file: this.query.path,
+                id: this.processDisplayed.getLastActionId()
+              })
+          }
         } else {
           logger.debug('Go to last action method call to fast (still loading)')
         }
       },
       gotoAction (id) {
         if (!this.processDisplayed.loading) {
-          this.startRemoteIfNeeded()
           this.processDisplayed.gotoAction(id)
         } else {
           logger.debug('Go to action method call to fast (still loading)')
-        }
-      },
-      startRemoteIfNeeded () {
-        if (!this.apiRemote.started) {
-          this.apiRemote.start({ query_file: this.query.path })
         }
       }
     },

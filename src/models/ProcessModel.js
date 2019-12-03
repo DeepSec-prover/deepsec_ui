@@ -23,6 +23,20 @@ export default class ProcessModel {
   }
 
   /**
+   * Send the first call to the API.
+   *
+   * @param {Object} options The command options.
+   */
+  startProcess (options) {
+    this.loading = true
+
+    // Wait for the next reply
+    this.apiRemote.onReply(this.handleUpdateAnswer.bind(this))
+
+    this.apiRemote.start(options)
+  }
+
+  /**
    * Go to a specific action, load the process state and the frame from DeepSec API.
    * Send the start call to the API if necessary.
    *
@@ -36,10 +50,7 @@ export default class ProcessModel {
     this.apiRemote.onReply(this.handleUpdateAnswer.bind(this))
 
     // Send query
-    this.apiRemote.sendQuery('goto_step', {
-      actionId: actionId,
-      processId: this.processId
-    })
+    this.apiRemote.sendQuery('goto_step', actionId, this.processId)
   }
 
   /**
