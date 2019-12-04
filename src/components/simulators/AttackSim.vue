@@ -139,17 +139,17 @@
 </template>
 
 <script>
-import QueryModel from '../../models/QueryModel'
-import SpecCode from '../SpecCode'
-import { formatProcess } from '../../util/process-parser'
-import ProcessDisplayedModel from '../../models/ProcessDisplayedModel'
-import ProcessUserModel from '../../models/ProcessUserModel'
-import SimFrame from './SimFrame'
-import SimTrace from './SimTrace'
-import Helper from '../helpers/Helper'
-import ApiRemote from '../../deepsec-api/ApiRemote'
+  import QueryModel from '../../models/QueryModel'
+  import SpecCode from '../SpecCode'
+  import { formatProcess } from '../../util/process-parser'
+  import ProcessDisplayedModel from '../../models/ProcessDisplayedModel'
+  import ProcessUserModel from '../../models/ProcessUserModel'
+  import SimFrame from './SimFrame'
+  import SimTrace from './SimTrace'
+  import Helper from '../helpers/Helper'
+  import ApiRemote from '../../deepsec-api/ApiRemote'
 
-export default {
+  export default {
     name: 'attack-sim',
     components: { Helper, SimTrace, SimFrame, SpecCode },
     data () {
@@ -253,8 +253,10 @@ export default {
     },
     // Called when the user change to an other view.
     destroyed () {
-      // Stop the attack simulator process
-      this.apiRemote.exit()
+      if (this.apiRemote.started && !this.apiRemote.stopped) {
+        // Stop the attack simulator process
+        this.apiRemote.sendQuery('die')
+      }
     }
   }
 </script>

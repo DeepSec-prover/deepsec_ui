@@ -71,18 +71,18 @@
 </template>
 
 <script>
-import QueryModel from '../../models/QueryModel'
-import Simplebar from 'simplebar-vue'
-import Helper from '../helpers/Helper'
-import SpecCode from '../SpecCode'
-import { formatProcess } from '../../util/process-parser'
-import logger from 'electron-log'
-import SimFrame from './SimFrame'
-import SimTrace from './SimTrace'
-import ProcessDisplayedModel from '../../models/ProcessDisplayedModel'
-import ApiRemote from '../../deepsec-api/ApiRemote'
+  import QueryModel from '../../models/QueryModel'
+  import Simplebar from 'simplebar-vue'
+  import Helper from '../helpers/Helper'
+  import SpecCode from '../SpecCode'
+  import { formatProcess } from '../../util/process-parser'
+  import logger from 'electron-log'
+  import SimFrame from './SimFrame'
+  import SimTrace from './SimTrace'
+  import ProcessDisplayedModel from '../../models/ProcessDisplayedModel'
+  import ApiRemote from '../../deepsec-api/ApiRemote'
 
-export default {
+  export default {
     name: 'query-trace',
     components: {
       SimTrace,
@@ -176,8 +176,10 @@ export default {
     },
     // Called when the user change to an other view.
     destroyed () {
-      // Stop the display trace process
-      this.apiRemote.exit()
+      if (this.apiRemote.started && !this.apiRemote.stopped) {
+        // Stop the display trace process
+        this.apiRemote.sendQuery('die')
+      }
     }
   }
 </script>

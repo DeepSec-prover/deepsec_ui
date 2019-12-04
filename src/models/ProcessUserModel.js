@@ -8,13 +8,16 @@ export default class ProcessUserModel extends ProcessModel {
     this.statusEquivalence = null
 
     this.actionsHistory = []
+    this.actionsRestore = []
   }
 
   update (answer) {
     super.update(answer)
     this.availableActions = answer.available_actions
     this.statusEquivalence = answer.status_equiv
-    this.actions.concat(answer.new_actions)
+    if (answer.new_actions && answer.new_actions.length > 0) {
+      this.actions = this.actions.concat(answer.new_actions)
+    }
   }
 
   gotoAction (actionId, saveHistory = true) {
@@ -93,7 +96,7 @@ export default class ProcessUserModel extends ProcessModel {
    * @returns {boolean} True if it's possible to redo an action.
    */
   hasNextHistory () {
-    return false
+    return this.actionsRestore.length > 0
   }
 
   /**
