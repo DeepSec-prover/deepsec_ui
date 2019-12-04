@@ -18,7 +18,7 @@
         </template>
       </template>
     </template>
-    <div v-if="currentAction === -1" class="centred-content info-text">
+    <div v-if="(!determinate && actions.length === 0) || (determinate && currentAction === -1)" class="centred-content info-text">
       Initial state
     </div>
     <div v-else-if="noActionVisible" class="centred-content info-text">
@@ -112,7 +112,7 @@ export default {
 
       for (let i = 0; i < this.actions.length; i++) {
         const a = this.actions[i]
-        if (i > this.currentAction) {
+        if (this.determinate && i > this.currentAction) {
           currentAction = false
         } else {
           currentAction = ProcessModel.isVisibleAction(a, this.traceLevel)
@@ -139,6 +139,9 @@ export default {
       this.computeVisibleActions()
     },
     currentAction: function () {
+      this.computeVisibleActions()
+    },
+    'actions.length': function () {
       this.computeVisibleActions()
     }
   },

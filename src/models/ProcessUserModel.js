@@ -16,7 +16,7 @@ export default class ProcessUserModel extends ProcessModel {
     this.availableActions = answer.available_actions
     this.statusEquivalence = answer.status_equiv
     if (answer.new_actions && answer.new_actions.length > 0) {
-      this.actions = this.actions.concat(answer.new_actions)
+      this.actions.push(...answer.new_actions)
     }
   }
 
@@ -24,11 +24,11 @@ export default class ProcessUserModel extends ProcessModel {
     this.loading = true
 
     // Remove actions from the list
-    const removedAction = this.actions.slice(actionId + 1)
+    const removedActions = this.actions.splice(actionId + 1)
 
     if (saveHistory) {
       this.actionsHistory.concat(
-        () => this.executeActions(removedAction, false)
+        () => this.executeActions(removedActions, false)
       )
     }
     super.gotoAction(actionId)
@@ -44,9 +44,10 @@ export default class ProcessUserModel extends ProcessModel {
     this.loading = true
 
     if (saveHistory) {
+      const currentId = this.actions.length - 1
       // Save reverse action
       this.actionsHistory.push(
-        () => this.gotoAction(this.actions.length - 1, false)
+        () => this.gotoAction(currentId, false)
       )
     }
 
@@ -67,9 +68,10 @@ export default class ProcessUserModel extends ProcessModel {
     this.loading = true
 
     if (saveHistory) {
+      const currentId = this.actions.length - 1
       // Save reverse action
       this.actionsHistory.push(
-        () => this.gotoAction(this.actions.length - 1, false)
+        () => this.gotoAction(currentId, false)
       )
     }
 
