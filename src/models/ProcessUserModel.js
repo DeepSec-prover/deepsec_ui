@@ -56,6 +56,9 @@ export default class ProcessUserModel extends ProcessModel {
 
     // Send query
     this.apiRemote.sendQuery('next_steps', actions)
+
+    // Add actions in the list
+    this.actions.push(...actions)
   }
 
   /**
