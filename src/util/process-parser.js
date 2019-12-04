@@ -19,8 +19,8 @@ export function formatTrace (actions, atomicData) {
   // New rename table
   const atomic = new AtomicRenamer(atomicData)
 
-  let axiomIdRef = { value : 1}
-  let res = []
+  const axiomIdRef = { value: 1 }
+  const res = []
 
   actions.forEach(action => {
     if (action.type === 'input' || action.type === 'output' || action.type === 'eavesdrop') {
@@ -42,8 +42,8 @@ export function formatTrace (actions, atomicData) {
 export function formatAction (action, atomic, axiomIdRef) {
   switch (action.type) {
     case 'input':
-      return 'in(' + formatRecipe(action.channel, atomic) + ','
-        + formatRecipe(action.term, atomic) + ')'
+      return 'in(' + formatRecipe(action.channel, atomic) + ',' +
+        formatRecipe(action.term, atomic) + ')'
     case 'output':
       return 'out(' + formatRecipe(action.channel, atomic) + ',ax_' + axiomIdRef.value++ + ')'
     case 'eavesdrop':

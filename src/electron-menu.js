@@ -35,44 +35,46 @@ function mainMenuTemplate (mainWindow) {
             app.quit()
           }
         },
-        { type: "separator" },
+        { type: 'separator' },
         { label: 'Undo', accelerator: 'CmdOrCtrl+Z', role: 'undo' },
-        { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", role: "redo" },
-        { type: "separator" },
-        { label: "Zoom In", accelerator: "CmdOrCtrl+numadd", role: "zoomIn" },
-        { label: "Zoom Out", accelerator: "CmdOrCtrl+numsub", role: "zoomOut" },
+        { label: 'Redo', accelerator: 'Shift+CmdOrCtrl+Z', role: 'redo' },
+        { type: 'separator' },
+        { label: 'Zoom In', accelerator: 'CmdOrCtrl+numadd', role: 'zoomIn' },
+        { label: 'Zoom Out', accelerator: 'CmdOrCtrl+numsub', role: 'zoomOut' }
       ]
     }
   ]
 
   // =================== MacOS basic actions ===================
   if (process.platform === 'darwin') {
-    menuTemplate[0].submenu = menuTemplate[0].submenu.concat([
-      { type: "separator" },
-      { label: "Cut", accelerator: "CmdOrCtrl+X", role: "cut" },
-      { label: "Copy", accelerator: "CmdOrCtrl+C", role: "copy" },
-      { label: "Paste", accelerator: "CmdOrCtrl+V", role: "paste" },
-      { label: "Select All", accelerator: "CmdOrCtrl+A", role: "selectAll" },
-    ])
+    menuTemplate[0].submenu = menuTemplate[0].submenu.concat(
+      [
+        { type: 'separator' },
+        { label: 'Cut', accelerator: 'CmdOrCtrl+X', role: 'cut' },
+        { label: 'Copy', accelerator: 'CmdOrCtrl+C', role: 'copy' },
+        { label: 'Paste', accelerator: 'CmdOrCtrl+V', role: 'paste' },
+        { label: 'Select All', accelerator: 'CmdOrCtrl+A', role: 'selectAll' }
+      ])
   }
 
   // ==================== Development Tools ====================
   if (settings.devTools.menu) {
-    menuTemplate.push({
-      label: 'Dev Tools',
-      submenu: [
-        {
-          label: 'Toggle inspector',
-          accelerator: process.platform === 'darwin' ? 'Command+I' : 'F12',
-          role: 'toggleDevTools'
-        },
-        {
-          label: 'Reload',
-          accelerator: process.platform === 'darwin' ? 'Command+R' : 'F5',
-          role: 'reload'
-        }
-      ]
-    })
+    menuTemplate.push(
+      {
+        label: 'Dev Tools',
+        submenu: [
+          {
+            label: 'Toggle inspector',
+            accelerator: process.platform === 'darwin' ? 'Command+I' : 'F12',
+            role: 'toggleDevTools'
+          },
+          {
+            label: 'Reload',
+            accelerator: process.platform === 'darwin' ? 'Command+R' : 'F5',
+            role: 'reload'
+          }
+        ]
+      })
   }
   return menuTemplate
 }

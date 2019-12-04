@@ -132,65 +132,65 @@
 </template>
 
 <script>
-  import ResultStatus from '../components/results/ResultStatus'
-  import Duration from '../components/Duration'
-  import ResultLayout from '../components/results/ResultLayout'
-  import QueryCollapsible from '../components/query/QueryCollapsible'
-  import RunConfig from '../components/RunConfig'
-  import Date from '../components/Date'
-  import settings from '../../settings'
-  import path from 'path'
-  import BatchModel from '../models/BatchModel'
+import ResultStatus from '../components/results/ResultStatus'
+import Duration from '../components/Duration'
+import ResultLayout from '../components/results/ResultLayout'
+import QueryCollapsible from '../components/query/QueryCollapsible'
+import RunConfig from '../components/RunConfig'
+import Date from '../components/Date'
+import settings from '../../settings'
+import path from 'path'
+import BatchModel from '../models/BatchModel'
 
-  export default {
-    name: 'batch',
-    components: {
-      Duration,
-      ResultLayout,
-      QueryCollapsible,
-      ResultStatus,
-      RunConfig,
-      Date
+export default {
+  name: 'batch',
+  components: {
+    Duration,
+    ResultLayout,
+    QueryCollapsible,
+    ResultStatus,
+    RunConfig,
+    Date
+  },
+  props: {
+    path: String
+  },
+  data () {
+    return {
+      openedRun: [],
+      batch: undefined
+    }
+  },
+  computed: {
+    branchUrl: function () {
+      return path.join(settings.deepsecGitUrl, 'tree', this.batch.gitBranch)
     },
-    props: {
-      path: String
-    },
-    data () {
-      return {
-        openedRun: [],
-        batch: undefined
-      }
-    },
-    computed: {
-      branchUrl: function () {
-        return path.join(settings.deepsecGitUrl, 'tree', this.batch.gitBranch)
-      },
-      hashUrl: function () {
-        return path.join(settings.deepsecGitUrl, 'tree', this.batch.gitHash)
-      }
-    },
-    methods: {
-      cancelBatch () {
-        this.batch.apiRemote.sendQuery('cancel-batch')
-      }
-    },
-    beforeMount () {
-      this.batch = new BatchModel(this.path, true, true)
-      // Load query and enable all listeners
-      this.batch.runs.forEach(r => {
-        r.enableUpdateListener()
-        r.loadQueries(true)
-      })
+    hashUrl: function () {
+      return path.join(settings.deepsecGitUrl, 'tree', this.batch.gitHash)
+    }
+  },
+  methods: {
+    cancelBatch () {
+      this.batch.apiRemote.sendQuery('cancel-batch')
+    }
+  },
+  beforeMount () {
+    this.batch = new BatchModel(this.path, true, true)
+    // Load query and enable all listeners
+    this.batch.runs.forEach(r => {
+      r.enableUpdateListener()
+      r.loadQueries(true)
+    })
 
-      /* Link all queries directly in the batch field because Vue fail to make it reactive behind the
-      * array of runs. */
-      this.batch.linkQueries()
+    /* Link all queries directly in the batch field because Vue fail to make it reactive behind the
+    * array of runs. */
+    this.batch.linkQueries()
 
-      if (this.batch.nbRun() === 1) {
-        this.openedRun.push(this.batch.runs[0].path)
-      }
+    if (this.batch.nbRun() === 1) {
+      this.openedRun.push(this.batch.runs[0].path)
     }
   }
+}
 </script>
 
 <style scoped>

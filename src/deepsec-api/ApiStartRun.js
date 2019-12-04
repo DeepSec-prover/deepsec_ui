@@ -6,7 +6,6 @@ import QueryModel from '../models/QueryModel'
 import { ApiManager } from './ApiManager'
 
 export class ApiStartRun extends ApiManager {
-
   static namespace () { return 'start-run' }
 
   constructor (event, mainWindow) {
@@ -61,7 +60,7 @@ export class ApiStartRun extends ApiManager {
     this.addQueryHandler('cancel-query', this.cancelQuery)
 
     // Send good result to the Start Run page
-    this.eventReply({ 'success': true })
+    this.eventReply({ success: true })
 
     // Started with warning
     if (answer.warning_runs && answer.warning_runs.length > 0) {
@@ -70,12 +69,12 @@ export class ApiStartRun extends ApiManager {
 
       // Send ui notification
       this.pushNotification(
-        `Batch started with warnings`,
+        'Batch started with warnings',
         `${nbTotalWarning} warning${nbTotalWarning > 1 ? 's' : ''} in
               ${nbFilesWarning} file${nbFilesWarning > 1 ? 's' : ''}`,
         'warning',
         'batch',
-        { name: 'batch', params: { 'path': answer.file } }
+        { name: 'batch', params: { path: answer.file } }
       )
     } else {
       // Send ui notification
@@ -84,7 +83,7 @@ export class ApiStartRun extends ApiManager {
         '',
         'info',
         'batch',
-        { name: 'batch', params: { 'path': answer.file } })
+        { name: 'batch', params: { path: answer.file } })
     }
 
     // Send update signal with the result file name as content
@@ -101,7 +100,7 @@ export class ApiStartRun extends ApiManager {
         run)} / ${run.batch.nbRun()}`,
       'info',
       'run',
-      { name: 'run', params: { 'path': answer.file } })
+      { name: 'run', params: { path: answer.file } })
 
     // Send update signal with the result file name as content
     this.sendSignalToRemote('update', { file: answer.file })
@@ -116,7 +115,7 @@ export class ApiStartRun extends ApiManager {
       `From run ${query.run.title()} <br> Query ${query.index} / ${query.run.nbQueries()}`,
       'info',
       'query',
-      { name: 'query', params: { 'path': answer.file } })
+      { name: 'query', params: { path: answer.file } })
 
     // Send update signal with the result file name as content
     this.sendSignalToRemote('update', { file: answer.file })
@@ -152,7 +151,7 @@ export class ApiStartRun extends ApiManager {
       `From run ${query.run.title()} <br> Query ${query.index} / ${query.run.nbQueries()}`,
       type,
       'query',
-      { name: 'query', params: { 'path': answer.file } })
+      { name: 'query', params: { path: answer.file } })
 
     // Send update signal with the result file name as content
     this.sendSignalToRemote('update', { file: answer.file })
@@ -189,7 +188,7 @@ export class ApiStartRun extends ApiManager {
         run)} / ${run.batch.nbRun()}`,
       type,
       'run',
-      { name: 'run', params: { 'path': answer.file } })
+      { name: 'run', params: { path: answer.file } })
 
     // Send update signal with the result file name as content
     this.sendSignalToRemote('update', { file: answer.file })
@@ -227,14 +226,14 @@ export class ApiStartRun extends ApiManager {
       title,
       `Batch of ${nbRun} run${nbRun > 1 ? 's' : ''}.
               <ul>
-                <li>${runStatus['completed']} completed</li>
-                <li>${runStatus['canceled']} canceled</li>
-                <li>${runStatus['internal_error']} error</li>
+                <li>${runStatus.completed} completed</li>
+                <li>${runStatus.canceled} canceled</li>
+                <li>${runStatus.internal_error} error</li>
               </ul>
               `,
       type,
       'batch',
-      { name: 'batch', params: { 'path': answer.file } })
+      { name: 'batch', params: { path: answer.file } })
 
     // Send update signal with the result file name as content
     this.sendSignalToRemote('update', { file: answer.file })
@@ -247,12 +246,12 @@ export class ApiStartRun extends ApiManager {
     })
   }
 
-// ======================= Error Answers ======================
+  // ======================= Error Answers ======================
 
   initError (answer) {
     // Send bad result to the Start Run page
     this.eventReply(
-      { 'success': false, 'errorMsg': answer.error_msg, 'isInternal': answer.is_internal })
+      { success: false, errorMsg: answer.error_msg, isInternal: answer.is_internal })
   }
 
   userError (answer) {
@@ -271,12 +270,12 @@ export class ApiStartRun extends ApiManager {
 
     // Send bad result to the Start Run page
     this.eventReply({
-                      'success': false,
-                      'isInternal': false,
-                      'errorMsg': `${nbTotalError} error${nbTotalError > 1 ? 's' : ''} and
+                      success: false,
+                      isInternal: false,
+                      errorMsg: `${nbTotalError} error${nbTotalError > 1 ? 's' : ''} and
                       ${nbTotalWarnings} warning${nbTotalWarnings > 1 ? 's' : ''} in
                       ${nbFilesIssue} file${nbFilesIssue > 1 ? 's' : ''}.`,
-                      'files_issues': answer.error_runs
+                      files_issues: answer.error_runs
                     })
   }
 }

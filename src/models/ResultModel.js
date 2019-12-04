@@ -15,7 +15,6 @@ const MAX_RETRY = 3
  * Abstract class to load result models
  */
 export default class ResultModel {
-
   /**
    * Load a result from a json file and map fields in the model.
    *
@@ -147,7 +146,7 @@ export default class ResultModel {
    * @throws Error If any problem with the file
    */
   static loadResultFile (relativePath) {
-    let dirPath = userSettings.get('resultsDirPath').toString()
+    const dirPath = userSettings.get('resultsDirPath').toString()
 
     if (isEmptyOrBlankStr(dirPath)) {
       logger.error('Result directory not set')
@@ -159,7 +158,7 @@ export default class ResultModel {
       throw Error(`Result directory path is not valid : ${dirPath}`)
     }
 
-    let filePath = path.join(dirPath, relativePath)
+    const filePath = path.join(dirPath, relativePath)
 
     if (!isFile(filePath)) {
       logger.error(`Result file path is not valid : ${filePath}`)

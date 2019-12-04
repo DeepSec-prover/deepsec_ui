@@ -4,7 +4,7 @@ const helpers = {
     distributed: {
       auto: 'TODO description of distributed auto',
       true: 'TODO description of distributed yes',
-      false: 'TODO description of distributed no',
+      false: 'TODO description of distributed no'
     },
     nbJobs: 'TODO description of nbJobs',
     localWorkers: 'TODO description of localWorkers',
@@ -22,7 +22,7 @@ const helpers = {
       trace_incl: 'TODO trace inclusion',
       observational_equiv: 'TODO observational equivalence',
       session_equiv: 'TODO session equivalence',
-      session_incl: 'TODO session inclusion',
+      session_incl: 'TODO session inclusion'
     }
   },
   semantics: {

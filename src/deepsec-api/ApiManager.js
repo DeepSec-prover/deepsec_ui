@@ -12,7 +12,6 @@ let stdoutBuffer = ''
  * @see ApiRemote
  */
 export class ApiManager {
-
   /**
    * Should be override by children classes.
    *
@@ -76,7 +75,7 @@ export class ApiManager {
    * @param {Object} command The command with options to send.
    */
   sendCommand (command) {
-    let cmdStr = JSON.stringify(command)
+    const cmdStr = JSON.stringify(command)
 
     if (this.process === null) {
       this.unexpectedError(
@@ -124,13 +123,13 @@ export class ApiManager {
     // Check Deepsec API path
     if (isEmptyOrBlankStr(apiPath)) {
       // Send bad result to the Start Run page
-      this.eventReply({ 'success': false, 'error': 'DeepSec API path is not set' })
+      this.eventReply({ success: false, error: 'DeepSec API path is not set' })
       logger.warn('Try to start a command but the DeepSec API path is not set')
       this.processExit()
       return
     } else if (!isFile(apiPath)) {
       // Send bad result to the Start Run page
-      this.eventReply({ 'success': false, 'error': `Incorrect DeepSec API path (${apiPath})` })
+      this.eventReply({ success: false, error: `Incorrect DeepSec API path (${apiPath})` })
       logger.warn(
         `Try to start a command but the DeepSec API path is incorrect (${apiPath})`)
       this.processExit()
@@ -146,7 +145,7 @@ export class ApiManager {
     })
 
     // Allow the application to close even if the process is still running
-    if (this.detached) {this.process.unref()}
+    if (this.detached) { this.process.unref() }
 
     // Stdout messages catching
     this.process.stdout.on('data', (data) => {
@@ -193,7 +192,7 @@ export class ApiManager {
 
     // Process disconnected signal
     this.process.on('disconnect', () => {
-      logger.debug(`DeepSec API process disconnect to current process`)
+      logger.debug('DeepSec API process disconnect to current process')
     })
 
     // Send first command
@@ -232,7 +231,7 @@ export class ApiManager {
     logger.error(message)
 
     // Send bad result to the Start Run page (if already for an answer this will be ignored)
-    this.eventReply({ 'success': false, 'error': message })
+    this.eventReply({ success: false, error: message })
 
     // Send ui notification
     this.pushNotification('Unexpected error', message, 'error', 'default')

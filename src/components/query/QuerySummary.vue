@@ -18,17 +18,23 @@
           </dd>
           <template v-if="query.batch.debug">
             <dt>Debug</dt>
-            <dd><el-tag size="mini" type="danger"><i class="el-icon-view"></i> yes</el-tag></dd>
+            <dd>
+              <el-tag size="mini" type="danger"><i class="el-icon-view"></i> yes</el-tag>
+            </dd>
           </template>
         </dl>
       </el-col>
       <el-col :lg="12" v-if="query.startTime">
         <dl class="in-line">
           <dt>Start time</dt>
-          <dd><date :date="query.startTime"></date></dd>
+          <dd>
+            <date :date="query.startTime"></date>
+          </dd>
           <template v-if="query.endTime">
             <dt>End time</dt>
-            <dd><date :date="query.endTime"></date></dd>
+            <dd>
+              <date :date="query.endTime"></date>
+            </dd>
           </template>
           <dt>Running time</dt>
           <dd>
@@ -114,102 +120,102 @@
 </template>
 
 <script>
-  import Helper from '../helpers/Helper'
-  import Date from '../Date'
-  import SpecCode from '../SpecCode'
-  import Duration from '../Duration'
-  import text from '../../text-content/text'
-  import { formatProcess, formatTrace } from '../../util/process-parser'
-  import AtomicRenamer from '../../util/AtomicRenamer'
+import Helper from '../helpers/Helper'
+import Date from '../Date'
+import SpecCode from '../SpecCode'
+import Duration from '../Duration'
+import text from '../../text-content/text'
+import { formatProcess, formatTrace } from '../../util/process-parser'
+import AtomicRenamer from '../../util/AtomicRenamer'
 
-  const BREAK_POINT = '\u200B' // zero-width space
+const BREAK_POINT = '\u200B' // zero-width space
 
-  export default {
-    name: 'query-summary',
-    components: {
-      Helper,
-      Date,
-      SpecCode,
-      Duration
+export default {
+  name: 'query-summary',
+  components: {
+    Helper,
+    Date,
+    SpecCode,
+    Duration
+  },
+  props: {
+    query: Object
+  },
+  computed: {
+    publicConstructors: function () {
+      return this.query.atomicData.filter(a => {
+        return a.type === 'Symbol'
+          && a.category.type === 'Constructor'
+          && a.representation === 'UserDefined'
+          && a.is_public
+      }).map(a => `${a.label}/${a.arity}`).join(',' + BREAK_POINT)
     },
-    props: {
-      query: Object
+    privateConstructors: function () {
+      return this.query.atomicData.filter(a => {
+        return a.type === 'Symbol'
+          && a.category.type === 'Constructor'
+          && a.representation === 'UserDefined'
+          && !a.is_public
+      }).map(a => `${a.label}/${a.arity}`).join(',' + BREAK_POINT)
     },
-    computed: {
-      publicConstructors: function () {
-        return this.query.atomicData.filter(a => {
-          return a.type === 'Symbol'
-            && a.category.type === 'Constructor'
-            && a.representation === 'UserDefined'
-            && a.is_public
-        }).map(a => `${a.label}/${a.arity}`).join(',' + BREAK_POINT)
-      },
-      privateConstructors: function () {
-        return this.query.atomicData.filter(a => {
-          return a.type === 'Symbol'
-            && a.category.type === 'Constructor'
-            && a.representation === 'UserDefined'
-            && !a.is_public
-        }).map(a => `${a.label}/${a.arity}`).join(',' + BREAK_POINT)
-      },
-      publicDestructors: function () {
-        return this.query.atomicData.filter(a => {
-          return a.type === 'Symbol'
-            && a.category.type === 'Destructor'
-            && a.is_public
-        }).map(a => `${a.label}/${a.arity}`).join(',' + BREAK_POINT)
-      },
-      privateDestructors: function () {
-        return this.query.atomicData.filter(a => {
-          return a.type === 'Symbol'
-            && a.category.type === 'Destructor'
-            && !a.is_public
-        }).map(a => `${a.label}/${a.arity}`).join(',' + BREAK_POINT)
-      },
-      publicNames: function () {
-        return this.query.atomicData.filter(a => {
-          return a.type === 'Symbol'
-            && a.representation === 'UserName'
-            && a.is_public
-        }).map(a => a.label).join(',' + BREAK_POINT)
-      },
-      privateNames: function () {
-        return this.query.atomicData.filter(a => {
-          return a.type === 'Symbol'
-            && a.representation === 'UserName'
-            && !a.is_public
-        }).map(a => a.label).join(',' + BREAK_POINT)
-      },
-      rewritingSystem: function () {
-        let destructors = this.query.atomicData.filter(a => {
-          return a.type === 'Symbol'
-            && a.category.type === 'Destructor'
+    publicDestructors: function () {
+      return this.query.atomicData.filter(a => {
+        return a.type === 'Symbol'
+          && a.category.type === 'Destructor'
+          && a.is_public
+      }).map(a => `${a.label}/${a.arity}`).join(',' + BREAK_POINT)
+    },
+    privateDestructors: function () {
+      return this.query.atomicData.filter(a => {
+        return a.type === 'Symbol'
+          && a.category.type === 'Destructor'
+          && !a.is_public
+      }).map(a => `${a.label}/${a.arity}`).join(',' + BREAK_POINT)
+    },
+    publicNames: function () {
+      return this.query.atomicData.filter(a => {
+        return a.type === 'Symbol'
+          && a.representation === 'UserName'
+          && a.is_public
+      }).map(a => a.label).join(',' + BREAK_POINT)
+    },
+    privateNames: function () {
+      return this.query.atomicData.filter(a => {
+        return a.type === 'Symbol'
+          && a.representation === 'UserName'
+          && !a.is_public
+      }).map(a => a.label).join(',' + BREAK_POINT)
+    },
+    rewritingSystem: function () {
+      let destructors = this.query.atomicData.filter(a => {
+        return a.type === 'Symbol'
+          && a.category.type === 'Destructor'
+      })
+
+      let rewriteRulesStr = []
+
+      destructors.forEach(d => {
+        d.category.rewrite_rules.forEach(r => {
+          // Create a shared atomic renamer for every part of the rewriting system
+          const atomic = new AtomicRenamer(this.query.atomicData)
+          let lhs = r.lhs.map(x => formatProcess(x, atomic)).join(',' + BREAK_POINT)
+          let rhs = formatProcess(r.rhs, atomic)
+          rewriteRulesStr.push(`${d.label}(${lhs}) -> ${rhs}`)
         })
+      })
 
-        let rewriteRulesStr = []
-
-        destructors.forEach(d => {
-          d.category.rewrite_rules.forEach(r => {
-            // Create a shared atomic renamer for every part of the rewriting system
-            const atomic = new AtomicRenamer(this.query.atomicData)
-            let lhs = r.lhs.map(x => formatProcess(x, atomic)).join(',' + BREAK_POINT)
-            let rhs = formatProcess(r.rhs, atomic)
-            rewriteRulesStr.push(`${d.label}(${lhs}) -> ${rhs}`)
-          })
-        })
-
-        return rewriteRulesStr
-      },
-      formattedAttackTrace: function () {
-        return formatTrace(this.query.attackTrace.action_sequence, this.query.atomicData)
-      }
+      return rewriteRulesStr
     },
-    data () {
-      return {
-        text: text
-      }
+    formattedAttackTrace: function () {
+      return formatTrace(this.query.attackTrace.action_sequence, this.query.atomicData)
+    }
+  },
+  data () {
+    return {
+      text: text
     }
   }
+}
 </script>
 
 <style scoped>

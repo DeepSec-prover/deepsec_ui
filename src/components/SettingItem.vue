@@ -20,52 +20,52 @@
 </template>
 
 <script>
-  import userSettings from 'electron-settings'
-  import logger from 'electron-log'
-  import { defaultUserSettings } from '../util/default-user-settings'
+import userSettings from 'electron-settings'
+import logger from 'electron-log'
+import { defaultUserSettings } from '../util/default-user-settings'
 
-  export default {
-    name: 'setting-item',
-    props: {
-      label: String,
-      settingsPath: String,
-      placeholder: {
-        type: String,
-        default: ''
-      },
-      min: {
-        type: Number,
-        default: -Infinity
+export default {
+  name: 'setting-item',
+  props: {
+    label: String,
+    settingsPath: String,
+    placeholder: {
+      type: String,
+      default: ''
+    },
+    min: {
+      type: Number,
+      default: -Infinity
 
-      },
-      max: {
-        type: Number,
-        default: Infinity
-      }
     },
-    data () {
-      return {
-        value: null,
-        currentEdit: false
-      }
-    },
-    computed: {
-      isDefault: function () {
-        return this.value === defaultUserSettings[this.settingsPath]
-      }
-    },
-    mounted () {
-      this.value = userSettings.get(this.settingsPath)
-
-      // TODO try beforeCreate to avoid custom watcher
-      // Set watcher after the initialization to avoid useless update
-      this.$watch('value', (newValue, oldValue) => {
-        logger.debug(`Change user setting "${this.settingsPath}" : ${oldValue} --> ${newValue}`)
-        userSettings.set(this.settingsPath, newValue)
-        this.currentEdit = true
-      })
+    max: {
+      type: Number,
+      default: Infinity
     }
+  },
+  data () {
+    return {
+      value: null,
+      currentEdit: false
+    }
+  },
+  computed: {
+    isDefault: function () {
+      return this.value === defaultUserSettings[this.settingsPath]
+    }
+  },
+  mounted () {
+    this.value = userSettings.get(this.settingsPath)
+
+    // TODO try beforeCreate to avoid custom watcher
+    // Set watcher after the initialization to avoid useless update
+    this.$watch('value', (newValue, oldValue) => {
+      logger.debug(`Change user setting "${this.settingsPath}" : ${oldValue} --> ${newValue}`)
+      userSettings.set(this.settingsPath, newValue)
+      this.currentEdit = true
+    })
   }
+}
 </script>
 
 <style>

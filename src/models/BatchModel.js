@@ -106,12 +106,12 @@ export default class BatchModel extends ResultModel {
   }
 
   runsStatusCount () {
-    let status = []
-    status['in_progress'] = 0
-    status['waiting'] = 0
-    status['completed'] = 0
-    status['canceled'] = 0
-    status['internal_error'] = 0
+    const status = []
+    status.in_progress = 0
+    status.waiting = 0
+    status.completed = 0
+    status.canceled = 0
+    status.internal_error = 0
 
     this.runs.forEach(run => status[run.status]++)
 

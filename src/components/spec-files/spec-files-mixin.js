@@ -1,7 +1,7 @@
 import path from 'path'
 
 const mixin = {
-  methods : {
+  methods: {
     fileName (filePath) {
       return path.basename(filePath).replace(/\.dps$/ui, '')
     }

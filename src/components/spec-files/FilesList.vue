@@ -22,36 +22,36 @@
 </template>
 
 <script>
-  import ElProgress from 'element-ui/packages/progress'
-  import SpecFileMixin from './spec-files-mixin'
+import ElProgress from 'element-ui/packages/progress'
+import SpecFileMixin from './spec-files-mixin'
 
-  export default {
-    name: 'files-list',
-    mixins: [SpecFileMixin],
-    data () {
-      return {
-        focusing: false
+export default {
+  name: 'files-list',
+  mixins: [SpecFileMixin],
+  data () {
+    return {
+      focusing: false
+    }
+  },
+  components: { ElProgress },
+  props: {
+    files: {
+      type: Array,
+      default () {
+        return []
       }
     },
-    components: { ElProgress },
-    props: {
-      files: {
-        type: Array,
-        default () {
-          return []
-        }
-      },
-      disabled: {
-        type: Boolean,
-        default: false
-      }
-    },
-    methods: {
-      handleClick (file) {
-        this.handlePreview && this.handlePreview(file)
-      }
+    disabled: {
+      type: Boolean,
+      default: false
+    }
+  },
+  methods: {
+    handleClick (file) {
+      this.handlePreview && this.handlePreview(file)
     }
   }
+}
 </script>
 
 <style scoped>

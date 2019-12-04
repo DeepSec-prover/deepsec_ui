@@ -65,74 +65,74 @@
 </template>
 
 <script>
-  export default {
-    name: 'result-breadcrumb',
-    props: {
-      batch: {
-        type: Object
-      },
-      run: {
-        type: Object,
-        default: undefined
-      },
-      query: {
-        type: Object,
-        default: undefined
+export default {
+  name: 'result-breadcrumb',
+  props: {
+    batch: {
+      type: Object
+    },
+    run: {
+      type: Object,
+      default: undefined
+    },
+    query: {
+      type: Object,
+      default: undefined
+    }
+  },
+  methods: {
+    isRoute (routeName) {
+      return this.$route.name === routeName
+    },
+    goToQuery (path) {
+      this.$router.push({ name: 'query', params: { path: path } })
+    },
+    goToRun (path) {
+      this.$router.push({ name: 'run', params: { path: path } })
+    }
+  },
+  computed: {
+    /**
+     * Get all batch's runs except the current one (if define).
+     * Load data from files if necessary.
+     *
+     * @returns {Array} List if runs
+     */
+    otherRuns: function () {
+      if (this.batch.runs === undefined) {
+        // Load runs
+        // Also reload the current one but it's not big deal
+        this.batch.loadRelations()
+      }
+
+      if (this.run) {
+        // Return all except the current one
+        return this.batch.runs.filter(r => r.path !== this.run.path)
+      } else {
+        return this.batch.runs
       }
     },
-    methods: {
-      isRoute (routeName) {
-        return this.$route.name === routeName
-      },
-      goToQuery (path) {
-        this.$router.push({ name: 'query', params: { path: path } })
-      },
-      goToRun (path) {
-        this.$router.push({ name: 'run', params: { path: path } })
+    /**
+     * Get all run's queries except the current one (if define).
+     * Load data from files if necessary.
+     *
+     * @returns {Array} List if queries
+     */
+    otherQueries: function () {
+      if (this.run.queries === undefined) {
+        // Also reload the current one but it's not big deal
+        this.run.loadQueries()
       }
-    },
-    computed: {
-      /**
-       * Get all batch's runs except the current one (if define).
-       * Load data from files if necessary.
-       *
-       * @returns {Array} List if runs
-       */
-      otherRuns: function () {
-        if (this.batch.runs === undefined) {
-          // Load runs
-          // Also reload the current one but it's not big deal
-          this.batch.loadRelations()
-        }
 
-        if (this.run) {
-          // Return all except the current one
-          return this.batch.runs.filter(r => r.path !== this.run.path)
-        } else {
-          return this.batch.runs
-        }
-      },
-      /**
-       * Get all run's queries except the current one (if define).
-       * Load data from files if necessary.
-       *
-       * @returns {Array} List if queries
-       */
-      otherQueries: function () {
-        if (this.run.queries === undefined) {
-          // Also reload the current one but it's not big deal
-          this.run.loadQueries()
-        }
-
-        if (this.query) {
-          // Return all except the current one
-          return this.run.queries.filter(q => q.path !== this.query.path)
-        } else {
-          return this.run.queries
-        }
+      if (this.query) {
+        // Return all except the current one
+        return this.run.queries.filter(q => q.path !== this.query.path)
+      } else {
+        return this.run.queries
       }
     }
   }
+}
 </script>
 
 <style scoped>

@@ -41,111 +41,111 @@
 </template>
 
 <script>
-  import Simplebar from 'simplebar-vue'
-  import SpecCode from '../SpecCode'
-  import { formatAction } from '../../util/process-parser'
-  import AtomicRenamer from '../../util/AtomicRenamer'
-  import ProcessModel from '../../models/ProcessModel'
+import Simplebar from 'simplebar-vue'
+import SpecCode from '../SpecCode'
+import { formatAction } from '../../util/process-parser'
+import AtomicRenamer from '../../util/AtomicRenamer'
+import ProcessModel from '../../models/ProcessModel'
 
-  export default {
-    name: 'sim-trace',
-    components: {
-      Simplebar,
-      SpecCode
+export default {
+  name: 'sim-trace',
+  components: {
+    Simplebar,
+    SpecCode
+  },
+  data () {
+    return {
+      visibleActions: [],
+      noActionVisible: true
+    }
+  },
+  props: {
+    actions: {
+      type: Array,
+      required: true
     },
-    data () {
-      return {
-        visibleActions: [],
-        noActionVisible: true
-      }
+    currentAction: {
+      type: Number,
+      default: -1
     },
-    props: {
-      actions: {
-        type: Array,
-        required: true
-      },
-      currentAction: {
-        type: Number,
-        default: -1
-      },
-      traceLevel: {
-        type: String,
-        required: true
-      },
-      atomic: {
-        type: AtomicRenamer,
-        required: true
-      },
-      /**
-       * Determinate means that the list of action won't change.
-       */
-      determinate: {
-        type: Boolean,
-        default: false
-      }
+    traceLevel: {
+      type: String,
+      required: true
     },
-    computed: {
-      actionsStr: function () {
-        let axiomIdRef = { value: 1 }
-        let actionsStr = []
-
-        // Format all actions
-        this.actions.forEach(a => {
-          actionsStr.push(formatAction(a, this.atomic, axiomIdRef))
-        })
-
-        return actionsStr
-      }
+    atomic: {
+      type: AtomicRenamer,
+      required: true
     },
-    methods: {
-      /**
-       * Filter action by visibility status.
-       * An action is not visible if it hasn't been executed yet or if it isn't in the scope of the
-       * current trace level.
-       *
-       * @returns {[Boolean]} An array of boolean where every position match with an action of the trace.
-       */
-      computeVisibleActions () {
-        let actions = []
-        let oneActionVisible = false
-        let currentAction
+    /**
+     * Determinate means that the list of action won't change.
+     */
+    determinate: {
+      type: Boolean,
+      default: false
+    }
+  },
+  computed: {
+    actionsStr: function () {
+      let axiomIdRef = { value: 1 }
+      let actionsStr = []
 
-        for (let i = 0; i < this.actions.length; i++) {
-          const a = this.actions[i]
-          if (i > this.currentAction) {
-            currentAction = false
-          } else {
-            currentAction = ProcessModel.isVisibleAction(a, this.traceLevel)
-          }
+      // Format all actions
+      this.actions.forEach(a => {
+        actionsStr.push(formatAction(a, this.atomic, axiomIdRef))
+      })
 
-          actions.push(currentAction)
-          oneActionVisible = oneActionVisible || currentAction
+      return actionsStr
+    }
+  },
+  methods: {
+    /**
+     * Filter action by visibility status.
+     * An action is not visible if it hasn't been executed yet or if it isn't in the scope of the
+     * current trace level.
+     *
+     * @returns {[Boolean]} An array of boolean where every position match with an action of the trace.
+     */
+    computeVisibleActions () {
+      let actions = []
+      let oneActionVisible = false
+      let currentAction
+
+      for (let i = 0; i < this.actions.length; i++) {
+        const a = this.actions[i]
+        if (i > this.currentAction) {
+          currentAction = false
+        } else {
+          currentAction = ProcessModel.isVisibleAction(a, this.traceLevel)
         }
 
-        // Set at the end to avoid multiple update
-        this.noActionVisible = !oneActionVisible
-        this.visibleActions = actions
-      },
-      isTauAction (action) {
-        return ['tau', 'comm', 'bang', 'choice'].includes(action.type)
-      },
-      gotoAction (id) {
-        this.$emit('goto', id)
+        actions.push(currentAction)
+        oneActionVisible = oneActionVisible || currentAction
       }
+
+      // Set at the end to avoid multiple update
+      this.noActionVisible = !oneActionVisible
+      this.visibleActions = actions
     },
-    watch: {
-      // Manual trigger visible actions because computed method fail to detect changes.
-      traceLevel: function () {
-        this.computeVisibleActions()
-      },
-      currentAction: function () {
-        this.computeVisibleActions()
-      }
+    isTauAction (action) {
+      return ['tau', 'comm', 'bang', 'choice'].includes(action.type)
     },
-    beforeMount () {
+    gotoAction (id) {
+      this.$emit('goto', id)
+    }
+  },
+  watch: {
+    // Manual trigger visible actions because computed method fail to detect changes.
+    traceLevel: function () {
+      this.computeVisibleActions()
+    },
+    currentAction: function () {
       this.computeVisibleActions()
     }
+  },
+  beforeMount () {
+    this.computeVisibleActions()
   }
+}
 </script>
 
 <style scoped>

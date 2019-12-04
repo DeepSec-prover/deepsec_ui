@@ -13,13 +13,12 @@ Vue.config.productionTip = false
 Vue.use(Element)
 Vue.use(VueShortKey)
 
-
 // Setup prototype for global use
 Vue.prototype.$notification = notification
-Vue.prototype.$openExternalLink = function(e) { remote.shell.openExternal(e.target.href) }
+Vue.prototype.$openExternalLink = function (e) { remote.shell.openExternal(e.target.href) }
 // TODO prototype for settings and user settings
 
 new Vue({
-  router,
-  render: h => h(App)
-}).$mount('#app')
+          router,
+          render: h => h(App)
+        }).$mount('#app')

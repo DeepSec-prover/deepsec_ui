@@ -9,7 +9,8 @@
                   :tabindex="-1">
         <div slot="content" v-html="helperContent"></div>
         <span :class="{'label-helper' : !helper.disable}">{{ label }}</span>
-      </el-tooltip> :
+      </el-tooltip>
+      :
     </template>
     <!-- Input field -->
     <slot></slot>
@@ -17,15 +18,15 @@
 </template>
 
 <script>
-  import helpersMixin from './helpers-mixin'
+import helpersMixin from './helpers-mixin'
 
-  export default {
-    name: 'form-item-helper',
-    mixins: [helpersMixin],
-    props: {
-      label: {
-        type: String
-      }
+export default {
+  name: 'form-item-helper',
+  mixins: [helpersMixin],
+  props: {
+    label: {
+      type: String
     }
   }
+}
 </script>

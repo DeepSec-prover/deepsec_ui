@@ -18,7 +18,6 @@ export default function notification (title,
                                       topic = 'default',
                                       link = null,
                                       router = null) {
-
   if (type === 'success' || type === 'info' || type === '') {
     // Check skip query
     if (topic === 'query' && !userSettings.get('showQueryNotif')) {
@@ -45,7 +44,7 @@ export default function notification (title,
   }
 
   // If link add click event and css class
-  let customClasses = ['background-' + type]
+  const customClasses = ['background-' + type]
   let onClick = null
   if (link) {
     customClasses.push('clickable')

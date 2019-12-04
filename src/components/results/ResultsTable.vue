@@ -1,7 +1,7 @@
 <template>
   <el-table id="result-table" :data="batches" @row-click="rowClick"
             empty-text="No batch found in the result folder."
-            :default-sort = "{prop: 'startTime', order: 'descending'}">
+            :default-sort="{prop: 'startTime', order: 'descending'}">
     <el-table-column label="Status" prop="status" sortable>
       <template slot-scope="scope">
         <result-status :status="scope.row.status" tag></result-status>
@@ -31,30 +31,30 @@
 </template>
 
 <script>
-  import ResultStatus from './ResultStatus'
-  import Date from '../Date'
-  import { getBatches } from '../../util/results-loader'
+import ResultStatus from './ResultStatus'
+import Date from '../Date'
+import { getBatches } from '../../util/results-loader'
 
-  export default {
-    name: 'results-table',
-    components: {
-      ResultStatus,
-      Date
-    },
-    data () {
-      return {
-        batches: []
-      }
-    },
-    methods: {
-      rowClick (batch, column, event) {
-        this.$router.push({ name: 'batch', params: { 'path': batch.path } })
-      }
-    },
-    beforeMount () {
-      this.batches = getBatches()
+export default {
+  name: 'results-table',
+  components: {
+    ResultStatus,
+    Date
+  },
+  data () {
+    return {
+      batches: []
     }
+  },
+  methods: {
+    rowClick (batch, column, event) {
+      this.$router.push({ name: 'batch', params: { 'path': batch.path } })
+    }
+  },
+  beforeMount () {
+    this.batches = getBatches()
   }
+}
 </script>
 
 <style>

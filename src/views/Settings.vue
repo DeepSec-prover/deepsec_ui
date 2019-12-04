@@ -42,32 +42,32 @@
 </template>
 
 <script>
-  import { resetAll } from '../util/default-user-settings'
-  import SettingItem from '../components/SettingItem'
+import { resetAll } from '../util/default-user-settings'
+import SettingItem from '../components/SettingItem'
 
-  export default {
-    name: 'settings',
-    components: {
-      SettingItem
+export default {
+  name: 'settings',
+  components: {
+    SettingItem
+  },
+  data () {
+    return {
+      refreshKey: 0,
+      resetConfirm: false
+    }
+  },
+  methods: {
+    resetSettings () {
+      resetAll()
+      // Changing the key force Vue to reload the components
+      this.refreshKey += 1
+      this.resetConfirm = false
     },
-    data () {
-      return {
-        refreshKey: 0,
-        resetConfirm: false
-      }
-    },
-    methods: {
-      resetSettings () {
-        resetAll()
-        // Changing the key force Vue to reload the components
-        this.refreshKey += 1
-        this.resetConfirm = false
-      },
-      testNotification () {
-        this.$notification('Test title', 'Test description')
-      }
+    testNotification () {
+      this.$notification('Test title', 'Test description')
     }
   }
+}
 </script>
 
 <style>

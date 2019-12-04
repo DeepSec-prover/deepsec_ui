@@ -10,48 +10,49 @@ import Batch from './views/Batch'
 
 Vue.use(Router)
 
-export default new Router({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: Home
-    },
-    {
-      path: '/start-run/:config?/:files*',
-      name: 'start-run',
-      component: StartRun,
-      props: true
-    },
-    {
-      path: '/all-results',
-      name: 'all-results',
-      component: AllResults
-    },
-    {
-      path: '/settings',
-      name: 'settings',
-      component: Settings
-    },
-    {
-      path: '/query/:path',
-      name: 'query',
-      component: Query,
-      props: true
-    },
-    {
-      path: '/run/:path',
-      name: 'run',
-      component: Run,
-      props: true
-    },
-    {
-      path: '/batch/:path',
-      name: 'batch',
-      component: Batch,
-      props: true
-    }
-  ]
-})
+export default new Router(
+  {
+    mode: 'history',
+    base: process.env.BASE_URL,
+    routes: [
+      {
+        path: '/',
+        name: 'home',
+        component: Home
+      },
+      {
+        path: '/start-run/:config?/:files*',
+        name: 'start-run',
+        component: StartRun,
+        props: true
+      },
+      {
+        path: '/all-results',
+        name: 'all-results',
+        component: AllResults
+      },
+      {
+        path: '/settings',
+        name: 'settings',
+        component: Settings
+      },
+      {
+        path: '/query/:path',
+        name: 'query',
+        component: Query,
+        props: true
+      },
+      {
+        path: '/run/:path',
+        name: 'run',
+        component: Run,
+        props: true
+      },
+      {
+        path: '/batch/:path',
+        name: 'batch',
+        component: Batch,
+        props: true
+      }
+    ]
+  })

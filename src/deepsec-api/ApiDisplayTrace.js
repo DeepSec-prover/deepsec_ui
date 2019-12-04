@@ -1,7 +1,6 @@
 import { ApiManager } from './ApiManager'
 
 export class ApiDisplayTrace extends ApiManager {
-
   static namespace () { return 'display-trace' }
 
   constructor (event, mainWindow, ipcId) {

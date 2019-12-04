@@ -8,22 +8,22 @@
 </template>
 
 <script>
-  import { formatProcess } from '../../util/process-parser'
-  import SpecCode from '../SpecCode'
+import { formatProcess } from '../../util/process-parser'
+import SpecCode from '../SpecCode'
 
-  export default {
-    name: 'query-processes',
-    components: {
-      SpecCode
-    },
-    props: {
-      query: Object,
-      required: true
-    },
-    computed: {
-      processesStr: function () {
-        return this.query.processes.map(p => formatProcess(p, this.query.atomicData))
-      }
+export default {
+  name: 'query-processes',
+  components: {
+    SpecCode
+  },
+  props: {
+    query: Object,
+    required: true
+  },
+  computed: {
+    processesStr: function () {
+      return this.query.processes.map(p => formatProcess(p, this.query.atomicData))
     }
   }
+}
 </script>

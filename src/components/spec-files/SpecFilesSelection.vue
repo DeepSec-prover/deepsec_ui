@@ -18,9 +18,9 @@
         </div>
       </el-col>
       <el-col v-if="hasSelectedFile" class="right-align">
-        <el-tag effect="plain" class="file-count"><b>{{ files.length }}</b> file{{ files.length > 1 ? "s" : "" }}</el-tag>
+        <el-tag effect="plain" class="file-count"><b>{{ files.length }}</b> file{{ files.length > 1 ? 's' : '' }}</el-tag>
         <el-button size="small" icon="el-icon-delete" :disabled="files.length === 0" @click="resetFiles">
-          Clear file{{ files.length > 1 ? "s" : "" }}
+          Clear file{{ files.length > 1 ? 's' : '' }}
         </el-button>
       </el-col>
     </el-row>
@@ -36,10 +36,10 @@
 </template>
 
 <script>
-  import { openSpecFilesRenderer } from '../../util/open-files-dialogs'
-  import FilesList from './FilesList'
+import { openSpecFilesRenderer } from '../../util/open-files-dialogs'
+import FilesList from './FilesList'
 
-  export default {
+export default {
   name: 'spec-files-selection',
   components: {
     FilesList

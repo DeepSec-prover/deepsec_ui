@@ -18,7 +18,7 @@ const defaultUserSettings = {
 function unsetToDefault () {
   Object.keys(defaultUserSettings).forEach(setting => {
     if (!userSettings.has(setting)) {
-      let value = defaultUserSettings[setting]
+      const value = defaultUserSettings[setting]
       logger.debug(`User setting "${setting}" set as default value : ${value}`)
       userSettings.set(setting, value)
     }

@@ -122,83 +122,83 @@
 </template>
 
 <script>
-  import Helper from './helpers/Helper'
-  import Duration from './Duration'
+import Helper from './helpers/Helper'
+import Duration from './Duration'
 
-  export default {
-    name: 'run-config',
-    components: {
-      Helper,
-      Duration
+export default {
+  name: 'run-config',
+  components: {
+    Helper,
+    Duration
+  },
+  props: {
+    userConfig: {
+      type: Object
     },
-    props: {
-      userConfig: {
-        type: Object
-      },
-      computedConfig: {
-        type: Object
-      }
-    },
-    methods: {
-      autoOrInt (object) {
-        // null or undefined
-        if (!object) {
-          return '-'
-        }
-
-        if (object.auto) {
-          return 'auto'
-        }
-
-        return object.value.toString()
-      }
-    },
-    computed: {
-      isDistributed: function () {
-        if (this.computedConfig) {
-          return this.computedConfig.distributed === true
-        } else {
-          return this.userConfig.distributed !== 'no'
-        }
-      },
-      nbServer: function () {
-        return this.userConfig.servers.length
-      },
-      nbDistantWorkers: function () {
-        return this.computedConfig.nbDistantWorkers()
-      },
-      /**
-       * @returns {string} The printable distributed value
-       */
-      userDistributedStr: function () {
-        if (this.userConfig.distributed === 'auto') {
-          return 'auto'
-        }
-
-        if (this.userConfig.distributed === true) {
-          return 'yes'
-        }
-
-        if (this.userConfig.distributed === false) {
-          return 'no'
-        }
-
-        // null or undefined
+    computedConfig: {
+      type: Object
+    }
+  },
+  methods: {
+    autoOrInt (object) {
+      // null or undefined
+      if (!object) {
         return '-'
-      },
-      /**
-       * @returns {string} The printable POR value
-       */
-      userPorStr: function () {
-        // null or undefined
-        if (this.userConfig.por === null || this.userConfig.por === undefined) {
-          return '-'
-        }
-
-        return this.userConfig.por ? 'yes' : 'no'
       }
+
+      if (object.auto) {
+        return 'auto'
+      }
+
+      return object.value.toString()
+    }
+  },
+  computed: {
+    isDistributed: function () {
+      if (this.computedConfig) {
+        return this.computedConfig.distributed === true
+      } else {
+        return this.userConfig.distributed !== 'no'
+      }
+    },
+    nbServer: function () {
+      return this.userConfig.servers.length
+    },
+    nbDistantWorkers: function () {
+      return this.computedConfig.nbDistantWorkers()
+    },
+    /**
+     * @returns {string} The printable distributed value
+     */
+    userDistributedStr: function () {
+      if (this.userConfig.distributed === 'auto') {
+        return 'auto'
+      }
+
+      if (this.userConfig.distributed === true) {
+        return 'yes'
+      }
+
+      if (this.userConfig.distributed === false) {
+        return 'no'
+      }
+
+      // null or undefined
+      return '-'
+    },
+    /**
+     * @returns {string} The printable POR value
+     */
+    userPorStr: function () {
+      // null or undefined
+      if (this.userConfig.por === null || this.userConfig.por === undefined) {
+        return '-'
+      }
+
+      return this.userConfig.por ? 'yes' : 'no'
     }
   }
+}
 </script>
 
 <style scoped>

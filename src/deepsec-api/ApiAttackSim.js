@@ -1,7 +1,6 @@
 import { ApiManager } from './ApiManager'
 
 export class ApiAttackSim extends ApiManager {
-
   static namespace () { return 'attack-simulator' }
 
   constructor (event, mainWindow, ipcId) {

@@ -12,7 +12,7 @@ const text = {
       trace_incl: 'Trace inclusion',
       observational_equiv: 'Observational equivalence',
       session_equiv: 'Session equivalence',
-      session_incl: 'Session inclusion',
+      session_incl: 'Session inclusion'
     },
     results: {
       // Use %p for attacked process number and %q for the other one
@@ -36,7 +36,7 @@ const text = {
         session_incl: {
           short: 'TODO short description attack',
           long: 'TODO long description attack'
-        },
+        }
       },
       no_attack: {
         trace_equiv: {
@@ -58,7 +58,7 @@ const text = {
         session_incl: {
           short: 'TODO short description no attack',
           long: 'TODO long description no attack'
-        },
+        }
       }
     }
   }

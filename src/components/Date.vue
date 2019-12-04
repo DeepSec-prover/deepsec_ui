@@ -4,14 +4,14 @@
 </template>
 
 <script>
-  export default {
-    name: 'date',
-    props: {
-      date: Date,
-      strict: {
-        type: Boolean,
-        default: false
-      }
+export default {
+  name: 'date',
+  props: {
+    date: Date,
+    strict: {
+      type: Boolean,
+      default: false
     }
   }
+}
 </script>

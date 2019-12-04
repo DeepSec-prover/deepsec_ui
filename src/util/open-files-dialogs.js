@@ -105,8 +105,8 @@ function openSpecFiles (currentDialog, files, directories) {
   // Filter DPS only if file selected
   if (files) {
     filters.unshift({
-      name: 'DPS', extensions: ['dps']
-    })
+                      name: 'DPS', extensions: ['dps']
+                    })
   }
 
   const promise = currentDialog.showOpenDialog(null, {
@@ -120,7 +120,6 @@ function openSpecFiles (currentDialog, files, directories) {
     if (!result.canceled) {
       const paths = result.filePaths
       if (paths !== null && paths.length >= 1) {
-
         const filePaths = []
         const dirPaths = []
         // Split files and directories
@@ -136,7 +135,7 @@ function openSpecFiles (currentDialog, files, directories) {
           `${filePaths.length} files and ${dirPaths.length} directories selected with success`)
 
         dirPaths.forEach(dirPath => {
-          let files = []
+          const files = []
           recursiveFindFiles(dirPath, /.*\.dps$/ui, files)
           logger.debug(`${files.length} files found recursively in the directory "${dirPath}"`)
           filePaths.push.apply(filePaths, files)

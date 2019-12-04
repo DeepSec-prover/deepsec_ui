@@ -24,15 +24,16 @@ protocol.registerSchemesAsPrivileged(
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({
-                                   width: 1200,
-                                   height: 1000,
-                                   minWidth: 1000,
-                                   minHeight: 600,
-                                   webPreferences: {
-                                     nodeIntegration: true // To use node in the client side
-                                   }
-                                 })
+  mainWindow = new BrowserWindow(
+    {
+      width: 1200,
+      height: 1000,
+      minWidth: 1000,
+      minHeight: 600,
+      webPreferences: {
+        nodeIntegration: true // To use node in the client side
+      }
+    })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode

@@ -40,7 +40,7 @@ Prism.hooks.add('wrap', env => {
   }
   // Format projection function
   else if (env.type === 'function' && env.content.startsWith('proj_{')) {
-    let n = Array.from(env.content.matchAll(/\d+/g))
+    const n = Array.from(env.content.matchAll(/\d+/g))
     env.content = `\u03A0<sub>${n[0]},${n[1]}</sub>`
   }
 })

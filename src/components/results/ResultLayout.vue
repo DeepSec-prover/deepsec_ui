@@ -20,7 +20,9 @@
 
     <div v-if="this.$slots.progression">
       <div id="progression">
-        <h3><slot name="progression"></slot></h3>
+        <h3>
+          <slot name="progression"></slot>
+        </h3>
         <el-progress :stroke-width="10"
                      :percentage="resultObject.progressionPercent()"
                      :color="progressionColor"></el-progress>
@@ -35,91 +37,91 @@
 </template>
 
 <script>
-  import ResultBreadcrumb from './ResultBreadcrumb'
-  import ResultStatus from './ResultStatus'
-  import ResultModel from '../../models/ResultModel'
-  import text from '../../text-content/text'
-  import BatchModel from '../../models/BatchModel'
-  import RunModel from '../../models/RunModel'
-  import QueryModel from '../../models/QueryModel'
+import ResultBreadcrumb from './ResultBreadcrumb'
+import ResultStatus from './ResultStatus'
+import ResultModel from '../../models/ResultModel'
+import text from '../../text-content/text'
+import BatchModel from '../../models/BatchModel'
+import RunModel from '../../models/RunModel'
+import QueryModel from '../../models/QueryModel'
 
-  export default {
-    name: 'result-layout',
-    components: {
-      ResultBreadcrumb,
-      ResultStatus
+export default {
+  name: 'result-layout',
+  components: {
+    ResultBreadcrumb,
+    ResultStatus
+  },
+  props: {
+    resultObject: {
+      type: ResultModel
+    }
+  },
+  data () {
+    return {
+      text: text
+    }
+  },
+  computed: {
+    breadcrumbBatch: function () {
+      if (this.resultObject instanceof BatchModel) {
+        return this.resultObject
+      }
+
+      return this.resultObject.batch
     },
-    props: {
-      resultObject: {
-        type: ResultModel
+    breadcrumbRun: function () {
+      if (this.resultObject instanceof RunModel) {
+        return this.resultObject
+      }
+
+      if (this.resultObject instanceof QueryModel) {
+        return this.resultObject.run
+      }
+
+      // If batch, no specific run
+      return null
+    },
+    breadcrumbQuery: function () {
+      if (this.resultObject instanceof QueryModel) {
+        return this.resultObject
+      }
+
+      // If batch or run, no specific run
+      return null
+    },
+    classTitle: function () {
+      if (this.resultObject instanceof BatchModel) {
+        return 'Batch'
+      }
+      if (this.resultObject instanceof RunModel) {
+        return 'Run'
+      }
+      if (this.resultObject instanceof QueryModel) {
+        return 'Query'
       }
     },
-    data () {
-      return {
-        text: text
-      }
-    },
-    computed: {
-      breadcrumbBatch: function () {
-        if (this.resultObject instanceof BatchModel) {
-          return this.resultObject
-        }
-
-        return this.resultObject.batch
-      },
-      breadcrumbRun: function () {
-        if (this.resultObject instanceof RunModel) {
-          return this.resultObject
-        }
-
-        if (this.resultObject instanceof QueryModel) {
-          return this.resultObject.run
-        }
-
-        // If batch, no specific run
-        return null
-      },
-      breadcrumbQuery: function () {
-        if (this.resultObject instanceof QueryModel) {
-          return this.resultObject
-        }
-
-        // If batch or run, no specific run
-        return null
-      },
-      classTitle: function () {
-        if (this.resultObject instanceof BatchModel) {
-          return 'Batch'
-        }
-        if (this.resultObject instanceof RunModel) {
-          return 'Run'
-        }
-        if (this.resultObject instanceof QueryModel) {
-          return 'Query'
-        }
-      },
-      progressionColor: function () {
-        switch (this.resultObject.status) {
-          case 'completed':
-            return '#67C23A'
-          case 'in_progress':
-            return '#409EFF'
-          case 'internal_error':
-            return '#F56C6C'
-          case 'canceled':
-            return '#E6A23C'
-          default:
-            return ''
-        }
-      }
-    },
-    destroyed () {
-      if (this.resultObject.apiRemote) {
-        // Disconnect all listeners
-        this.resultObject.apiRemote.exit()
+    progressionColor: function () {
+      switch (this.resultObject.status) {
+        case 'completed':
+          return '#67C23A'
+        case 'in_progress':
+          return '#409EFF'
+        case 'internal_error':
+          return '#F56C6C'
+        case 'canceled':
+          return '#E6A23C'
+        default:
+          return ''
       }
     }
+  },
+  destroyed () {
+    if (this.resultObject.apiRemote) {
+      // Disconnect all listeners
+      this.resultObject.apiRemote.exit()
+    }
   }
+}
 </script>
 
 <style scoped>

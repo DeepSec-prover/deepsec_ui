@@ -12,29 +12,29 @@
 </template>
 
 <script>
-  import SpecCode from '../SpecCode'
-  import { formatProcess } from '../../util/process-parser'
-  import AtomicRenamer from '../../util/AtomicRenamer'
+import SpecCode from '../SpecCode'
+import { formatProcess } from '../../util/process-parser'
+import AtomicRenamer from '../../util/AtomicRenamer'
 
-  export default {
-    name: 'sim-frame',
-    props: {
-      frame: {
-        type: Array
-      },
-      atomic: {
-        type: AtomicRenamer
-      }
+export default {
+  name: 'sim-frame',
+  props: {
+    frame: {
+      type: Array
     },
-    components: {
-      SpecCode
-    },
-    computed: {
-      termsStr: function () {
-        return this.frame.map(q => formatProcess(q, this.atomic))
-      }
+    atomic: {
+      type: AtomicRenamer
+    }
+  },
+  components: {
+    SpecCode
+  },
+  computed: {
+    termsStr: function () {
+      return this.frame.map(q => formatProcess(q, this.atomic))
     }
   }
+}
 </script>
 
 <style scoped>

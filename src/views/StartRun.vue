@@ -86,14 +86,13 @@
         <!-- Global error message -->
         <el-row v-if="globalError">
           <el-divider></el-divider>
-          <el-alert
-                  id="failed-error-msg"
-                  title="Fail to start run"
-                  type="error"
-                  :title="globalError.title"
-                  :closable="false"
-                  effect="dark"
-                  show-icon>
+          <el-alert id="failed-error-msg"
+                    title="Fail to start run"
+                    type="error"
+                    :title="globalError.title"
+                    :closable="false"
+                    effect="dark"
+                    show-icon>
             <span v-html="globalError.message"></span>
             <template v-if="globalError.isInternal">
               <br>
@@ -149,140 +148,140 @@
 </template>
 
 <script>
-  import SpecFilesSelection from '../components/spec-files/SpecFilesSelection'
-  import FormItemHelper from '../components/helpers/FormItemHelper'
-  import Helper from '../components/helpers/Helper'
-  import FileIssuesList from '../components/spec-files/FileIssuesList'
-  import settings from '../../settings'
-  import RunConfigModel from '../models/RunConfigModel'
-  import logger from 'electron-log'
-  import ApiRemote from '../deepsec-api/ApiRemote'
+import SpecFilesSelection from '../components/spec-files/SpecFilesSelection'
+import FormItemHelper from '../components/helpers/FormItemHelper'
+import Helper from '../components/helpers/Helper'
+import FileIssuesList from '../components/spec-files/FileIssuesList'
+import settings from '../../settings'
+import RunConfigModel from '../models/RunConfigModel'
+import logger from 'electron-log'
+import ApiRemote from '../deepsec-api/ApiRemote'
 
-  export default {
-    name: 'start-run',
-    props: {
-      /**
-       * Used as default run configuration.
-       * These objects never change.
-       */
-      config: {
-        type: Object,
-        default: null
-      },
-      files: {
-        type: Array,
-        default: null
+export default {
+  name: 'start-run',
+  props: {
+    /**
+     * Used as default run configuration.
+     * These objects never change.
+     */
+    config: {
+      type: Object,
+      default: null
+    },
+    files: {
+      type: Array,
+      default: null
+    }
+  },
+  components: {
+    SpecFilesSelection,
+    FormItemHelper,
+    Helper,
+    FileIssuesList
+  },
+  data () {
+    return {
+      currentFiles: [],
+      currentConf: null,
+      runStarting: false,
+      globalError: null,
+      filesIssues: [],
+      settings: settings,
+      apiRemote: null
+    }
+  },
+  computed: {
+    nbWorkers: function () {
+      if (this.currentConf.localWorkers.auto) {
+        return Number.POSITIVE_INFINITY
       }
-    },
-    components: {
-      SpecFilesSelection,
-      FormItemHelper,
-      Helper,
-      FileIssuesList
-    },
-    data () {
-      return {
-        currentFiles: [],
-        currentConf: null,
-        runStarting: false,
-        globalError: null,
-        filesIssues: [],
-        settings: settings,
-        apiRemote: null
-      }
-    },
-    computed: {
-      nbWorkers: function () {
-        if (this.currentConf.localWorkers.auto) {
+
+      let sum = this.currentConf.localWorkers.value
+
+      for (let i = 0; i < this.currentConf.nbServer(); i++) {
+        if (this.currentConf.servers[i].workers.auto) {
           return Number.POSITIVE_INFINITY
         }
-
-        let sum = this.currentConf.localWorkers.value
-
-        for (let i = 0; i < this.currentConf.nbServer(); i++) {
-          if (this.currentConf.servers[i].workers.auto) {
-            return Number.POSITIVE_INFINITY
-          }
-          sum += this.currentConf.servers[i].workers.value
-        }
-
-        return sum
+        sum += this.currentConf.servers[i].workers.value
       }
-    },
-    methods: {
-      submitForm () {
-        this.runStarting = true
-        this.globalError = null
-        this.filesIssues = []
 
-        // Clean user inputs (eg: trim)
-        this.currentConf.preProcessData()
+      return sum
+    }
+  },
+  methods: {
+    submitForm () {
+      this.runStarting = true
+      this.globalError = null
+      this.filesIssues = []
 
-        // No ipc Id for now because we don't know the id of the batch.
-        // It will be set on the batch started.
-        this.apiRemote = new ApiRemote('start-run', null, false)
+      // Clean user inputs (eg: trim)
+      this.currentConf.preProcessData()
 
-        // Wait for the run confirmation or error message
-        this.apiRemote.onReply((event, result) => {
-          logger.silly(`Run starting confirmation : ${JSON.stringify(result)}`)
-          if (!result.success) {
-            this.showGlobalError(result)
-          }
-          this.runStarting = false
-          this.apiRemote.exit()
-          this.apiRemote = null
-        })
+      // No ipc Id for now because we don't know the id of the batch.
+      // It will be set on the batch started.
+      this.apiRemote = new ApiRemote('start-run', null, false)
 
-        // Send the run start order
-        this.apiRemote.start(
-          {
-            'input_files': this.currentFiles,
-            'command_options': this.currentConf.toJson()
-          })
-      },
-      resetConf () {
-        this.currentConf = new RunConfigModel()
-      },
-      showGlobalError (result) {
-        let error = {}
-        // Save internal flag for display tips
-        error.isInternal = result.isInternal
-
-        // Error title
-        if (result.isInternal) {
-          error.title = 'Internal error'
-        } else {
-          error.title = 'User error'
+      // Wait for the run confirmation or error message
+      this.apiRemote.onReply((event, result) => {
+        logger.silly(`Run starting confirmation : ${JSON.stringify(result)}`)
+        if (!result.success) {
+          this.showGlobalError(result)
         }
-
-        if (result.errorMsg) {
-          // Error message
-          error.message = result.errorMsg
-        } else {
-          // Unknown error message
-          error.message = 'No error message. Please check logs.'
-        }
-
-        // Error or warning per files
-        if (result.files_issues) {
-          this.filesIssues = result.files_issues
-        }
-
-        // Set at the end to have only one UI update
-        this.globalError = error
-      }
-    },
-    beforeMount () {
-      // Load default values (from props)
-      this.currentFiles = this.files ? this.files : []
-      this.currentConf = this.config ? this.config : new RunConfigModel()
-    },
-    destroyed () {
-      if (this.apiRemote) {
+        this.runStarting = false
         this.apiRemote.exit()
+        this.apiRemote = null
+      })
+
+      // Send the run start order
+      this.apiRemote.start(
+        {
+          'input_files': this.currentFiles,
+          'command_options': this.currentConf.toJson()
+        })
+    },
+    resetConf () {
+      this.currentConf = new RunConfigModel()
+    },
+    showGlobalError (result) {
+      let error = {}
+      // Save internal flag for display tips
+      error.isInternal = result.isInternal
+
+      // Error title
+      if (result.isInternal) {
+        error.title = 'Internal error'
+      } else {
+        error.title = 'User error'
       }
+
+      if (result.errorMsg) {
+        // Error message
+        error.message = result.errorMsg
+      } else {
+        // Unknown error message
+        error.message = 'No error message. Please check logs.'
+      }
+
+      // Error or warning per files
+      if (result.files_issues) {
+        this.filesIssues = result.files_issues
+      }
+
+      // Set at the end to have only one UI update
+      this.globalError = error
+    }
+  },
+  beforeMount () {
+    // Load default values (from props)
+    this.currentFiles = this.files ? this.files : []
+    this.currentConf = this.config ? this.config : new RunConfigModel()
+  },
+  destroyed () {
+    if (this.apiRemote) {
+      this.apiRemote.exit()
     }
   }
+}
 </script>
 
 <style>

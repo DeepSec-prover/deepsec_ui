@@ -2,7 +2,8 @@
   <el-collapse-item :name="query.path">
     <template slot="title">
       <h3>
-        <result-status :status="query.status" tooltip></result-status> Query {{ query.index }}
+        <result-status :status="query.status" tooltip></result-status>
+        Query {{ query.index }}
         <el-tag v-if="query.isCompleted()" size="small" class="query-result" :type="query.attackFound() ? 'danger' : 'success'">
           {{ query.shortResultDescription() }}
         </el-tag>
@@ -36,10 +37,14 @@
       <el-col :sm="12" v-if="query.startTime">
         <dl class="in-line">
           <dt>Start time</dt>
-          <dd><date :date="query.startTime"></date></dd>
+          <dd>
+            <date :date="query.startTime"></date>
+          </dd>
           <template v-if="query.endTime">
             <dt>End time</dt>
-            <dd><date :date="query.endTime"></date></dd>
+            <dd>
+              <date :date="query.endTime"></date>
+            </dd>
           </template>
           <dt>Running time</dt>
           <dd>
@@ -52,34 +57,34 @@
 </template>
 
 <script>
-  import text from '../../text-content/text'
-  import ResultStatus from '../results/ResultStatus'
-  import Date from '../Date'
-  import Helper from '../helpers/Helper'
-  import Duration from '../Duration'
+import text from '../../text-content/text'
+import ResultStatus from '../results/ResultStatus'
+import Date from '../Date'
+import Helper from '../helpers/Helper'
+import Duration from '../Duration'
 
-  export default {
-    name: 'query-collapsible',
-    components: {
-      Helper,
-      Date,
-      Duration,
-      ResultStatus
-    },
-    props: {
-      query: Object
-    },
-    data () {
-      return {
-        text: text
-      }
-    },
-    methods: {
-      openQuery (path) {
-        this.$router.push({ name: 'query', params: { 'path': path } })
-      }
+export default {
+  name: 'query-collapsible',
+  components: {
+    Helper,
+    Date,
+    Duration,
+    ResultStatus
+  },
+  props: {
+    query: Object
+  },
+  data () {
+    return {
+      text: text
+    }
+  },
+  methods: {
+    openQuery (path) {
+      this.$router.push({ name: 'query', params: { 'path': path } })
     }
   }
+}
 </script>
 
 <style scoped>

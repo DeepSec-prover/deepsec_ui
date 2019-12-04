@@ -33,7 +33,9 @@
               <dd>{{ run.nbQueries() }}</dd>
               <template v-if="run.batch.debug">
                 <dt>Debug</dt>
-                <dd><el-tag size="mini" type="danger"><i class="el-icon-view"></i> yes</el-tag></dd>
+                <dd>
+                  <el-tag size="mini" type="danger"><i class="el-icon-view"></i> yes</el-tag>
+                </dd>
               </template>
             </dl>
           </el-col>
@@ -70,36 +72,36 @@
 </template>
 
 <script>
-  import Date from '../components/Date'
-  import Duration from '../components/Duration'
-  import QueryCollapsible from '../components/query/QueryCollapsible'
-  import ResultLayout from '../components/results/ResultLayout'
-  import RunModel from '../models/RunModel'
+import Date from '../components/Date'
+import Duration from '../components/Duration'
+import QueryCollapsible from '../components/query/QueryCollapsible'
+import ResultLayout from '../components/results/ResultLayout'
+import RunModel from '../models/RunModel'
 
-  export default {
-    name: 'run',
-    components: {
-      Duration,
-      Date,
-      QueryCollapsible,
-      ResultLayout
-    },
-    props: {
-      path: String
-    },
-    data () {
-      return {
-        openedSummary: [],
-        run: undefined
-      }
-    },
-    beforeMount () {
-      this.run = new RunModel(this.path, true, true)
-      this.run.queries.forEach(q => q.enableUpdateListener())
-      // If few query show all summaries
-      if (this.run.nbQueries() <= 5) {
-        this.openedSummary = this.run.queries.map(q => q.path)
-      }
+export default {
+  name: 'run',
+  components: {
+    Duration,
+    Date,
+    QueryCollapsible,
+    ResultLayout
+  },
+  props: {
+    path: String
+  },
+  data () {
+    return {
+      openedSummary: [],
+      run: undefined
+    }
+  },
+  beforeMount () {
+    this.run = new RunModel(this.path, true, true)
+    this.run.queries.forEach(q => q.enableUpdateListener())
+    // If few query show all summaries
+    if (this.run.nbQueries() <= 5) {
+      this.openedSummary = this.run.queries.map(q => q.path)
     }
   }
+}
 </script>

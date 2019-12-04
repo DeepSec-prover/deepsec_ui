@@ -31,7 +31,7 @@ const mixin = {
      * @see ../text-content/helpers
      */
     helperContent: function () {
-      let content = []
+      const content = []
 
       // Fixed content
       if (this.helperStr !== null) {
@@ -41,10 +41,10 @@ const mixin = {
       // Content from helper file
       if (this.helperId) {
         let helperContent = helpers
-        let idParts = this.helperId.split('.')
+        const idParts = this.helperId.split('.')
 
         try {
-          for (let part in idParts) {
+          for (const part in idParts) {
             helperContent = helperContent[idParts[part]]
           }
         } catch (e) {

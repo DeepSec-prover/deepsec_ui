@@ -60,63 +60,63 @@
 </template>
 
 <script>
-  import ResultLayout from '../components/results/ResultLayout'
-  import QuerySummary from '../components/query/QuerySummary'
-  import DisplayTrace from '../components/simulators/DisplayTrace'
-  import QueryProcesses from '../components/query/QueryProcesses'
-  import QueryModel from '../models/QueryModel'
-  import AttackSim from '../components/simulators/AttackSim'
-  import EquivalenceSim from '../components/simulators/EquivalenceSim'
+import ResultLayout from '../components/results/ResultLayout'
+import QuerySummary from '../components/query/QuerySummary'
+import DisplayTrace from '../components/simulators/DisplayTrace'
+import QueryProcesses from '../components/query/QueryProcesses'
+import QueryModel from '../models/QueryModel'
+import AttackSim from '../components/simulators/AttackSim'
+import EquivalenceSim from '../components/simulators/EquivalenceSim'
 
-  export default {
-    name: 'query',
-    components: {
-      EquivalenceSim,
-      AttackSim,
-      QueryProcesses,
-      DisplayTrace,
-      QuerySummary,
-      ResultLayout
-    },
-    props: {
-      path: String
-    },
-    data () {
-      return {
-        activeDetail: 'processes',
-        query: undefined
+export default {
+  name: 'query',
+  components: {
+    EquivalenceSim,
+    AttackSim,
+    QueryProcesses,
+    DisplayTrace,
+    QuerySummary,
+    ResultLayout
+  },
+  props: {
+    path: String
+  },
+  data () {
+    return {
+      activeDetail: 'processes',
+      query: undefined
+    }
+  },
+  computed: {
+    progressionStepStr: function () {
+      if (this.query.status === 'completed') {
+        return 'Done'
       }
-    },
-    computed: {
-      progressionStepStr: function () {
-        if (this.query.status === 'completed') {
-          return 'Done'
-        }
 
-        if (!this.query.progression) {
-          return 'Not started'
-        }
+      if (!this.query.progression) {
+        return 'Not started'
+      }
 
-        const roundStr = this.query.progression.round === 0 ? '' : `Round ${this.query.progression.round} - `
+      const roundStr = this.query.progression.round === 0 ? '' : `Round ${this.query.progression.round} - `
 
-        if (this.query.progression.generation) {
-          return `${roundStr}Jobs generation
+      if (this.query.progression.generation) {
+        return `${roundStr}Jobs generation
           (${this.query.progression.generation.jobs_created}/${this.query.progression.generation.minimum_jobs})`
-        }
-
-        if (this.query.progression.verification) {
-          return `${roundStr}Verification processing
-           (jobs remaining: ${this.query.progression.verification.jobs_remaining})`
-        }
       }
-    },
-    beforeMount () {
-      this.query = new QueryModel(this.path, true, true)
 
-      // If has attack trace auto switch to this tab
-      if (this.query.isCompleted() && this.query.attackFound()) {
-        this.activeDetail = 'trace'
+      if (this.query.progression.verification) {
+        return `${roundStr}Verification processing
+           (jobs remaining: ${this.query.progression.verification.jobs_remaining})`
       }
     }
+  },
+  beforeMount () {
+    this.query = new QueryModel(this.path, true, true)
+
+    // If has attack trace auto switch to this tab
+    if (this.query.isCompleted() && this.query.attackFound()) {
+      this.activeDetail = 'trace'
+    }
   }
+}
 </script>

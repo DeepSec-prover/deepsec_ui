@@ -28,7 +28,7 @@ export default class RunConfigModel {
    * @param {Object} server The server reference to remove
    */
   removeServer (server) {
-    let index = this.servers.indexOf(server)
+    const index = this.servers.indexOf(server)
     this.servers.splice(index, 1)
   }
 
@@ -57,7 +57,7 @@ export default class RunConfigModel {
    */
   preProcessData () {
     if (this.title) {
-      this.title = this.title.trim().replace(/\s+/, " ")
+      this.title = this.title.trim().replace(/\s+/, ' ')
     }
     this.servers.forEach(s => {
       s.host = s.host.trim()
@@ -71,25 +71,25 @@ export default class RunConfigModel {
    * @returns {Object} The json object
    */
   toJson () {
-    let json = {
-      'default_semantics': this.defaultSemantic,
-      'distributed': this.distributed,
-      'por': this.por
+    const json = {
+      default_semantics: this.defaultSemantic,
+      distributed: this.distributed,
+      por: this.por
     }
 
     if (!isEmptyOrBlankStr(this.title)) {
-      json['title'] = this.title
+      json.title = this.title
     }
 
     if (this.distributed === true) {
-      json['nb_jobs'] = this.nbJobs.auto ? 'auto' : this.nbJobs.value
-      json['local_workers'] = this.localWorkers.auto ? 'auto' : this.localWorkers.value
-      json['round_timer'] = this.roundTimer
-      json['distant_workers'] = this.servers.map(s => {
+      json.nb_jobs = this.nbJobs.auto ? 'auto' : this.nbJobs.value
+      json.local_workers = this.localWorkers.auto ? 'auto' : this.localWorkers.value
+      json.round_timer = this.roundTimer
+      json.distant_workers = this.servers.map(s => {
         return {
-          'host': s.host,
-          'path': s.path,
-          'workers': s.workers.auto ? 'auto' : s.workers.value
+          host: s.host,
+          path: s.path,
+          workers: s.workers.auto ? 'auto' : s.workers.value
         }
       })
     }
@@ -104,7 +104,7 @@ export default class RunConfigModel {
    * @returns {RunConfigModel} The run config model
    */
   static loadFromJson (json) {
-    let config = new RunConfigModel()
+    const config = new RunConfigModel()
     config.defaultSemantic = json.default_semantics
     config.distributed = json.distributed
     config.por = json.por
@@ -150,7 +150,7 @@ class RunConfigServerModel {
   }
 
   static loadFromJson (json, id) {
-    let server = new RunConfigServerModel(id)
+    const server = new RunConfigServerModel(id)
     server.host = json.host
     server.path = json.path
 

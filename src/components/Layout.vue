@@ -32,24 +32,24 @@
 </template>
 
 <script>
-  import { ipcRenderer } from 'electron'
+import { ipcRenderer } from 'electron'
 
-  export default {
-    name: 'layout',
-    methods: {
-      routePush (routeName) {
-        if (this.$route.name !== routeName) {
-          this.$router.push({ name: routeName })
-        }
+export default {
+  name: 'layout',
+  methods: {
+    routePush (routeName) {
+      if (this.$route.name !== routeName) {
+        this.$router.push({ name: routeName })
       }
-    },
-    mounted () {
-      // When received data then show notification
-      ipcRenderer.on('notification:show', (event, title, content, type, topic, link) => {
-        this.$notification(title, content, type, topic, link, this.$router)
-      })
     }
+  },
+  mounted () {
+    // When received data then show notification
+    ipcRenderer.on('notification:show', (event, title, content, type, topic, link) => {
+      this.$notification(title, content, type, topic, link, this.$router)
+    })
   }
+}
 </script>
 
 <style scoped>

@@ -6,48 +6,48 @@
 </template>
 
 <script>
-  import Prism from '../util/prism-deepsec'
-  import Simplebar from 'simplebar-vue'
-  import 'simplebar/dist/simplebar.min.css'
-  import logger from 'electron-log'
+import Prism from '../util/prism-deepsec'
+import Simplebar from 'simplebar-vue'
+import 'simplebar/dist/simplebar.min.css'
+import logger from 'electron-log'
 
-  // Disable automatic highlight at page load
-  document.removeEventListener('DOMContentLoaded', Prism.highlightAll)
+// Disable automatic highlight at page load
+document.removeEventListener('DOMContentLoaded', Prism.highlightAll)
 
-  export default {
-    name: 'spec-code',
-    components: {
-      Simplebar
-    },
-    props: {
-      code: String,
-      inLine: {
-        type: Boolean,
-        default: false
+export default {
+  name: 'spec-code',
+  components: {
+    Simplebar
+  },
+  props: {
+    code: String,
+    inLine: {
+      type: Boolean,
+      default: false
+    }
+  },
+  methods: {
+    render () {
+      logger.silly('Update Prism code highlight')
+      if (this.code) {
+        // We have to edit directly the dom to enable Prism plugins
+        this.$refs.code.textContent = this.code
+        Prism.highlightElement(this.$refs.code)
+      } else {
+        // No code yet
+        this.$refs.code.textContent = 'loading ...'
       }
-    },
-    methods: {
-      render () {
-        logger.silly('Update Prism code highlight')
-        if (this.code) {
-          // We have to edit directly the dom to enable Prism plugins
-          this.$refs.code.textContent = this.code
-          Prism.highlightElement(this.$refs.code)
-        } else {
-          // No code yet
-          this.$refs.code.textContent = 'loading ...'
-        }
-      }
-    },
-    watch: {
-      code () {
-        this.render()
-      }
-    },
-    mounted () {
+    }
+  },
+  watch: {
+    code () {
       this.render()
     }
+  },
+  mounted () {
+    this.render()
   }
+}
 </script>
 
 <style>

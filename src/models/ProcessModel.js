@@ -93,8 +93,8 @@ export default class ProcessModel {
   static isVisibleAction (action, level) {
     switch (level) {
       case 'default':
-        return action.type === 'output' || action.type === 'input' || action.type === 'eavesdrop'
-          || action.type === 'bang'
+        return action.type === 'output' || action.type === 'input' || action.type === 'eavesdrop' ||
+          action.type === 'bang'
       case 'io':
         return action.type === 'output' || action.type === 'input' || action.type === 'eavesdrop'
       case 'all':

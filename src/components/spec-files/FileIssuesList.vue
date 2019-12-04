@@ -6,7 +6,7 @@
         <el-tag class="tag-status" v-if="fileIssues.error_msg" effect="dark" type="danger" size="mini">
           1 <i class="el-icon-error"></i>
         </el-tag>
-        <el-tag  class="tag-status" v-if="fileIssues.warnings && fileIssues.warnings.length > 0" effect="dark" type="warning" size="mini">
+        <el-tag class="tag-status" v-if="fileIssues.warnings && fileIssues.warnings.length > 0" effect="dark" type="warning" size="mini">
           {{ fileIssues.warnings.length }} <i class="el-icon-warning"></i>
         </el-tag>
       </template>
@@ -17,28 +17,28 @@
 </template>
 
 <script>
-  import SpecFileMixin from './spec-files-mixin'
+import SpecFileMixin from './spec-files-mixin'
 
-  export default {
-    name: 'file-issues-list',
-    mixins: [SpecFileMixin],
-    props: {
-      filesIssues: Array
-    },
-    data () {
-      return {
-        openFile: ''
-      }
-    },
-    beforeMount () {
-      // If small content show it
-      if (this.filesIssues.length === 1) {
-        if (this.filesIssues[0].warnings.length < 10) {
-          this.openFile = this.filesIssues[0].file
-        }
+export default {
+  name: 'file-issues-list',
+  mixins: [SpecFileMixin],
+  props: {
+    filesIssues: Array
+  },
+  data () {
+    return {
+      openFile: ''
+    }
+  },
+  beforeMount () {
+    // If small content show it
+    if (this.filesIssues.length === 1) {
+      if (this.filesIssues[0].warnings.length < 10) {
+        this.openFile = this.filesIssues[0].file
       }
     }
   }
+}
 </script>
 
 <style scoped>

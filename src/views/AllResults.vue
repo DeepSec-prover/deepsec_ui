@@ -6,13 +6,13 @@
 </template>
 
 <script>
-  import ResultsTable from '../components/results/ResultsTable'
+import ResultsTable from '../components/results/ResultsTable'
 
-  export default {
-    name: 'all-results',
-    components: {
-      ResultsTable
-    },
+export default {
+  name: 'all-results',
+  components: {
+    ResultsTable
   }
+}
 </script>
 

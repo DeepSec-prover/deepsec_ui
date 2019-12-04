@@ -13,16 +13,16 @@
 </template>
 
 <script>
-  import helpersMixin from './helpers-mixin'
+import helpersMixin from './helpers-mixin'
 
-  export default {
-    name: 'helper',
-    mixins: [helpersMixin],
-    props: {
-      textContent: {
-        type: Boolean,
-        default: false
-      }
+export default {
+  name: 'helper',
+  mixins: [helpersMixin],
+  props: {
+    textContent: {
+      type: Boolean,
+      default: false
     }
   }
+}
 </script>

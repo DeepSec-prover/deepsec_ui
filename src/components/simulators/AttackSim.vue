@@ -139,126 +139,126 @@
 </template>
 
 <script>
-  import QueryModel from '../../models/QueryModel'
-  import SpecCode from '../SpecCode'
-  import { formatProcess } from '../../util/process-parser'
-  import ProcessDisplayedModel from '../../models/ProcessDisplayedModel'
-  import ProcessUserModel from '../../models/ProcessUserModel'
-  import SimFrame from './SimFrame'
-  import SimTrace from './SimTrace'
-  import Helper from '../helpers/Helper'
-  import ApiRemote from '../../deepsec-api/ApiRemote'
+import QueryModel from '../../models/QueryModel'
+import SpecCode from '../SpecCode'
+import { formatProcess } from '../../util/process-parser'
+import ProcessDisplayedModel from '../../models/ProcessDisplayedModel'
+import ProcessUserModel from '../../models/ProcessUserModel'
+import SimFrame from './SimFrame'
+import SimTrace from './SimTrace'
+import Helper from '../helpers/Helper'
+import ApiRemote from '../../deepsec-api/ApiRemote'
 
-  export default {
-    name: 'attack-sim',
-    components: { Helper, SimTrace, SimFrame, SpecCode },
-    data () {
-      return {
-        processDisplayed: undefined,
-        processUser: undefined,
-        apiRemote: undefined,
-        syncProcesses: true
+export default {
+  name: 'attack-sim',
+  components: { Helper, SimTrace, SimFrame, SpecCode },
+  data () {
+    return {
+      processDisplayed: undefined,
+      processUser: undefined,
+      apiRemote: undefined,
+      syncProcesses: true
+    }
+  },
+  props: {
+    query: {
+      type: QueryModel,
+      required: true
+    }
+  },
+  computed: {
+    processDisplayedStr: function () {
+      return formatProcess(this.processDisplayed.process, this.processDisplayed.atomic)
+    },
+    processUserStr: function () {
+      return formatProcess(this.processUser.process, this.processUser.atomic)
+    }
+  },
+  watch: {
+    'simulatedProcess.actions': function () {
+      if (this.syncProcesses) {
+        this.forceSyncProcesses()
       }
     },
-    props: {
-      query: {
-        type: QueryModel,
-        required: true
-      }
-    },
-    computed: {
-      processDisplayedStr: function () {
-        return formatProcess(this.processDisplayed.process, this.processDisplayed.atomic)
-      },
-      processUserStr: function () {
-        return formatProcess(this.processUser.process, this.processUser.atomic)
-      }
-    },
-    watch: {
-      'simulatedProcess.actions': function () {
-        if (this.syncProcesses) {
-          this.forceSyncProcesses()
-        }
-      },
-      syncProcesses: function (newVal, _) {
-        if (newVal) {
-          this.forceSyncProcesses()
-        }
-      }
-    },
-    methods: {
-      firstAction () {
-        if (!this.syncProcesses && !this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
-          this.processDisplayed.gotoFirstAction()
-        }
-      },
-      previousAction () {
-        if (!this.syncProcesses && !this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
-          this.processDisplayed.gotoPreviousAction()
-        }
-      },
-      nextAction () {
-        if (!this.syncProcesses && !this.processDisplayed.loading && this.processDisplayed.hasNextAction()) {
-          this.processDisplayed.gotoNextAction()
-        }
-      },
-      lastAction () {
-        if (!this.syncProcesses && !this.processDisplayed.loading && this.processDisplayed.hasNextAction()) {
-          this.processDisplayed.gotoLastAction()
-        }
-      },
-      gotoAction (id) {
-        if (!this.syncProcesses && !this.processDisplayed.loading) {
-          this.processDisplayed.gotoAction(id)
-        }
-      },
-      simulateAction (action) {
-        if (!this.processDisplayed.loading && !this.processUser.loading) {
-          this.processUser.nextUserAction(action)
-        }
-      },
-      undo () {
-        if (!this.processDisplayed.loading && !this.processUser.loading && this.processUser.hasBackHistory()) {
-          this.processUser.undo()
-        }
-      },
-      redo () {
-        if (!this.processDisplayed.loading && !this.processUser.loading && this.processUser.hasNextHistory()) {
-          this.processUser.redo()
-        }
-      },
-      forceSyncProcesses () {
-        // If sync enable and not the same step level
-        const goal = this.processUser.nbVisibleAction()
-        if (this.processDisplayed.nbVisibleAction() !== goal) {
-          this.processDisplayed.gotoNbVisibleAction(goal)
-        }
-      }
-    },
-    beforeMount () {
-      this.apiRemote = new ApiRemote('attack-simulator', this.query.path, false)
-      this.processDisplayed = new ProcessDisplayedModel(this.query.getAttackedProcessId(),
-                                                        this.query.getAttackedProcess(),
-                                                        this.query.atomicData,
-                                                        this.query.attackTrace.action_sequence,
-                                                        this.apiRemote)
-
-      this.processUser = new ProcessUserModel(this.query.getNotAttackedProcessId(),
-                                              this.query.getNotAttackedProcess(),
-                                              this.query.atomicData,
-                                              this.apiRemote)
-
-      // Start the attack simulator process
-      this.processUser.startProcess({ query_file: this.query.path })
-    },
-    // Called when the user change to an other view.
-    destroyed () {
-      if (this.apiRemote.started && !this.apiRemote.stopped) {
-        // Stop the attack simulator process
-        this.apiRemote.sendQuery('die')
+    syncProcesses: function (newVal, _) {
+      if (newVal) {
+        this.forceSyncProcesses()
       }
     }
+  },
+  methods: {
+    firstAction () {
+      if (!this.syncProcesses && !this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
+        this.processDisplayed.gotoFirstAction()
+      }
+    },
+    previousAction () {
+      if (!this.syncProcesses && !this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
+        this.processDisplayed.gotoPreviousAction()
+      }
+    },
+    nextAction () {
+      if (!this.syncProcesses && !this.processDisplayed.loading && this.processDisplayed.hasNextAction()) {
+        this.processDisplayed.gotoNextAction()
+      }
+    },
+    lastAction () {
+      if (!this.syncProcesses && !this.processDisplayed.loading && this.processDisplayed.hasNextAction()) {
+        this.processDisplayed.gotoLastAction()
+      }
+    },
+    gotoAction (id) {
+      if (!this.syncProcesses && !this.processDisplayed.loading) {
+        this.processDisplayed.gotoAction(id)
+      }
+    },
+    simulateAction (action) {
+      if (!this.processDisplayed.loading && !this.processUser.loading) {
+        this.processUser.nextUserAction(action)
+      }
+    },
+    undo () {
+      if (!this.processDisplayed.loading && !this.processUser.loading && this.processUser.hasBackHistory()) {
+        this.processUser.undo()
+      }
+    },
+    redo () {
+      if (!this.processDisplayed.loading && !this.processUser.loading && this.processUser.hasNextHistory()) {
+        this.processUser.redo()
+      }
+    },
+    forceSyncProcesses () {
+      // If sync enable and not the same step level
+      const goal = this.processUser.nbVisibleAction()
+      if (this.processDisplayed.nbVisibleAction() !== goal) {
+        this.processDisplayed.gotoNbVisibleAction(goal)
+      }
+    }
+  },
+  beforeMount () {
+    this.apiRemote = new ApiRemote('attack-simulator', this.query.path, false)
+    this.processDisplayed = new ProcessDisplayedModel(this.query.getAttackedProcessId(),
+                                                      this.query.getAttackedProcess(),
+                                                      this.query.atomicData,
+                                                      this.query.attackTrace.action_sequence,
+                                                      this.apiRemote)
+
+    this.processUser = new ProcessUserModel(this.query.getNotAttackedProcessId(),
+                                            this.query.getNotAttackedProcess(),
+                                            this.query.atomicData,
+                                            this.apiRemote)
+
+    // Start the attack simulator process
+    this.processUser.startProcess({ query_file: this.query.path })
+  },
+  // Called when the user change to an other view.
+  destroyed () {
+    if (this.apiRemote.started && !this.apiRemote.stopped) {
+      // Stop the attack simulator process
+      this.apiRemote.sendQuery('die')
+    }
   }
+}
 </script>
 
 <style scoped>
