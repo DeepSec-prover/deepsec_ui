@@ -27,7 +27,7 @@ export default class ProcessUserModel extends ProcessModel {
     const removedActions = this.actions.splice(actionId + 1)
 
     if (saveHistory) {
-      this.actionsHistory.concat(
+      this.actionsHistory.push(
         () => this.executeActions(removedActions, false)
       )
     }

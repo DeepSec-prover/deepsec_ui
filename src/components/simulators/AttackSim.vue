@@ -74,6 +74,7 @@
                      :trace-level="processDisplayed.traceLevel"
                      :current-action="processDisplayed.currentAction"
                      :actions="processDisplayed.actions"
+                     @goto="gotoActionDisplayed"
                      determinate></sim-trace>
           <!-- Frame -->
           <sim-frame :atomic="processDisplayed.atomic" :frame="processDisplayed.frame"></sim-frame>
@@ -124,7 +125,8 @@
           <!-- Trace -->
           <sim-trace :atomic="processUser.atomic"
                      :trace-level="processUser.traceLevel"
-                     :actions="processUser.actions"></sim-trace>
+                     :actions="processUser.actions"
+                     @goto="gotoActionUser"></sim-trace>
           <!-- Frame -->
           <sim-frame :atomic="processUser.atomic" :frame="processUser.frame"></sim-frame>
           <el-button @click="simulateAction(processUser.availableActions.all[0])">Test next action</el-button>
@@ -207,7 +209,7 @@ export default {
         this.processDisplayed.gotoLastAction()
       }
     },
-    gotoAction (id) {
+    gotoActionDisplayed (id) {
       if (!this.syncProcesses && !this.processDisplayed.loading) {
         this.processDisplayed.gotoAction(id)
       }
@@ -215,6 +217,11 @@ export default {
     simulateAction (action) {
       if (!this.processDisplayed.loading && !this.processUser.loading) {
         this.processUser.nextUserAction(action)
+      }
+    },
+    gotoActionUser (id) {
+      if (!this.processUser.loading) {
+        this.processUser.gotoAction(id)
       }
     },
     undo () {
