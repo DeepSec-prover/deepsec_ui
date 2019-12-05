@@ -68,7 +68,7 @@
                    :trace-level="processDisplayed.traceLevel"
                    :nb-preview="nbTracePreview"
                    v-on:goto="gotoAction"
-                   determinate></sim-trace>
+                   fixedActions></sim-trace>
 
         <!-- Trace Frame -->
         <sim-frame :frame="processDisplayed.frame" :atomic="processDisplayed.atomic"></sim-frame>

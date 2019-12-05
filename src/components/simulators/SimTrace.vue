@@ -1,7 +1,7 @@
 <template>
   <el-card class="steps-frame">
     <template slot="header">
-      <template v-if="determinate">
+      <template v-if="fixedActions">
         <template v-if="currentAction === -1">
           Trace - {{ actions.length }} Step{{ actions.length > 1 ? 's' : '' }}
         </template>
@@ -87,12 +87,15 @@ export default {
       required: true
     },
     /**
-     * Determinate means that the list of action won't change.
+     * If the list of action won't change.
      */
-    determinate: {
+    fixedActions: {
       type: Boolean,
       default: false
     },
+    /**
+     * The number of next action preview to show.
+     */
     nbPreview: {
       type: Number,
       default: 0
@@ -111,7 +114,7 @@ export default {
       return actionsStr
     },
     isInitialState: function () {
-      if (this.determinate) {
+      if (this.fixedActions) {
         return (this.currentAction + this.nbPreview) === -1
       } else {
         return this.actions.length === 0
@@ -135,7 +138,7 @@ export default {
       for (let i = 0; i < this.actions.length; i++) {
         const a = this.actions[i]
         // Current action limit
-        if (this.determinate && i > this.currentAction) {
+        if (this.fixedActions && i > this.currentAction) {
           // Add in preview if necessary
           if (countPreview < this.nbPreview) {
             if (ProcessModel.isVisibleAction(a, this.traceLevel)) {

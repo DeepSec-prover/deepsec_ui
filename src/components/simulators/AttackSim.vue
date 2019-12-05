@@ -78,7 +78,7 @@
                      :actions="processDisplayed.actions"
                      :nb-preview="nbTracePreview"
                      @goto="gotoActionDisplayed"
-                     determinate></sim-trace>
+                     fixedActions></sim-trace>
           <!-- Frame -->
           <sim-frame :atomic="processDisplayed.atomic" :frame="processDisplayed.frame"></sim-frame>
         </el-col>
