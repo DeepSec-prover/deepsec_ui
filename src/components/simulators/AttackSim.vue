@@ -1,11 +1,11 @@
 <template>
   <el-row :gutter="10">
     <el-col :lg="12">
-      <h3>Attacked Process</h3>
+      <h3>Attacked Process ({{ processDisplayed.processId }})</h3>
       <el-row :gutter="10">
         <el-col :span="16">
           <!-- Process code -->
-          <spec-code :code="processDisplayedStr"></spec-code>
+          <spec-code :code="processDisplayedStr" :focused-positions="focusedPositions"></spec-code>
         </el-col>
         <el-col :span="8">
           <!-- Interactions -->
@@ -31,7 +31,7 @@
             </div>
             <!-- Navigation buttons -->
             <div>
-              <el-button-group v-if="!syncProcesses">
+              <el-button-group>
                 <helper helper-str="Go to initial state.<br><b>Short Key</b> : ctrl + ⇦">
                   <el-button :disabled="processDisplayed.loading || !processDisplayed.hasPreviousAction()"
                              @click="firstAction"
@@ -52,6 +52,8 @@
                 <helper helper-str="Go to next action.<br><b>Short Key</b> : ⇨">
                   <el-button :disabled="processDisplayed.loading || !processDisplayed.hasNextAction()"
                              @click="nextAction"
+                             @mouseenter.native="focusNextActions"
+                             @mouseleave.native="clearFocusActions"
                              v-shortkey="['arrowright']" @shortkey.native="nextAction"
                              size="small">
                     Next
@@ -74,6 +76,7 @@
                      :trace-level="processDisplayed.traceLevel"
                      :current-action="processDisplayed.currentAction"
                      :actions="processDisplayed.actions"
+                     :nb-preview="nbTracePreview"
                      @goto="gotoActionDisplayed"
                      determinate></sim-trace>
           <!-- Frame -->
@@ -82,7 +85,7 @@
       </el-row>
     </el-col>
     <el-col :lg="12">
-      <h3 class="text-right">Simulated Process</h3>
+      <h3 class="text-right">Simulated Process ({{ processUser.processId }})</h3>
       <el-row :gutter="10">
         <el-col :span="8">
           <!-- Interactions -->
@@ -159,7 +162,9 @@ export default {
       processDisplayed: undefined,
       processUser: undefined,
       apiRemote: undefined,
-      syncProcesses: true
+      syncProcesses: true,
+      focusedPositions: [],
+      nbTracePreview: 0
     }
   },
   props: {
@@ -186,33 +191,52 @@ export default {
       if (newVal) {
         this.forceSyncProcesses()
       }
+    },
+    'processDisplayed.currentAction': function () {
+      // Update next action focus if still displayed
+      if (this.focusedPositions && this.focusedPositions.length > 0) {
+        this.focusedPositions = this.processDisplayed.getNextActionPositions()
+      }
     }
   },
   methods: {
     firstAction () {
-      if (!this.syncProcesses && !this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
+      if (!this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
+        this.syncProcesses = false
         this.processDisplayed.gotoFirstAction()
       }
     },
     previousAction () {
-      if (!this.syncProcesses && !this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
+      if (!this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
+        this.syncProcesses = false
         this.processDisplayed.gotoPreviousAction()
       }
     },
     nextAction () {
-      if (!this.syncProcesses && !this.processDisplayed.loading && this.processDisplayed.hasNextAction()) {
+      if (!this.processDisplayed.loading && this.processDisplayed.hasNextAction()) {
+        this.syncProcesses = false
         this.processDisplayed.gotoNextAction()
       }
     },
     lastAction () {
-      if (!this.syncProcesses && !this.processDisplayed.loading && this.processDisplayed.hasNextAction()) {
+      if (!this.processDisplayed.loading && this.processDisplayed.hasNextAction()) {
+        this.syncProcesses = false
         this.processDisplayed.gotoLastAction()
       }
     },
     gotoActionDisplayed (id) {
-      if (!this.syncProcesses && !this.processDisplayed.loading) {
+      if (!this.processDisplayed.loading) {
+        this.syncProcesses = false
         this.processDisplayed.gotoAction(id)
       }
+    },
+    focusNextActions () {
+      this.nbTracePreview = 1
+      this.focusedPositions = this.processDisplayed.getNextActionPositions()
+    },
+    clearFocusActions () {
+      this.nbTracePreview = 0
+      this.focusedPositions = []
     },
     simulateAction (action) {
       if (!this.processDisplayed.loading && !this.processUser.loading) {
