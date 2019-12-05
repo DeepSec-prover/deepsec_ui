@@ -1,9 +1,8 @@
 import Prism from 'prismjs'
 
-// Define the language grammar
-Prism.languages.deepsec = {
+let filters = {
   keyword: {
-    pattern: /(?<=\b)(new|let|if|then|else|in)(?=\s)|(?<=\s)->(?=\s)|(?<=^|\s|;)!~\d+/,
+    pattern: /(?<=\b)(new|let|if|then|else|in)(?=\s|%)|(?<=\s|%)->(?=\s|%)|(?<=^|\s|;|%)!~\d+/,
     inside: {
       sup: /~\d+/
     }
@@ -11,16 +10,28 @@ Prism.languages.deepsec = {
   'in-out': /(?<=\b)(in|out|eavesdrop)(?=\()/,
   operator: /=\|/,
   function: {
-    pattern: /(?<=^|[\s,;()])(#?\w+|proj_{\d+,\d+})(?=\()/,
+    pattern: /(?<=^|[\s,;()%])(#?\w+|proj_{\d+,\d+})(?=\()/,
     inside: {
       sub: /(?<=\w)_\d+(?=\b)/
     }
   },
   'no-args': /\(\)/,
   punctuation: /[(),;]/u,
-  sup: /(?<=\w)~\d+(-\d+)*(?=\s|$|_)/,
-  sub: /(?<=\w)_\d+(?=\b|~)/
+  sup: /(?<=\w)~\d+(-\d+)*(?=\s|$|_|%)/,
+  sub: /(?<=\w)_\d+(?=\b|~|%)/,
+
 }
+
+// Position can include everything
+let position = {
+  pattern: /%\d+(-\d+)*%[^%]+%/, // Something like "142" or "752-1-2"
+  inside: Object.assign({}, filters) // Deep copy to avoid circular reference
+}
+
+filters = { position: position, ...filters } // Set position at first rule
+
+// Define the language grammar
+Prism.languages.deepsec = filters
 
 // Create hook before rendering code
 Prism.hooks.add('wrap', env => {
@@ -37,6 +48,12 @@ Prism.hooks.add('wrap', env => {
   // Hide no args "()"
   else if (env.type === 'no-args') {
     env.classes.push('hidden')
+  }
+  // Position tag
+  else if (env.type === 'position') {
+    const index = env.content.match(/^%([-\d]+)%/)[1]
+    env.classes.push(`position-${index}`)
+    env.content = env.content.match(/^%[-\d]+%([^%]+)%/)[1]
   }
   // Format projection function
   else if (env.type === 'function' && env.content.startsWith('proj_{')) {

@@ -159,9 +159,13 @@ function formatNew (subProcess, atomic, indent) {
     res += '~' + subProcess.bang.join('-')
   }
 
-  res += ';\n' + format(subProcess.process, atomic, indent)
+  if (subProcess.position) {
+    res = tagPosition(res, subProcess.position)
+  }
 
-  return res
+  res += ';\n'
+
+  return res + format(subProcess.process, atomic, indent)
 }
 
 /**
@@ -174,7 +178,13 @@ function formatNew (subProcess, atomic, indent) {
  */
 function formatLetInElse (subProcess, atomic, indent) {
   let res = 'let ' + format(subProcess.pattern, atomic, indent) + ' = ' +
-    format(subProcess.term, atomic, indent) + ' in \n'
+    format(subProcess.term, atomic, indent) + ' in'
+
+  if (subProcess.position) {
+    res = tagPosition(res, subProcess.position)
+  }
+
+  res += '\n'
 
   // No "else" so no indent "in"
   if (subProcess.process_else === undefined) {
@@ -182,9 +192,16 @@ function formatLetInElse (subProcess, atomic, indent) {
   }
   // With "else" so no indent all
   else {
-    res += format(subProcess.process_then, atomic, indent + 1)
-    res += strIndent(indent) + 'else\n' +
-      format(subProcess.process_else, atomic, indent + 1)
+    res += format(subProcess.process_then, atomic, indent + 1) +
+      strIndent(indent)
+
+    if (subProcess.position) {
+      res += tagPosition('else', subProcess.position)
+    } else {
+      res += 'else'
+    }
+
+    res += '\n' + format(subProcess.process_else, atomic, indent + 1)
   }
 
   return res
@@ -247,6 +264,10 @@ function formatOutput (subProcess, atomic, indent) {
   let res = 'out(' + format(subProcess.channel, atomic, indent) + ',' +
     format(subProcess.term, atomic, indent) + ')'
 
+  if (subProcess.position) {
+    res = tagPosition(res, subProcess.position)
+  }
+
   if (subProcess.process === undefined) {
     res += '\n'
   } else {
@@ -282,6 +303,10 @@ function formatInput (subProcess, atomic, indent) {
   let res = 'in(' + format(subProcess.channel, atomic, indent) + ',' +
     format(subProcess.pattern, atomic, indent) + ')'
 
+  if (subProcess.position) {
+    res = tagPosition(res, subProcess.position)
+  }
+
   if (subProcess.process === undefined) {
     res += '\n'
   } else {
@@ -301,7 +326,13 @@ function formatInput (subProcess, atomic, indent) {
  */
 function formatIfThenElse (subProcess, atomic, indent) {
   let res = 'if ' + format(subProcess.term1, atomic, indent) + ' = ' +
-    format(subProcess.term2, atomic, indent) + ' then\n'
+    format(subProcess.term2, atomic, indent) + ' then'
+
+  if (subProcess.position) {
+    res = tagPosition(res, subProcess.position)
+  }
+
+  res += '\n'
 
   // No "else" so no indent "then"
   if (subProcess.process_else === undefined) {
@@ -310,8 +341,15 @@ function formatIfThenElse (subProcess, atomic, indent) {
   // With "else" so indent all
   else {
     res += format(subProcess.process_then, atomic, indent + 1) +
-      strIndent(indent) + 'else\n' +
-      format(subProcess.process_else, atomic, indent + 1)
+      strIndent(indent)
+
+    if (subProcess.position) {
+      res += tagPosition('else', subProcess.position)
+    } else {
+      res += 'else'
+    }
+
+    res += '\n' + format(subProcess.process_else, atomic, indent + 1)
   }
 
   return res
@@ -326,7 +364,15 @@ function formatIfThenElse (subProcess, atomic, indent) {
  * @returns {string} A readable string which describe the sub-process and its children
  */
 function formatBang (subProcess, atomic, indent) {
-  return `!~${subProcess.multiplicity}\n` + format(subProcess.process, atomic, indent)
+  let res = `!~${subProcess.multiplicity}`
+
+  if (subProcess.position) {
+    res = tagPosition(res, subProcess.position)
+  }
+
+  res += '\n' + format(subProcess.process, atomic, indent)
+
+  return res
 }
 
 /**
@@ -379,4 +425,21 @@ function formatRecipe (recipe, atomic) {
     logger.error(`Try to parse an unknown recipe type ${recipe.type}`)
     return `------------ not implemented : ${recipe.type} ------------`
   }
+}
+
+/**
+ * Surround a string with a tag position.
+ * With identifier like "142" or "752-1-2"
+ *
+ * @param {String} content The content to tag with the position.
+ * @param {Object} position The position object.
+ * @returns {string} The content surrounded with the position tag.
+ */
+function tagPosition (content, position) {
+  let args = ''
+  if (position.args && position.args.length > 0) {
+    args = '-' + position.args.join('-')
+  }
+
+  return `%${position.index}${args}%${content}%`
 }
