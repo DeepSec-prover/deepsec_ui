@@ -117,6 +117,13 @@ export default {
       return formatProcess(this.processDisplayed.process, this.processDisplayed.atomic)
     }
   },
+  watch: {
+    'processDisplayed.currentAction': function () {
+      if (this.focusedPositions && this.focusedPositions.length > 0) {
+        this.focusedPositions = this.processDisplayed.getNextActionPositions()
+      }
+    }
+  },
   methods: {
     firstAction () {
       if (!this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
@@ -171,7 +178,7 @@ export default {
     },
     focusNextActions () {
       this.nbTracePreview = 1
-      this.focusedPositions.push(...this.processDisplayed.getNextActionPositions())
+      this.focusedPositions = this.processDisplayed.getNextActionPositions()
     },
     clearFocusActions () {
       this.nbTracePreview = 0
