@@ -24,6 +24,10 @@ export default {
     inLine: {
       type: Boolean,
       default: false
+    },
+    focusedPositions: {
+      type: Array,
+      default: null
     }
   },
   methods: {
@@ -33,15 +37,35 @@ export default {
         // We have to edit directly the dom to enable Prism plugins
         this.$refs.code.textContent = this.code
         Prism.highlightElement(this.$refs.code)
+        // Trigger custom focus highlight
+        if (this.focusedPositions) {
+          this.focusCode()
+        }
       } else {
         // No code yet
         this.$refs.code.textContent = 'loading ...'
+      }
+    },
+    focusCode () {
+      // Clean previous focus
+      this.$el.querySelectorAll('.focused').forEach(e => {e.classList.remove('focused')})
+
+      // Add focus to specific positions
+      if (this.focusedPositions && this.focusedPositions.length > 0) {
+        this.focusedPositions.forEach(p => {
+          this.$el.querySelectorAll(`.position-${p}`).forEach(e => {
+            e.classList.add('focused')
+          })
+        })
       }
     }
   },
   watch: {
     code () {
       this.render()
+    },
+    focusedPositions () {
+      this.focusCode()
     }
   },
   mounted () {
@@ -51,6 +75,12 @@ export default {
 </script>
 
 <style>
+  .focused {
+    border: rgba(255, 0, 0, 0.7);
+    border-style: solid;
+    border-radius: 6px;
+  }
+
   .language-deepsec .token.hidden {
     display: none;
   }

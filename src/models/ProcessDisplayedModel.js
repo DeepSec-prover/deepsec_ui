@@ -100,6 +100,43 @@ export default class ProcessDisplayedModel extends ProcessModel {
   }
 
   /**
+   * Get the list of next actions position id.
+   * Use for focus some part in the code.
+   *
+   * @returns {string[]} Next action position id formatted as a string.
+   */
+  getNextActionPositions () {
+    const positions = []
+
+    for (let i = this.currentAction + 1; i < this.nbSteps(); i++) {
+      const a = this.actions[i]
+
+      if (a.position) {
+        positions.push(a.position)
+      }
+      if (a.input_position) {
+        positions.push(a.input_position)
+      }
+      if (a.output_position) {
+        positions.push(a.output_position)
+      }
+
+      if (ProcessModel.isVisibleAction(this.actions[i], this.traceLevel)) {
+        break
+      }
+    }
+
+    // Format to string and return
+    return positions.map(p => {
+      let argsStr = ''
+      if (p.args && p.args.length > 0) {
+        argsStr = '-' + p.args.join('-')
+      }
+      return p.index + argsStr
+    })
+  }
+
+  /**
    * Got to a step that match with a specific number of visible actions (I/O).
    *
    * @param {number} nb The number of visible action we want.

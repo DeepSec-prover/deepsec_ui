@@ -2,7 +2,7 @@
   <el-row :gutter="10">
     <el-col :md="16">
       <h3>Attack on Process {{ processDisplayed.processId }}</h3>
-      <spec-code :code="processStr"></spec-code>
+      <spec-code :code="processStr" :focused-positions="focusedPositions"></spec-code>
     </el-col>
     <el-col :md="8">
 
@@ -41,6 +41,8 @@
           <helper helper-str="Go to next action.<br><b>Short Key</b> : ⇨">
             <el-button :disabled="processDisplayed.loading || !processDisplayed.hasNextAction()"
                        @click="nextAction"
+                       @mouseenter.native="focusNextActions"
+                       @mouseleave.native="clearFocusActions"
                        v-shortkey="['arrowright']" @shortkey.native="nextAction">
               Next
               <i class="el-icon-arrow-right"></i>
@@ -101,7 +103,8 @@ export default {
       processDisplayed: undefined,
       apiRemote: undefined,
       visibleActions: [],
-      noActionVisible: true
+      noActionVisible: true,
+      focusedPositions: []
     }
   },
   computed: {
@@ -163,6 +166,12 @@ export default {
       } else {
         logger.debug('Go to action method call to fast (still loading)')
       }
+    },
+    focusNextActions () {
+      this.focusedPositions.push(...this.processDisplayed.getNextActionPositions())
+    },
+    clearFocusActions () {
+      this.focusedPositions = []
     }
   },
   beforeMount () {
