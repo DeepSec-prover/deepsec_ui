@@ -121,6 +121,8 @@ function format (subProcess, atomic, indent) {
       return linePrefix + formatIfThenElse(subProcess, atomic, indent)
     case 'Bang':
       return linePrefix + formatBang(subProcess, atomic, indent)
+    case 'Choice':
+      return linePrefix + formatChoice(subProcess, atomic, indent)
     case null:
       return linePrefix + '0\n'
     default:
@@ -288,7 +290,7 @@ function formatOutput (subProcess, atomic, indent) {
 function formatPar (subProcess, atomic, indent) {
   return '(\n' + subProcess.process_list.map(process => {
     return format(process, atomic, indent + 1)
-  }).join(strIndent(indent) + ')|(\n') + strIndent(indent) + ')\n'
+  }).join(strIndent(indent) + ') | (\n') + strIndent(indent) + ')\n'
 }
 
 /**
@@ -371,6 +373,26 @@ function formatBang (subProcess, atomic, indent) {
   }
 
   res += '\n' + format(subProcess.process, atomic, indent)
+
+  return res
+}
+
+/**
+ * Format "Choice" type to readable string
+ *
+ * @param {Object} subProcess - A structured sub-process
+ * @param {Object} atomic - The table of atomic data
+ * @param {number} indent - The number of indentation character for the current sub-process (>1)
+ * @returns {string} A readable string which describe the sub-process and its children
+ */
+function formatChoice (subProcess, atomic, indent) {
+  let res = '(\n' + format(subProcess.process1, atomic, indent + 1) + strIndent(indent) + ') '
+
+  if (subProcess.position) {
+    res += tagPosition('+', subProcess.position)
+  }
+
+  res += ' (\n' + format(subProcess.process2, atomic, indent + 1) + strIndent(indent) + ')\n'
 
   return res
 }
