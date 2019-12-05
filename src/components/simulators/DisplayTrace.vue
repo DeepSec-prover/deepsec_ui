@@ -63,6 +63,7 @@
                  :atomic="processDisplayed.atomic"
                  :current-action="processDisplayed.currentAction"
                  :trace-level="processDisplayed.traceLevel"
+                 :nb-preview="nbTracePreview"
                  determinate
                  v-on:goto="gotoAction"></sim-trace>
 
@@ -104,7 +105,8 @@ export default {
       apiRemote: undefined,
       visibleActions: [],
       noActionVisible: true,
-      focusedPositions: []
+      focusedPositions: [],
+      nbTracePreview: 0
     }
   },
   computed: {
@@ -168,9 +170,11 @@ export default {
       }
     },
     focusNextActions () {
+      this.nbTracePreview = 1
       this.focusedPositions.push(...this.processDisplayed.getNextActionPositions())
     },
     clearFocusActions () {
+      this.nbTracePreview = 0
       this.focusedPositions = []
     }
   },

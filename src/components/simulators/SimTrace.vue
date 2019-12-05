@@ -18,7 +18,7 @@
         </template>
       </template>
     </template>
-    <div v-if="(!determinate && actions.length === 0) || (determinate && currentAction === -1)" class="centred-content info-text">
+    <div v-if="isInitialState" class="centred-content info-text">
       Initial state
     </div>
     <div v-else-if="noActionVisible" class="centred-content info-text">
@@ -26,14 +26,23 @@
     </div>
     <simplebar v-else id="steps">
       <div id="trace-actions">
-        <template v-for="i in actions.length" v-if="visibleActions[i-1]">
-          <span class="action-index">{{ i }}</span>
+        <template v-for="a in visibleActions">
+          <span class="action-index">{{ a.index + 1 }}</span>
           <span class="action-description">
-                <spec-code :code="actionsStr[i-1]"
-                           @click.native="gotoAction(i-1)"
-                           :class="{'clickable': true, 'tau': isTauAction(actions[i-1])}"
+                <spec-code :code="actionsStr[a.index]"
+                           @click.native="gotoAction(a.index)"
+                           :class="{'clickable': true, 'tau': isTauAction(a.action)}"
                            in-line></spec-code>
-              </span>
+          </span>
+        </template>
+        <template v-for="a in previewActions">
+          <span class="action-index preview">{{ a.index + 1 }}</span>
+          <span class="action-description">
+                <spec-code :code="actionsStr[a.index]"
+                           @click.native="gotoAction(a.index)"
+                           :class="{'clickable': true, 'tau': isTauAction(a.action)}"
+                           in-line></spec-code>
+          </span>
         </template>
       </div>
     </simplebar>
@@ -56,6 +65,7 @@ export default {
   data () {
     return {
       visibleActions: [],
+      previewActions: [],
       noActionVisible: true
     }
   },
@@ -82,6 +92,10 @@ export default {
     determinate: {
       type: Boolean,
       default: false
+    },
+    nbPreview: {
+      type: Number,
+      default: 0
     }
   },
   computed: {
@@ -95,6 +109,13 @@ export default {
       })
 
       return actionsStr
+    },
+    isInitialState: function () {
+      if (this.determinate) {
+        return (this.currentAction + this.nbPreview) === -1
+      } else {
+        return this.actions.length === 0
+      }
     }
   },
   methods: {
@@ -106,25 +127,36 @@ export default {
      * @returns {[Boolean]} An array of boolean where every position match with an action of the trace.
      */
     computeVisibleActions () {
-      let actions = []
+      this.visibleActions = []
+      this.previewActions = []
       let oneActionVisible = false
-      let currentAction
+      let countPreview = 0
 
       for (let i = 0; i < this.actions.length; i++) {
         const a = this.actions[i]
+        // Current action limit
         if (this.determinate && i > this.currentAction) {
-          currentAction = false
+          // Add in preview if necessary
+          if (countPreview < this.nbPreview) {
+            if (ProcessModel.isVisibleAction(a, this.traceLevel)) {
+              this.previewActions.push({ index: i, action: a })
+              oneActionVisible = true
+              countPreview++
+            }
+          } else {
+            break
+          }
         } else {
-          currentAction = ProcessModel.isVisibleAction(a, this.traceLevel)
+          // Add in list if visible
+          if (ProcessModel.isVisibleAction(a, this.traceLevel)) {
+            this.visibleActions.push({ index: i, action: a })
+            oneActionVisible = true
+          }
         }
-
-        actions.push(currentAction)
-        oneActionVisible = oneActionVisible || currentAction
       }
 
       // Set at the end to avoid multiple update
       this.noActionVisible = !oneActionVisible
-      this.visibleActions = actions
     },
     isTauAction (action) {
       return ['tau', 'comm', 'bang', 'choice'].includes(action.type)
@@ -142,6 +174,9 @@ export default {
       this.computeVisibleActions()
     },
     'actions.length': function () {
+      this.computeVisibleActions()
+    },
+    nbPreview: function () {
       this.computeVisibleActions()
     }
   },
@@ -184,5 +219,9 @@ export default {
 
   .steps-frame {
     margin-bottom: 20px;
+  }
+
+  #trace-actions .action-index.preview {
+    color: rgba(255, 0, 0, 0.7);
   }
 </style>
