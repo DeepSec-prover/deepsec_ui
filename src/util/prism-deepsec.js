@@ -8,7 +8,7 @@ let filters = {
     }
   },
   'in-out': /(?<=\b)(in|out|eavesdrop)(?=\()/,
-  operator: /=\|/,
+  operator: /=\|\+/,
   function: {
     pattern: /(?<=^|[\s,;()%])(#?\w+|proj_{\d+,\d+})(?=\()/,
     inside: {
