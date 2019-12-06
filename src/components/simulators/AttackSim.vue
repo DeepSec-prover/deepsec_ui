@@ -136,7 +136,7 @@
         </el-col>
         <el-col :span="16">
           <!-- Process code -->
-          <spec-code :code="processUserStr"></spec-code>
+          <spec-code :code="processUserStr" :available-actions="processUser.getCurrentAvailableActions()"></spec-code>
         </el-col>
       </el-row>
     </el-col>

@@ -10,6 +10,7 @@ import Prism from '../util/prism-deepsec'
 import Simplebar from 'simplebar-vue'
 import 'simplebar/dist/simplebar.min.css'
 import logger from 'electron-log'
+import ProcessModel from '../models/ProcessModel'
 
 // Disable automatic highlight at page load
 document.removeEventListener('DOMContentLoaded', Prism.highlightAll)
@@ -25,9 +26,24 @@ export default {
       type: Boolean,
       default: false
     },
+    /**
+     * List of position formatted as a string.
+     */
     focusedPositions: {
       type: Array,
-      default: null
+      default: () => []
+    },
+    /**
+     * List of available actions objects.
+     */
+    availableActions: {
+      type: Array,
+      default: () => []
+    }
+  },
+  data () {
+    return {
+      focusedPositionsFromActions: []
     }
   },
   methods: {
@@ -38,34 +54,84 @@ export default {
         this.$refs.code.textContent = this.code
         Prism.highlightElement(this.$refs.code)
         // Trigger custom focus highlight
-        if (this.focusedPositions) {
-          this.focusCode()
-        }
+        this.setupFocus(this.focusedPositions)
+        // Trigger custom clickable action
+        this.setupAvailableActions()
       } else {
         // No code yet
         this.$refs.code.textContent = 'loading ...'
       }
     },
-    focusCode () {
-      // Clean previous focus
-      this.$el.querySelectorAll('.focused').forEach(e => {e.classList.remove('focused')})
-
+    setupFocus (positionList) {
       // Add focus to specific positions
-      if (this.focusedPositions && this.focusedPositions.length > 0) {
-        this.focusedPositions.forEach(p => {
+      if (positionList && positionList.length > 0) {
+        positionList.forEach(p => {
           this.$el.querySelectorAll(`.position-${p}`).forEach(e => {
             e.classList.add('focused')
           })
         })
       }
+    },
+    clearFocus () {
+      // Clean previous focus (all of them)
+      this.$el.querySelectorAll('.focused').forEach(e => {e.classList.remove('focused')})
+    },
+    setupAvailableActions () {
+      if (this.availableActions && this.availableActions.length > 0) {
+        this.availableActions.forEach(action => {
+          const positionStr = ProcessModel.formatPositionToString(action.position)
+          this.$el.querySelectorAll(`.position-${positionStr}`).forEach(e => {
+            // Add css classes
+            e.classList.add('available-action', 'clickable')
+
+            // Click listener
+            e.addEventListener('click', () => console.log(action))
+
+            // If has linked actions, add listener for focus
+            if (action.tau_positions && action.tau_positions.length > 1) {
+              const newPositions = action.tau_positions.map(p => ProcessModel.formatPositionToString(p))
+              e.addEventListener('mouseenter', () => {
+                this.focusedPositionsFromActions = newPositions
+              })
+              e.addEventListener('mouseleave', () => {
+                this.focusedPositionsFromActions = []
+              })
+            }
+          })
+        })
+      }
+    },
+    clearAvailableActions () {
+      // Clean previous focus (all of them)
+      this.$el.querySelectorAll('.available-action').forEach(e => {
+        e.classList.remove('available-action', 'clickable')
+      })
     }
   },
   watch: {
     code () {
       this.render()
     },
-    focusedPositions () {
-      this.focusCode()
+    focusedPositions (newVal, oldVal) {
+      if (oldVal && oldVal.length > 0) {
+        this.clearFocus()
+      }
+
+      this.setupFocus(this.focusedPositions)
+    },
+    focusedPositionsFromActions (newVal, oldVal) {
+      if (oldVal && oldVal.length > 0) {
+        this.clearFocus()
+      }
+
+      this.setupFocus(this.focusedPositionsFromActions)
+    },
+    availableActions (newVal, oldVal) {
+      if (oldVal && oldVal.length > 0) {
+        this.clearAvailableActions()
+      }
+
+      this.setupAvailableActions()
     }
   },
   mounted () {
@@ -76,9 +142,15 @@ export default {
 
 <style>
   .focused {
-    border: rgba(255, 0, 0, 0.7);
-    border-style: solid;
-    border-radius: 6px;
+    outline: solid rgba(255, 0, 0, 0.7);
+  }
+
+  .available-action {
+    outline: dashed rgba(255, 0, 0, 0.5);
+  }
+
+  .available-action:hover {
+    outline: solid rgba(255, 0, 0, 0.7);
   }
 
   .language-deepsec .token.hidden {

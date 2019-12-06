@@ -124,4 +124,11 @@ export default class ProcessUserModel extends ProcessModel {
   nbVisibleAction () {
     return this.actions.filter(a => ProcessModel.isVisibleAction(a, 'io')).length
   }
+
+  /**
+   * @returns {Object[]} The list of available actions depending of the current trace level.
+   */
+  getCurrentAvailableActions () {
+    return this.availableActions[this.traceLevel]
+  }
 }

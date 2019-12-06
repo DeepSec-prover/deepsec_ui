@@ -127,13 +127,7 @@ export default class ProcessDisplayedModel extends ProcessModel {
     }
 
     // Format to string and return
-    return positions.map(p => {
-      let argsStr = ''
-      if (p.args && p.args.length > 0) {
-        argsStr = '-' + p.args.join('-')
-      }
-      return p.index + argsStr
-    })
+    return positions.map(p => ProcessModel.formatPositionToString(p))
   }
 
   /**

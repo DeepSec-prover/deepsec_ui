@@ -83,6 +83,15 @@ export default class ProcessModel {
   }
 
   /**
+   * Count the number of visible action (I/O) in this process trace.
+   *
+   * @returns {number} The number of visible action.
+   */
+  nbVisibleAction () {
+    throw new TypeError('Must override method')
+  }
+
+  /**
    * Check if an action is visible depending of the current detail level.
    *
    * @param {Object} action The action to check
@@ -105,11 +114,19 @@ export default class ProcessModel {
   }
 
   /**
-   * Count the number of visible action (I/O) in this process trace.
+   * Format a position object as a string.
+   * Used for classes identifier.
+   * Eg: "142" or "21-2-1"
    *
-   * @returns {number} The number of visible action.
+   * @param {Object} position The position object.
+   * @returns {string} The string identifier.
    */
-  nbVisibleAction () {
-    throw new TypeError('Must override method')
+  static formatPositionToString (position) {
+    let argsStr = ''
+    if (position.args && position.args.length > 0) {
+      argsStr = '-' + position.args.join('-')
+    }
+
+    return position.index + argsStr
   }
 }

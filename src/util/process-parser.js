@@ -1,5 +1,6 @@
 import AtomicRenamer from './AtomicRenamer'
 import logger from 'electron-log'
+import ProcessModel from '../models/ProcessModel'
 
 /**
  * String for one code indent
@@ -458,10 +459,6 @@ function formatRecipe (recipe, atomic) {
  * @returns {string} The content surrounded with the position tag.
  */
 function tagPosition (content, position) {
-  let args = ''
-  if (position.args && position.args.length > 0) {
-    args = '-' + position.args.join('-')
-  }
-
-  return `%${position.index}${args}%${content}%`
+  const positionStr = ProcessModel.formatPositionToString(position)
+  return `%${positionStr}%${content}%`
 }
