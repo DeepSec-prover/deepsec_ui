@@ -132,11 +132,12 @@
                      @goto="gotoActionUser"></sim-trace>
           <!-- Frame -->
           <sim-frame :atomic="processUser.atomic" :frame="processUser.frame"></sim-frame>
-          <el-button @click="simulateAction(processUser.availableActions.all[0])">Test next action</el-button>
         </el-col>
         <el-col :span="16">
           <!-- Process code -->
-          <spec-code :code="processUserStr" :available-actions="processUser.getCurrentAvailableActions()"></spec-code>
+          <spec-code :code="processUserStr"
+                     :available-actions="processUser.getCurrentAvailableActions()"
+                     @user-select-action="executeAction"></spec-code>
         </el-col>
       </el-row>
     </el-col>
@@ -238,7 +239,7 @@ export default {
       this.nbTracePreview = 0
       this.focusedPositions = []
     },
-    simulateAction (action) {
+    executeAction (action) {
       if (!this.processDisplayed.loading && !this.processUser.loading) {
         this.processUser.nextUserAction(action)
       }

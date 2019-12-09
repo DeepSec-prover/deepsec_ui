@@ -43,7 +43,14 @@ export default {
   },
   data () {
     return {
-      focusedPositionsFromActions: []
+      /**
+       * Focus position computed from an available action when cursor is hover.
+       */
+      focusedPositionsFromActions: [],
+      /**
+       * Save active listeners to remove them later.
+       */
+      actionActiveListeners: []
     }
   },
   methods: {
@@ -85,27 +92,48 @@ export default {
             e.classList.add('available-action', 'clickable')
 
             // Click listener
-            e.addEventListener('click', () => console.log(action))
+            const clickAction = () => {
+              const selectedAction = this.actionSelection(action)
+              this.$emit('user-select-action', selectedAction)
+            }
+            // Keep track to remove later
+            this.actionActiveListeners.push({ element: e, event: 'click', callback: clickAction })
+            e.addEventListener('click', clickAction)
 
             // If has linked actions, add listener for focus
             if (action.tau_positions && action.tau_positions.length > 1) {
               const newPositions = action.tau_positions.map(p => ProcessModel.formatPositionToString(p))
-              e.addEventListener('mouseenter', () => {
-                this.focusedPositionsFromActions = newPositions
-              })
-              e.addEventListener('mouseleave', () => {
-                this.focusedPositionsFromActions = []
-              })
+
+              const mouseEnterAction = () => this.focusedPositionsFromActions = newPositions
+              // Keep track to remove later
+              this.actionActiveListeners.push({ element: e, event: 'mouseenter', callback: mouseEnterAction })
+              e.addEventListener('mouseenter', mouseEnterAction)
+
+              const mouseLeaveAction = () => this.focusedPositionsFromActions = []
+              // Keep track to remove later
+              this.actionActiveListeners.push({ element: e, event: 'mouseleave', callback: mouseLeaveAction })
+              e.addEventListener('mouseleave', mouseLeaveAction)
             }
           })
         })
       }
     },
     clearAvailableActions () {
+      // Remove last listeners
+      this.actionActiveListeners.forEach(l => l.element.removeEventListener(l.event, l.callback))
+      this.actionActiveListeners = []
+
       // Clean previous focus (all of them)
       this.$el.querySelectorAll('.available-action').forEach(e => {
         e.classList.remove('available-action', 'clickable')
+
       })
+    },
+    actionSelection (availableAction) {
+      switch (availableAction.type) {
+        case 'tau':
+          return availableAction
+      }
     }
   },
   watch: {
