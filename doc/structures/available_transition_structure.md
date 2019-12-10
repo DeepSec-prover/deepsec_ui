@@ -6,7 +6,7 @@ Definition of `<available_transition>` :
 {
   "type": "direct",
   "recipe_channel": <recipe>,
-  "recipe_term":  <term> // Only for the attacker or generic simulator to display the recipe (could be recover from the attack trace).
+  "recipe_term": <recipe>, // Only for the attacker or generic simulator to display the recipe (could be recover from the attack trace).
   "term": <term> // Only for the attacker or generic simulator to display the term inputed.
 }
 ```

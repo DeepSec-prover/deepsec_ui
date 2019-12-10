@@ -4,8 +4,8 @@ Definition of `<term>` :
 
 ```
 {
-  "type": "Atomic";
-  "id": <int>;
+  "type": "Atomic",
+  "id": <int>,
   "bang": [ <int>,...,<int> ] // optional
 }
 ```

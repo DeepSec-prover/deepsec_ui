@@ -14,7 +14,16 @@ Definition of `<available_action>` :
 or
 ```
 {
-  "type": "bang" | "choice",
+  "type": "choice",
+  "position": <position>,
+  "tau_positions": [ <position> ]
+}
+```
+or
+```
+{
+  "type": "bang",
+  "max_unfolding": <int>,
   "position": <position>,
   "tau_positions": [ <position> ]
 }
