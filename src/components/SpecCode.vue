@@ -1,7 +1,16 @@
 <template>
+  <!-- In line code -->
   <code v-if="inLine" class="language-deepsec match-braces" ref="code"></code>
   <simplebar v-else class="code-block language-deepsec match-braces line-numbers">
+    <!-- Code Block -->
     <pre><code ref="code"></code></pre>
+    <!-- Action selection for interactive popup -->
+    <div v-show="showActionPopup" ref="actionPopup">
+      <action-popup :action="selectedAction"
+                    @close="closeActionPopup"
+                    @user-select-action="sendActionSelection"
+                    @user-select-transition="selectAvailableTransitionActions"></action-popup>
+    </div>
   </simplebar>
 </template>
 
@@ -11,6 +20,9 @@ import Simplebar from 'simplebar-vue'
 import 'simplebar/dist/simplebar.min.css'
 import logger from 'electron-log'
 import ProcessModel from '../models/ProcessModel'
+import Popper from 'popper.js'
+import ActionPopup from './ActionPopup'
+import lodash from 'lodash'
 
 // Disable automatic highlight at page load
 document.removeEventListener('DOMContentLoaded', Prism.highlightAll)
@@ -18,6 +30,7 @@ document.removeEventListener('DOMContentLoaded', Prism.highlightAll)
 export default {
   name: 'spec-code',
   components: {
+    ActionPopup,
     Simplebar
   },
   props: {
@@ -48,9 +61,22 @@ export default {
        */
       focusedPositionsFromActions: [],
       /**
-       * Save active listeners to remove them later.
+       * Save active action listeners to remove them later.
        */
-      actionActiveListeners: []
+      actionActiveListeners: [],
+      /**
+       * List of available transitions depending of the current selected action.
+       */
+      availableTransitions: [],
+      /**
+       * Save active transitions listeners to remove them later.
+       */
+      transitionsActiveListeners: [],
+      /**
+       * The selected action if waiting for transition selection.
+       */
+      selectedAction: null,
+      showActionPopup: false
     }
   },
   methods: {
@@ -92,10 +118,7 @@ export default {
             e.classList.add('available-action', 'clickable')
 
             // Click listener
-            const clickAction = () => {
-              const selectedAction = this.actionSelection(action)
-              this.$emit('user-select-action', selectedAction)
-            }
+            const clickAction = () => this.actionSelection(action, e)
             // Keep track to remove later
             this.actionActiveListeners.push({ element: e, event: 'click', callback: clickAction })
             e.addEventListener('click', clickAction)
@@ -126,14 +149,85 @@ export default {
       // Clean previous focus (all of them)
       this.$el.querySelectorAll('.available-action').forEach(e => {
         e.classList.remove('available-action', 'clickable')
-
       })
     },
-    actionSelection (availableAction) {
-      switch (availableAction.type) {
-        case 'tau':
-          return availableAction
+    setupAvailableTransitions () {
+      if (this.availableTransitions && this.availableTransitions.length > 0) {
+        this.availableTransitions.forEach(transition => {
+          const positionStr = ProcessModel.formatPositionToString(transition.position)
+          this.$el.querySelectorAll(`.position-${positionStr}`).forEach(e => {
+            // Add css classes
+            e.classList.add('available-transitions', 'clickable')
+
+            const clickAction = () => {
+              const action = this.transitionSelection(transition)
+              // Null means that more user action are expected
+              this.sendActionSelection(action)
+              this.clearAvailableTransitions()
+            }
+            this.transitionsActiveListeners.push({ element: e, event: 'click', callback: clickAction })
+            e.addEventListener('click', clickAction)
+          })
+        })
       }
+    },
+    clearAvailableTransitions () {
+      // Remove last listeners
+      this.transitionsActiveListeners.forEach(l => l.element.removeEventListener(l.event, l.callback))
+      this.transitionsActiveListeners = []
+
+      // Clean previous focus (all of them)
+      this.$el.querySelectorAll('.available-transitions').forEach(e => {
+        e.classList.remove('available-transitions', 'clickable')
+      })
+    },
+    actionSelection (availableAction, domElement) {
+      const type = availableAction.type
+
+      if (type === 'tau') {
+        // No change needed
+        this.sendActionSelection(availableAction)
+      } else if (type === 'output' || 'input') {
+        this.displayActionSelector(domElement, availableAction)
+      } else {
+        logger.error(`Not implemented action type ${type}`)
+      }
+    },
+    transitionSelection (selectedTransition) {
+      return null
+    },
+    displayActionSelector (domElement, action) {
+      const popper = new Popper(domElement, this.$refs.actionPopup)
+      this.selectedAction = action
+      this.showActionPopup = true
+    },
+    selectAvailableTransitionActions (transition) {
+      const filterType = this.selectedAction.type === 'input' ? 'output' : 'input'
+      const filterTransitionType = transition.type
+      const filterChannel = this.selectedAction.channel
+
+      this.availableTransitions = this.availableActions.filter(a => {
+        return a.type === filterType &&
+          a.transitions.some(t => t.type === filterTransitionType) &&
+          lodash.isEqual(a.channel, filterChannel) // Full object content value comparison
+      })
+
+      // Hide previous available actions
+      this.clearAvailableActions()
+      // Show available transitions
+      this.setupAvailableTransitions()
+    },
+    /**
+     * Close the action popup selection
+     */
+    closeActionPopup () {
+      this.showActionPopup = false
+    },
+    /**
+     * Send the "user-select-action" signal to the parent.
+     */
+    sendActionSelection (action) {
+      this.$emit('user-select-action', action)
     }
   },
   watch: {
@@ -160,6 +254,15 @@ export default {
       }
 
       this.setupAvailableActions()
+    },
+    selectedAction (newValue, oldValue) {
+      if (oldValue) {
+        this.clearFocus()
+      }
+
+      if (newValue) {
+        this.setupFocus([ProcessModel.formatPositionToString(newValue.position)])
+      }
     }
   },
   mounted () {
@@ -179,6 +282,14 @@ export default {
 
   .available-action:hover {
     outline: solid rgba(255, 0, 0, 0.7);
+  }
+
+  .available-transitions {
+    outline: dashed rgba(255, 204, 0, 0.5);
+  }
+
+  .available-transitions:hover {
+    outline: solid rgba(255, 204, 0, 0.5);
   }
 
   .language-deepsec .token.hidden {
