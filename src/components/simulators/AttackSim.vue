@@ -25,8 +25,8 @@
               </el-radio-group>
             </div>
             <!-- Sync Processes -->
-            <div>
-              Follow user steps
+            <div class="sync-switch">
+              <span>Follow simulated</span>
               <el-switch v-model="syncProcesses"></el-switch>
             </div>
             <!-- Navigation buttons -->
@@ -300,5 +300,14 @@ export default {
 
   .nav-buttons > * {
     margin-bottom: 10px;
+  }
+
+  .sync-switch {
+    color: #606266;
+    font-size: 15px;
+  }
+
+  .sync-switch > span {
+    padding-right: 7px;
   }
 </style>

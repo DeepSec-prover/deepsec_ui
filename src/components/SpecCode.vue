@@ -9,7 +9,8 @@
       <action-popup :action="selectedAction"
                     @close="closeActionPopup"
                     @user-select-action="sendActionSelection"
-                    @user-select-transition="selectAvailableTransitionActions"></action-popup>
+                    @user-select-transition="selectAvailableTransitionActions"
+                    @cancel="cancelActionSelection"></action-popup>
     </div>
   </simplebar>
 </template>
@@ -95,8 +96,8 @@ export default {
      * This add color and improve the syntax.
      */
     render () {
-      logger.silly('Update Prism code highlight')
       if (this.code) {
+        logger.silly('Update Prism code highlight')
         // We have to edit directly the dom to enable Prism plugins
         this.$refs.code.textContent = this.code
         Prism.highlightElement(this.$refs.code)
@@ -323,6 +324,22 @@ export default {
      * @param {Object} action The action selected by the user and formatted as a proper API command.
      */
     sendActionSelection (action) {
+      this.resetUserSelection()
+
+      this.$emit('user-select-action', action)
+    },
+    /**
+     * Cancel the action transition selection, go back to action selection state.
+     */
+    cancelActionSelection () {
+      this.closeActionPopup()
+      this.resetUserSelection()
+      this.setupAvailableActions()
+    },
+    /**
+     * Remove current user selection, visual focus and listeners.
+     */
+    resetUserSelection () {
       // Reset visual
       this.clearAvailableTransitions()
       this.clearAvailableActions()
@@ -331,12 +348,13 @@ export default {
       // Reset values
       this.selectedAction = null
       this.transitionSettings = null
-
-      this.$emit('user-select-action', action)
     }
   },
   watch: {
-    code () {
+    code (newVal, oldVal) {
+      if (oldVal) {
+        this.resetUserSelection()
+      }
       this.render()
     },
     focusedPositions (newVal, oldVal) {
@@ -420,7 +438,8 @@ export default {
 <style scoped>
   /* TODO remove horizontal scroll in <pre> for Simplebar */
   .code-block {
-    max-height: 80vh; /* 80% of the window height */
+    max-height: 90vh; /* 90% of the window height */
+    min-height: 50px;
   }
 
   pre {
