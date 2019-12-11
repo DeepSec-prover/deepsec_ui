@@ -79,15 +79,18 @@ export default {
     }
   },
   watch: {
-    action () {
-      // Set default value for selected transition type
-      if (this.action.transitions) {
-        if (this.transitionTypes.includes('direct')) {
-          this.selectedTransitionType = 'direct'
-        } else if (this.transitionTypes.includes('comm')) {
-          this.selectedTransitionType = 'comm'
-        } else if (this.transitionTypes.includes('eavesdrop')) {
-          this.selectedTransitionType = 'eavesdrop'
+    action (newVal, _) {
+      // Only update if some new value is set
+      if (newVal) {
+        // Set default value for selected transition type
+        if (this.action.transitions) {
+          if (this.transitionTypes.includes('direct')) {
+            this.selectedTransitionType = 'direct'
+          } else if (this.transitionTypes.includes('comm')) {
+            this.selectedTransitionType = 'comm'
+          } else if (this.transitionTypes.includes('eavesdrop')) {
+            this.selectedTransitionType = 'eavesdrop'
+          }
         }
       }
     }

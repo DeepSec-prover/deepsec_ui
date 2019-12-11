@@ -200,14 +200,16 @@ export default {
      * Remove any previously set CSS and listeners for available transition action.
      */
     clearAvailableTransitions () {
-      // Remove last listeners
-      this.transitionsActiveListeners.forEach(l => l.element.removeEventListener(l.event, l.callback))
-      this.transitionsActiveListeners = []
+      if (this.transitionsActiveListeners && this.transitionsActiveListeners.length > 0) {
+        // Remove last listeners
+        this.transitionsActiveListeners.forEach(l => l.element.removeEventListener(l.event, l.callback))
+        this.transitionsActiveListeners = []
 
-      // Clean previous focus (all of them)
-      this.$el.querySelectorAll('.available-transitions').forEach(e => {
-        e.classList.remove('available-transitions', 'clickable')
-      })
+        // Clean previous focus (all of them)
+        this.$el.querySelectorAll('.available-transitions').forEach(e => {
+          e.classList.remove('available-transitions', 'clickable')
+        })
+      }
     },
     /**
      * Trigger the appropriate code depending of the selected action type.
@@ -266,9 +268,6 @@ export default {
       } else {
         logger.error(`Invalid transition selection type ${this.transitionSettings.type}`)
       }
-
-      this.clearAvailableTransitions()
-      this.clearFocus()
     },
     /**
      * Filter and focus available transition actions depending of the previous selected action and the transition settings.
@@ -301,10 +300,12 @@ export default {
       // Hide previous available actions
       this.clearAvailableActions()
       this.clearFocus()
-      // Save current action and will trigger the focus
+      // Save current action
       this.selectedAction = action
+      // Focus on this action
+      this.setupFocus([ProcessModel.formatPositionToString(this.selectedAction.position)])
 
-      const popper = new Popper(domElement, this.$refs.actionPopup)
+      new Popper(domElement, this.$refs.actionPopup)
       this.showActionPopup = true
     },
     /**
@@ -319,6 +320,15 @@ export default {
      * @param {Object} action The action selected by the user and formatted as a proper API command.
      */
     sendActionSelection (action) {
+      // Reset visual
+      this.clearAvailableTransitions()
+      this.clearAvailableActions()
+      this.clearFocus()
+
+      // Reset values
+      this.selectedAction = null
+      this.transitionSettings = null
+
       this.$emit('user-select-action', action)
     }
   },
@@ -330,31 +340,19 @@ export default {
       if (oldVal && oldVal.length > 0) {
         this.clearFocus()
       }
-
       this.setupFocus(this.focusedPositions)
     },
     focusedPositionsFromActions (newVal, oldVal) {
       if (oldVal && oldVal.length > 0) {
         this.clearFocus()
       }
-
       this.setupFocus(this.focusedPositionsFromActions)
     },
     availableActions (newVal, oldVal) {
       if (oldVal && oldVal.length > 0) {
         this.clearAvailableActions()
       }
-
       this.setupAvailableActions()
-    },
-    selectedAction (newValue, oldValue) {
-      if (oldValue) {
-        this.clearFocus()
-      }
-
-      if (newValue) {
-        this.setupFocus([ProcessModel.formatPositionToString(newValue.position)])
-      }
     }
   },
   mounted () {
