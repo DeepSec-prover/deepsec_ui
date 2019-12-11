@@ -76,10 +76,21 @@ export default {
        * The selected action if waiting for transition selection.
        */
       selectedAction: null,
+      /**
+       * Store the transition settings selected by the user in the popup (for I/O)
+       */
+      transitionSettings: null,
+      /**
+       * Toggle the action selection popup. The same popup is used all the time.
+       */
       showActionPopup: false
     }
   },
   methods: {
+    /**
+     * Parse and highlight the code with Prism.
+     * This add color and improve the syntax.
+     */
     render () {
       logger.silly('Update Prism code highlight')
       if (this.code) {
@@ -95,20 +106,30 @@ export default {
         this.$refs.code.textContent = 'loading ...'
       }
     },
+    /**
+     * Enable CSS for visually show focused positions.
+     *
+     * @param {String[]} positionList The list of code positions formatted as string.
+     */
     setupFocus (positionList) {
-      // Add focus to specific positions
       if (positionList && positionList.length > 0) {
+        // Add focus to specific positions
         positionList.forEach(p => {
-          this.$el.querySelectorAll(`.position-${p}`).forEach(e => {
-            e.classList.add('focused')
-          })
+          this.$el.querySelectorAll(`.position-${p}`).forEach(e => e.classList.add('focused'))
         })
       }
     },
+    /**
+     * Remove any previously set CSS for focused positions.
+     */
     clearFocus () {
       // Clean previous focus (all of them)
-      this.$el.querySelectorAll('.focused').forEach(e => {e.classList.remove('focused')})
+      this.$el.querySelectorAll('.focused').forEach(e => e.classList.remove('focused'))
     },
+    /**
+     * Enable CSS and listeners for available user action.
+     * Allow the user to click on any available position to execute it.
+     */
     setupAvailableActions () {
       if (this.availableActions && this.availableActions.length > 0) {
         this.availableActions.forEach(action => {
@@ -141,6 +162,9 @@ export default {
         })
       }
     },
+    /**
+     * Remove any previously set CSS and listeners for available user action.
+     */
     clearAvailableActions () {
       // Remove last listeners
       this.actionActiveListeners.forEach(l => l.element.removeEventListener(l.event, l.callback))
@@ -151,6 +175,11 @@ export default {
         e.classList.remove('available-action', 'clickable')
       })
     },
+    /**
+     * Enable CSS and listeners for available transitions.
+     * Which are actions available as a transition of the previous I/O action.
+     * Allow the user to click on any available transitions to execute it.
+     */
     setupAvailableTransitions () {
       if (this.availableTransitions && this.availableTransitions.length > 0) {
         this.availableTransitions.forEach(transition => {
@@ -159,18 +188,17 @@ export default {
             // Add css classes
             e.classList.add('available-transitions', 'clickable')
 
-            const clickAction = () => {
-              const action = this.transitionSelection(transition)
-              // Null means that more user action are expected
-              this.sendActionSelection(action)
-              this.clearAvailableTransitions()
-            }
+            const clickAction = () => this.transitionSelection(transition)
+            // Keep track to remove later
             this.transitionsActiveListeners.push({ element: e, event: 'click', callback: clickAction })
             e.addEventListener('click', clickAction)
           })
         })
       }
     },
+    /**
+     * Remove any previously set CSS and listeners for available transition action.
+     */
     clearAvailableTransitions () {
       // Remove last listeners
       this.transitionsActiveListeners.forEach(l => l.element.removeEventListener(l.event, l.callback))
@@ -181,41 +209,103 @@ export default {
         e.classList.remove('available-transitions', 'clickable')
       })
     },
+    /**
+     * Trigger the appropriate code depending of the selected action type.
+     * Could send the action or open a popup to ask more information to the user.
+     *
+     * @param {Object} availableAction The action that the user just select.
+     * @param {Element} domElement The DOM element which directly include the action string. Used for popup position.
+     */
     actionSelection (availableAction, domElement) {
       const type = availableAction.type
 
       if (type === 'tau') {
-        // No change needed
+        // No change needed, send the action to the API.
         this.sendActionSelection(availableAction)
       } else if (type === 'output' || 'input') {
-        this.displayActionSelector(domElement, availableAction)
+        // Display a popup to ask more information.
+        this.displayActionSelectorPopup(availableAction, domElement)
+      } else if (type === 'bang') {
+        // Display a popup to ask about the unfolding quantity.
+        this.displayActionSelectorPopup(availableAction, domElement)
       } else {
         logger.error(`Not implemented action type ${type}`)
       }
     },
+    /**
+     * Trigger the appropriate code depending of the transition type and action selection.
+     * Always send an answer to the API.
+     *
+     * @param {Object} selectedTransition The transition action which the user just select.
+     */
     transitionSelection (selectedTransition) {
-      return null
+      let input, output
+      if (this.selectedAction.type === 'input') {
+        input = this.selectedAction
+        output = selectedTransition
+      } else {
+        input = selectedTransition
+        output = this.selectedAction
+      }
+
+      if (this.transitionSettings.type === 'comm') {
+        this.sendActionSelection(
+          {
+            type: 'comm',
+            input_position: input.position,
+            output_position: output.position
+          })
+      } else if (this.transitionSettings.type === 'eavesdrop') {
+        this.sendActionSelection(
+          {
+            type: 'eavesdrop',
+            input_position: input.position,
+            output_position: output.position,
+            channel: this.selectedAction.channel
+          })
+      } else {
+        logger.error(`Invalid transition selection type ${this.transitionSettings.type}`)
+      }
+
+      this.clearAvailableTransitions()
+      this.clearFocus()
     },
-    displayActionSelector (domElement, action) {
-      const popper = new Popper(domElement, this.$refs.actionPopup)
-      this.selectedAction = action
-      this.showActionPopup = true
-    },
+    /**
+     * Filter and focus available transition actions depending of the previous selected action and the transition settings.
+     *
+     * @param {Object} transition The selected transition settings.
+     */
     selectAvailableTransitionActions (transition) {
+      this.transitionSettings = transition
       const filterType = this.selectedAction.type === 'input' ? 'output' : 'input'
       const filterTransitionType = transition.type
       const filterChannel = this.selectedAction.channel
 
+      // Filter the available transition action for the current available action list.
       this.availableTransitions = this.availableActions.filter(a => {
         return a.type === filterType &&
           a.transitions.some(t => t.type === filterTransitionType) &&
           lodash.isEqual(a.channel, filterChannel) // Full object content value comparison
       })
 
-      // Hide previous available actions
-      this.clearAvailableActions()
       // Show available transitions
       this.setupAvailableTransitions()
+    },
+    /**
+     * Display the action selector popup to ask more information to the user.
+     *
+     * @param {Object} action The action for which we want to display the popop.
+     * @param {Element} domElement The DOM element which directly include the action string. Used for popup position.
+     */
+    displayActionSelectorPopup (action, domElement) {
+      // Hide previous available actions
+      this.clearAvailableActions()
+      this.clearFocus()
+      // Save current action and will trigger the focus
+      this.selectedAction = action
+
+      const popper = new Popper(domElement, this.$refs.actionPopup)
+      this.showActionPopup = true
     },
     /**
      * Close the action popup selection
@@ -225,6 +315,8 @@ export default {
     },
     /**
      * Send the "user-select-action" signal to the parent.
+     *
+     * @param {Object} action The action selected by the user and formatted as a proper API command.
      */
     sendActionSelection (action) {
       this.$emit('user-select-action', action)
@@ -285,11 +377,11 @@ export default {
   }
 
   .available-transitions {
-    outline: dashed rgba(255, 204, 0, 0.5);
+    outline: dashed rgba(255, 175, 14, 0.5);
   }
 
   .available-transitions:hover {
-    outline: solid rgba(255, 204, 0, 0.5);
+    outline: solid rgba(255, 175, 14, 0.5);
   }
 
   .language-deepsec .token.hidden {
