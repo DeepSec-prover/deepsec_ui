@@ -86,6 +86,9 @@ export default {
       showActionPopup: false
     }
   },
+  /**
+   * @see flow/user_action_selection.svg for detail about actions ordering.
+   */
   methods: {
     /**
      * Parse and highlight the code with Prism.
