@@ -439,7 +439,6 @@ export default {
   /* TODO remove horizontal scroll in <pre> for Simplebar */
   .code-block {
     max-height: 90vh; /* 90% of the window height */
-    min-height: 50px;
   }
 
   pre {

@@ -3,9 +3,10 @@
     <el-form v-if="action" size="mini">
       <!-- Bang -->
       <template v-if="action.type === 'bang'">
-        <el-form-item label="Nb unfolded">
+        <el-form-item v-if="action.max_unfolding > 1" label="Nb unfolded">
           <el-input-number v-model="nbProcessUnfolded" :min="1" :max="action.max_unfolding"></el-input-number>
         </el-form-item>
+        <div v-else>Unfold 1</div>
       </template>
       <!-- I/O -->
       <template v-else-if="action.type === 'input' || action.type === 'output'">

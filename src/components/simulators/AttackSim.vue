@@ -154,6 +154,7 @@ import SimFrame from './SimFrame'
 import SimTrace from './SimTrace'
 import Helper from '../helpers/Helper'
 import ApiRemote from '../../deepsec-api/ApiRemote'
+import logger from 'electron-log'
 
 export default {
   name: 'attack-sim',
@@ -205,30 +206,40 @@ export default {
       if (!this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
         this.syncProcesses = false
         this.processDisplayed.gotoFirstAction()
+      } else {
+        logger.warn('Action ignored because a process is currently loading or is impossible.')
       }
     },
     previousAction () {
       if (!this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
         this.syncProcesses = false
         this.processDisplayed.gotoPreviousAction()
+      } else {
+        logger.warn('Action ignored because a process is currently loading or is impossible.')
       }
     },
     nextAction () {
       if (!this.processDisplayed.loading && this.processDisplayed.hasNextAction()) {
         this.syncProcesses = false
         this.processDisplayed.gotoNextAction()
+      } else {
+        logger.warn('Action ignored because a process is currently loading or is impossible.')
       }
     },
     lastAction () {
       if (!this.processDisplayed.loading && this.processDisplayed.hasNextAction()) {
         this.syncProcesses = false
         this.processDisplayed.gotoLastAction()
+      } else {
+        logger.warn('Action ignored because a process is currently loading or is impossible.')
       }
     },
     gotoActionDisplayed (id) {
       if (!this.processDisplayed.loading) {
         this.syncProcesses = false
         this.processDisplayed.gotoAction(id)
+      } else {
+        logger.warn('Action ignored because a process is currently loading.')
       }
     },
     focusNextActions () {
@@ -242,21 +253,29 @@ export default {
     executeAction (action) {
       if (!this.processDisplayed.loading && !this.processUser.loading) {
         this.processUser.nextUserAction(action)
+      } else {
+        logger.warn('Action ignored because a process is currently loading.')
       }
     },
     gotoActionUser (id) {
       if (!this.processUser.loading) {
         this.processUser.gotoAction(id)
+      } else {
+        logger.warn('Action ignored because a process is currently loading.')
       }
     },
     undo () {
       if (!this.processDisplayed.loading && !this.processUser.loading && this.processUser.hasBackHistory()) {
         this.processUser.undo()
+      } else {
+        logger.warn('Action ignored because a process is currently loading or is impossible.')
       }
     },
     redo () {
       if (!this.processDisplayed.loading && !this.processUser.loading && this.processUser.hasNextHistory()) {
         this.processUser.redo()
+      } else {
+        logger.warn('Action ignored because a process is currently loading or is impossible.')
       }
     },
     forceSyncProcesses () {
