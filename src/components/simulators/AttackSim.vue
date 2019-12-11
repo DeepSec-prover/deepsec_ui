@@ -183,7 +183,7 @@ export default {
     }
   },
   watch: {
-    'simulatedProcess.actions': function () {
+    'processUser.actions': function () {
       if (this.syncProcesses) {
         this.forceSyncProcesses()
       }
