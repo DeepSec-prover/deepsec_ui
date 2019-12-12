@@ -20,6 +20,8 @@ export default class ProcessModel {
     this.apiRemote = apiRemote
     this.loading = false
     this.traceLevel = 'default'
+    // Catch every API answer
+    this.apiRemote.onReply(this.handleUpdateAnswer.bind(this), false)
   }
 
   /**
@@ -29,9 +31,6 @@ export default class ProcessModel {
    */
   startProcess (options) {
     this.loading = true
-
-    // Wait for the next reply
-    this.apiRemote.onReply(this.handleUpdateAnswer.bind(this))
 
     this.apiRemote.start(options)
   }
