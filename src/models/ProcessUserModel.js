@@ -51,9 +51,6 @@ export default class ProcessUserModel extends ProcessModel {
       )
     }
 
-    // Wait for the next reply
-    this.apiRemote.onReply(this.handleUpdateAnswer.bind(this))
-
     // Send query
     this.apiRemote.sendQuery('next_steps', actions)
 
@@ -77,9 +74,6 @@ export default class ProcessUserModel extends ProcessModel {
         () => this.gotoAction(currentId, false)
       )
     }
-
-    // Wait for the next reply
-    this.apiRemote.onReply(this.handleUpdateAnswer.bind(this))
 
     // Send query
     this.apiRemote.sendQuery('next_step_user', action)

@@ -45,9 +45,6 @@ export default class ProcessModel {
   gotoAction (actionId, saveHistory = true) {
     this.loading = true
 
-    // Wait for the next reply
-    this.apiRemote.onReply(this.handleUpdateAnswer.bind(this))
-
     // Send query
     this.apiRemote.sendQuery('goto_step', actionId, this.processId)
   }
