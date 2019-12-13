@@ -24,11 +24,11 @@
                         :locked="recipes[selectedTransitionType].locked"></recipe-input>
         </template>
         <!-- Term -->
-        <el-form-item v-show="selectedTransitionType === 'direct' && action.type === 'input'"
-                      label="Term's recipe:">
+        <template v-show="selectedTransitionType === 'direct' && action.type === 'input'">
+          <div class="recipe-label">Term's recipe:</div>
           <recipe-input v-model="recipes[selectedTransitionType].recipe_term"
                         :locked="recipes[selectedTransitionType].locked"></recipe-input>
-        </el-form-item>
+        </template>
       </template>
       <!-- Buttons -->
       <div class="buttons">
