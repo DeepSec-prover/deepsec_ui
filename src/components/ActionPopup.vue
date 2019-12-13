@@ -18,13 +18,13 @@
           </el-radio-group>
         </div>
         <!-- Channel -->
-        <template v-show="selectedTransitionType === 'direct' || selectedTransitionType === 'eavesdrop'">
+        <template v-if="selectedTransitionType === 'direct' || selectedTransitionType === 'eavesdrop'">
           <div class="recipe-label">Channel's recipe:</div>
           <recipe-input v-model="recipes[selectedTransitionType].recipe_channel"
                         :locked="recipes[selectedTransitionType].locked"></recipe-input>
         </template>
         <!-- Term -->
-        <template v-show="selectedTransitionType === 'direct' && action.type === 'input'">
+        <template v-if="selectedTransitionType === 'direct' && action.type === 'input'">
           <div class="recipe-label">Term's recipe:</div>
           <recipe-input v-model="recipes[selectedTransitionType].recipe_term"
                         :locked="recipes[selectedTransitionType].locked"></recipe-input>
