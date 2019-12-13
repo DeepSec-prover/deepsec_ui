@@ -38,8 +38,8 @@
           </el-button>
         </span>
         <span>
-          <el-button class="validate" size="mini" type="success" @click="validate" plain>
-            {{ selectedTransitionType === 'direct' ? 'Validate' : 'Continue'}}
+          <el-button class="validate" size="mini" type="success" @click="validate" :plain="!finalAction">
+            {{ finalAction ? 'Validate' : 'Continue'}}
           </el-button>
         </span>
       </div>
@@ -78,6 +78,9 @@ export default {
     },
     onlyOneType: function () {
       return this.action.transitions.length === 1
+    },
+    finalAction: function () {
+      return this.selectedTransitionType === 'direct' || this.action.type === 'bang'
     }
   },
   methods: {
