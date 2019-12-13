@@ -20,7 +20,6 @@ let filters = {
   punctuation: /[(),;]/u,
   sup: /(?<=\w)~\d+(-\d+)*(?=\s|$|_|%)/,
   sub: /(?<=\w)_\d+(?=\b|~|%)/,
-
 }
 
 // Position can include everything
