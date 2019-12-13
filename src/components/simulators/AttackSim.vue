@@ -125,6 +125,10 @@
               </el-button-group>
             </div>
           </div>
+          <!-- Equivalence status -->
+          <equivalence-status v-if="processUser.statusEquivalence && processUser.statusEquivalence.status !== 'equivalent'"
+                              :equivalence="processUser.statusEquivalence"
+                              :atomic="processUser.atomic"></equivalence-status>
           <!-- Trace -->
           <sim-trace :atomic="processUser.atomic"
                      :trace-level="processUser.traceLevel"
@@ -156,10 +160,11 @@ import SimTrace from './SimTrace'
 import Helper from '../helpers/Helper'
 import ApiRemote from '../../deepsec-api/ApiRemote'
 import logger from 'electron-log'
+import EquivalenceStatus from '../EquivalenceStatus'
 
 export default {
   name: 'attack-sim',
-  components: { Helper, SimTrace, SimFrame, SpecCode },
+  components: { EquivalenceStatus, Helper, SimTrace, SimFrame, SpecCode },
   data () {
     return {
       processDisplayed: undefined,

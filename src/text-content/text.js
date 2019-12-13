@@ -60,6 +60,11 @@ const text = {
           long: 'TODO long description no attack'
         }
       }
+    },
+    equivalence_status: {
+      equivalent: 'Equivalent',
+      non_equivalent_message: 'Frames not statically equivalent',
+      non_equivalent_equality: 'Frames not statically equivalent'
     }
   }
 }
