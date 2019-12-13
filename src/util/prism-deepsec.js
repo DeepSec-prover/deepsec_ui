@@ -1,6 +1,7 @@
 import Prism from 'prismjs'
 
 let filters = {
+  comment: /\/\/.*$/,
   keyword: {
     pattern: /(?<=\b)(new|let|if|then|else|in)(?=\s|%)|(?<=\s|%)->(?=\s|%)|(?<=^|\s|;|%)!~\d+/,
     inside: {

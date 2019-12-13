@@ -5,7 +5,7 @@ Definition of `<recipe>` :
 ```
 {
   "type": "Axiom";
-  "id": <int>   // display as ax_{id}
+  "id": <int> // display as ax_{id}
 }
 ```
 or

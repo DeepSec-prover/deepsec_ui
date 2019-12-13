@@ -17,13 +17,17 @@
             <el-radio-button v-if="transitionTypes.includes('eavesdrop')" label="eavesdrop">Eavesdrop</el-radio-button>
           </el-radio-group>
         </div>
-        <el-form-item v-show="selectedTransitionType === 'direct' || selectedTransitionType === 'eavesdrop'"
-                      label="Channel :">
-          <el-input v-model="channelRecipe" placeholder="recipe"></el-input>
-        </el-form-item>
-        <el-form-item v-show="selectedTransitionType === 'direct'"
-                      label="Term :">
-          <el-input v-model="termRecipe" placeholder="recipe"></el-input>
+        <!-- Channel -->
+        <template v-show="selectedTransitionType === 'direct' || selectedTransitionType === 'eavesdrop'">
+          <div class="recipe-label">Channel's recipe:</div>
+          <recipe-input v-model="recipes[selectedTransitionType].recipe_channel"
+                        :locked="recipes[selectedTransitionType].locked"></recipe-input>
+        </template>
+        <!-- Term -->
+        <el-form-item v-show="selectedTransitionType === 'direct' && action.type === 'input'"
+                      label="Term's recipe:">
+          <recipe-input v-model="recipes[selectedTransitionType].recipe_term"
+                        :locked="recipes[selectedTransitionType].locked"></recipe-input>
         </el-form-item>
       </template>
       <!-- Buttons -->
@@ -44,20 +48,28 @@
 </template>
 
 <script>
+import RecipeInput from './RecipeInput'
+import { formatProcess } from '../util/process-parser'
+import AtomicRenamer from '../util/AtomicRenamer'
+
 export default {
   name: 'action-popup',
+  components: { RecipeInput },
   props: {
     action: {
       type: Object,
+      require: true
+    },
+    atomic: {
+      type: AtomicRenamer,
       require: true
     }
   },
   data () {
     return {
       selectedTransitionType: 'direct',
-      nbProcessUnfolded: 1,
-      channelRecipe: '',
-      termRecipe: ''
+      recipes: {},
+      nbProcessUnfolded: 1
     }
   },
   computed: {
@@ -82,13 +94,14 @@ export default {
         if (this.selectedTransitionType === 'direct') {
           this.$emit('user-select-action', {
             type: this.action.type,
-            position: this.action.position
+            position: this.action.position,
+            channel: this.recipes[this.selectedTransitionType].recipe_channel,
+            term: this.recipes[this.selectedTransitionType].recipe_term
           })
         } else {
           this.$emit('user-select-transition', {
             type: this.selectedTransitionType,
-            channel: this.channelRecipe,
-            term: this.termRecipe
+            channel: this.recipes[this.selectedTransitionType].recipe_channel
           })
         }
       }
@@ -108,6 +121,17 @@ export default {
           } else if (this.transitionTypes.includes('eavesdrop')) {
             this.selectedTransitionType = 'eavesdrop'
           }
+
+          this.action.transitions.forEach(t => {
+            this.recipes[t.type] = {}
+            if (t.recipe_channel) {
+              this.recipes[t.type].recipe_channel = formatProcess(t.recipe_channel, this.atomic)
+            }
+
+            if (t.recipe_term) {
+              this.recipes[t.type].recipe_term = formatProcess(t.recipe_term, this.atomic)
+            }
+          })
         }
       }
     }
@@ -124,11 +148,6 @@ export default {
     margin-bottom: 8px !important;
   }
 
-  .popup .el-form-item__label {
-    font-size: 90%;
-    line-height: 22px !important;
-  }
-
   .not-clickable .el-radio-button__inner {
     cursor: default;
   }
@@ -142,5 +161,10 @@ export default {
 
   .buttons {
     padding-top: 8px;
+  }
+
+  .recipe-label {
+    font-size: 90%;
+    line-height: 22px !important;
   }
 </style>

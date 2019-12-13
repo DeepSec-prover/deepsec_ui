@@ -136,6 +136,7 @@
         <el-col :span="16">
           <!-- Process code -->
           <spec-code :code="processUserStr"
+                     :atomic="processUser.atomic"
                      :available-actions="processUser.getCurrentAvailableActions()"
                      @user-select-action="executeAction"></spec-code>
         </el-col>

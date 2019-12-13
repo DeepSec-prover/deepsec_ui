@@ -5,8 +5,9 @@
     <!-- Code Block -->
     <pre><code ref="code"></code></pre>
     <!-- Action selection for interactive popup -->
-    <div v-show="showActionPopup" ref="actionPopup">
+    <div v-if="atomic" v-show="showActionPopup" ref="actionPopup">
       <action-popup :action="selectedAction"
+                    :atomic="atomic"
                     @close="closeActionPopup"
                     @user-select-action="sendActionSelection"
                     @user-select-transition="selectAvailableTransitionActions"
@@ -24,6 +25,7 @@ import ProcessModel from '../models/ProcessModel'
 import Popper from 'popper.js'
 import ActionPopup from './ActionPopup'
 import lodash from 'lodash'
+import AtomicRenamer from '../util/AtomicRenamer'
 
 // Disable automatic highlight at page load
 document.removeEventListener('DOMContentLoaded', Prism.highlightAll)
@@ -35,10 +37,16 @@ export default {
     Simplebar
   },
   props: {
-    code: String,
+    code: {
+      type: String,
+      default: null
+    },
     inLine: {
       type: Boolean,
       default: false
+    },
+    atomic: {
+      type: AtomicRenamer
     },
     /**
      * List of position formatted as a string.
@@ -96,7 +104,9 @@ export default {
      * This add color and improve the syntax.
      */
     render () {
-      if (this.code) {
+      if (this.code === '') {
+        this.$refs.code.textContent = '// empty'
+      } else if (this.code !== null) {
         logger.silly('Update Prism code highlight')
         // We have to edit directly the dom to enable Prism plugins
         this.$refs.code.textContent = this.code

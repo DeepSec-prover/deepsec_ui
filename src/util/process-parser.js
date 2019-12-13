@@ -43,12 +43,12 @@ export function formatTrace (actions, atomicData) {
 export function formatAction (action, atomic, axiomIdRef) {
   switch (action.type) {
     case 'input':
-      return 'in(' + formatRecipe(action.channel, atomic) + ',' +
-        formatRecipe(action.term, atomic) + ')'
+      return 'in(' + format(action.channel, atomic, 0) + ',' +
+        format(action.term, atomic, 0) + ')'
     case 'output':
-      return 'out(' + formatRecipe(action.channel, atomic) + ',ax_' + axiomIdRef.value++ + ')'
+      return 'out(' + format(action.channel, atomic, 0) + ',ax_' + axiomIdRef.value++ + ')'
     case 'eavesdrop':
-      return 'eavesdrop(' + formatRecipe(action.channel, atomic) + ',ax_' + axiomIdRef.value++ + ')'
+      return 'eavesdrop(' + format(action.channel, atomic, 0) + ',ax_' + axiomIdRef.value++ + ')'
     case 'tau':
       return 'τ step'
     case 'comm':
@@ -428,26 +428,6 @@ function formatAxiom (subProcess) {
  */
 function formatAttacker (subProcess) {
   return subProcess.label
-}
-
-/**
- * Format "Recipe" type to readable string
- * Only use for attack trace
- *
- * @param {Object} recipe The recipe to parse
- * @param {Object} atomic The table of atomic data
- * @returns {string} A readable string which describe the recipe
- */
-function formatRecipe (recipe, atomic) {
-  if (recipe.type === 'Axiom') {
-    return 'ax_' + recipe.id
-  } else if (recipe.type === 'Function' || recipe.type === 'Attacker') {
-    return format(recipe, atomic, 0)
-  } else {
-    // Do not stop the app but log an error
-    logger.error(`Try to parse an unknown recipe type ${recipe.type}`)
-    return `------------ not implemented : ${recipe.type} ------------`
-  }
 }
 
 /**
