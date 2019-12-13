@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import SpecCodeInline from './Code/SpecCodeInline'
+import SpecCodeInline from './code/SpecCodeInline'
 
 export default {
   name: 'recipe-input',

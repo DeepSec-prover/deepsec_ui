@@ -81,7 +81,7 @@
 import QueryModel from '../../models/QueryModel'
 import Simplebar from 'simplebar-vue'
 import Helper from '../helpers/Helper'
-import SpecCode from '../Code/SpecCode'
+import SpecCode from '../code/SpecCode'
 import { formatCode } from '../../util/process-parser'
 import logger from 'electron-log'
 import SimFrame from './SimFrame'

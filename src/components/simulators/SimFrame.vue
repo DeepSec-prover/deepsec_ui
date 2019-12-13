@@ -14,7 +14,7 @@
 <script>
 import { formatCode } from '../../util/process-parser'
 import AtomicRenamer from '../../util/AtomicRenamer'
-import SpecCodeInline from '../Code/SpecCodeInline'
+import SpecCodeInline from '../code/SpecCodeInline'
 
 export default {
   name: 'sim-frame',

@@ -9,7 +9,7 @@
 
 <script>
 import { formatCode } from '../../util/process-parser'
-import SpecCode from '../Code/SpecCode'
+import SpecCode from '../code/SpecCode'
 
 export default {
   name: 'query-processes',

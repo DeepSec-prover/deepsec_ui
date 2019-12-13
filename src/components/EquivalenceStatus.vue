@@ -37,7 +37,7 @@
 import text from '../text-content/text'
 import AtomicRenamer from '../util/AtomicRenamer'
 import { formatCode } from '../util/process-parser'
-import SpecCodeInline from './Code/SpecCodeInline'
+import SpecCodeInline from './code/SpecCodeInline'
 
 export default {
   name: 'equivalence-status',

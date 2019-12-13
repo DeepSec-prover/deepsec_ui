@@ -52,7 +52,7 @@ import Simplebar from 'simplebar-vue'
 import { formatAction } from '../../util/process-parser'
 import AtomicRenamer from '../../util/AtomicRenamer'
 import ProcessModel from '../../models/ProcessModel'
-import SpecCodeInline from '../Code/SpecCodeInline'
+import SpecCodeInline from '../code/SpecCodeInline'
 
 export default {
   name: 'sim-trace',

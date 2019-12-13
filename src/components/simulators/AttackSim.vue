@@ -151,7 +151,7 @@
 
 <script>
 import QueryModel from '../../models/QueryModel'
-import SpecCode from '../Code/SpecCode'
+import SpecCode from '../code/SpecCode'
 import { formatCode } from '../../util/process-parser'
 import ProcessDisplayedModel from '../../models/ProcessDisplayedModel'
 import ProcessUserModel from '../../models/ProcessUserModel'

@@ -126,7 +126,7 @@ import Duration from '../Duration'
 import text from '../../text-content/text'
 import { formatCode, formatTrace } from '../../util/process-parser'
 import AtomicRenamer from '../../util/AtomicRenamer'
-import SpecCodeInline from '../Code/SpecCodeInline'
+import SpecCodeInline from '../code/SpecCodeInline'
 
 const BREAK_POINT = '\u200B' // zero-width space
 
