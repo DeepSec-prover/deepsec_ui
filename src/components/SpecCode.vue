@@ -5,7 +5,7 @@
     <!-- Code Block -->
     <pre><code ref="code"></code></pre>
     <!-- Action selection for interactive popup -->
-    <div v-if="atomic" v-show="showActionPopup" ref="actionPopup">
+    <div v-show="showActionPopup && selectedAction" ref="actionPopup">
       <action-popup :action="selectedAction"
                     :atomic="atomic"
                     @close="closeActionPopup"
