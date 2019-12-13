@@ -29,19 +29,17 @@
         <template v-for="a in visibleActions">
           <span class="action-index">{{ a.index + 1 }}</span>
           <span class="action-description">
-                <spec-code :code="actionsStr[a.index]"
-                           @click.native="gotoAction(a.index)"
-                           :class="{'clickable': true, 'tau': isTauAction(a.action)}"
-                           in-line></spec-code>
+                <spec-code-inline :code="actionsStr[a.index]"
+                                  @click.native="gotoAction(a.index)"
+                                  :class="{'clickable': true, 'tau': isTauAction(a.action)}"></spec-code-inline>
           </span>
         </template>
         <template v-for="a in previewActions">
           <span class="action-index preview">{{ a.index + 1 }}</span>
           <span class="action-description">
-                <spec-code :code="actionsStr[a.index]"
-                           @click.native="gotoAction(a.index)"
-                           :class="{'clickable': true, 'tau': isTauAction(a.action)}"
-                           in-line></spec-code>
+                <spec-code-inline :code="actionsStr[a.index]"
+                                  @click.native="gotoAction(a.index)"
+                                  :class="{'clickable': true, 'tau': isTauAction(a.action)}"></spec-code-inline>
           </span>
         </template>
       </div>
@@ -51,16 +49,16 @@
 
 <script>
 import Simplebar from 'simplebar-vue'
-import SpecCode from '../SpecCode'
 import { formatAction } from '../../util/process-parser'
 import AtomicRenamer from '../../util/AtomicRenamer'
 import ProcessModel from '../../models/ProcessModel'
+import SpecCodeInline from '../Code/SpecCodeInline'
 
 export default {
   name: 'sim-trace',
   components: {
-    Simplebar,
-    SpecCode
+    SpecCodeInline,
+    Simplebar
   },
   data () {
     return {

@@ -61,7 +61,8 @@ export function formatAction (action, atomic, axiomIdRef) {
 }
 
 /**
- * Format a process from a Json format to a readable string.
+ * Format a DeepSec spec code from a Json format to a readable string.
+ * Could format a full process, a term or a recipe.
  *
  * @param {Object} process - The structured process
  * @param {Array|AtomicRenamer} atomicData - The table of atomic data. If it's an array then wrap
@@ -70,7 +71,7 @@ export function formatAction (action, atomic, axiomIdRef) {
  * @returns {string} A readable string which describe the process
  * @see doc/process_structure.md for process structure
  */
-export function formatProcess (process, atomicData) {
+export function formatCode (process, atomicData) {
   // If the atomic parameter is already a renamer keep it, if not create one
   const atomic = atomicData instanceof AtomicRenamer ? atomicData : new AtomicRenamer(atomicData)
 

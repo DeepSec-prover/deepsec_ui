@@ -1,7 +1,5 @@
 <template>
-  <!-- In line code -->
-  <code v-if="inLine" class="language-deepsec match-braces" ref="code"></code>
-  <simplebar v-else class="code-block language-deepsec match-braces line-numbers">
+  <simplebar class="code-block language-deepsec match-braces line-numbers">
     <!-- Code Block -->
     <pre><code ref="code"></code></pre>
     <!-- Action selection for interactive popup -->
@@ -17,34 +15,28 @@
 </template>
 
 <script>
-import Prism from '../util/prism-deepsec'
+import Prism from '../../util/prism-deepsec'
 import Simplebar from 'simplebar-vue'
 import 'simplebar/dist/simplebar.min.css'
 import logger from 'electron-log'
-import ProcessModel from '../models/ProcessModel'
+import ProcessModel from '../../models/ProcessModel'
 import Popper from 'popper.js'
-import ActionPopup from './ActionPopup'
+import ActionPopup from '../ActionPopup'
 import lodash from 'lodash'
-import AtomicRenamer from '../util/AtomicRenamer'
+import AtomicRenamer from '../../util/AtomicRenamer'
+import codeMixin from './code-mixin'
 
 // Disable automatic highlight at page load
 document.removeEventListener('DOMContentLoaded', Prism.highlightAll)
 
 export default {
   name: 'spec-code',
+  mixins: [codeMixin],
   components: {
     ActionPopup,
     Simplebar
   },
   props: {
-    code: {
-      type: String,
-      default: null
-    },
-    inLine: {
-      type: Boolean,
-      default: false
-    },
     atomic: {
       type: AtomicRenamer
     },
@@ -99,29 +91,6 @@ export default {
    * @see flow/user_action_selection.svg for detail about actions ordering.
    */
   methods: {
-    /**
-     * Parse and highlight the code with Prism.
-     * This add color and improve the syntax.
-     */
-    render () {
-      if (this.code === '') {
-        logger.silly('Update Prism code highlight')
-        this.$refs.code.textContent = '// empty'
-        Prism.highlightElement(this.$refs.code)
-      } else if (this.code !== null) {
-        logger.silly('Update Prism code highlight')
-        // We have to edit directly the dom to enable Prism plugins
-        this.$refs.code.textContent = this.code
-        Prism.highlightElement(this.$refs.code)
-        // Trigger custom focus highlight
-        this.setupFocus(this.focusedPositions)
-        // Trigger custom clickable action
-        this.setupAvailableActions()
-      } else {
-        // No code yet
-        this.$refs.code.textContent = 'loading ...'
-      }
-    },
     /**
      * Enable CSS for visually show focused positions.
      *
@@ -368,6 +337,10 @@ export default {
         this.resetUserSelection()
       }
       this.render()
+      // Trigger custom focus highlight
+      this.setupFocus(this.focusedPositions)
+      // Trigger custom clickable action
+      this.setupAvailableActions()
     },
     focusedPositions (newVal, oldVal) {
       if (oldVal && oldVal.length > 0) {
@@ -388,8 +361,14 @@ export default {
       this.setupAvailableActions()
     }
   },
+  /**
+   * Called after the mixin hook
+   */
   mounted () {
-    this.render()
+    // Trigger custom focus highlight
+    this.setupFocus(this.focusedPositions)
+    // Trigger custom clickable action
+    this.setupAvailableActions()
   }
 }
 </script>

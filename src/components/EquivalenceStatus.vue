@@ -7,26 +7,26 @@
 
     <template v-if="equivalence.status === 'non_equivalent_message'">
       The recipe
-      <spec-code :code="recipeStr" in-line></spec-code>
+      <spec-code-inline :code="recipeStr"></spec-code-inline>
       yields the message
-      <spec-code :code="termStr" in-line></spec-code>
+      <spec-code-inline :code="termStr"></spec-code-inline>
       on Process {{ equivalence.process_id }}
       but fails to compute a message on Process {{ (equivalence.process_id % 2) + 1 }}.
     </template>
 
     <template v-else>
       The two recipes
-      <spec-code :code="recipe1Str" in-line></spec-code>
+      <spec-code-inline :code="recipe1Str"></spec-code-inline>
       and
-      <spec-code :code="recipe2Str" in-line></spec-code>
+      <spec-code-inline :code="recipe2Str"></spec-code-inline>
       yield the same message
-      <spec-code :code="termEqualStr" in-line></spec-code>
+      <spec-code-inline :code="termEqualStr"></spec-code-inline>
       on Process {{ equivalence.process_id }}
       but they yield different messages on Process {{ (equivalence.process_id % 2) + 1 }}
       (
-      <spec-code :code="term1Str" in-line></spec-code>
+      <spec-code-inline :code="term1Str"></spec-code-inline>
       and
-      <spec-code :code="term2Str" in-line></spec-code>
+      <spec-code-inline :code="term2Str"></spec-code-inline>
       respectively).
     </template>
 
@@ -35,13 +35,13 @@
 
 <script>
 import text from '../text-content/text'
-import SpecCode from './SpecCode'
 import AtomicRenamer from '../util/AtomicRenamer'
-import { formatProcess } from '../util/process-parser'
+import { formatCode } from '../util/process-parser'
+import SpecCodeInline from './Code/SpecCodeInline'
 
 export default {
   name: 'equivalence-status',
-  components: { SpecCode },
+  components: { SpecCodeInline },
   props: {
     equivalence: {
       type: Object,
@@ -59,25 +59,25 @@ export default {
   },
   computed: {
     recipeStr: function () {
-      return formatProcess(this.equivalence.recipe, this.atomic)
+      return formatCode(this.equivalence.recipe, this.atomic)
     },
     termStr: function () {
-      return formatProcess(this.equivalence.term, this.atomic)
+      return formatCode(this.equivalence.term, this.atomic)
     },
     recipe1Str: function () {
-      return formatProcess(this.equivalence.recipe1, this.atomic)
+      return formatCode(this.equivalence.recipe1, this.atomic)
     },
     recipe2Str: function () {
-      return formatProcess(this.equivalence.recipe2, this.atomic)
+      return formatCode(this.equivalence.recipe2, this.atomic)
     },
     termEqualStr: function () {
-      return formatProcess(this.equivalence.term_equal, this.atomic)
+      return formatCode(this.equivalence.term_equal, this.atomic)
     },
     term1Str: function () {
-      return formatProcess(this.equivalence.term1, this.atomic)
+      return formatCode(this.equivalence.term1, this.atomic)
     },
     term2Str: function () {
-      return formatProcess(this.equivalence.term2, this.atomic)
+      return formatCode(this.equivalence.term2, this.atomic)
     }
   }
 }

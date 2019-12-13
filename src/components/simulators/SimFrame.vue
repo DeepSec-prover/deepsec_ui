@@ -2,7 +2,7 @@
   <el-card header="Frame">
     <ul v-if="frame.length > 0" class="no-bullet">
       <li v-for="i in frame.length">
-        <spec-code in-line :code="`ax_${i} -> ${ termsStr[i-1] }`"></spec-code>
+        <spec-code-inline :code="`ax_${i} -> ${ termsStr[i-1] }`"></spec-code-inline>
       </li>
     </ul>
     <div v-else class="centred-content info-text">
@@ -12,9 +12,9 @@
 </template>
 
 <script>
-import SpecCode from '../SpecCode'
-import { formatProcess } from '../../util/process-parser'
+import { formatCode } from '../../util/process-parser'
 import AtomicRenamer from '../../util/AtomicRenamer'
+import SpecCodeInline from '../Code/SpecCodeInline'
 
 export default {
   name: 'sim-frame',
@@ -27,11 +27,11 @@ export default {
     }
   },
   components: {
-    SpecCode
+    SpecCodeInline
   },
   computed: {
     termsStr: function () {
-      return this.frame.map(q => formatProcess(q, this.atomic))
+      return this.frame.map(q => formatCode(q, this.atomic))
     }
   }
 }

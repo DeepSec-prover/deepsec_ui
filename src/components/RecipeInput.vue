@@ -2,7 +2,7 @@
   <div>
     <el-input v-if="!locked" ref="input" class="recipe-input" v-show="editionEnable" v-model="recipe" placeholder="recipe"
               @input="inputChange" @keyup.native.enter="validateInput"></el-input>
-    <spec-code @click.native="codeClick" v-show="!editionEnable" :code="recipe" in-line></spec-code>
+    <spec-code-inline @click.native="codeClick" v-show="!editionEnable" :code="recipe"></spec-code-inline>
     <span v-if="!locked" class="edit-button">
       <el-link @click="clickEdit" :icon="editionEnable ? 'el-icon-check' : 'el-icon-edit'"></el-link>
     </span>
@@ -10,12 +10,12 @@
 </template>
 
 <script>
-import SpecCode from './SpecCode'
+import SpecCodeInline from './Code/SpecCodeInline'
 
 export default {
   name: 'recipe-input',
   components: {
-    SpecCode
+    SpecCodeInline
   },
   props: {
     value: {

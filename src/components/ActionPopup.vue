@@ -49,7 +49,7 @@
 
 <script>
 import RecipeInput from './RecipeInput'
-import { formatProcess } from '../util/process-parser'
+import { formatCode } from '../util/process-parser'
 import AtomicRenamer from '../util/AtomicRenamer'
 
 export default {
@@ -128,11 +128,11 @@ export default {
           this.action.transitions.forEach(t => {
             this.recipes[t.type] = {}
             if (t.recipe_channel) {
-              this.recipes[t.type].recipe_channel = formatProcess(t.recipe_channel, this.atomic)
+              this.recipes[t.type].recipe_channel = formatCode(t.recipe_channel, this.atomic)
             }
 
             if (t.recipe_term) {
-              this.recipes[t.type].recipe_term = formatProcess(t.recipe_term, this.atomic)
+              this.recipes[t.type].recipe_term = formatCode(t.recipe_term, this.atomic)
             }
           })
         }

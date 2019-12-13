@@ -81,8 +81,8 @@
 import QueryModel from '../../models/QueryModel'
 import Simplebar from 'simplebar-vue'
 import Helper from '../helpers/Helper'
-import SpecCode from '../SpecCode'
-import { formatProcess } from '../../util/process-parser'
+import SpecCode from '../Code/SpecCode'
+import { formatCode } from '../../util/process-parser'
 import logger from 'electron-log'
 import SimFrame from './SimFrame'
 import SimTrace from './SimTrace'
@@ -118,7 +118,7 @@ export default {
       if (!this.processDisplayed.process)
         return 'loading ...'
 
-      return formatProcess(this.processDisplayed.process, this.processDisplayed.atomic)
+      return formatCode(this.processDisplayed.process, this.processDisplayed.atomic)
     }
   },
   watch: {

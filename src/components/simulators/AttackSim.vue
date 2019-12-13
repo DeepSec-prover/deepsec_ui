@@ -151,8 +151,8 @@
 
 <script>
 import QueryModel from '../../models/QueryModel'
-import SpecCode from '../SpecCode'
-import { formatProcess } from '../../util/process-parser'
+import SpecCode from '../Code/SpecCode'
+import { formatCode } from '../../util/process-parser'
 import ProcessDisplayedModel from '../../models/ProcessDisplayedModel'
 import ProcessUserModel from '../../models/ProcessUserModel'
 import SimFrame from './SimFrame'
@@ -183,10 +183,10 @@ export default {
   },
   computed: {
     processDisplayedStr: function () {
-      return formatProcess(this.processDisplayed.process, this.processDisplayed.atomic)
+      return formatCode(this.processDisplayed.process, this.processDisplayed.atomic)
     },
     processUserStr: function () {
-      return formatProcess(this.processUser.process, this.processUser.atomic)
+      return formatCode(this.processUser.process, this.processUser.atomic)
     }
   },
   watch: {
