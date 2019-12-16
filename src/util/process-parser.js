@@ -388,13 +388,15 @@ function formatBang (subProcess, atomic, indent) {
  * @returns {string} A readable string which describe the sub-process and its children
  */
 function formatChoice (subProcess, atomic, indent) {
-  let res = '(\n' + format(subProcess.process1, atomic, indent + 1) + strIndent(indent) + ') '
+  let res = '(\n' + format(subProcess.process1, atomic, indent + 1) + strIndent(indent) + ')'
 
   if (subProcess.position) {
-    res += tagPosition('+', subProcess.position)
+    res += tagPosition(' + ', subProcess.position)
+  } else {
+    res += ' + '
   }
 
-  res += ' (\n' + format(subProcess.process2, atomic, indent + 1) + strIndent(indent) + ')\n'
+  res += '(\n' + format(subProcess.process2, atomic, indent + 1) + strIndent(indent) + ')\n'
 
   return res
 }
