@@ -209,12 +209,11 @@ export default {
       if (type === 'tau') {
         // No change needed, send the action to the API.
         this.sendActionSelection(availableAction)
-      } else if (type === 'output' || 'input') {
+      } else if (type === 'output' || type === 'input' | type === 'bang') {
         // Display a popup to ask more information.
         this.displayActionSelectorPopup(availableAction, domElement)
-      } else if (type === 'bang') {
-        // Display a popup to ask about the unfolding quantity.
-        this.displayActionSelectorPopup(availableAction, domElement)
+      } else if (type === 'choice') {
+        this.selectAvailableChoice(availableAction)
       } else {
         logger.error(`Not implemented action type ${type}`)
       }
@@ -226,6 +225,15 @@ export default {
      * @param {Object} selectedTransition The transition action which the user just select.
      */
     transitionSelection (selectedTransition) {
+      if (this.selectedAction.type === 'choice') {
+        this.sendActionSelection(
+          {
+            type: 'choice',
+            position: this.selectedAction.position,
+            choose_left: selectedTransition.position.tag === 'left'
+          })
+      }
+
       let input, output
       if (this.selectedAction.type === 'input') {
         input = this.selectedAction
@@ -255,7 +263,7 @@ export default {
       }
     },
     /**
-     * Filter and focus available transition actions depending of the previous selected action and the transition settings.
+     * Filter and focus available transition actions depending of the previously selected action and the transition settings.
      *
      * @param {Object} transition The selected transition settings.
      */
@@ -271,6 +279,42 @@ export default {
           a.transitions.some(t => t.type === filterTransitionType) &&
           lodash.isEqual(a.channel, filterChannel) // Full object content value comparison
       })
+
+      // Show available transitions
+      this.setupAvailableTransitions()
+    },
+    /**
+     * Filter and focus available transition actions depending of the previously selected choice.
+     *
+     * @param {Object} choiceAction The selected choice.
+     */
+    selectAvailableChoice (choiceAction) {
+      // Hide previous available actions
+      this.clearAvailableActions()
+      this.clearFocus()
+      // Save current action
+      this.selectedAction = choiceAction
+      // Focus on this action
+      this.setupFocus([ProcessModel.formatPositionToString(this.selectedAction.position)])
+
+      this.availableTransitions = [
+        {
+          type: 'choice',
+          position: {
+            index: choiceAction.position.index,
+            args: choiceAction.position.args,
+            tag: 'left'
+          }
+        },
+        {
+          type: 'choice',
+          position: {
+            index: choiceAction.position.index,
+            args: choiceAction.position.args,
+            tag: 'right'
+          }
+        }
+      ]
 
       // Show available transitions
       this.setupAvailableTransitions()
@@ -388,10 +432,12 @@ export default {
 
   .available-transitions {
     outline: dashed rgba(255, 175, 14, 0.5);
+    display: table;
+    padding-right: 5px;
   }
 
   .available-transitions:hover {
-    outline: solid rgba(255, 175, 14, 0.5);
+    outline: solid rgba(255, 175, 14, 0.7);
   }
 
   .language-deepsec .token.hidden {

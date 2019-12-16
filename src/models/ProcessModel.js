@@ -112,7 +112,7 @@ export default class ProcessModel {
   /**
    * Format a position object as a string.
    * Used for classes identifier.
-   * Eg: "142" or "21-2-1"
+   * Eg: "142" or "21-2-1" or "10-5-tag"
    *
    * @param {Object} position The position object.
    * @returns {string} The string identifier.
@@ -121,6 +121,9 @@ export default class ProcessModel {
     let argsStr = ''
     if (position.args && position.args.length > 0) {
       argsStr = '-' + position.args.join('-')
+    }
+    if (position.tag && position.tag.length > 0) {
+      argsStr += '-' + position.tag
     }
 
     return position.index + argsStr
