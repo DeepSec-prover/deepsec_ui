@@ -432,8 +432,7 @@ export default {
 
   .available-transitions {
     outline: dashed rgba(255, 175, 14, 0.5);
-    display: table;
-    padding-right: 5px;
+    outline-offset: 1px;
   }
 
   .available-transitions:hover {
