@@ -388,17 +388,18 @@ function formatBang (subProcess, atomic, indent) {
  * @returns {string} A readable string which describe the sub-process and its children
  */
 function formatChoice (subProcess, atomic, indent) {
-  let res = '(\n' + format(subProcess.process1, atomic, indent + 1) + strIndent(indent) + ')'
+  let left = format(subProcess.process1, atomic, indent + 1)
+  let middle = ' + '
+  let right = format(subProcess.process2, atomic, indent + 1)
+
 
   if (subProcess.position) {
-    res += tagPosition(' + ', subProcess.position)
-  } else {
-    res += ' + '
+    left = tagPosition(left, subProcess.position, 'left')
+    middle = tagPosition(middle, subProcess.position)
+    right = tagPosition(right, subProcess.position, 'right')
   }
 
-  res += '(\n' + format(subProcess.process2, atomic, indent + 1) + strIndent(indent) + ')\n'
-
-  return res
+  return '(\n' + left + strIndent(indent) + ')' + middle + '(\n' + right + strIndent(indent) + ')\n'
 }
 
 /**
@@ -434,14 +435,16 @@ function formatAttacker (subProcess) {
 }
 
 /**
- * Surround a string with a tag position.
- * With identifier like "142" or "752-1-2"
+ * Surround a string with a unique position.
+ * With identifier like "%142%...%/142%" or "%752-1-2%...%/752-1-2%"
  *
- * @param {String} content The content to tag with the position.
+ * @param {String} content The content to identify with the position.
  * @param {Object} position The position object.
+ * @param {String} tag Additional tag at the end of the identifier (should match \w).
  * @returns {string} The content surrounded with the position tag.
  */
-function tagPosition (content, position) {
+function tagPosition (content, position, tag = null) {
   const positionStr = ProcessModel.formatPositionToString(position)
-  return `%${positionStr}%${content}%`
+  const tagStr = tag === null ? '' : `-${tag}`
+  return `%${positionStr}${tagStr}%${content}%/${positionStr}${tagStr}%`
 }
