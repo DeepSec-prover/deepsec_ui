@@ -10,8 +10,9 @@ export default class ProcessModel {
    * @param {Array} atomicData The table of atomic data of the process.
    * @param {Array} actions The list of know action for this process.
    * @param {Object} apiRemote The reference to the API remote.
+   * @param {Boolean} listenUpdate Is the update listener enable.
    */
-  constructor (processId, process, atomicData, actions, apiRemote) {
+  constructor (processId, process, atomicData, actions, apiRemote, listenUpdate = true) {
     this.processId = processId
     this.process = process
     this.atomic = new AtomicRenamer(atomicData)
@@ -20,8 +21,21 @@ export default class ProcessModel {
     this.apiRemote = apiRemote
     this.loading = false
     this.traceLevel = 'default'
-    // Catch every API answer
-    this.apiRemote.onReply(this.handleUpdateAnswer.bind(this), false)
+
+    if (listenUpdate) {
+      // Catch every API answer
+      this.updateListener = this.handleUpdateAnswer.bind(this) // Keep ref to remove later
+      this.apiRemote.onReply(this.updateListener, false)
+    }
+  }
+
+  /**
+   * Remove the current update listener. To used when we don't need this model anymore,
+   * after a copy for example.
+   */
+  stopUpdate () {
+    this.apiRemote.removeReplyListener(this.updateListener)
+    this.updateListener = null
   }
 
   /**
