@@ -10,6 +10,7 @@ import { ApiStartRun } from './deepsec-api/ApiStartRun'
 import { ApiDisplayTrace } from './deepsec-api/ApiDisplayTrace'
 import { ApiManager } from './deepsec-api/ApiManager'
 import { ApiAttackSim } from './deepsec-api/ApiAttackSim'
+import { ApiEquivalenceSim } from './deepsec-api/ApiEquivalenceSim'
 
 // Init default logger
 setupDefaultLogger()
@@ -89,7 +90,7 @@ app.on('ready', async () => {
   }
 
   // Every API manager that you want to use has to be in this list.
-  ApiManager.registerManagers([ApiStartRun, ApiDisplayTrace, ApiAttackSim],
+  ApiManager.registerManagers([ApiStartRun, ApiDisplayTrace, ApiAttackSim, ApiEquivalenceSim],
                               () => mainWindow)
 
   createWindow()

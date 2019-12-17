@@ -1,5 +1,5 @@
 <template>
-  <el-alert class="equiv-message" type="warning" :closable="false">
+  <el-alert class="equiv-message" type="error" :closable="false">
 
     <template v-slot:title>
       {{ text.query.equivalence_status[equivalence.status] }}
