@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h3>Attack on Process {{ processDisplayed.processId }}</h3>
     <el-row :gutter="10">
       <el-col :md="16">
         <!-- Process code -->
@@ -77,44 +76,31 @@
 </template>
 
 <script>
-import QueryModel from '../../models/QueryModel'
-import Simplebar from 'simplebar-vue'
-import Helper from '../helpers/Helper'
+import ProcessDisplayedModel from '../../models/ProcessDisplayedModel'
 import SpecCode from '../code/SpecCode'
 import { formatCode } from '../../util/process-parser'
-import logger from 'electron-log'
-import SimFrame from './SimFrame'
+import Helper from '../helpers/Helper'
 import SimTrace from './SimTrace'
-import ProcessDisplayedModel from '../../models/ProcessDisplayedModel'
-import ApiRemote from '../../deepsec-api/ApiRemote'
+import SimFrame from './SimFrame'
+import logger from 'electron-log'
 
 export default {
-  name: 'query-trace',
-  components: {
-    SimTrace,
-    SimFrame,
-    SpecCode,
-    Helper,
-    Simplebar
-  },
+  name: 'equivalence-sim-display',
+  components: { SimFrame, SimTrace, Helper, SpecCode },
   props: {
-    query: {
-      type: QueryModel
+    processDisplayed: {
+      type: ProcessDisplayedModel,
+      required: true
     }
   },
   data () {
     return {
-      processDisplayed: undefined,
-      apiRemote: undefined,
       focusedPositions: [],
       nbTracePreview: 0
     }
   },
   computed: {
     processStr: function () {
-      if (!this.processDisplayed.process)
-        return 'loading ...'
-
       return formatCode(this.processDisplayed.process, this.processDisplayed.atomic)
     }
   },
@@ -185,22 +171,6 @@ export default {
     clearFocusActions () {
       this.nbTracePreview = 0
       this.focusedPositions = []
-    }
-  },
-  beforeMount () {
-    // Create the model but don't start the API util the first call.
-    this.apiRemote = new ApiRemote('display-trace', this.query.path, false)
-    this.processDisplayed = new ProcessDisplayedModel(this.query.getAttackedProcessId(),
-                                                      this.query.getAttackedProcess(),
-                                                      this.query.atomicData,
-                                                      this.query.attackTrace.action_sequence,
-                                                      this.apiRemote)
-  },
-  // Called when the user change to an other view.
-  destroyed () {
-    if (this.apiRemote.started && !this.apiRemote.stopped) {
-      // Stop the display trace process
-      this.apiRemote.sendQuery('die')
     }
   }
 }

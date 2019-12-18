@@ -4,18 +4,24 @@
       <!-- Title -->
       <h3>
         Process {{ process.processId }}
-        <el-button class="start-button" size="small" icon="el-icon-video-play" type="primary" plain
+        <el-button class="start-button" size="small" icon="el-icon-video-play"
+                   :type="isApiRunning ? '' : 'primary'" plain
                    @click="startSimulator(process.processId)">
-          {{ isApiRunning ? 'Restart' : 'Start' }} with process {{ process.processId }}
+          <template v-if="this.selectedProcess === process.processId">
+            Reset
+          </tempalte>
+          <template>
+            Select trace of process {{ process.processId }}
+          </template>
         </el-button>
       </h3>
       <!-- Display Process -->
       <template v-if="isDisplayProcess(process)">
-        Display
+        <equivalence-sim-display :processDisplayed="process"></equivalence-sim-display>
       </template>
       <!-- User Interactive Process -->
       <template v-else-if="isUserProcess(process)">
-        User
+        <equivalence-sim-user :processUser="process"></equivalence-sim-user>
       </template>
       <!-- Fixed Process -->
       <template v-else>
@@ -33,10 +39,11 @@ import SpecCode from '../code/SpecCode'
 import { formatCode } from '../../util/process-parser'
 import ProcessUserModel from '../../models/ProcessUserModel'
 import ProcessDisplayedModel from '../../models/ProcessDisplayedModel'
+import EquivalenceSimDisplay from './EquivalenceSimDisplay'
 
 export default {
   name: 'equivalence-sim',
-  components: { SpecCode },
+  components: { EquivalenceSimDisplay, SpecCode },
   props: {
     query: {
       type: QueryModel,
@@ -47,7 +54,8 @@ export default {
     return {
       apiRemote: undefined,
       processes: [],
-      simulatorState: 'not-started'
+      simulatorState: 'not-started',
+      selectedProcess: undefined
     }
   },
   computed: {
@@ -61,10 +69,9 @@ export default {
   },
   methods: {
     startSimulator (selectedId) {
+      this.selectedProcess = selectedId
       selectedId = selectedId - 1
-      const notSelectedId = (selectedId + 1) % 2
       this.processes[selectedId] = ProcessUserModel.convertToProcessUser(this.processes[selectedId])
-      this.processes[notSelectedId] = ProcessDisplayedModel.convertToProcessDisplay(this.processes[notSelectedId])
 
       if (this.isApiRunning) {
         this.apiRemote.sendQuery('reset_simulator', selectedId)
