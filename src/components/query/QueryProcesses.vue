@@ -8,8 +8,8 @@
 </template>
 
 <script>
-import { formatProcess } from '../../util/process-parser'
-import SpecCode from '../SpecCode'
+import { formatCode } from '../../util/process-parser'
+import SpecCode from '../code/SpecCode'
 
 export default {
   name: 'query-processes',
@@ -22,7 +22,7 @@ export default {
   },
   computed: {
     processesStr: function () {
-      return this.query.processes.map(p => formatProcess(p, this.query.atomicData))
+      return this.query.processes.map(p => formatCode(p, this.query.atomicData))
     }
   }
 }

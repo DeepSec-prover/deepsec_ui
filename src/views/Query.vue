@@ -50,7 +50,7 @@
           <template v-else>
             <!-- Equivalence simulator -->
             <el-tab-pane label="Equivalence Simulator" name="equivalence-sim" :lazy="true">
-              <equivalence-sim></equivalence-sim>
+              <equivalence-sim :query="query"></equivalence-sim>
             </el-tab-pane>
           </template>
         </template>

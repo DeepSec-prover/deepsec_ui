@@ -1,3 +1,5 @@
+import logger from 'electron-log'
+
 /**
  * Store atomic data and renames names and variables when duplicate detected.
  */
@@ -19,7 +21,12 @@ export default class AtomicRenamer {
    * @returns {Object}
    */
   get (id) {
-    return this.dataTable[id]
+    const data = this.dataTable[id]
+    if (data === undefined) {
+      logger.error(`Index "${id}" not found in the atomic table.`)
+      throw new Error(`Index "${id}" not found in the atomic table.`)
+    }
+    return data
   }
 
   /**
@@ -31,14 +38,21 @@ export default class AtomicRenamer {
    * @returns {string} The name with smallest index
    */
   getAndRename (id) {
-    const type = this.dataTable[id].type
+    const data = this.dataTable[id]
 
-    if (type !== 'Name' && type !== 'Variable') {
-      throw Error(`Unexpected Atomic type ${type} to rename`)
+    if (data === undefined) {
+      logger.error(`Index "${id}" not found in the atomic table.`)
+      throw new Error(`Index "${id}" not found in the atomic table.`)
     }
 
-    const label = this.dataTable[id].label
-    const index = this.dataTable[id].index
+    const type = data.type
+
+    if (type !== 'Name' && type !== 'Variable') {
+      throw new Error(`Unexpected Atomic type ${type} to rename`)
+    }
+
+    const label = data.label
+    const index = data.index
 
     // Existing label
     if (this.renameTable.has(label)) {

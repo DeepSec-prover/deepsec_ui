@@ -43,12 +43,12 @@ export function formatTrace (actions, atomicData) {
 export function formatAction (action, atomic, axiomIdRef) {
   switch (action.type) {
     case 'input':
-      return 'in(' + formatRecipe(action.channel, atomic) + ',' +
-        formatRecipe(action.term, atomic) + ')'
+      return 'in(' + format(action.channel, atomic, 0) + ',' +
+        format(action.term, atomic, 0) + ')'
     case 'output':
-      return 'out(' + formatRecipe(action.channel, atomic) + ',ax_' + axiomIdRef.value++ + ')'
+      return 'out(' + format(action.channel, atomic, 0) + ',ax_' + axiomIdRef.value++ + ')'
     case 'eavesdrop':
-      return 'eavesdrop(' + formatRecipe(action.channel, atomic) + ',ax_' + axiomIdRef.value++ + ')'
+      return 'eavesdrop(' + format(action.channel, atomic, 0) + ',ax_' + axiomIdRef.value++ + ')'
     case 'tau':
       return '\uD835\uDF49 step'
     case 'comm':
@@ -61,7 +61,8 @@ export function formatAction (action, atomic, axiomIdRef) {
 }
 
 /**
- * Format a process from a Json format to a readable string.
+ * Format a DeepSec spec code from a Json format to a readable string.
+ * Could format a full process, a term or a recipe.
  *
  * @param {Object} process - The structured process
  * @param {Array|AtomicRenamer} atomicData - The table of atomic data. If it's an array then wrap
@@ -70,7 +71,7 @@ export function formatAction (action, atomic, axiomIdRef) {
  * @returns {string} A readable string which describe the process
  * @see doc/process_structure.md for process structure
  */
-export function formatProcess (process, atomicData) {
+export function formatCode (process, atomicData) {
   // If the atomic parameter is already a renamer keep it, if not create one
   const atomic = atomicData instanceof AtomicRenamer ? atomicData : new AtomicRenamer(atomicData)
 
@@ -387,15 +388,18 @@ function formatBang (subProcess, atomic, indent) {
  * @returns {string} A readable string which describe the sub-process and its children
  */
 function formatChoice (subProcess, atomic, indent) {
-  let res = '(\n' + format(subProcess.process1, atomic, indent + 1) + strIndent(indent) + ') '
+  let left = format(subProcess.process1, atomic, indent + 1)
+  let middle = ' + '
+  let right = format(subProcess.process2, atomic, indent + 1)
+
 
   if (subProcess.position) {
-    res += tagPosition('+', subProcess.position)
+    left = tagPosition(left, subProcess.position, 'left')
+    middle = tagPosition(middle, subProcess.position)
+    right = tagPosition(right, subProcess.position, 'right')
   }
 
-  res += ' (\n' + format(subProcess.process2, atomic, indent + 1) + strIndent(indent) + ')\n'
-
-  return res
+  return '(\n' + left + strIndent(indent) + ')' + middle + '(\n' + right + strIndent(indent) + ')\n'
 }
 
 /**
@@ -431,34 +435,16 @@ function formatAttacker (subProcess) {
 }
 
 /**
- * Format "Recipe" type to readable string
- * Only use for attack trace
+ * Surround a string with a unique position.
+ * With identifier like "%142%...%/142%" or "%752-1-2%...%/752-1-2%"
  *
- * @param {Object} recipe The recipe to parse
- * @param {Object} atomic The table of atomic data
- * @returns {string} A readable string which describe the recipe
- */
-function formatRecipe (recipe, atomic) {
-  if (recipe.type === 'Axiom') {
-    return 'ax_' + recipe.id
-  } else if (recipe.type === 'Function' || recipe.type === 'Attacker') {
-    return format(recipe, atomic, 0)
-  } else {
-    // Do not stop the app but log an error
-    logger.error(`Try to parse an unknown recipe type ${recipe.type}`)
-    return `------------ not implemented : ${recipe.type} ------------`
-  }
-}
-
-/**
- * Surround a string with a tag position.
- * With identifier like "142" or "752-1-2"
- *
- * @param {String} content The content to tag with the position.
+ * @param {String} content The content to identify with the position.
  * @param {Object} position The position object.
+ * @param {String} tag Additional tag at the end of the identifier (should match \w).
  * @returns {string} The content surrounded with the position tag.
  */
-function tagPosition (content, position) {
+function tagPosition (content, position, tag = null) {
   const positionStr = ProcessModel.formatPositionToString(position)
-  return `%${positionStr}%${content}%`
+  const tagStr = tag === null ? '' : `-${tag}`
+  return `%${positionStr}${tagStr}%${content}%/${positionStr}${tagStr}%`
 }

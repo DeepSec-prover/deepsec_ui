@@ -11,7 +11,7 @@ const { remote } = require('electron')
 Vue.config.productionTip = false
 
 Vue.use(Element)
-Vue.use(VueShortKey)
+Vue.use(VueShortKey, { prevent: ['input', 'textarea'] }) // https://www.npmjs.com/package/vue-shortkey
 
 // Setup prototype for global use
 Vue.prototype.$notification = notification

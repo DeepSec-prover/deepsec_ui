@@ -3,9 +3,10 @@
     <el-form v-if="action" size="mini">
       <!-- Bang -->
       <template v-if="action.type === 'bang'">
-        <el-form-item label="Nb unfolded">
+        <el-form-item v-if="action.max_unfolding > 1" label="Nb unfolded">
           <el-input-number v-model="nbProcessUnfolded" :min="1" :max="action.max_unfolding"></el-input-number>
         </el-form-item>
+        <div v-else>Unfold 1</div>
       </template>
       <!-- I/O -->
       <template v-else-if="action.type === 'input' || action.type === 'output'">
@@ -16,14 +17,18 @@
             <el-radio-button v-if="transitionTypes.includes('eavesdrop')" label="eavesdrop">Eavesdrop</el-radio-button>
           </el-radio-group>
         </div>
-        <el-form-item v-show="selectedTransitionType === 'direct' || selectedTransitionType === 'eavesdrop'"
-                      label="Channel :">
-          <el-input v-model="channelRecipe" placeholder="recipe"></el-input>
-        </el-form-item>
-        <el-form-item v-show="selectedTransitionType === 'direct'"
-                      label="Term :">
-          <el-input v-model="termRecipe" placeholder="recipe"></el-input>
-        </el-form-item>
+        <!-- Channel -->
+        <template v-if="selectedTransitionType === 'direct' || selectedTransitionType === 'eavesdrop'">
+          <div class="recipe-label">Channel's recipe:</div>
+          <recipe-input v-model="recipes[selectedTransitionType].recipe_channel"
+                        :locked="recipes[selectedTransitionType].locked"></recipe-input>
+        </template>
+        <!-- Term -->
+        <template v-if="selectedTransitionType === 'direct' && action.type === 'input'">
+          <div class="recipe-label">Term's recipe:</div>
+          <recipe-input v-model="recipes[selectedTransitionType].recipe_term"
+                        :locked="recipes[selectedTransitionType].locked"></recipe-input>
+        </template>
       </template>
       <!-- Buttons -->
       <div class="buttons">
@@ -33,8 +38,8 @@
           </el-button>
         </span>
         <span>
-          <el-button class="validate" size="mini" type="success" @click="validate" plain>
-            {{ selectedTransitionType === 'direct' ? 'Validate' : 'Continue'}}
+          <el-button class="validate" size="mini" type="success" @click="validate" :plain="!finalAction">
+            {{ finalAction ? 'Validate' : 'Continue'}}
           </el-button>
         </span>
       </div>
@@ -43,20 +48,28 @@
 </template>
 
 <script>
+import RecipeInput from './RecipeInput'
+import { formatCode } from '../util/process-parser'
+import AtomicRenamer from '../util/AtomicRenamer'
+
 export default {
   name: 'action-popup',
+  components: { RecipeInput },
   props: {
     action: {
       type: Object,
+      require: true
+    },
+    atomic: {
+      type: AtomicRenamer,
       require: true
     }
   },
   data () {
     return {
       selectedTransitionType: 'direct',
-      nbProcessUnfolded: 1,
-      channelRecipe: '',
-      termRecipe: ''
+      recipes: {},
+      nbProcessUnfolded: 1
     }
   },
   computed: {
@@ -65,6 +78,9 @@ export default {
     },
     onlyOneType: function () {
       return this.action.transitions.length === 1
+    },
+    finalAction: function () {
+      return this.selectedTransitionType === 'direct' || this.action.type === 'bang'
     }
   },
   methods: {
@@ -81,13 +97,14 @@ export default {
         if (this.selectedTransitionType === 'direct') {
           this.$emit('user-select-action', {
             type: this.action.type,
-            position: this.action.position
+            position: this.action.position,
+            channel: this.recipes[this.selectedTransitionType].recipe_channel,
+            term: this.recipes[this.selectedTransitionType].recipe_term
           })
         } else {
           this.$emit('user-select-transition', {
             type: this.selectedTransitionType,
-            channel: this.channelRecipe,
-            term: this.termRecipe
+            channel: this.recipes[this.selectedTransitionType].recipe_channel
           })
         }
       }
@@ -107,6 +124,17 @@ export default {
           } else if (this.transitionTypes.includes('eavesdrop')) {
             this.selectedTransitionType = 'eavesdrop'
           }
+
+          this.action.transitions.forEach(t => {
+            this.recipes[t.type] = {}
+            if (t.recipe_channel) {
+              this.recipes[t.type].recipe_channel = formatCode(t.recipe_channel, this.atomic)
+            }
+
+            if (t.recipe_term) {
+              this.recipes[t.type].recipe_term = formatCode(t.recipe_term, this.atomic)
+            }
+          })
         }
       }
     }
@@ -123,11 +151,6 @@ export default {
     margin-bottom: 8px !important;
   }
 
-  .popup .el-form-item__label {
-    font-size: 90%;
-    line-height: 22px !important;
-  }
-
   .not-clickable .el-radio-button__inner {
     cursor: default;
   }
@@ -141,5 +164,10 @@ export default {
 
   .buttons {
     padding-top: 8px;
+  }
+
+  .recipe-label {
+    font-size: 90%;
+    line-height: 22px !important;
   }
 </style>

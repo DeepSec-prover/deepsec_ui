@@ -171,4 +171,20 @@ export default class ProcessDisplayedModel extends ProcessModel {
 
     return count
   }
+
+  /**
+   * Create a copy of a process model as a new display model.
+   *
+   * @param {ProcessModel} processModel The original process to copy.
+   */
+  static convertToProcessDisplay (processModel) {
+    const copy = new ProcessDisplayedModel(processModel.processId,
+                                           processModel.process,
+                                           [], // Copy the atomic renamer after
+                                           processModel.actions,
+                                           processModel.apiRemote)
+    copy.atomic = processModel.atomic
+    copy.frame = processModel.frame
+    return copy
+  }
 }

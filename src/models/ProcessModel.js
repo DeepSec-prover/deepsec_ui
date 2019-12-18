@@ -10,8 +10,9 @@ export default class ProcessModel {
    * @param {Array} atomicData The table of atomic data of the process.
    * @param {Array} actions The list of know action for this process.
    * @param {Object} apiRemote The reference to the API remote.
+   * @param {Boolean} listenUpdate Is the update listener enable.
    */
-  constructor (processId, process, atomicData, actions, apiRemote) {
+  constructor (processId, process, atomicData, actions, apiRemote, listenUpdate = true) {
     this.processId = processId
     this.process = process
     this.atomic = new AtomicRenamer(atomicData)
@@ -20,6 +21,21 @@ export default class ProcessModel {
     this.apiRemote = apiRemote
     this.loading = false
     this.traceLevel = 'default'
+
+    if (listenUpdate) {
+      // Catch every API answer
+      this.updateListener = this.handleUpdateAnswer.bind(this) // Keep ref to remove later
+      this.apiRemote.onReply(this.updateListener, false)
+    }
+  }
+
+  /**
+   * Remove the current update listener. To used when we don't need this model anymore,
+   * after a copy for example.
+   */
+  stopUpdate () {
+    this.apiRemote.removeReplyListener(this.updateListener)
+    this.updateListener = null
   }
 
   /**
@@ -29,9 +45,6 @@ export default class ProcessModel {
    */
   startProcess (options) {
     this.loading = true
-
-    // Wait for the next reply
-    this.apiRemote.onReply(this.handleUpdateAnswer.bind(this))
 
     this.apiRemote.start(options)
   }
@@ -45,9 +58,6 @@ export default class ProcessModel {
    */
   gotoAction (actionId, saveHistory = true) {
     this.loading = true
-
-    // Wait for the next reply
-    this.apiRemote.onReply(this.handleUpdateAnswer.bind(this))
 
     // Send query
     this.apiRemote.sendQuery('goto_step', actionId, this.processId)
@@ -116,7 +126,7 @@ export default class ProcessModel {
   /**
    * Format a position object as a string.
    * Used for classes identifier.
-   * Eg: "142" or "21-2-1"
+   * Eg: "142" or "21-2-1" or "10-5-tag"
    *
    * @param {Object} position The position object.
    * @returns {string} The string identifier.
@@ -125,6 +135,9 @@ export default class ProcessModel {
     let argsStr = ''
     if (position.args && position.args.length > 0) {
       argsStr = '-' + position.args.join('-')
+    }
+    if (position.tag && position.tag.length > 0) {
+      argsStr += '-' + position.tag
     }
 
     return position.index + argsStr

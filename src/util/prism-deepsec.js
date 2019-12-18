@@ -1,6 +1,17 @@
 import Prism from 'prismjs'
 
 let filters = {
+  position: {
+    pattern: /%(\d+(-\d+)*(-\w+)?)%(.|\n)+%\/\1%/, // Something like "%142%...%/142%" or "%752-1-2%...%/752-1-2%"
+    inside: {
+      // Used to avoid infinite loop, see https://github.com/PrismJS/prism/issues/2133
+      'position-content': {
+        pattern: /(?<=%(\d+(-\d+)*(-\w+)?)%)(.|\n)+(?=%\/\1%)/
+        // Set inside later
+      }
+    }
+  },
+  comment: /\/\/.*$/,
   keyword: {
     pattern: /(?<=\b)(new|let|if|then|else|in)(?=\s|%)|(?<=\s|%)->(?=\s|%)|(?<=^|\s|;|%)!~\d+/,
     inside: {
@@ -16,19 +27,13 @@ let filters = {
     }
   },
   'no-args': /\(\)/,
-  punctuation: /[(),;]/u,
+  punctuation: /[(),;]/,
   sup: /(?<=\w)~\d+(-\d+)*(?=\s|$|_|%)/,
   sub: /(?<=\w)_\d+(?=\b|~|%)/,
-
 }
 
-// Position can include everything
-let position = {
-  pattern: /%\d+(-\d+)*%[^%]+%/, // Something like "142" or "752-1-2"
-  inside: Object.assign({}, filters) // Deep copy to avoid circular reference
-}
-
-filters = { position: position, ...filters } // Set position at first rule
+// Recursive definition for position
+filters.position.inside['position-content'].inside = filters
 
 // Define the language grammar
 Prism.languages.deepsec = filters
@@ -51,9 +56,9 @@ Prism.hooks.add('wrap', env => {
   }
   // Position tag
   else if (env.type === 'position') {
-    const index = env.content.match(/^%([-\d]+)%/)[1]
+    const index = env.content.match(/^%([-\d]+(?:\w+)?)%/)[1]
     env.classes.push(`position-${index}`)
-    env.content = env.content.match(/^%[-\d]+%([^%]+)%/)[1]
+    env.content = env.content.match(/^%[-\d]+(?:\w+)?%([^%]+)%\/[-\d]+(?:\w+)?%$/)[1]
   }
   // Format projection function
   else if (env.type === 'function' && env.content.startsWith('proj_{')) {

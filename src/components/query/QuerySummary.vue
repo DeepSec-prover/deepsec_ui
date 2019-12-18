@@ -50,12 +50,12 @@
           <!-- Public -->
           <span v-if="publicConstructors">
               <el-tag size="mini" effect="plain" class="tag" type="success">Public :</el-tag>
-              <spec-code in-line :code="publicConstructors"></spec-code>
+              <spec-code-inline :code="publicConstructors"></spec-code-inline>
             </span>
           <!-- Private -->
           <span v-if="privateConstructors">
               <el-tag size="mini" effect="plain" class="tag">Private :</el-tag>
-              <spec-code in-line :code="privateConstructors"></spec-code>
+              <spec-code-inline :code="privateConstructors"></spec-code-inline>
             </span>
           <!-- None -->
           <span v-if="!publicConstructors && !privateConstructors">
@@ -67,12 +67,12 @@
           <!-- Public -->
           <span v-if="publicDestructors">
               <el-tag size="mini" effect="plain" class="tag" type="success">Public :</el-tag>
-              <spec-code in-line :code="publicDestructors"></spec-code>
+              <spec-code-inline :code="publicDestructors"></spec-code-inline>
             </span>
           <!-- Private -->
           <span v-if="privateDestructors">
               <el-tag size="mini" effect="plain" class="tag">Private :</el-tag>
-              <spec-code in-line :code="privateDestructors"></spec-code>
+              <spec-code-inline :code="privateDestructors"></spec-code-inline>
             </span>
           <!-- None -->
           <span v-if="!publicDestructors && !privateDestructors">
@@ -84,12 +84,12 @@
           <!-- Public -->
           <span v-if="publicNames">
               <el-tag size="mini" effect="plain" class="tag" type="success">Public :</el-tag>
-              <spec-code in-line :code="publicNames"></spec-code>
+              <spec-code-inline :code="publicNames"></spec-code-inline>
             </span>
           <!-- Private -->
           <span v-if="privateNames">
               <el-tag size="mini" effect="plain" class="tag">Private :</el-tag>
-              <spec-code in-line :code="privateNames"></spec-code>
+              <spec-code-inline :code="privateNames"></spec-code-inline>
             </span>
           <!-- None -->
           <span v-if="!publicNames && !privateNames">
@@ -99,11 +99,11 @@
         <dt :class="{'label-top': rewritingSystem.length > 1}">Rewriting system</dt>
         <dd>
           <!-- Only one -->
-          <spec-code :code="rewritingSystem[0]" in-line v-if="rewritingSystem.length === 1"></spec-code>
+          <spec-code-inline :code="rewritingSystem[0]" v-if="rewritingSystem.length === 1"></spec-code-inline>
           <!-- Many -->
           <ul v-else-if="rewritingSystem.length > 1" class="rewriting-list">
             <li v-for="rs in rewritingSystem">
-              <spec-code in-line :code="rs"></spec-code>
+              <spec-code-inline :code="rs"></spec-code-inline>
             </li>
           </ul>
           <!-- None -->
@@ -114,7 +114,7 @@
     <el-row v-if="query.isCompleted()">
       <el-divider></el-divider>
       <p>{{ query.longResultDescription() }}</p>
-      <spec-code in-line v-if="query.attackTrace" :code="formattedAttackTrace"></spec-code>
+      <spec-code-inline v-if="query.attackTrace" :code="formattedAttackTrace"></spec-code-inline>
     </el-row>
   </div>
 </template>
@@ -122,20 +122,20 @@
 <script>
 import Helper from '../helpers/Helper'
 import Date from '../Date'
-import SpecCode from '../SpecCode'
 import Duration from '../Duration'
 import text from '../../text-content/text'
-import { formatProcess, formatTrace } from '../../util/process-parser'
+import { formatCode, formatTrace } from '../../util/process-parser'
 import AtomicRenamer from '../../util/AtomicRenamer'
+import SpecCodeInline from '../code/SpecCodeInline'
 
 const BREAK_POINT = '\u200B' // zero-width space
 
 export default {
   name: 'query-summary',
   components: {
+    SpecCodeInline,
     Helper,
     Date,
-    SpecCode,
     Duration
   },
   props: {
@@ -198,8 +198,8 @@ export default {
         d.category.rewrite_rules.forEach(r => {
           // Create a shared atomic renamer for every part of the rewriting system
           const atomic = new AtomicRenamer(this.query.atomicData)
-          let lhs = r.lhs.map(x => formatProcess(x, atomic)).join(',' + BREAK_POINT)
-          let rhs = formatProcess(r.rhs, atomic)
+          let lhs = r.lhs.map(x => formatCode(x, atomic)).join(',' + BREAK_POINT)
+          let rhs = formatCode(r.rhs, atomic)
           rewriteRulesStr.push(`${d.label}(${lhs}) -> ${rhs}`)
         })
       })

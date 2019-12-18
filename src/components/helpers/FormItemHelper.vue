@@ -6,6 +6,7 @@
                   :effect="helper.effect"
                   :open-delay="helper.openDelay"
                   :disabled="helper.disable"
+                  :enterable="false"
                   :tabindex="-1">
         <div slot="content" v-html="helperContent"></div>
         <span :class="{'label-helper' : !helper.disable}">{{ label }}</span>

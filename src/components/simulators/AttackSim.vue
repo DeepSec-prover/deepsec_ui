@@ -125,6 +125,10 @@
               </el-button-group>
             </div>
           </div>
+          <!-- Equivalence status -->
+          <equivalence-status v-if="processUser.statusEquivalence && processUser.statusEquivalence.status !== 'equivalent'"
+                              :equivalence="processUser.statusEquivalence"
+                              :atomic="processUser.atomic"></equivalence-status>
           <!-- Trace -->
           <sim-trace :atomic="processUser.atomic"
                      :trace-level="processUser.traceLevel"
@@ -136,6 +140,7 @@
         <el-col :span="16">
           <!-- Process code -->
           <spec-code :code="processUserStr"
+                     :atomic="processUser.atomic"
                      :available-actions="processUser.getCurrentAvailableActions()"
                      @user-select-action="executeAction"></spec-code>
         </el-col>
@@ -146,18 +151,20 @@
 
 <script>
 import QueryModel from '../../models/QueryModel'
-import SpecCode from '../SpecCode'
-import { formatProcess } from '../../util/process-parser'
+import SpecCode from '../code/SpecCode'
+import { formatCode } from '../../util/process-parser'
 import ProcessDisplayedModel from '../../models/ProcessDisplayedModel'
 import ProcessUserModel from '../../models/ProcessUserModel'
 import SimFrame from './SimFrame'
 import SimTrace from './SimTrace'
 import Helper from '../helpers/Helper'
 import ApiRemote from '../../deepsec-api/ApiRemote'
+import logger from 'electron-log'
+import EquivalenceStatus from '../EquivalenceStatus'
 
 export default {
   name: 'attack-sim',
-  components: { Helper, SimTrace, SimFrame, SpecCode },
+  components: { EquivalenceStatus, Helper, SimTrace, SimFrame, SpecCode },
   data () {
     return {
       processDisplayed: undefined,
@@ -176,10 +183,10 @@ export default {
   },
   computed: {
     processDisplayedStr: function () {
-      return formatProcess(this.processDisplayed.process, this.processDisplayed.atomic)
+      return formatCode(this.processDisplayed.process, this.processDisplayed.atomic)
     },
     processUserStr: function () {
-      return formatProcess(this.processUser.process, this.processUser.atomic)
+      return formatCode(this.processUser.process, this.processUser.atomic)
     }
   },
   watch: {
@@ -205,30 +212,40 @@ export default {
       if (!this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
         this.syncProcesses = false
         this.processDisplayed.gotoFirstAction()
+      } else {
+        logger.warn('Action ignored because a process is currently loading or is impossible.')
       }
     },
     previousAction () {
       if (!this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
         this.syncProcesses = false
         this.processDisplayed.gotoPreviousAction()
+      } else {
+        logger.warn('Action ignored because a process is currently loading or is impossible.')
       }
     },
     nextAction () {
       if (!this.processDisplayed.loading && this.processDisplayed.hasNextAction()) {
         this.syncProcesses = false
         this.processDisplayed.gotoNextAction()
+      } else {
+        logger.warn('Action ignored because a process is currently loading or is impossible.')
       }
     },
     lastAction () {
       if (!this.processDisplayed.loading && this.processDisplayed.hasNextAction()) {
         this.syncProcesses = false
         this.processDisplayed.gotoLastAction()
+      } else {
+        logger.warn('Action ignored because a process is currently loading or is impossible.')
       }
     },
     gotoActionDisplayed (id) {
       if (!this.processDisplayed.loading) {
         this.syncProcesses = false
         this.processDisplayed.gotoAction(id)
+      } else {
+        logger.warn('Action ignored because a process is currently loading.')
       }
     },
     focusNextActions () {
@@ -242,21 +259,29 @@ export default {
     executeAction (action) {
       if (!this.processDisplayed.loading && !this.processUser.loading) {
         this.processUser.nextUserAction(action)
+      } else {
+        logger.warn('Action ignored because a process is currently loading.')
       }
     },
     gotoActionUser (id) {
       if (!this.processUser.loading) {
         this.processUser.gotoAction(id)
+      } else {
+        logger.warn('Action ignored because a process is currently loading.')
       }
     },
     undo () {
       if (!this.processDisplayed.loading && !this.processUser.loading && this.processUser.hasBackHistory()) {
         this.processUser.undo()
+      } else {
+        logger.warn('Action ignored because a process is currently loading or is impossible.')
       }
     },
     redo () {
       if (!this.processDisplayed.loading && !this.processUser.loading && this.processUser.hasNextHistory()) {
         this.processUser.redo()
+      } else {
+        logger.warn('Action ignored because a process is currently loading or is impossible.')
       }
     },
     forceSyncProcesses () {

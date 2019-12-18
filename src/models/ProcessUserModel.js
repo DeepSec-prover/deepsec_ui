@@ -51,9 +51,6 @@ export default class ProcessUserModel extends ProcessModel {
       )
     }
 
-    // Wait for the next reply
-    this.apiRemote.onReply(this.handleUpdateAnswer.bind(this))
-
     // Send query
     this.apiRemote.sendQuery('next_steps', actions)
 
@@ -77,9 +74,6 @@ export default class ProcessUserModel extends ProcessModel {
         () => this.gotoAction(currentId, false)
       )
     }
-
-    // Wait for the next reply
-    this.apiRemote.onReply(this.handleUpdateAnswer.bind(this))
 
     // Send query
     this.apiRemote.sendQuery('next_step_user', action)
@@ -130,5 +124,21 @@ export default class ProcessUserModel extends ProcessModel {
    */
   getCurrentAvailableActions () {
     return this.availableActions[this.traceLevel]
+  }
+
+  /**
+   * Create a copy of a process model as a new user model.
+   *
+   * @param {ProcessModel} processModel The original process to copy.
+   */
+  static convertToProcessUser (processModel) {
+    const copy = new ProcessUserModel(processModel.processId,
+                                      processModel.process,
+                                      [],  // Copy the atomic renamer after
+                                      processModel.apiRemote)
+    copy.atomic = processModel.atomic
+    copy.frame = processModel.frame
+    copy.actions = processModel.actions
+    return copy
   }
 }

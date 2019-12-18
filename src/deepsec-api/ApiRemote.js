@@ -76,6 +76,15 @@ export default class ApiRemote {
   }
 
   /**
+   * Remove a specific reply listener.
+   *
+   * @param {CallableFunction} lambda Reference to the lambda to remove.
+   */
+  removeReplyListener (lambda) {
+    ipcRenderer.removeListener(`deepsec-api:${this.namespace}:reply`, lambda)
+  }
+
+  /**
    * Wait a signal to trigger an action.
    *
    * @param {String} label The label of the signal

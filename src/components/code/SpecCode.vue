@@ -1,12 +1,11 @@
 <template>
-  <!-- In line code -->
-  <code v-if="inLine" class="language-deepsec match-braces" ref="code"></code>
-  <simplebar v-else class="code-block language-deepsec match-braces line-numbers">
+  <simplebar class="code-block language-deepsec match-braces line-numbers">
     <!-- Code Block -->
     <pre><code ref="code"></code></pre>
     <!-- Action selection for interactive popup -->
-    <div v-show="showActionPopup" ref="actionPopup">
+    <div v-show="showActionPopup && selectedAction" ref="actionPopup">
       <action-popup :action="selectedAction"
+                    :atomic="atomic"
                     @close="closeActionPopup"
                     @user-select-action="sendActionSelection"
                     @user-select-transition="selectAvailableTransitionActions"
@@ -16,29 +15,30 @@
 </template>
 
 <script>
-import Prism from '../util/prism-deepsec'
+import Prism from '../../util/prism-deepsec'
 import Simplebar from 'simplebar-vue'
 import 'simplebar/dist/simplebar.min.css'
 import logger from 'electron-log'
-import ProcessModel from '../models/ProcessModel'
+import ProcessModel from '../../models/ProcessModel'
 import Popper from 'popper.js'
-import ActionPopup from './ActionPopup'
+import ActionPopup from '../ActionPopup'
 import lodash from 'lodash'
+import AtomicRenamer from '../../util/AtomicRenamer'
+import codeMixin from './code-mixin'
 
 // Disable automatic highlight at page load
 document.removeEventListener('DOMContentLoaded', Prism.highlightAll)
 
 export default {
   name: 'spec-code',
+  mixins: [codeMixin],
   components: {
     ActionPopup,
     Simplebar
   },
   props: {
-    code: String,
-    inLine: {
-      type: Boolean,
-      default: false
+    atomic: {
+      type: AtomicRenamer
     },
     /**
      * List of position formatted as a string.
@@ -91,25 +91,6 @@ export default {
    * @see flow/user_action_selection.svg for detail about actions ordering.
    */
   methods: {
-    /**
-     * Parse and highlight the code with Prism.
-     * This add color and improve the syntax.
-     */
-    render () {
-      if (this.code) {
-        logger.silly('Update Prism code highlight')
-        // We have to edit directly the dom to enable Prism plugins
-        this.$refs.code.textContent = this.code
-        Prism.highlightElement(this.$refs.code)
-        // Trigger custom focus highlight
-        this.setupFocus(this.focusedPositions)
-        // Trigger custom clickable action
-        this.setupAvailableActions()
-      } else {
-        // No code yet
-        this.$refs.code.textContent = 'loading ...'
-      }
-    },
     /**
      * Enable CSS for visually show focused positions.
      *
@@ -228,12 +209,11 @@ export default {
       if (type === 'tau') {
         // No change needed, send the action to the API.
         this.sendActionSelection(availableAction)
-      } else if (type === 'output' || 'input') {
+      } else if (type === 'output' || type === 'input' | type === 'bang') {
         // Display a popup to ask more information.
         this.displayActionSelectorPopup(availableAction, domElement)
-      } else if (type === 'bang') {
-        // Display a popup to ask about the unfolding quantity.
-        this.displayActionSelectorPopup(availableAction, domElement)
+      } else if (type === 'choice') {
+        this.selectAvailableChoice(availableAction)
       } else {
         logger.error(`Not implemented action type ${type}`)
       }
@@ -245,6 +225,15 @@ export default {
      * @param {Object} selectedTransition The transition action which the user just select.
      */
     transitionSelection (selectedTransition) {
+      if (this.selectedAction.type === 'choice') {
+        this.sendActionSelection(
+          {
+            type: 'choice',
+            position: this.selectedAction.position,
+            choose_left: selectedTransition.position.tag === 'left'
+          })
+      }
+
       let input, output
       if (this.selectedAction.type === 'input') {
         input = this.selectedAction
@@ -274,7 +263,7 @@ export default {
       }
     },
     /**
-     * Filter and focus available transition actions depending of the previous selected action and the transition settings.
+     * Filter and focus available transition actions depending of the previously selected action and the transition settings.
      *
      * @param {Object} transition The selected transition settings.
      */
@@ -290,6 +279,42 @@ export default {
           a.transitions.some(t => t.type === filterTransitionType) &&
           lodash.isEqual(a.channel, filterChannel) // Full object content value comparison
       })
+
+      // Show available transitions
+      this.setupAvailableTransitions()
+    },
+    /**
+     * Filter and focus available transition actions depending of the previously selected choice.
+     *
+     * @param {Object} choiceAction The selected choice.
+     */
+    selectAvailableChoice (choiceAction) {
+      // Hide previous available actions
+      this.clearAvailableActions()
+      this.clearFocus()
+      // Save current action
+      this.selectedAction = choiceAction
+      // Focus on this action
+      this.setupFocus([ProcessModel.formatPositionToString(this.selectedAction.position)])
+
+      this.availableTransitions = [
+        {
+          type: 'choice',
+          position: {
+            index: choiceAction.position.index,
+            args: choiceAction.position.args,
+            tag: 'left'
+          }
+        },
+        {
+          type: 'choice',
+          position: {
+            index: choiceAction.position.index,
+            args: choiceAction.position.args,
+            tag: 'right'
+          }
+        }
+      ]
 
       // Show available transitions
       this.setupAvailableTransitions()
@@ -356,6 +381,10 @@ export default {
         this.resetUserSelection()
       }
       this.render()
+      // Trigger custom focus highlight
+      this.setupFocus(this.focusedPositions)
+      // Trigger custom clickable action
+      this.setupAvailableActions()
     },
     focusedPositions (newVal, oldVal) {
       if (oldVal && oldVal.length > 0) {
@@ -376,8 +405,14 @@ export default {
       this.setupAvailableActions()
     }
   },
+  /**
+   * Called after the mixin hook
+   */
   mounted () {
-    this.render()
+    // Trigger custom focus highlight
+    this.setupFocus(this.focusedPositions)
+    // Trigger custom clickable action
+    this.setupAvailableActions()
   }
 }
 </script>
@@ -397,10 +432,11 @@ export default {
 
   .available-transitions {
     outline: dashed rgba(255, 175, 14, 0.5);
+    outline-offset: 2px;
   }
 
   .available-transitions:hover {
-    outline: solid rgba(255, 175, 14, 0.5);
+    outline: solid rgba(255, 175, 14, 0.7);
   }
 
   .language-deepsec .token.hidden {
@@ -439,7 +475,6 @@ export default {
   /* TODO remove horizontal scroll in <pre> for Simplebar */
   .code-block {
     max-height: 90vh; /* 90% of the window height */
-    min-height: 50px;
   }
 
   pre {

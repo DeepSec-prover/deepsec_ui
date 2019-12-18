@@ -81,8 +81,8 @@
 import QueryModel from '../../models/QueryModel'
 import Simplebar from 'simplebar-vue'
 import Helper from '../helpers/Helper'
-import SpecCode from '../SpecCode'
-import { formatProcess } from '../../util/process-parser'
+import SpecCode from '../code/SpecCode'
+import { formatCode } from '../../util/process-parser'
 import logger from 'electron-log'
 import SimFrame from './SimFrame'
 import SimTrace from './SimTrace'
@@ -118,7 +118,7 @@ export default {
       if (!this.processDisplayed.process)
         return 'loading ...'
 
-      return formatProcess(this.processDisplayed.process, this.processDisplayed.atomic)
+      return formatCode(this.processDisplayed.process, this.processDisplayed.atomic)
     }
   },
   watch: {
@@ -134,14 +134,14 @@ export default {
       if (!this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
         this.processDisplayed.gotoFirstAction()
       } else {
-        logger.debug('Go to first action method call to fast (still loading)')
+        logger.warn('Action ignored because the process is currently loading or is impossible.')
       }
     },
     previousAction () {
       if (!this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
         this.processDisplayed.gotoPreviousAction()
       } else {
-        logger.debug('Go to previous action method call to fast (still loading)')
+        logger.warn('Action ignored because the process is currently loading or is impossible.')
       }
     },
     nextAction () {
@@ -156,7 +156,7 @@ export default {
             })
         }
       } else {
-        logger.debug('Go to next action method call to fast (still loading)')
+        logger.warn('Action ignored because the process is currently loading or is impossible.')
       }
     },
     lastAction () {
@@ -171,14 +171,14 @@ export default {
             })
         }
       } else {
-        logger.debug('Go to last action method call to fast (still loading)')
+        logger.warn('Action ignored because the process is currently loading or is impossible.')
       }
     },
     gotoAction (id) {
       if (!this.processDisplayed.loading) {
         this.processDisplayed.gotoAction(id)
       } else {
-        logger.debug('Go to action method call to fast (still loading)')
+        logger.warn('Action ignored because the process is currently loading.')
       }
     },
     focusNextActions () {
