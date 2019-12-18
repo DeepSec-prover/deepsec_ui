@@ -142,4 +142,25 @@ export default class ProcessModel {
 
     return position.index + argsStr
   }
+
+  /**
+   * Create a copy of a process model.
+   * If the original process is already a basic model just return it (no copy).
+   *
+   * @param {ProcessModel} processModel The original process to copy.
+   */
+  static convertToProcess (processModel) {
+    if (Object.getPrototypeOf(processModel) === ProcessModel.prototype) {
+      return processModel
+    }
+
+    const copy = new ProcessUserModel(processModel.processId,
+                                      processModel.process,
+                                      [],  // Copy the atomic renamer after
+                                      processModel.apiRemote)
+    copy.atomic = processModel.atomic
+    copy.frame = processModel.frame
+    copy.actions = processModel.actions
+    return copy
+  }
 }

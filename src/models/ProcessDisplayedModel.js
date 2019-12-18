@@ -174,10 +174,15 @@ export default class ProcessDisplayedModel extends ProcessModel {
 
   /**
    * Create a copy of a process model as a new display model.
+   * If the original process is already a display model just return it (no copy).
    *
    * @param {ProcessModel} processModel The original process to copy.
    */
   static convertToProcessDisplay (processModel) {
+    if (Object.getPrototypeOf(processModel) === ProcessDisplayedModel.prototype) {
+      return processModel
+    }
+
     const copy = new ProcessDisplayedModel(processModel.processId,
                                            processModel.process,
                                            [], // Copy the atomic renamer after

@@ -128,10 +128,15 @@ export default class ProcessUserModel extends ProcessModel {
 
   /**
    * Create a copy of a process model as a new user model.
+   * If the original process is already a user model just return it (no copy).
    *
    * @param {ProcessModel} processModel The original process to copy.
    */
   static convertToProcessUser (processModel) {
+    if (Object.getPrototypeOf(processModel) === ProcessUserModel.prototype) {
+      return processModel
+    }
+
     const copy = new ProcessUserModel(processModel.processId,
                                       processModel.process,
                                       [],  // Copy the atomic renamer after
