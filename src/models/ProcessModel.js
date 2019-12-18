@@ -22,6 +22,7 @@ export default class ProcessModel {
     this.loading = false
     this.traceLevel = 'default'
 
+    this.updateListener = null
     if (listenUpdate) {
       // Catch every API answer
       this.updateListener = this.handleUpdateAnswer.bind(this) // Keep ref to remove later
@@ -34,8 +35,10 @@ export default class ProcessModel {
    * after a copy for example.
    */
   stopUpdate () {
-    this.apiRemote.removeReplyListener(this.updateListener)
-    this.updateListener = null
+    if (updateListener) {
+      this.apiRemote.removeReplyListener(this.updateListener)
+      this.updateListener = null
+    }
   }
 
   /**
@@ -144,23 +147,34 @@ export default class ProcessModel {
   }
 
   /**
-   * Create a copy of a process model.
+   * Create a copy of a process model and stop update the original one.
    * If the original process is already a basic model just return it (no copy).
    *
    * @param {ProcessModel} processModel The original process to copy.
+   * @param {Boolean} keepContext If true also copy the frame and the action list.
    */
-  static convertToProcess (processModel) {
+  static convertToProcess (processModel, keepContext = false) {
     if (Object.getPrototypeOf(processModel) === ProcessModel.prototype) {
       return processModel
     }
 
+    // Remove update listener
+    processModel.stopUpdate()
+
     const copy = new ProcessUserModel(processModel.processId,
                                       processModel.process,
-                                      [],  // Copy the atomic renamer after
-                                      processModel.apiRemote)
+                                      [], // Copy the atomic renamer after
+                                      processModel.apiRemote,
+                                      false) // No update listener 
+
+    copy.traceLevel = processModel.traceLevel
     copy.atomic = processModel.atomic
-    copy.frame = processModel.frame
-    copy.actions = processModel.actions
+
+    if (keepContext) {
+      copy.frame = processModel.frame
+      copy.actions = processModel.actions
+    }
+
     return copy
   }
 }

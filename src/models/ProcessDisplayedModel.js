@@ -173,7 +173,7 @@ export default class ProcessDisplayedModel extends ProcessModel {
   }
 
   /**
-   * Create a copy of a process model as a new display model.
+   * Create a copy of a process model as a new display model and stop update the original one.
    * If the original process is already a display model just return it (no copy).
    *
    * @param {ProcessModel} processModel The original process to copy.
@@ -183,11 +183,16 @@ export default class ProcessDisplayedModel extends ProcessModel {
       return processModel
     }
 
+    // Remove update listener
+    processModel.stopUpdate()
+
     const copy = new ProcessDisplayedModel(processModel.processId,
                                            processModel.process,
                                            [], // Copy the atomic renamer after
                                            processModel.actions,
                                            processModel.apiRemote)
+
+    copy.traceLevel = processModel.traceLevel
     copy.atomic = processModel.atomic
     copy.frame = processModel.frame
     return copy

@@ -6,7 +6,7 @@
         Process {{ process.processId }}
         <el-button class="start-button" size="small" icon="el-icon-video-play"
                    :type="isApiRunning ? '' : 'primary'" plain
-                   @click="startSimulator(process.processId)">
+                   @click="startOrResetSimulation(process.processId)">
           <template v-if="this.selectedProcess === process.processId">
             Reset
           </tempalte>
@@ -25,6 +25,11 @@
       </template>
       <!-- Fixed Process -->
       <template v-else>
+        <el-button v-if="simulatorState === 'phase-1' && getSelectedProcessModel().actions.length > 0"
+                   size="small" icon="el-icon-video-play" type="sucess" plain
+                   @click="findEquivalentTrace">
+          Find equivalent trace
+        </el-button>
         <spec-code :code="processesStr[process.processId - 1]"></spec-code>
       </template>
     </el-col>
@@ -68,10 +73,20 @@ export default {
     }
   },
   methods: {
-    startSimulator (selectedId) {
+    startOrResetSimulation (selectedId) {
       this.selectedProcess = selectedId
+
+      const notSelectedId = selectedId % 2
       selectedId = selectedId - 1
+
+      // Convert to proper model
       this.processes[selectedId] = ProcessUserModel.convertToProcessUser(this.processes[selectedId])
+      this.processes[notSelectedId] = ProcessUserModel.convertToProcess(this.processes[notSelectedId])
+      // Set loading
+      this.getSelectedProcessModel().loading = true
+      // Reset processes
+      this.processes[selectedId].process = this.query.processes[selectedId]
+      this.processes[notSelectedId].process = this.query.processes[notSelectedId]
 
       if (this.isApiRunning) {
         this.apiRemote.sendQuery('reset_simulator', selectedId)
@@ -80,11 +95,42 @@ export default {
       }
       this.simulatorState = 'phase-1'
     },
+    findEquivalentTrace () {
+      // Convert to proper model
+      this.processes[0] = ProcessDisplayedModel.convertToProcessDisplay(this.processes[0])
+      this.processes[1] = ProcessDisplayedModel.convertToProcessDisplay(this.processes[1])
+      // Set loading
+      this.getNotSelectedProcessModel().loading = true
+      // Reset processes
+      this.processes[0] = this.query.processes[0]
+      this.processes[1] = this.query.processes[1]
+
+      // Wait for the next reply
+      this.apiRemote.onReply(() => {
+        if (answer.success) {
+          logger.silly('Equivalent trace received.')
+          const selectedProcess = this.getNotSelectedProcessModel()
+          selectedProcess.actions = answer.content.action_sequence
+          selectedProcess.loading = false
+        } else {
+          logger.error(`Equivalent trace finding failed : ${JSON.stringify(answer)}`)
+        }
+        this.loading = false
+      })
+
+      this.apiRemote.sendQuery('find_equivalent_trace')
+    },
     isDisplayProcess (process) {
       return process instanceof ProcessDisplayedModel
     },
     isUserProcess (process) {
       return process instanceof ProcessUserModel
+    },
+    getSelectedProcessModel () {
+      return this.processes[this.selectedProcess - 1]
+    },
+    getNotSelectedProcessModel () {
+      return this.processes[this.selectedProcess % 2]
     }
   },
   beforeMount () {

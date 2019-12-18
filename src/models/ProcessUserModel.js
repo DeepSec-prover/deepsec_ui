@@ -127,23 +127,33 @@ export default class ProcessUserModel extends ProcessModel {
   }
 
   /**
-   * Create a copy of a process model as a new user model.
+   * Create a copy of a process model as a new user model and stop update the original one.
    * If the original process is already a user model just return it (no copy).
    *
    * @param {ProcessModel} processModel The original process to copy.
+   * @param {Boolean} keepContext If true also copy the frame and the action list.
    */
-  static convertToProcessUser (processModel) {
+  static convertToProcessUser (processModel, keepContext = false) {
     if (Object.getPrototypeOf(processModel) === ProcessUserModel.prototype) {
       return processModel
     }
+
+    // Remove update listener
+    processModel.stopUpdate()
 
     const copy = new ProcessUserModel(processModel.processId,
                                       processModel.process,
                                       [],  // Copy the atomic renamer after
                                       processModel.apiRemote)
+
+    copy.traceLevel = processModel.traceLevel
     copy.atomic = processModel.atomic
-    copy.frame = processModel.frame
-    copy.actions = processModel.actions
+
+    if (keepContext) {
+      copy.frame = processModel.frame
+      copy.actions = processModel.actions
+    }
+    
     return copy
   }
 }
