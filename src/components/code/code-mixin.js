@@ -1,4 +1,5 @@
 import logger from 'electron-log'
+import { isEmptyOrBlankStr } from '../../util/misc'
 
 const mixin = {
   props: {
@@ -13,7 +14,7 @@ const mixin = {
      * This add color and improve the syntax.
      */
     render () {
-      if (this.code === '') {
+      if (isEmptyOrBlankStr(this.code)) {
         logger.silly('Update Prism code highlight')
         this.$refs.code.textContent = '// empty'
         Prism.highlightElement(this.$refs.code)

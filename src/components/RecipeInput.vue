@@ -55,7 +55,8 @@ export default {
         })
       }
     },
-    validateInput () {
+    validateInput (event) {
+      event.preventDefault()
       this.editionEnable = false
     }
   },
