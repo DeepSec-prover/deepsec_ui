@@ -52,6 +52,7 @@ import ProcessDisplayedModel from '../../models/ProcessDisplayedModel'
 import EquivalenceSimDisplay from './EquivalenceSimDisplay'
 import EquivalenceSimUser from './EquivalenceSimUser'
 import logger from 'electron-log'
+import Vue from 'vue'
 
 export default {
   name: 'equivalence-sim',
@@ -97,9 +98,10 @@ export default {
       const notSelectedId = selectedId % 2
       selectedId = selectedId - 1
 
-      // Convert to proper model
-      this.processes[selectedId] = ProcessUserModel.convertToProcessUser(this.processes[selectedId])
-      this.processes[notSelectedId] = ProcessUserModel.convertToProcess(this.processes[notSelectedId])
+      // Convert to proper model (use Vue.set for reactivity)
+      Vue.set(this.processes, selectedId, ProcessUserModel.convertToProcessUser(this.processes[selectedId]))
+      Vue.set(this.processes, notSelectedId, ProcessUserModel.convertToProcess(this.processes[notSelectedId]))
+
       // Set loading
       this.getSelectedProcessModel().loading = true
       // Reset processes
@@ -120,14 +122,14 @@ export default {
      * @see doc/flows/equivalence_simulator.svg
      */
     findEquivalentTrace () {
-      // Convert to proper model
-      this.processes[0] = ProcessDisplayedModel.convertToProcessDisplay(this.processes[0])
-      this.processes[1] = ProcessDisplayedModel.convertToProcessDisplay(this.processes[1])
+      // Convert to proper model (use Vue.set for reactivity)
+      Vue.set(this.processes, 0, ProcessDisplayedModel.convertToProcessDisplay(this.processes[0]))
+      Vue.set(this.processes, 1, ProcessDisplayedModel.convertToProcessDisplay(this.processes[1]))
       // Set loading
       this.getNotSelectedProcessModel().loading = true
       // Reset processes
-      this.processes[0] = this.query.processes[0]
-      this.processes[1] = this.query.processes[1]
+      this.processes[0].process = this.query.processes[0]
+      this.processes[1].process = this.query.processes[1]
 
       // Wait for the next reply
       this.apiRemote.onReply((_, answer) => {
@@ -162,18 +164,19 @@ export default {
   },
   beforeMount () {
     this.apiRemote = new ApiRemote('equivalence-simulator', this.query.path, false)
-    this.processes[0] = new ProcessModel(1,
-                                         this.query.processes[0],
-                                         this.query.atomicData,
-                                         [],
-                                         this.apiRemote,
-                                         false)
-    this.processes[1] = new ProcessModel(2,
-                                         this.query.processes[1],
-                                         this.query.atomicData,
-                                         [],
-                                         this.apiRemote,
-                                         false)
+    // (use Vue.set for reactivity)
+    Vue.set(this.processes, 0, new ProcessModel(1,
+                                                this.query.processes[0],
+                                                this.query.atomicData,
+                                                [],
+                                                this.apiRemote,
+                                                false))
+    Vue.set(this.processes, 1, new ProcessModel(2,
+                                                this.query.processes[1],
+                                                this.query.atomicData,
+                                                [],
+                                                this.apiRemote,
+                                                false))
   },
   destroyed () {
     if (this.apiRemote.started && !this.apiRemote.stopped) {

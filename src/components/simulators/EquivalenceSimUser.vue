@@ -75,8 +75,7 @@ export default {
     }
   },
   data () {
-    return {
-    }
+    return {}
   },
   computed: {
     processStr: function () {
@@ -111,7 +110,7 @@ export default {
       } else {
         logger.warn('Action ignored because a process is currently loading or is impossible.')
       }
-    },
+    }
   }
 }
 </script>
