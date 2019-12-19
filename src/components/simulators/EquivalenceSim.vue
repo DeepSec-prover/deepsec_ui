@@ -4,16 +4,26 @@
       <!-- Title -->
       <h3>
         Process {{ process.processId }}
-        <el-button class="start-button" size="small" icon="el-icon-video-play"
-                   :type="isApiRunning ? '' : 'primary'" plain
-                   @click="startOrResetSimulation(process.processId)">
-          <template v-if="selectedProcess === process.processId">
-            Reset
-          </template>
-          <template v-else>
-            Select trace of process {{ process.processId }}
-          </template>
-        </el-button>
+
+        <span class="action-buttons">
+          <el-button v-if="isFixedProcess(process) && simulatorState === 'phase-1'"
+                     :disabled="getSelectedProcessModel().actions.length === 0"
+                     size="small" icon="el-icon-video-play" type="success"
+                     @click="findEquivalentTrace">
+            Find equivalent trace
+          </el-button>
+
+          <el-button class="start-button" size="small" icon="el-icon-video-play"
+                     :type="isApiRunning ? '' : 'primary'" plain
+                     @click="startOrResetSimulation(process.processId)">
+            <template v-if="selectedProcess === process.processId">
+              Reset
+            </template>
+            <template v-else>
+              Select trace of process {{ process.processId }}
+            </template>
+          </el-button>
+        </span>
       </h3>
       <!-- Display Process -->
       <template v-if="isDisplayProcess(process)">
@@ -25,11 +35,6 @@
       </template>
       <!-- Fixed Process -->
       <template v-else>
-        <el-button v-if="simulatorState === 'phase-1' && getSelectedProcessModel().actions.length > 0"
-                   size="small" icon="el-icon-video-play" type="success" plain
-                   @click="findEquivalentTrace">
-          Find equivalent trace
-        </el-button>
         <spec-code :code="processesStr[process.processId - 1]"></spec-code>
       </template>
     </el-col>
@@ -145,6 +150,9 @@ export default {
     isUserProcess (process) {
       return process instanceof ProcessUserModel
     },
+    isFixedProcess (process) {
+      return !this.isDisplayProcess(process) && !this.isUserProcess(process)
+    },
     getSelectedProcessModel () {
       return this.processes[this.selectedProcess - 1]
     },
@@ -177,7 +185,7 @@ export default {
 </script>
 
 <style scoped>
-.start-button {
+.action-buttons > * {
   margin-left: 10px;
 }
 </style>
