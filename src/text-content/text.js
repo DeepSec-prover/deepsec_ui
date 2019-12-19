@@ -18,12 +18,12 @@ const text = {
       // Use %p for attacked process number and %q for the other one
       attack: {
         trace_equiv: {
-          short: 'Not equivalent',
-          long: 'The processes are not equivalent. The following trace from process %p doesn\'t have an equivalent in process %q.'
+          short: 'Not trace equivalent',
+          long: 'The processes are not trace equivalent. The following trace from process %p doesn\'t have an equivalent in process %q.'
         },
         trace_incl: {
-          short: 'TODO short description attack',
-          long: 'TODO long description attack'
+          short: 'Not trace included',
+          long: 'The process %p is not trace included in %q. The following trace from process %p doesn\'t have an equivalent in process %q.'
         },
         observational_equiv: {
           short: 'TODO short description attack',
@@ -40,12 +40,12 @@ const text = {
       },
       no_attack: {
         trace_equiv: {
-          short: 'Equivalent',
-          long: 'The processes are equivalent. No attack trace found.'
+          short: 'Trace equivalent',
+          long: 'The processes are trace equivalent. No attack trace found.'
         },
         trace_incl: {
-          short: 'TODO short description no attack',
-          long: 'TODO long description no attack'
+          short: 'Trace included',
+          long: 'The process 1 is trace included in process 2.'
         },
         observational_equiv: {
           short: 'TODO short description no attack',
