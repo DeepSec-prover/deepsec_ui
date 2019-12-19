@@ -439,10 +439,6 @@ export default {
     outline: solid rgba(255, 175, 14, 0.7);
   }
 
-  .language-deepsec .token.hidden {
-    display: none;
-  }
-
   .language-deepsec .token.in-out {
     color: lightgreen;
   }

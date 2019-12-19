@@ -248,8 +248,6 @@ function formatFunction (subProcess, atomic, indent) {
 
     if (subProcess.args) {
       res += '(' + subProcess.args.map(value => format(value, atomic, indent)).join(',') + ')'
-    } else {
-      res += '()'
     }
 
     return res

@@ -26,7 +26,6 @@ let filters = {
       sub: /(?<=\w)_\d+(?=\b)/
     }
   },
-  'no-args': /\(\)/,
   punctuation: /[(),;]/,
   sup: /(?<=\w)~\d+(-\d+)*(?=\s|$|_|%)/,
   sub: /(?<=\w)_\d+(?=\b|~|%)/,
@@ -49,10 +48,6 @@ Prism.hooks.add('wrap', env => {
   else if (env.type === 'sup') {
     env.tag = 'sup'
     env.content = env.content.replace('~', '')
-  }
-  // Hide no args "()"
-  else if (env.type === 'no-args') {
-    env.classes.push('hidden')
   }
   // Position tag
   else if (env.type === 'position') {
