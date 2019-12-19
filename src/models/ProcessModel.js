@@ -35,7 +35,7 @@ export default class ProcessModel {
    * after a copy for example.
    */
   stopUpdate () {
-    if (updateListener) {
+    if (this.updateListener) {
       this.apiRemote.removeReplyListener(this.updateListener)
       this.updateListener = null
     }
@@ -161,11 +161,12 @@ export default class ProcessModel {
     // Remove update listener
     processModel.stopUpdate()
 
-    const copy = new ProcessUserModel(processModel.processId,
-                                      processModel.process,
-                                      [], // Copy the atomic renamer after
-                                      processModel.apiRemote,
-                                      false) // No update listener 
+    const copy = new ProcessModel(processModel.processId,
+                                  processModel.process,
+                                  [], // Copy the atomic renamer after
+                                  [],
+                                  processModel.apiRemote,
+                                  false) // No update listener
 
     copy.traceLevel = processModel.traceLevel
     copy.atomic = processModel.atomic

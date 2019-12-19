@@ -25,7 +25,7 @@
         <div>
           <el-button-group>
             <helper helper-str="Reverse previous user action.<br><b>Short Key</b> : ctrl + z">
-              <el-button :disabled="!processUser.hasBackHistory() || processDisplayed.loading || processUser.loading"
+              <el-button :disabled="!processUser.hasBackHistory() || processUser.loading"
                          @click="undo"
                          icon="el-icon-refresh-left"
                          v-shortkey="['ctrl', 'z']" @shortkey.native="undo"
@@ -34,7 +34,7 @@
               </el-button>
             </helper>
             <helper helper-str="Restore previous reversed action.<br><b>Short Key</b> : ctrl + maj + z">
-              <el-button :disabled="!processUser.hasNextHistory() || processDisplayed.loading || processUser.loading"
+              <el-button :disabled="!processUser.hasNextHistory() || processUser.loading"
                          @click="redo"
                          v-shortkey="['ctrl', 'shift', 'z']" @shortkey.native="redo"
                          size="small">
@@ -85,7 +85,7 @@ export default {
   },
   methods: {
     executeAction (action) {
-      if (!this.processDisplayed.loading && !this.processUser.loading) {
+      if (!this.processUser.loading) {
         this.processUser.nextUserAction(action)
       } else {
         logger.warn('Action ignored because a process is currently loading.')
@@ -99,14 +99,14 @@ export default {
       }
     },
     undo () {
-      if (!this.processDisplayed.loading && !this.processUser.loading && this.processUser.hasBackHistory()) {
+      if (!this.processUser.loading && this.processUser.hasBackHistory()) {
         this.processUser.undo()
       } else {
         logger.warn('Action ignored because a process is currently loading or is impossible.')
       }
     },
     redo () {
-      if (!this.processDisplayed.loading && !this.processUser.loading && this.processUser.hasNextHistory()) {
+      if (!this.processUser.loading && this.processUser.hasNextHistory()) {
         this.processUser.redo()
       } else {
         logger.warn('Action ignored because a process is currently loading or is impossible.')

@@ -1,16 +1,16 @@
 <template>
   <el-row :gutter="10">
-    <el-col v-for="process in processes" :lg="12">
+    <el-col v-for="process in processes" :key="process.processId" :lg="12">
       <!-- Title -->
       <h3>
         Process {{ process.processId }}
         <el-button class="start-button" size="small" icon="el-icon-video-play"
                    :type="isApiRunning ? '' : 'primary'" plain
                    @click="startOrResetSimulation(process.processId)">
-          <template v-if="this.selectedProcess === process.processId">
+          <template v-if="selectedProcess === process.processId">
             Reset
-          </tempalte>
-          <template>
+          </template>
+          <template v-else>
             Select trace of process {{ process.processId }}
           </template>
         </el-button>
@@ -26,7 +26,7 @@
       <!-- Fixed Process -->
       <template v-else>
         <el-button v-if="simulatorState === 'phase-1' && getSelectedProcessModel().actions.length > 0"
-                   size="small" icon="el-icon-video-play" type="sucess" plain
+                   size="small" icon="el-icon-video-play" type="success" plain
                    @click="findEquivalentTrace">
           Find equivalent trace
         </el-button>
@@ -45,10 +45,16 @@ import { formatCode } from '../../util/process-parser'
 import ProcessUserModel from '../../models/ProcessUserModel'
 import ProcessDisplayedModel from '../../models/ProcessDisplayedModel'
 import EquivalenceSimDisplay from './EquivalenceSimDisplay'
+import EquivalenceSimUser from './EquivalenceSimUser'
+import logger from 'electron-log'
 
 export default {
   name: 'equivalence-sim',
-  components: { EquivalenceSimDisplay, SpecCode },
+  components: {
+    EquivalenceSimDisplay,
+    EquivalenceSimUser,
+    SpecCode
+  },
   props: {
     query: {
       type: QueryModel,
@@ -73,6 +79,13 @@ export default {
     }
   },
   methods: {
+    /**
+     * Start or reset the simulation.
+     * This is the beginning of the phase 1.
+     * @see doc/flows/equivalence_simulator.svg
+     *
+     * @param {Number} selectedId The selected process id (1 or 2)
+     */
     startOrResetSimulation (selectedId) {
       this.selectedProcess = selectedId
 
@@ -89,12 +102,18 @@ export default {
       this.processes[notSelectedId].process = this.query.processes[notSelectedId]
 
       if (this.isApiRunning) {
-        this.apiRemote.sendQuery('reset_simulator', selectedId)
+        this.apiRemote.sendQuery('reset_simulator', selectedId + 1)
       } else {
-        this.apiRemote.start({ query_file: this.query.path, process_id: selectedId })
+        this.apiRemote.start({ query_file: this.query.path, process_id: selectedId + 1 })
       }
       this.simulatorState = 'phase-1'
     },
+    /**
+     * Find the equivalent trace in the not selected process which match with
+     * the trace that the user selected.
+     * This is the beginning of the phase 2.
+     * @see doc/flows/equivalence_simulator.svg
+     */
     findEquivalentTrace () {
       // Convert to proper model
       this.processes[0] = ProcessDisplayedModel.convertToProcessDisplay(this.processes[0])
@@ -106,7 +125,7 @@ export default {
       this.processes[1] = this.query.processes[1]
 
       // Wait for the next reply
-      this.apiRemote.onReply(() => {
+      this.apiRemote.onReply((_, answer) => {
         if (answer.success) {
           logger.silly('Equivalent trace received.')
           const selectedProcess = this.getNotSelectedProcessModel()
