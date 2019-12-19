@@ -111,6 +111,13 @@ export default {
       if (this.isApiRunning) {
         this.apiRemote.sendQuery('reset_simulator', selectedId + 1)
       } else {
+        // Handle future user error
+        this.apiRemote.onReply((_, answer) => {
+          if (!answer.success) {
+            this.userError(answer.content)
+          }
+        }, false)
+        // Start the API
         this.apiRemote.start({ query_file: this.query.path, process_id: selectedId + 1 })
       }
       this.simulatorState = 'phase-1'
@@ -160,6 +167,13 @@ export default {
     },
     getNotSelectedProcessModel () {
       return this.processes[this.selectedProcess % 2]
+    },
+    userError (content) {
+      this.$alert(content.error_msg, 'User error', {
+        confirmButtonText: 'OK',
+        type: 'error'
+      })
+      this.getSelectedProcessModel().undo()
     }
   },
   beforeMount () {

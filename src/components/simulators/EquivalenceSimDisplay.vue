@@ -129,30 +129,14 @@ export default {
     },
     nextAction () {
       if (!this.processDisplayed.loading && this.processDisplayed.hasNextAction()) {
-        if (this.apiRemote.started) {
-          this.processDisplayed.gotoNextAction()
-        } else {
-          this.processDisplayed.startProcess(
-            {
-              query_file: this.query.path,
-              id: this.processDisplayed.getNextActionId()
-            })
-        }
+        this.processDisplayed.gotoNextAction()
       } else {
         logger.warn('Action ignored because the process is currently loading or is impossible.')
       }
     },
     lastAction () {
       if (!this.processDisplayed.loading && this.processDisplayed.hasNextAction()) {
-        if (this.apiRemote.started) {
-          this.processDisplayed.gotoLastAction()
-        } else {
-          this.processDisplayed.startProcess(
-            {
-              query_file: this.query.path,
-              id: this.processDisplayed.getLastActionId()
-            })
-        }
+        this.processDisplayed.gotoLastAction()
       } else {
         logger.warn('Action ignored because the process is currently loading or is impossible.')
       }
