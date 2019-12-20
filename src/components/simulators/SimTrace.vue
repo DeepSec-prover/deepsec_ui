@@ -30,17 +30,17 @@
         <template v-if="traceLevel === 'all' && actions.length > 0">
           <span class="action-index">0</span>
           <span class="action-description">
-                <spec-code-inline code="initial step" @click.native="gotoAction(-1)" class="clickable tau"></spec-code-inline>
+            <spec-code-inline code="initial state" @click.native="gotoAction(-1)" class="clickable tau"></spec-code-inline>
           </span>
         </template>
         <!-- Current actions -->
         <template v-for="a in visibleActions">
           <span class="action-index" :class="{'bold': lastActionId === a.index}">{{ a.index + 1 }}</span>
           <span class="action-description">
-                <spec-code-inline :code="actionsStr[a.index]"
-                                  @click.native="gotoAction(a.index)"
-                                  :class="{'clickable': lastActionId !== a.index, 'tau': isTauAction(a.action)}">
-                </spec-code-inline>
+            <spec-code-inline :code="actionsStr[a.index]"
+                              @click.native="gotoAction(a.index)"
+                              :class="{'clickable': lastActionId !== a.index, 'tau': isTauAction(a.action)}">
+            </spec-code-inline>
           </span>
         </template>
         <!-- Preview of future actions -->
