@@ -35,8 +35,8 @@
         </template>
         <!-- Current actions -->
         <template v-for="a in visibleActions">
-          <span class="action-index" :class="{'bold': lastActionId === a.index}">{{ a.index + 1 }}</span>
-          <span class="action-description">
+          <span class="action-index" :class="{'bold': lastActionId === a.index}" :key="a.index">{{ a.index + 1 }}</span>
+          <span class="action-description" :key="a.index + '-desc'">
             <spec-code-inline :code="actionsStr[a.index]"
                               @click.native="gotoAction(a.index)"
                               :class="{'clickable': lastActionId !== a.index, 'tau': isTauAction(a.action)}">
@@ -45,8 +45,8 @@
         </template>
         <!-- Preview of future actions -->
         <template v-for="a in previewActions">
-          <span class="action-index preview">{{ a.index + 1 }}</span>
-          <span class="action-description">
+          <span class="action-index preview" :key="a.index">{{ a.index + 1 }}</span>
+          <span class="action-description" :key="a.index + '-desc'">
             <spec-code-inline :code="actionsStr[a.index]" :class="{'tau': isTauAction(a.action)}"></spec-code-inline>
           </span>
         </template>
