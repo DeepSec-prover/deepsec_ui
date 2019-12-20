@@ -100,7 +100,7 @@ export default {
       if (positionList && positionList.length > 0) {
         // Add focus to specific positions
         positionList.forEach(p => {
-          this.$el.querySelectorAll(`.position-${p}`).forEach(e => e.classList.add('focused'))
+          this.$el.querySelectorAll(`.position-${p}`).forEach(e => { e.classList.add('focused') })
         })
       }
     },
@@ -109,7 +109,7 @@ export default {
      */
     clearFocus () {
       // Clean previous focus (all of them)
-      this.$el.querySelectorAll('.focused').forEach(e => e.classList.remove('focused'))
+      this.$el.querySelectorAll('.focused').forEach(e => { e.classList.remove('focused') })
     },
     /**
      * Enable CSS and listeners for available user action.
@@ -124,7 +124,7 @@ export default {
             e.classList.add('available-action', 'clickable')
 
             // Click listener
-            const clickAction = () => this.actionSelection(action, e)
+            const clickAction = () => { this.actionSelection(action, e) }
             // Keep track to remove later
             this.actionActiveListeners.push({ element: e, event: 'click', callback: clickAction })
             e.addEventListener('click', clickAction)
@@ -133,12 +133,12 @@ export default {
             if (action.tau_positions && action.tau_positions.length > 1) {
               const newPositions = action.tau_positions.map(p => ProcessModel.formatPositionToString(p))
 
-              const mouseEnterAction = () => this.focusedPositionsFromActions = newPositions
+              const mouseEnterAction = () => { this.focusedPositionsFromActions = newPositions }
               // Keep track to remove later
               this.actionActiveListeners.push({ element: e, event: 'mouseenter', callback: mouseEnterAction })
               e.addEventListener('mouseenter', mouseEnterAction)
 
-              const mouseLeaveAction = () => this.focusedPositionsFromActions = []
+              const mouseLeaveAction = () => { this.focusedPositionsFromActions = [] }
               // Keep track to remove later
               this.actionActiveListeners.push({ element: e, event: 'mouseleave', callback: mouseLeaveAction })
               e.addEventListener('mouseleave', mouseLeaveAction)
@@ -152,7 +152,7 @@ export default {
      */
     clearAvailableActions () {
       // Remove last listeners
-      this.actionActiveListeners.forEach(l => l.element.removeEventListener(l.event, l.callback))
+      this.actionActiveListeners.forEach(l => { l.element.removeEventListener(l.event, l.callback) })
       this.actionActiveListeners = []
 
       // Clean previous focus (all of them)
@@ -173,7 +173,7 @@ export default {
             // Add css classes
             e.classList.add('available-transitions', 'clickable')
 
-            const clickAction = () => this.transitionSelection(transition)
+            const clickAction = () => { this.transitionSelection(transition) }
             // Keep track to remove later
             this.transitionsActiveListeners.push({ element: e, event: 'click', callback: clickAction })
             e.addEventListener('click', clickAction)
@@ -187,7 +187,7 @@ export default {
     clearAvailableTransitions () {
       if (this.transitionsActiveListeners && this.transitionsActiveListeners.length > 0) {
         // Remove last listeners
-        this.transitionsActiveListeners.forEach(l => l.element.removeEventListener(l.event, l.callback))
+        this.transitionsActiveListeners.forEach(l => { l.element.removeEventListener(l.event, l.callback) })
         this.transitionsActiveListeners = []
 
         // Clean previous focus (all of them)
