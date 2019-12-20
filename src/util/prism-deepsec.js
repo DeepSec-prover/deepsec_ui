@@ -2,23 +2,23 @@ import Prism from 'prismjs'
 
 let filters = {
   position: {
-    pattern: /%(\d+(-\d+)*(-\w+)?)%(.|\n)+%\/\1%/, // Something like "%142%...%/142%" or "%752-1-2%...%/752-1-2%"
+    pattern: /%(\d+(-\d+)*(-\w+)?)%[^%]+%\/\1%/, // Something like "%142%...%/142%" or "%752-1-2%...%/752-1-2%"
     inside: {
       // Used to avoid infinite loop, see https://github.com/PrismJS/prism/issues/2133
       'position-content': {
-        pattern: /(?<=%(\d+(-\d+)*(-\w+)?)%)(.|\n)+(?=%\/\1%)/
+        pattern: /(?<=%(\d+(-\d+)*(-\w+)?)%)[^%]+(?=%\/\1%)/
         // Set inside later
       }
     }
   },
   comment: /\/\/.*$/,
+  'in-out': /(?<=\b)(in|out|eavesdrop)(?=\()/,
   keyword: {
-    pattern: /(?<=\b)(new|let|if|then|else|in)(?=\s|%)|(?<=\s|%)->(?=\s|%)|(?<=^|\s|;|%)!~\d+/,
+    pattern: /(?<=\b)(new|let|if|then|else|in)(?=\b)|(?<=\s|%)->(?=\s|%)|(?<=^|\s|;|%)!~\d+/,
     inside: {
       sup: /~\d+/
     }
   },
-  'in-out': /(?<=\b)(in|out|eavesdrop)(?=\()/,
   operator: /=\|\+/,
   function: {
     pattern: /(?<=^|[\s,;()%])(#?\w+|proj_{\d+,\d+})(?=\()/,
