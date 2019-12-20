@@ -177,9 +177,14 @@ export default class ProcessDisplayedModel extends ProcessModel {
    * If the original process is already a display model just return it (no copy).
    *
    * @param {ProcessModel} processModel The original process to copy.
+   * @param {Boolean} keepContext If true also copy the frame and the current action.
    */
-  static convertToProcessDisplay (processModel) {
+  static convertToProcessDisplay (processModel, keepContext = false) {
     if (Object.getPrototypeOf(processModel) === ProcessDisplayedModel.prototype) {
+      if (!keepContext) {
+        processModel.currentAction = -1
+        processModel.frame = []
+      }
       return processModel
     }
 
@@ -194,7 +199,11 @@ export default class ProcessDisplayedModel extends ProcessModel {
 
     copy.traceLevel = processModel.traceLevel
     copy.atomic = processModel.atomic
-    copy.frame = processModel.frame
+
+    if (keepContext) {
+      copy.currentAction = processModel.actions.length - 1
+      copy.frame = processModel.frame
+    }
     return copy
   }
 }

@@ -155,6 +155,11 @@ export default class ProcessModel {
    */
   static convertToProcess (processModel, keepContext = false) {
     if (Object.getPrototypeOf(processModel) === ProcessModel.prototype) {
+      if (!keepContext) {
+        processModel.frame = []
+        processModel.actions = []
+      }
+
       return processModel
     }
 

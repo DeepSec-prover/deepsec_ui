@@ -135,6 +135,13 @@ export default class ProcessUserModel extends ProcessModel {
    */
   static convertToProcessUser (processModel, keepContext = false) {
     if (Object.getPrototypeOf(processModel) === ProcessUserModel.prototype) {
+      if (!keepContext) {
+        processModel.frame = []
+        processModel.actions = []
+        // remove undo history
+        processModel.actionsHistory = []
+        processModel.actionsRestore = []
+      }
       return processModel
     }
 
@@ -153,7 +160,7 @@ export default class ProcessUserModel extends ProcessModel {
       copy.frame = processModel.frame
       copy.actions = processModel.actions
     }
-    
+
     return copy
   }
 }
