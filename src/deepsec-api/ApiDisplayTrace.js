@@ -48,8 +48,12 @@ export class ApiDisplayTrace extends ApiManager {
 
   // ==================== Queries ====================
 
-  gotoStep (_, stepId) {
-    this.sendCommand({ command: 'goto_step', id: stepId })
+  gotoStep (_, stepId, processId) {
+    this.sendCommand({
+                       command: 'goto_step',
+                       id: stepId,
+                       process_id: processId
+                     })
   }
 
   die () {
