@@ -26,20 +26,28 @@
     </div>
     <simplebar v-else id="steps">
       <div id="trace-actions">
+        <!-- Initial actions -->
+        <template v-if="traceLevel === 'all' && actions.length > 0">
+          <span class="action-index">0</span>
+          <span class="action-description">
+                <spec-code-inline code="initial step" @click.native="gotoAction(-1)" class="clickable tau"></spec-code-inline>
+          </span>
+        </template>
+        <!-- Current actions -->
         <template v-for="a in visibleActions">
-          <span class="action-index">{{ a.index + 1 }}</span>
+          <span class="action-index" :class="{'bold': lastActionId === a.index}">{{ a.index + 1 }}</span>
           <span class="action-description">
                 <spec-code-inline :code="actionsStr[a.index]"
                                   @click.native="gotoAction(a.index)"
-                                  :class="{'clickable': true, 'tau': isTauAction(a.action)}"></spec-code-inline>
+                                  :class="{'clickable': lastActionId !== a.index, 'tau': isTauAction(a.action)}">
+                </spec-code-inline>
           </span>
         </template>
+        <!-- Preview of future actions -->
         <template v-for="a in previewActions">
           <span class="action-index preview">{{ a.index + 1 }}</span>
           <span class="action-description">
-                <spec-code-inline :code="actionsStr[a.index]"
-                                  @click.native="gotoAction(a.index)"
-                                  :class="{'clickable': true, 'tau': isTauAction(a.action)}"></spec-code-inline>
+            <spec-code-inline :code="actionsStr[a.index]" :class="{'tau': isTauAction(a.action)}"></spec-code-inline>
           </span>
         </template>
       </div>
@@ -117,6 +125,13 @@ export default {
       } else {
         return this.actions.length === 0
       }
+    },
+    lastActionId: function () {
+      if (this.fixedActions) {
+        return this.currentAction
+      } else {
+        return this.actions.length - 1
+      }
     }
   },
   methods: {
@@ -163,7 +178,9 @@ export default {
       return ['tau', 'comm', 'bang', 'choice'].includes(action.type)
     },
     gotoAction (id) {
-      this.$emit('goto', id)
+      if (this.lastActionId !== id) {
+        this.$emit('goto', id)
+      }
     }
   },
   watch: {
@@ -224,5 +241,9 @@ export default {
 
   #trace-actions .action-index.preview {
     color: rgba(255, 0, 0, 0.7);
+  }
+
+  .bold {
+    font-weight: bold;
   }
 </style>
