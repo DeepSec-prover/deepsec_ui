@@ -1,5 +1,5 @@
 <template>
-  <el-form :disabled="runStarting" id="start-run" size="mini" label-width="auto">
+  <el-form @submit.native.prevent :disabled="runStarting" id="start-run" size="mini" label-width="auto">
     <el-row>
       <!-- Files selection -->
       <spec-files-selection :disabled="runStarting" :files="currentFiles"></spec-files-selection>

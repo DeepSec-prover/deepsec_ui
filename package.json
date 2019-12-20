@@ -11,7 +11,7 @@
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
-    "package:linux": "electron-packager . deepsec-ui --overwrite --appCopyright=\"GPL-3.0\" --asar --platform=linux --arch=all --icon=assets/icons/icon.png --prune=true --out=release-builds",
+    "package:linux": "electron-packager ./src deepsec-ui --overwrite --appCopyright=\"GPL-3.0\" --platform=linux --arch=x64 --icon=assets/icons/icon.png --prune=true --out=release-builds",
     "package:mac": "electron-packager . --overwrite --appCopyright=\"GPL-3.0\" --platform=darwin --arch=all --darwinDarkModeSupport=true --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
     "package:win": "electron-packager . deepsec-ui --overwrite --appCopyright=\"GPL-3.0\", --asar --platform=win32 --arch=all --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=\"INRIA\" --version-string.FileDescription=\"User interface for DeepSec\" --version-string.ProductName=\"DeepSec UI\"",
     "vue:build": "vue-cli-service build",

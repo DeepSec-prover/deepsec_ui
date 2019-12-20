@@ -4,7 +4,7 @@
     <el-row type="flex" justify="center">
       <el-col :xs="20" :sm="16" :md="12" :xl="6">
         <!-- Form -->
-        <el-form size="small" :key="refreshKey" label-position="right" label-width="auto">
+        <el-form @submit.native.prevent size="small" :key="refreshKey" label-position="right" label-width="auto">
           <!-- Interface -->
           <el-divider><i class="el-icon-picture-outline-round"></i> Interface</el-divider>
           <setting-item label="Show Helpers" settings-path="showHelpers"></setting-item>
