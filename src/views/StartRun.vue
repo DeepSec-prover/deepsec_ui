@@ -87,7 +87,6 @@
         <el-row v-if="globalError">
           <el-divider></el-divider>
           <el-alert id="failed-error-msg"
-                    title="Fail to start run"
                     type="error"
                     :title="globalError.title"
                     :closable="false"
