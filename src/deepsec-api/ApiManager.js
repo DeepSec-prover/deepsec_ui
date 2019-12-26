@@ -123,13 +123,13 @@ export class ApiManager {
     // Check Deepsec API path
     if (isEmptyOrBlankStr(apiPath)) {
       // Send bad result to the Start Run page
-      this.eventReply({ success: false, error: 'DeepSec API path is not set' })
+      this.eventReply({ success: false, errorMsg: 'DeepSec API path is not define. You can set it in the application setting page.' })
       logger.warn('Try to start a command but the DeepSec API path is not set')
       this.processExit()
       return
     } else if (!isFile(apiPath)) {
       // Send bad result to the Start Run page
-      this.eventReply({ success: false, error: `Incorrect DeepSec API path (${apiPath})` })
+      this.eventReply({ success: false, errorMsg: `Incorrect DeepSec API path (${apiPath}). You can change it in the application setting page.` })
       logger.warn(
         `Try to start a command but the DeepSec API path is incorrect (${apiPath})`)
       this.processExit()
@@ -231,7 +231,7 @@ export class ApiManager {
     logger.error(message)
 
     // Send bad result to the Start Run page (if already for an answer this will be ignored)
-    this.eventReply({ success: false, error: message })
+    this.eventReply({ success: false, errorMsg: message })
 
     // Send ui notification
     this.pushNotification('Unexpected error', message, 'error', 'default')

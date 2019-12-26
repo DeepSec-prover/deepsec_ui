@@ -11,7 +11,7 @@
           <!-- Environment -->
           <el-divider><i class="el-icon-files"></i> Environment</el-divider>
           <setting-item label="DeepSec API Path" settings-path="deepsecApiPath" placeholder="/path/to/deepsec-api"></setting-item>
-          <setting-item label="Results directory" settings-path="resultsDirPath" placeholder="/path/to/results"></setting-item>
+          <setting-item label="Results directory" settings-path="resultsDirPath" placeholder="/path/to/result_files"></setting-item>
           <!-- Notifications -->
           <el-divider><i class="el-icon-bell"></i> Notifications</el-divider>
           <div class="centred-content">
