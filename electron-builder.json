@@ -4,6 +4,7 @@
     "output": "release-builds"
   },
   "mac": {
+    "target": "dmg",
     "icon": "build/icon.icns",
     "category": "public.app-category.developer-tools"
   },
