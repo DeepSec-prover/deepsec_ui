@@ -62,7 +62,7 @@ export default {
   components: { RecipeInput },
   props: {
     action: {
-      type: Object,
+      type: Object, // Type available_action_structure
       require: true
     },
     atomic: {
@@ -72,7 +72,7 @@ export default {
   },
   data () {
     return {
-      selectedTransitionType: 'direct',
+      selectedTransitionType: null,
       recipes: {},
       nbProcessUnfolded: 1,
       validRecipes: false
@@ -135,6 +135,7 @@ export default {
     action (newVal, _) {
       // Only update if some new value is set
       if (newVal) {
+        console.log (this.action)
         // Set default value for selected transition type
         if (this.action.transitions) {
           if (this.transitionTypes.includes('direct')) {
@@ -162,6 +163,8 @@ export default {
 
             this.recipes[t.type].locked = t.locked
           })
+        } else {
+          this.selectedTransitionType = null
         }
         this.checkRecipes()
       }
