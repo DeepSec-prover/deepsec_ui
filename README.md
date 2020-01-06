@@ -85,4 +85,4 @@ Theses files are stored in the OS default user's data directory.
 - [Prism](https://prismjs.com) : Code syntax highlighter library
 - [Electron-Log](https://github.com/megahertz/electron-log) : Logging system for electron
 - [Element UI](https://element.eleme.io/#/en-US) ([doc](https://element.eleme.io/#/en-US/component/installation)) : CSS framework
-
+- [Electron-Builder](https://www.electron.build/) : Package the application to production
