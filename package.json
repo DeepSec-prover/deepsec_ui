@@ -4,16 +4,13 @@
   "version": "0.3.0",
   "description": "User interface for DeepSec tool (DEciding Equivalence Properties in SECurity protocols)",
   "author": "Victor YON, Vincent CHEVAL, Steve KREMER",
-  "main": "src/background.js",
+  "main": "background.js",
   "scripts": {
     "check": "standard",
     "electron:build": "vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps",
-    "package:linux": "electron-packager . deepsec-ui --overwrite --appCopyright=\"GPL-3.0\" --platform=linux --arch=x64 --icon=src/assets/icons/icon.png --prune=true --out=release-builds",
-    "package:mac": "electron-packager . deepsec-ui --overwrite --appCopyright=\"GPL-3.0\" --platform=darwin --arch=all --darwinDarkModeSupport=true --icon=src/assets/icons/mac/icon.icns --prune=true --out=release-builds",
-    "package:win": "electron-packager . deepsec-ui --overwrite --appCopyright=\"GPL-3.0\", --asar --platform=win32 --arch=all --icon=src/assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=\"INRIA\" --version-string.FileDescription=\"User interface for DeepSec\" --version-string.ProductName=\"DeepSec UI\""
+    "postuninstall": "electron-builder install-app-deps"
   },
   "dependencies": {
     "babel-plugin-prismjs": "^1.1.1",
@@ -36,7 +33,6 @@
     "@vue/eslint-config-standard": "^4.0.0",
     "babel-eslint": "^10.0.1",
     "electron": "^6.0.5",
-    "electron-packager": "^14.1.1",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "sass": "^1.18.0",
