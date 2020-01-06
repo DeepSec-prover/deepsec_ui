@@ -18,7 +18,8 @@ export default new Router(
       {
         path: '/',
         name: 'home',
-        component: Home
+        component: Home,
+        alias: '/index.html' // Because the first call in bundled application go here
       },
       {
         path: '/start-run/:config?/:files*',
