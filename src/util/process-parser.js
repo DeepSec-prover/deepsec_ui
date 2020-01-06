@@ -263,7 +263,6 @@ function formatFunction (subProcess, atomic, indent) {
  * @returns {string} A readable string which describe the sub-process and its children
  */
 function formatTuple (subProcess, atomic, indent) {
-
   return '(' + subProcess.args.map(value => format(value, atomic, indent)).join(',') + ')'
 }
 
@@ -276,8 +275,7 @@ function formatTuple (subProcess, atomic, indent) {
  * @returns {string} A readable string which describe the sub-process and its children
  */
 function formatProj (subProcess, atomic, indent) {
-
-  return 'proj_{'+ subProcess.ith + ',' + subProcess.arity_tuple + '}(' + format(subProcess.arg, atomic, indent) + ')'
+  return 'proj_{' + subProcess.ith + ',' + subProcess.arity_tuple + '}(' + format(subProcess.arg, atomic, indent) + ')'
 }
 
 /**
