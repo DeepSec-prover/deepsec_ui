@@ -135,7 +135,6 @@ export default {
     action (newVal, _) {
       // Only update if some new value is set
       if (newVal) {
-        console.log (this.action)
         // Set default value for selected transition type
         if (this.action.transitions) {
           if (this.transitionTypes.includes('direct')) {
