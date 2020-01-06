@@ -30,12 +30,12 @@ const text = {
           long: 'TODO long description attack'
         },
         session_equiv: {
-          short: 'TODO short description attack',
-          long: 'TODO long description attack'
+          short: 'Not session equivalent',
+          long: 'The processes are not session equivalent. The following trace from process %p doesn\'t have an equivalent in process %q.'
         },
         session_incl: {
-          short: 'TODO short description attack',
-          long: 'TODO long description attack'
+          short: 'Not session included',
+          long: 'The process %p is not session included in %q. The following trace from process %p doesn\'t have an equivalent in process %q.'
         }
       },
       no_attack: {
@@ -52,12 +52,12 @@ const text = {
           long: 'TODO long description no attack'
         },
         session_equiv: {
-          short: 'TODO short description no attack',
-          long: 'TODO long description no attack'
+          short: 'Session equivalent',
+          long: 'The processes are session equivalence. No attack trace found.'
         },
         session_incl: {
-          short: 'TODO short description no attack',
-          long: 'TODO long description no attack'
+          short: 'Session inluded',
+          long: 'The process 1 is session included in process 2.'
         }
       }
     },

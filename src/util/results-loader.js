@@ -5,11 +5,13 @@ import BatchModel from '../models/BatchModel'
 export function getBatches () {
   const batches = []
 
-  fs.readdir(userSettings.get('resultsDirPath').toString(), (err, files) => {
-    files.filter(file => file.endsWith('.json'))
-         .sort()
-         .reverse()
-         .forEach(file => batches.push(new BatchModel(file, false)))
+  fs.readdir(userSettings.get('resultsDirPath').toString(), (_, files) => {
+    if (files) {
+      files.filter(file => file.endsWith('.json'))
+           .sort()
+           .reverse()
+           .forEach(file => batches.push(new BatchModel(file, false)))
+    }
   })
 
   return batches

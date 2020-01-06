@@ -101,6 +101,10 @@ function format (subProcess, atomic, indent) {
   switch (subProcess.type) {
     case 'Atomic':
       return formatAtomic(subProcess, atomic, indent)
+    case 'Tuple':
+      return formatTuple(subProcess, atomic, indent)
+    case 'Proj':
+      return formatProj(subProcess, atomic, indent)
     case 'Function':
       return formatFunction(subProcess, atomic, indent)
     case 'Equality':
@@ -241,17 +245,37 @@ function formatAtomic (subProcess, atomic, indent) {
 function formatFunction (subProcess, atomic, indent) {
   const symbol = atomic.get(subProcess.symbol)
 
-  if (symbol.category.type === 'Tuple') {
-    return '(' + subProcess.args.map(value => format(value, atomic, indent)).join(',') + ')'
-  } else {
-    let res = symbol.label
+  let res = symbol.label
 
-    if (subProcess.args) {
-      res += '(' + subProcess.args.map(value => format(value, atomic, indent)).join(',') + ')'
-    }
-
-    return res
+  if (subProcess.args) {
+    res += '(' + subProcess.args.map(value => format(value, atomic, indent)).join(',') + ')'
   }
+
+  return res
+}
+
+/**
+ *  Format "Tuple" type to readable string
+ *
+ * @param {Object} subProcess - A structured sub-process
+ * @param {Object} atomic - The table of atomic data
+ * @param {number} indent - The number of indentation character for the current sub-process (>1)
+ * @returns {string} A readable string which describe the sub-process and its children
+ */
+function formatTuple (subProcess, atomic, indent) {
+  return '(' + subProcess.args.map(value => format(value, atomic, indent)).join(',') + ')'
+}
+
+/**
+ *  Format "Proj" type to readable string
+ *
+ * @param {Object} subProcess - A structured sub-process
+ * @param {Object} atomic - The table of atomic data
+ * @param {number} indent - The number of indentation character for the current sub-process (>1)
+ * @returns {string} A readable string which describe the sub-process and its children
+ */
+function formatProj (subProcess, atomic, indent) {
+  return 'proj_{' + subProcess.ith + ',' + subProcess.arity_tuple + '}(' + format(subProcess.arg, atomic, indent) + ')'
 }
 
 /**

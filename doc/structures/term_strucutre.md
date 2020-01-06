@@ -28,3 +28,14 @@ or
   "label": <string>
 }
 ```
+or
+```
+{
+  "type": "Tuple",
+  "args": [
+    <term>,
+    ...,
+    <term>
+  ]
+}
+```

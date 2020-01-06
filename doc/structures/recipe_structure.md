@@ -27,3 +27,23 @@ or
   "label": <string>
 }
 ```
+or
+```
+{
+  "type": "Tuple",
+  "args": [
+    <recipe>,
+    ...,
+    <recipe>
+  ]
+}
+````
+or
+```
+{
+  "type": "Proj",
+  "ith": <int>,
+  "arity_tuple": <int>,
+  "arg": <recipe>
+}
+```

@@ -43,13 +43,13 @@
               <display-trace :query="query"></display-trace>
             </el-tab-pane>
             <!-- Attack simulator -->
-            <el-tab-pane label="Attack Simulator" name="attack-sim" :lazy="true">
+            <el-tab-pane v-if="query.type === 'trace_equiv' || query.type === 'trace_incl'" label="Attack Simulator" name="attack-sim" :lazy="true">
               <attack-sim :query="query"></attack-sim>
             </el-tab-pane>
           </template>
           <template v-else>
             <!-- Equivalence simulator -->
-            <el-tab-pane label="Equivalence Simulator" name="equivalence-sim" :lazy="true">
+            <el-tab-pane v-if="query.type === 'trace_equiv' || query.type === 'trace_incl'" label="Equivalence Simulator" name="equivalence-sim" :lazy="true">
               <equivalence-sim :query="query"></equivalence-sim>
             </el-tab-pane>
           </template>

@@ -24,6 +24,16 @@ or
 or
 ```
 {
+  "type": "Tuple",
+  "args": [
+    <pattern>,
+    ...,
+    <pattern>
+  ]
+}
+or
+```
+{
   "type": "Equality",
   "term": <term>
 }
