@@ -1,0 +1,23 @@
+{
+  "appId": "io.github.deepsec-prover",
+  "directories": {
+    "output": "release-builds"
+  },
+  "mac": {
+    "icon": "build/icon.icns",
+    "category": "public.app-category.developer-tools"
+  },
+  "win": {
+    "icon": "build/icon.ico"
+  },
+  "linux": {
+    "target": [
+      "AppImage",
+      "snap",
+      "deb"
+    ],
+    "category": "Development",
+    "icon": "build/icon.png",
+    "synopsis": "User interface for DeepSec"
+  }
+}
