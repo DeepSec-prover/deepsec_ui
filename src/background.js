@@ -33,7 +33,8 @@ function createWindow () {
       minHeight: 600,
       webPreferences: {
         nodeIntegration: true // To use node in the client side
-      }
+      },
+      icon: 'public/64x64.png' // Probably override by the application is packaged (but useful for dev)
     })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {

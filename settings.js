@@ -22,9 +22,9 @@ const prod = {
   logLevelFile: 'info',
   devTools: {
     startUp: false,
-    menu: true // TODO turn to false
+    menu: true
   },
-  mockDataAsDefault: true // TODO turn to false
+  mockDataAsDefault: false
 }
 
 // Export "common" union ("prod" or "dev")

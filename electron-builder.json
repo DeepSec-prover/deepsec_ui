@@ -18,7 +18,7 @@
       "deb"
     ],
     "category": "Development",
-    "icon": "build/icon.png",
+    "icon": "build/icons",
     "synopsis": "User interface for DeepSec"
   }
 }
