@@ -4,10 +4,11 @@
     <el-aside id="side-menu" width="200px">
       <h1 class="logo">DeepSec UI</h1>
       <el-menu :default-active="this.$route.name">
-        <el-menu-item index="home" @click="routePush('home')">
-          <i class="el-icon-s-home"></i>
-          <span>Home</span>
-        </el-menu-item>
+        <!-- TODO uncomment when the home page is done -->
+        <!--        <el-menu-item index="home" @click="routePush('home')">-->
+        <!--          <i class="el-icon-s-home"></i>-->
+        <!--          <span>Home</span>-->
+        <!--        </el-menu-item>-->
         <el-menu-item index="start-run" @click="routePush('start-run')">
           <i class="el-icon-video-play"></i>
           <span>Start Run</span>
