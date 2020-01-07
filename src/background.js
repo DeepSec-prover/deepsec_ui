@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, protocol } from 'electron'
+import { app, BrowserWindow, ipcMain, Menu, protocol } from 'electron'
 import { createProtocol, installVueDevtools } from 'vue-cli-plugin-electron-builder/lib'
 import mainMenuTemplate from './electron-menu'
 import settings from '../settings'
@@ -11,6 +11,7 @@ import { ApiDisplayTrace } from './deepsec-api/ApiDisplayTrace'
 import { ApiManager } from './deepsec-api/ApiManager'
 import { ApiAttackSim } from './deepsec-api/ApiAttackSim'
 import { ApiEquivalenceSim } from './deepsec-api/ApiEquivalenceSim'
+import { refreshApiPath } from './util/refreshApiPath'
 
 // Init default logger
 setupDefaultLogger()
@@ -27,6 +28,7 @@ function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow(
     {
+      show: false,
       width: 1200,
       height: 1000,
       minWidth: 1000,
@@ -34,7 +36,7 @@ function createWindow () {
       webPreferences: {
         nodeIntegration: true // To use node in the client side
       },
-      icon: 'public/64x64.png' // Probably override by the application is packaged (but useful for dev)
+      icon: 'public/64x64.png' // Probably override by the application if packaged (but useful for dev)
     })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -67,7 +69,7 @@ function createWindow () {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
-  logger.info('App ready')
+  logger.info('Electron app ready')
 
   // Set user settings to default if never set or missing
   unsetToDefault()
@@ -90,7 +92,7 @@ app.on('ready', async () => {
     }
   }
 
-  // Every API manager that you want to use has to be in this list.
+  // Every API manager that you want to use with the remote has to be in this list.
   ApiManager.registerManagers([ApiStartRun, ApiDisplayTrace, ApiAttackSim, ApiEquivalenceSim],
                               () => mainWindow)
 
@@ -125,3 +127,13 @@ if (settings.isDevelopment) {
     })
   }
 }
+
+/**
+ * Trigger when the application is loaded and the vue is fully mounted.
+ * This event is send by the vue Layout.
+ */
+ipcMain.once('app-loaded', () => {
+  logger.info('Application fully loaded (electron + vue)')
+  mainWindow.show()
+  refreshApiPath(mainWindow)
+})

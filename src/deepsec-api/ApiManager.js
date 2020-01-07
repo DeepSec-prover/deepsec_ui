@@ -63,10 +63,9 @@ export class ApiManager {
                     message = '',
                     type = 'info',
                     topic = 'default',
-                    link = null,
-                    router = null) {
+                    link = nul) {
     this.mainWindow.webContents.send('notification:show',
-                                     title, message, type, topic, link, router)
+                                     title, message, type, topic, link)
   }
 
   /**
@@ -120,7 +119,7 @@ export class ApiManager {
 
     const apiPath = String(userSettings.get('deepsecApiPath'))
 
-    // Check Deepsec API path
+    // Check DeepSec API path
     if (isEmptyOrBlankStr(apiPath)) {
       // Send bad result to the Start Run page
       this.eventReply({ success: false, errorMsg: 'DeepSec API path is not define. You can set it in the application setting page.' })

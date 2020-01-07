@@ -48,6 +48,9 @@ export default {
     ipcRenderer.on('notification:show', (event, title, content, type, topic, link) => {
       this.$notification(title, content, type, topic, link, this.$router)
     })
+
+    // Send app loaded signal
+    ipcRenderer.send('app-loaded')
   }
 }
 </script>

@@ -1,10 +1,15 @@
 import { ApiManager } from './ApiManager'
+import userSettings from 'electron-settings'
+import logger from 'electron-log'
 
+/**
+ * This manager is made to be used inside the main process.
+ */
 export class ApiGetConfig extends ApiManager {
   static namespace () { return 'get-config' }
 
-  constructor (event, mainWindow, ipcId) {
-    super(false, event, mainWindow, ipcId)
+  constructor (mainWindow, ipcId) {
+    super(false, null, mainWindow, ipcId)
   }
 
   start (options) {
@@ -16,10 +21,17 @@ export class ApiGetConfig extends ApiManager {
   }
 
   config (answer) {
-    this.eventReply(
-      {
-        success: true,
-        content: answer
-      })
+    this.pushNotification(`DeepSec API version ${answer.version} successfully detected`)
+    logger.info(`DeepSec API detected with version: ${answer.version}`)
+    logger.info(`Result directory path set to: ${answer.results_dir_path}`)
+    userSettings.set('resultsDirPath', answer.results_dir_path)
+  }
+
+  /**
+   * Override the event reply since it works only in the main process.
+   * @param content The content of the reply.
+   */
+  eventReply (content) {
+    /* Do nothing */
   }
 }
