@@ -16,9 +16,10 @@ import { refreshApiPath } from './util/refreshApiPath'
 // Init default logger
 setupDefaultLogger()
 
-// Keep a global reference of the window object, if you don't, the window will
+// Keep a global reference of the window objects, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
+let loadingWindow
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged(
@@ -36,7 +37,7 @@ function createWindow () {
       webPreferences: {
         nodeIntegration: true // To use node in the client side
       },
-      icon: 'public/64x64.png' // Probably override by the application if packaged (but useful for dev)
+      icon: 'public/icons/icon.png' // Probably override by the packaged application (but useful for dev)
     })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -65,11 +66,42 @@ function createWindow () {
   logger.info('Main windows created')
 }
 
+function createLoadingWindow () {
+  // Create the loading window.
+  loadingWindow = new BrowserWindow(
+    {
+      show: true,
+      width: 800,
+      height: 265,
+      frame: false,
+      backgroundColor: '#154C62',
+      center: true,
+      resizable: false,
+      movable: false,
+      minimizable: false,
+      maximizable: false,
+      closable: false,
+      fullscreenable: false,
+      icon: 'public/icons/icon-loading.png' // Probably override by the packaged application (but useful for dev)
+    })
+
+  if (process.env.WEBPACK_DEV_SERVER_URL) {
+    // Load the url of the dev server if in development mode
+    loadingWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL + 'loading.html')
+  } else {
+    createProtocol('app')
+    // Load the index.html when not in development
+    loadingWindow.loadURL('app://./loading.html')
+  }
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
   logger.info('Electron app ready')
+
+  createLoadingWindow()
 
   // Set user settings to default if never set or missing
   unsetToDefault()
@@ -134,6 +166,7 @@ if (settings.isDevelopment) {
  */
 ipcMain.once('app-loaded', () => {
   logger.info('Application fully loaded (electron + vue)')
+  loadingWindow.destroy()
   mainWindow.show()
   refreshApiPath(mainWindow)
 })

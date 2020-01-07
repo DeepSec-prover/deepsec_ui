@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>DeepSec UI</title>
+</head>
+<body>
+<img src="logo/logo-animated.gif" alt="DeepSec logo animated" width="100%">
+<p id="loading-msg">Initialization</p>
+</body>
+<style>
+  body {
+    margin: 0;
+    color: white;
+    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+    font-size: 1em;
+    text-align: center;
+  }
+
+  #loading-msg:after {
+    content: ' .';
+    animation: dots 1.5s steps(5, end) infinite;
+  }
+
+  @keyframes dots {
+    0%, 20% {
+      color: rgba(0, 0, 0, 0);
+      text-shadow: .25em 0 0 rgba(0, 0, 0, 0),
+      .5em 0 0 rgba(0, 0, 0, 0);
+    }
+    40% {
+      color: white;
+      text-shadow: .25em 0 0 rgba(0, 0, 0, 0),
+      .5em 0 0 rgba(0, 0, 0, 0);
+    }
+    60% {
+      text-shadow: .25em 0 0 white,
+      .5em 0 0 rgba(0, 0, 0, 0);
+    }
+    80%, 100% {
+      text-shadow: .25em 0 0 white,
+      .5em 0 0 white;
+    }
+  }
+</style>
+</html>
