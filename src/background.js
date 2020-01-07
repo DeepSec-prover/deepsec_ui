@@ -170,3 +170,11 @@ ipcMain.once('app-loaded', () => {
   mainWindow.show()
   refreshApiPath(mainWindow)
 })
+
+/**
+ * Check the current Api path.
+ * Called when the user change this setting.
+ */
+ipcMain.on('refresh-api-path', () => {
+  refreshApiPath(mainWindow)
+})

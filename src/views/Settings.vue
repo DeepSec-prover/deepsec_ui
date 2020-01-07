@@ -10,18 +10,21 @@
           <setting-item label="Show Helpers" settings-path="showHelpers"></setting-item>
           <!-- Environment -->
           <el-divider><i class="el-icon-files"></i> Environment</el-divider>
-          <setting-item label="DeepSec API Path" settings-path="deepsecApiPath" placeholder="/path/to/deepsec-api"></setting-item>
-          <setting-item label="Results directory" settings-path="resultsDirPath" placeholder="/path/to/result_files"></setting-item>
+          <setting-item label="DeepSec API Path" settings-path="deepsecApiPath" placeholder="/path/to/deepsec_api"></setting-item>
+          <p class="centred-content regular-text">Results directory : <i>{{ this.resultsDir ? this.resultsDir : 'not defined' }}</i></p>
+          <div class="centred-content">
+            <el-button size="mini" @click="checkApi">Check API</el-button>
+          </div>
           <!-- Notifications -->
           <el-divider><i class="el-icon-bell"></i> Notifications</el-divider>
-          <div class="centred-content">
-            <el-button class="test-button" size="mini" @click="testNotification">Test Notification</el-button>
-          </div>
           <setting-item label="Duration (s)" settings-path="notificationDuration" :min="0" :max="10"></setting-item>
           <setting-item label="Batch notifications" settings-path="showBatchNotif"></setting-item>
           <setting-item label="Run notifications" settings-path="showRunNotif"></setting-item>
           <setting-item label="Query notifications" settings-path="showQueryNotif"></setting-item>
           <setting-item label="No auto dismiss error" settings-path="stickyErrorNotif"></setting-item>
+          <div class="centred-content">
+            <el-button class="test-button" size="mini" @click="testNotification">Test Notification</el-button>
+          </div>
           <!-- Reset Settings -->
           <div id="reset-settings" class="centred-content">
             <el-popover placement="top" v-model="resetConfirm">
@@ -44,6 +47,8 @@
 <script>
 import { resetAll } from '../util/default-user-settings'
 import SettingItem from '../components/SettingItem'
+import userSettings from 'electron-settings'
+import { ipcRenderer } from 'electron'
 
 export default {
   name: 'settings',
@@ -53,7 +58,9 @@ export default {
   data () {
     return {
       refreshKey: 0,
-      resetConfirm: false
+      resetConfirm: false,
+      resultsDir: '',
+      lastCheckedApiPath: ''
     }
   },
   methods: {
@@ -65,6 +72,22 @@ export default {
     },
     testNotification () {
       this.$notification('Test title', 'Test description')
+    },
+    checkApi () {
+      // Send checking signal to the main process
+      ipcRenderer.send('refresh-api-path')
+      this.resultsDir = userSettings.get('resultsDirPath', '')
+      this.lastCheckedApiPath = userSettings.get('deepsecApiPath', '')
+    }
+  },
+  mounted () {
+    this.lastCheckedApiPath = userSettings.get('deepsecApiPath', '')
+    this.resultsDir = userSettings.get('resultsDirPath', '')
+  },
+  beforeDestroy () {
+    if (this.lastCheckedApiPath !== userSettings.get('deepsecApiPath', '')) {
+      // Send checking signal to the main process
+      ipcRenderer.send('refresh-api-path')
     }
   }
 }
