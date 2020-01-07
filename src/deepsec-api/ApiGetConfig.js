@@ -23,8 +23,8 @@ export class ApiGetConfig extends ApiManager {
   config (answer) {
     this.pushNotification(`DeepSec API version ${answer.version} successfully detected`)
     logger.info(`DeepSec API detected with version: ${answer.version}`)
-    logger.info(`Result directory path set to: ${answer.results_dir_path}`)
-    userSettings.set('resultsDirPath', answer.results_dir_path)
+    logger.info(`Result directory path set to: ${answer.result_files_path}`)
+    userSettings.set('resultsDirPath', answer.result_files_path)
   }
 
   /**

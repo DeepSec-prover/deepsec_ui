@@ -63,7 +63,7 @@ export class ApiManager {
                     message = '',
                     type = 'info',
                     topic = 'default',
-                    link = nul) {
+                    link = null) {
     this.mainWindow.webContents.send('notification:show',
                                      title, message, type, topic, link)
   }

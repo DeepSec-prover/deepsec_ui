@@ -14,7 +14,7 @@ Reply to get config: DeepSec -> UI
 {
   "command": "config",
   "version": <string>, // define as: "X.X.X"
-  "results_dir_path": <string>
+  "result_files_path": <string>
 }
 ```
 > The process should stop after this answer.
