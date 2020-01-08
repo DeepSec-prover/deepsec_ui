@@ -342,4 +342,11 @@ export default {
   #submit-run {
     margin-top: 20px;
   }
+
+  #failed-error-msg .el-alert__content {
+    overflow-wrap: break-word;
+    /*noinspection CssInvalidPropertyValue*/
+    width: -webkit-fill-available;
+    padding-right: 30px;
+  }
 </style>

@@ -41,6 +41,10 @@ h3 {
   cursor: pointer;
 }
 
+.break-word {
+  overflow-wrap: break-word;
+}
+
 /* Alert message */
 
 .el-alert__content a {

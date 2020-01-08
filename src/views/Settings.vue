@@ -11,7 +11,7 @@
           <!-- Environment -->
           <el-divider><i class="el-icon-files"></i> Environment</el-divider>
           <setting-item label="DeepSec API Path" settings-path="deepsecApiPath" placeholder="/path/to/deepsec_api"></setting-item>
-          <p class="centred-content regular-text">Results directory : <i>{{ this.resultsDir ? this.resultsDir : 'not defined' }}</i></p>
+          <p class="break-word centred-content regular-text">Results directory : <i>{{ this.resultsDir ? this.resultsDir : 'not defined' }}</i></p>
           <div class="centred-content">
             <el-button size="mini" @click="checkApi">Check API</el-button>
           </div>
