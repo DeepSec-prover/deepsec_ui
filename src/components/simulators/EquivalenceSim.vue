@@ -173,6 +173,7 @@ export default {
     userError (content) {
       this.$msgbox({
                      title: 'User error',
+                     // Create a component on the fly but vuejs seem to use the same every time
                      message: this.$createElement(errorMessage, { props: { msg: content.error_msg } }),
                      confirmButtonText: 'OK',
                      type: 'error'

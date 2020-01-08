@@ -31,6 +31,11 @@ export default {
       msgParts: []
     }
   },
+  watch: {
+    msg () {
+      this.msgParts = this.msg.split('%') // Split '%' to find the code section
+    }
+  },
   beforeMount () {
     this.msgParts = this.msg.split('%') // Split '%' to find the code section
   }
