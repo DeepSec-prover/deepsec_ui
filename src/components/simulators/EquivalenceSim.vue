@@ -53,6 +53,7 @@ import EquivalenceSimDisplay from './EquivalenceSimDisplay'
 import EquivalenceSimUser from './EquivalenceSimUser'
 import logger from 'electron-log'
 import Vue from 'vue'
+import errorMessage from '../errorMessage'
 
 export default {
   name: 'equivalence-sim',
@@ -169,14 +170,13 @@ export default {
     getSelectedProcessModel () {
       return this.processes[this.selectedProcessId - 1]
     },
-    getNotSelectedProcessModel () {
-      return this.processes[this.selectedProcessId % 2]
-    },
     userError (content) {
-      this.$alert(content.error_msg, 'User error', {
-        confirmButtonText: 'OK',
-        type: 'error'
-      })
+      this.$msgbox({
+                     title: 'User error',
+                     message: this.$createElement(errorMessage, { props: { msg: content.error_msg } }),
+                     confirmButtonText: 'OK',
+                     type: 'error'
+                   })
       this.getSelectedProcessModel().undo()
     }
   },
@@ -206,7 +206,7 @@ export default {
 </script>
 
 <style scoped>
-.action-buttons > * {
-  margin-left: 10px;
-}
+  .action-buttons > * {
+    margin-left: 10px;
+  }
 </style>
