@@ -116,7 +116,7 @@ export default class ProcessModel {
     switch (level) {
       case 'default':
         return action.type === 'output' || action.type === 'input' || action.type === 'eavesdrop' ||
-          action.type === 'bang'
+          action.type === 'bang' || action.type === 'comm' || action.type === 'choice'
       case 'io':
         return action.type === 'output' || action.type === 'input' || action.type === 'eavesdrop'
       case 'all':

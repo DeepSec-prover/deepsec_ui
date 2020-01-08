@@ -20,18 +20,18 @@ const helpers = {
     type: {
       trace_equiv: 'Trace equivalence between processes 1 and 2.',
       trace_incl: 'Trace inclusion of process 1 into process 2.',
-      observational_equiv: 'Oberservational equivalence between processes 1 and 2.',
+      observational_equiv: 'Observational equivalence between processes 1 and 2.',
       session_equiv: 'Session equivalence between processes 1 and 2.',
       session_incl: 'Session inclusion of process 1 into process 2.'
     }
   },
   semantics: {
     private: 'Internal communication only allowed on private channels.',
-    classic: 'Internal communicationons allowed on all channels.',
+    classic: 'Internal communications allowed on all channels.',
     eavesdrop: 'Internal communication only allowed on private channels and<br>the attacker is allowed to eavesdrop on public channels.'
   },
   traceLevel: {
-    default: 'Only display input/output/choice/replication transitions. Other &tau; transitions are hidden.',
+    default: 'Only display input/output/choice/replication/internal communication transitions. Other &tau; transitions are hidden.',
     io: 'Only display input/output transitions. &tau; transitions are hidden.',
     all: 'Display all transitions.'
   }
