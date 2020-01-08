@@ -56,6 +56,7 @@ import { formatCode } from '../util/process-parser'
 import AtomicRenamer from '../util/AtomicRenamer'
 import { isEmptyOrBlankStr } from '../util/misc'
 import Vue from 'vue'
+import ProcessModel from '../models/ProcessModel'
 
 export default {
   name: 'action-popup',
@@ -75,7 +76,8 @@ export default {
       selectedTransitionType: null,
       recipes: {},
       nbProcessUnfolded: 1,
-      validRecipes: false
+      validRecipes: false,
+      cacheRecipes: new Map()
     }
   },
   computed: {
@@ -132,9 +134,14 @@ export default {
     }
   },
   watch: {
-    action (newVal, _) {
+    action (newVal, oldVal) {
+      // When the popup is closed
+      if (newVal === null && oldVal) {
+        // Save the current recipes in the cache
+        this.cacheRecipes.set(ProcessModel.formatPositionToString(oldVal.position), this.recipes)
+      }
       // Only update if some new value is set
-      if (newVal) {
+      else if (newVal) {
         // Set default value for selected transition type
         if (this.action.transitions) {
           if (this.transitionTypes.includes('direct')) {
@@ -145,23 +152,29 @@ export default {
             this.selectedTransitionType = 'eavesdrop'
           }
 
-          this.recipes = []
-          this.action.transitions.forEach(t => {
-            Vue.set(this.recipes, t.type, {}) // Use vue.set for reactivity
-            if (t.recipe_channel) {
-              this.recipes[t.type].recipe_channel = formatCode(t.recipe_channel, this.atomic)
-            } else {
-              this.recipes[t.type].recipe_channel = ''
-            }
+          const positionStr = ProcessModel.formatPositionToString(newVal.position)
+          // If possible load from cache, else get default values
+          if (this.cacheRecipes.has(positionStr)) {
+            this.recipes = this.cacheRecipes.get(positionStr)
+          } else {
+            this.recipes = []
+            this.action.transitions.forEach(t => {
+              Vue.set(this.recipes, t.type, {}) // Use vue.set for reactivity
+              if (t.recipe_channel) {
+                this.recipes[t.type].recipe_channel = formatCode(t.recipe_channel, this.atomic)
+              } else {
+                this.recipes[t.type].recipe_channel = ''
+              }
 
-            if (t.recipe_term) {
-              this.recipes[t.type].recipe_term = formatCode(t.recipe_term, this.atomic)
-            } else {
-              this.recipes[t.type].recipe_term = ''
-            }
+              if (t.recipe_term) {
+                this.recipes[t.type].recipe_term = formatCode(t.recipe_term, this.atomic)
+              } else {
+                this.recipes[t.type].recipe_term = ''
+              }
 
-            this.recipes[t.type].locked = t.locked
-          })
+              this.recipes[t.type].locked = t.locked
+            })
+          }
         } else {
           this.selectedTransitionType = null
         }
