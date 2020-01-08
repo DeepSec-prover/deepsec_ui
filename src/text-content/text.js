@@ -53,10 +53,10 @@ const text = {
         },
         session_equiv: {
           short: 'Session equivalent',
-          long: 'The processes are session equivalence. No attack trace found.'
+          long: 'The processes are session equivalent. No attack trace found.'
         },
         session_incl: {
-          short: 'Session inluded',
+          short: 'Session included',
           long: 'The process 1 is session included in process 2.'
         }
       }
