@@ -1,9 +1,11 @@
 <template>
   <el-card header="Frame">
     <ul v-if="frame.length > 0" class="no-bullet">
-      <li v-for="i in frame.length">
-        <spec-code-inline :code="`ax_${i} -> ${ termsStr[i-1] }`"></spec-code-inline>
-      </li>
+      <simplebar>
+        <li v-for="i in frame.length">
+          <spec-code-inline :code="`ax_${i} -> ${ termsStr[i-1] }`"></spec-code-inline>
+        </li>
+      </simplebar>
     </ul>
     <div v-else class="centred-content info-text">
       Empty
@@ -12,6 +14,7 @@
 </template>
 
 <script>
+import Simplebar from 'simplebar-vue'
 import { formatCode } from '../../util/process-parser'
 import AtomicRenamer from '../../util/AtomicRenamer'
 import SpecCodeInline from '../code/SpecCodeInline'
@@ -27,7 +30,8 @@ export default {
     }
   },
   components: {
-    SpecCodeInline
+    SpecCodeInline,
+    Simplebar
   },
   computed: {
     termsStr: function () {
