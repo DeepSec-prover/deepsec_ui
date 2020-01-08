@@ -273,7 +273,7 @@ export default {
   beforeMount () {
     // Load default values (from props)
     this.currentFiles = this.files ? this.files : []
-    this.currentConf = this.config ? this.config : new RunConfigModel()
+    this.currentConf = this.config ? this.config.beforeRestart() : new RunConfigModel()
   },
   destroyed () {
     if (this.apiRemote) {

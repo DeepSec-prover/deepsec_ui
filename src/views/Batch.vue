@@ -51,6 +51,12 @@
                 <dd>
                   <duration :start-time="batch.startTime" :end-time="batch.endTime"></duration>
                 </dd>
+                <template v-if="batch.memoryUsed () != 0">
+                  <dt>Memory</dt>
+                  <dd>
+                    <memory :memory="batch.memoryUsed ()"></memory>
+                  </dd>
+                </template>
               </dl>
             </el-col>
           </el-row>
@@ -134,6 +140,7 @@
 <script>
 import ResultStatus from '../components/results/ResultStatus'
 import Duration from '../components/Duration'
+import Memory from '../components/Memory'
 import ResultLayout from '../components/results/ResultLayout'
 import QueryCollapsible from '../components/query/QueryCollapsible'
 import RunConfig from '../components/RunConfig'
@@ -150,7 +157,8 @@ export default {
     QueryCollapsible,
     ResultStatus,
     RunConfig,
-    Date
+    Date,
+    Memory
   },
   props: {
     path: String

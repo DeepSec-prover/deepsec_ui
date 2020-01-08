@@ -66,6 +66,18 @@ export default class RunConfigModel {
   }
 
   /**
+   * Setup the data before restarting a run
+   */
+  beforeRestart () {
+    if (this.distributed === false) {
+      this.nbJobs = { auto: true, value: 200 }
+      this.localWorkers = { auto: true, value: 2 }
+      this.roundTimer = 120
+    };
+    return this
+  }
+
+  /**
    * Convert to a json object usable for DeepSec API command.
    *
    * @returns {Object} The json object

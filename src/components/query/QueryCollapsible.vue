@@ -13,6 +13,7 @@
       </h3>
       <span v-if="query.isActive()" class="query-progress">
         &ndash;
+        <template v-if="query.progression.round !== 0">Round {{ query.progression.round }} &ndash;</template>
         <template v-if="query.progression.generation">Generation </template>
         <template v-if="query.progression.verification">Verification </template>
         {{ query.progressionPercent() }}%
@@ -50,6 +51,12 @@
           <dd>
             <duration :start-time="query.startTime" :end-time="query.endTime"></duration>
           </dd>
+          <template v-if="query.memory !== 0">
+            <dt>Memory</dt>
+            <dd>
+              <memory :memory="query.memory"></memory>
+            </dd>
+          </template>
         </dl>
       </el-col>
     </el-row>
@@ -60,6 +67,7 @@
 import text from '../../text-content/text'
 import ResultStatus from '../results/ResultStatus'
 import Date from '../Date'
+import Memory from '../Memory'
 import Helper from '../helpers/Helper'
 import Duration from '../Duration'
 
@@ -68,6 +76,7 @@ export default {
   components: {
     Helper,
     Date,
+    Memory,
     Duration,
     ResultStatus
   },
