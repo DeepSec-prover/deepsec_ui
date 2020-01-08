@@ -34,6 +34,7 @@
 
 <script>
 import { ipcRenderer } from 'electron'
+import logger from 'electron-log'
 
 export default {
   name: 'layout',
@@ -43,6 +44,15 @@ export default {
         this.$router.push({ name: routeName })
       }
     }
+  },
+  beforeMount () {
+    window.addEventListener('beforeunload', () => {
+      logger.info('Application refreshing or closing detected, Execute Order 66: destroy all components!')
+      // Trigger all the "beforeDestroy" and "destroyed" hooks from this components and its children.
+      // This is necessary to send "die" comment to child processes.
+      // This is quite brutal but seems good for this use case.
+      this.$destroy()
+    })
   },
   mounted () {
     // When received data then show notification
