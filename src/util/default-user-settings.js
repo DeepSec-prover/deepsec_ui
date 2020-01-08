@@ -7,8 +7,8 @@ const defaultUserSettings = {
   resultsDirPath: '',
   notificationDuration: 5, // seconds
   showBatchNotif: true,
-  showRunNotif: true,
-  showQueryNotif: false,
+  showRunNotif: false,
+  showQueryNotif: true,
   stickyErrorNotif: true
 }
 
