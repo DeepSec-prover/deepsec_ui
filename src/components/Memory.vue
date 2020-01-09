@@ -8,7 +8,8 @@ export default {
   props: {
     memory: {
       type: Number,
-      default: null
+      default: null,
+      required: true
     }
   },
   computed: {

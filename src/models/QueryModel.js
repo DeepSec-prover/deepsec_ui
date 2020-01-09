@@ -97,10 +97,6 @@ export default class QueryModel extends ResultModel {
     return 0
   }
 
-  memoryUsed () {
-    return this.memory
-  }
-
   /**
    * Progression estimation for the all query processing
    */

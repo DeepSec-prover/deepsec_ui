@@ -10,7 +10,7 @@
               {{ userConfig.defaultSemantic }}
             </helper>
             <template v-else>-</template>
-            <span v-if="userConfig.defaultSemantic !== computedConfig.defaultSemantic" class="computed-conf">
+            <span v-if="computedConfig.defaultSemantic && userConfig.defaultSemantic !== computedConfig.defaultSemantic" class="computed-conf">
               (<helper helper-str="Value computed during the run." :helper-id="`semantics.${computedConfig.defaultSemantic}`"
                        text-content>{{ computedConfig.defaultSemantic }}</helper>)
             </span>
@@ -19,7 +19,7 @@
           <dt>Title</dt>
           <dd>
             {{ userConfig.title === undefined ? '-' : `"${userConfig.title}"` }}
-            <span class="computed-conf" v-if="userConfig.title !== computedConfig.title">
+            <span class="computed-conf" v-if="computedConfig.title && userConfig.title !== computedConfig.title">
               (<helper helper-str="Value computed during the run."
                        text-content>{{ `"${computedConfig.title}"` }}</helper>)
             </span>
@@ -30,7 +30,7 @@
             <helper helper-id="runOptions.por" text-content>
               {{ userPorStr }}
             </helper>
-            <span class="computed-conf" v-if="userConfig.por !== computedConfig.por">
+            <span class="computed-conf" v-if="computedConfig.por && userConfig.por !== computedConfig.por">
               (<helper helper-str="Value computed during the run." helper-id="runOptions.por"
                        text-content>{{ computedConfig.por ? 'yes' : 'no' }}</helper>)
             </span>
@@ -42,7 +42,7 @@
               {{ userDistributedStr }}
             </helper>
             <template v-else>-</template>
-            <span class="computed-conf" v-if="userConfig.distributed !== computedConfig.distributed">
+            <span class="computed-conf" v-if="computedConfig.distributed && userConfig.distributed !== computedConfig.distributed">
               (<helper helper-str="Value computed during the run."
                        :helper-id="`runOptions.distributed.${computedConfig.distributed}`"
                        text-content>{{ computedConfig.distributed ? 'yes' : 'no' }}</helper>)
@@ -56,8 +56,8 @@
           <dt>Number of Jobs</dt>
           <dd>
             {{ autoOrInt(userConfig.nbJobs) }}
-            <span class="computed-conf" v-if="!userConfig.nbJobs || userConfig.nbJobs.auto ||
-             userConfig.nbJobs.value !== computedConfig.nbJobs.value">
+            <span class="computed-conf" v-if="computedConfig.nbJobs && computedConfig.nbJobs.value && (!userConfig.nbJobs || userConfig.nbJobs.auto ||
+             userConfig.nbJobs.value !== computedConfig.nbJobs.value)">
               (<helper helper-str="Value computed during the run."
                        text-content>{{ computedConfig.nbJobs.value }}</helper>)
             </span>
@@ -66,8 +66,8 @@
           <dt>Local Workers</dt>
           <dd>
             {{ autoOrInt(userConfig.localWorkers) }}
-            <span class="computed-conf" v-if="!userConfig.localWorkers || userConfig.localWorkers.auto ||
-             userConfig.localWorkers.value !== computedConfig.localWorkers.value">
+            <span class="computed-conf" v-if="computedConfig.localWorkers && computedConfig.localWorkers.value && (!userConfig.localWorkers || userConfig.localWorkers.auto ||
+             userConfig.localWorkers.value !== computedConfig.localWorkers.value)">
               (<helper helper-str="Value computed during the run."
                        text-content>{{ computedConfig.localWorkers.value }}</helper>)
             </span>
@@ -78,7 +78,7 @@
             <duration v-if="userConfig.roundTimer" :duration="userConfig.roundTimer"></duration>
             <template v-else>
               -
-              <span class="computed-conf">
+              <span class="computed-conf" v-if="computedConfig.roundTimer">
               (<helper helper-str="Value computed during the run.">
                 <duration :duration="computedConfig.roundTimer"></duration>
               </helper>)
@@ -107,9 +107,9 @@
             <dt>Workers</dt>
             <dd>
               {{ autoOrInt(userConfig.servers[i - 1].workers) }}
-              <span class="computed-conf" v-if="!userConfig.servers[i - 1].workers ||
+              <span class="computed-conf" v-if="computedConfig.servers[i - 1].workers && computedConfig.servers[i - 1].workers.value && (!userConfig.servers[i - 1].workers ||
               userConfig.servers[i - 1].workers.auto ||
-              userConfig.servers[i - 1].workers.value !== computedConfig.servers[i - 1].workers.value">
+              userConfig.servers[i - 1].workers.value !== computedConfig.servers[i - 1].workers.value)">
                 (<helper helper-str="Value computed during the run."
                          text-content>{{ computedConfig.servers[i - 1].workers.value }}</helper>)
               </span>

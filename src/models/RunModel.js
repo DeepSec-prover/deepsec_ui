@@ -53,7 +53,7 @@ export default class RunModel extends ResultModel {
 
   memoryUsed () {
     const memory = this.queries.reduce(
-      (sum, q) => Math.max(sum,q.memoryUsed()), 0)
+      (sum, q) => Math.max(sum,q.memory), 0)
 
     return memory
   }

@@ -147,6 +147,7 @@
 </template>
 
 <script>
+import lodash from 'lodash'
 import SpecFilesSelection from '../components/spec-files/SpecFilesSelection'
 import FormItemHelper from '../components/helpers/FormItemHelper'
 import Helper from '../components/helpers/Helper'
@@ -273,7 +274,14 @@ export default {
   beforeMount () {
     // Load default values (from props)
     this.currentFiles = this.files ? this.files : []
-    this.currentConf = this.config ? this.config.beforeRestart() : new RunConfigModel()
+    const runconfig = new RunConfigModel()
+    if (this.config) {
+      const copy = lodash.cloneDeep(this.config)
+      lodash.defaultsDeep(copy, runconfig)
+      this.currentConf = copy
+    } else {
+      this.currentConf = runconfig
+    }
   },
   destroyed () {
     if (this.apiRemote) {
