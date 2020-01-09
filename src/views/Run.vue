@@ -95,13 +95,23 @@ export default {
       run: undefined
     }
   },
-  beforeMount () {
-    this.run = new RunModel(this.path, true, true)
-    this.run.queries.forEach(q => q.enableUpdateListener())
-    // If few query show all summaries
-    if (this.run.nbQueries() <= 5) {
-      this.openedSummary = this.run.queries.map(q => q.path)
+  methods: {
+    setupResult () {
+      this.run = new RunModel(this.path, true, true)
+      this.run.queries.forEach(q => q.enableUpdateListener())
+      // If few query show all summaries
+      if (this.run.nbQueries() <= 5) {
+        this.openedSummary = this.run.queries.map(q => q.path)
+      }
     }
+  },
+  watch: {
+    path () {
+      this.setupResult()
+    }
+  },
+  beforeMount () {
+    this.setupResult()
   }
 }
 </script>

@@ -53,7 +53,8 @@ export default {
   },
   props: {
     resultObject: {
-      type: ResultModel
+      type: ResultModel,
+      required: true
     }
   },
   data () {
