@@ -256,7 +256,7 @@ export default {
             type: 'eavesdrop',
             input_position: input.position,
             output_position: output.position,
-            channel: this.selectedAction.channel
+            channel: this.transitionSettings.channel
           })
       } else {
         logger.error(`Invalid transition selection type ${this.transitionSettings.type}`)
