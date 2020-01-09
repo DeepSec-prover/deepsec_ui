@@ -1,0 +1,32 @@
+/* ----------- Common theme ----------- */
+
+.focused {
+    outline: solid rgba(255, 0, 0, 0.7);
+}
+
+.available-action {
+    outline: dashed rgba(255, 0, 0, 0.5);
+}
+
+.available-action:hover {
+    outline: solid rgba(255, 0, 0, 0.7);
+}
+
+.available-transitions {
+    outline: dashed rgba(255, 175, 14, 0.5);
+    outline-offset: 2px;
+}
+
+.available-transitions:hover {
+    outline: solid rgba(255, 175, 14, 0.7);
+}
+
+/* To avoid different line high and bad line number */
+.language-deepsec sup {
+    vertical-align: top;
+}
+
+/* To avoid different line high and bad line number */
+.language-deepsec sub {
+    vertical-align: bottom;
+}

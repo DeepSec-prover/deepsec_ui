@@ -10,7 +10,8 @@ const defaultUserSettings = {
   showRunNotif: false,
   showQueryNotif: true,
   stickyErrorNotif: true,
-  stickyWarningNotif: true
+  stickyWarningNotif: true,
+  codeStyleTheme: 'coy'
 }
 
 /**

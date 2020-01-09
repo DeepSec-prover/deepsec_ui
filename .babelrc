@@ -7,9 +7,10 @@
           "css"
         ],
         "plugins": [
-          "line-numbers"
+          "line-numbers",
+          "match-braces"
         ],
-        "theme": "okaidia",
+        "theme": "coy",
         "css": true
       }
     ]

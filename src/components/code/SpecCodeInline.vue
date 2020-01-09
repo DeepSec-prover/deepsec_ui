@@ -1,5 +1,5 @@
 <template>
-  <code class="language-deepsec match-braces" ref="code"></code>
+  <code class="inline-code language-deepsec match-braces" ref="code" :class="[codeTheme]"></code>
 </template>
 
 <script>

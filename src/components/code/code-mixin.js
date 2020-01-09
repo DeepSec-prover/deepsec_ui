@@ -1,4 +1,5 @@
 import logger from 'electron-log'
+import userSettings from 'electron-settings'
 import { isEmptyOrBlankStr } from '../../util/misc'
 
 const mixin = {
@@ -6,6 +7,14 @@ const mixin = {
     code: {
       type: String,
       required: true
+    }
+  },
+  date () {
+    return {
+      /**
+       * The current code style theme chosen by the user
+       */
+      codeTheme: 'coy'
     }
   },
   methods: {
@@ -28,6 +37,9 @@ const mixin = {
         this.$refs.code.textContent = 'loading ...'
       }
     },
+  },
+  beforeMount () {
+    this.codeTheme = userSettings.get('codeStyleTheme', 'coy')
   },
   mounted () {
     this.render()

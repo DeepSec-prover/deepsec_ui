@@ -11,7 +11,7 @@ let filters = {
       }
     }
   },
-  comment: /\/\/.*$/,
+  comment: /\/\/.*(?=$|\n)/,
   'in-out': /(?<=\b)(in|out|eavesdrop)(?=\()/,
   keyword: {
     pattern: /(?<=\b)(new|let|if|then|else|in)(?=\b)|(?<=\s|%)->(?=\s|%)|(?<=^|\s|;|%)!~\d+/,
