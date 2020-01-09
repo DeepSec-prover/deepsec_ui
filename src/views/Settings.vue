@@ -21,9 +21,10 @@
           <setting-item label="Batch notifications" settings-path="showBatchNotif"></setting-item>
           <setting-item label="Run notifications" settings-path="showRunNotif"></setting-item>
           <setting-item label="Query notifications" settings-path="showQueryNotif"></setting-item>
-          <setting-item label="No auto dismiss error" settings-path="stickyErrorNotif"></setting-item>
+          <setting-item label="Sticky error notification" settings-path="stickyErrorNotif"></setting-item>
+          <setting-item label="Sticky warning notification" settings-path="stickyWarningNotif"></setting-item>
           <div class="centred-content">
-            <el-button class="test-button" size="mini" @click="testNotification">Test Notification</el-button>
+            <el-button class="test-button" size="mini" @click="testNotifications">Test Notifications</el-button>
           </div>
           <!-- Reset Settings -->
           <div id="reset-settings" class="centred-content">
@@ -70,8 +71,10 @@ export default {
       this.refreshKey += 1
       this.resetConfirm = false
     },
-    testNotification () {
-      this.$notification('Test title', 'Test description')
+    testNotifications () {
+      this.$notification('Test info notification', 'This one if for casual information.')
+      setTimeout(() => {this.$notification('Test warning notification', 'This one deserve more attention...', 'warning')}, 500)
+      setTimeout(() => {this.$notification('Test error notification', 'This one is critical, don\'t miss it!', 'error')}, 1000)
     },
     checkApi () {
       // Send checking signal to the main process

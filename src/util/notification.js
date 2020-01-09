@@ -38,7 +38,8 @@ export default function notification (title,
 
   // Set time
   let time // in ms
-  if (type === 'error' && userSettings.get('stickyErrorNotif')) {
+  if (type === 'error' && userSettings.get('stickyErrorNotif') ||
+    type === 'warning' && userSettings.get('stickyWarningNotif')) {
     time = 0 // no auto dismiss
   } else {
     time = userSettings.get('notificationDuration') * 1000 // Seconds to ms
