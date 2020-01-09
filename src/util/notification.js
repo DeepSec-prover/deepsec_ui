@@ -1,6 +1,7 @@
 import logger from 'electron-log'
 import { Notification } from 'element-ui'
 import userSettings from 'electron-settings'
+import dash from 'lodash'
 
 /**
  * Send a notification depending of the user settings.
@@ -49,7 +50,13 @@ export default function notification (title,
   if (link) {
     customClasses.push('clickable')
     onClick = function () {
-      router.push(link)
+      // Go to the route if it's not the current location
+      if (router.currentRoute.name === link.name &&
+        dash.isEqual(router.currentRoute.params, link.params)) {
+        logger.verbose(`Try to go to the current route (${router.currentRoute.path})`)
+      } else {
+        router.push(link)
+      }
       this.close()
     }
   }
