@@ -110,13 +110,25 @@ export default {
       }
     }
   },
-  beforeMount () {
-    this.query = new QueryModel(this.path, true, true)
+  methods: {
+    setupResult () {
+      this.query = new QueryModel(this.path, true, true)
 
-    // If has attack trace auto switch to this tab
-    if (this.query.isCompleted() && this.query.attackFound()) {
-      this.activeDetail = 'trace'
+      // If has attack trace auto switch to this tab
+      if (this.query.isCompleted() && this.query.attackFound()) {
+        this.activeDetail = 'trace'
+      } else {
+        this.activeDetail = 'processes'
+      }
     }
+  },
+  watch: {
+    path () {
+      this.setupResult()
+    }
+  },
+  beforeMount () {
+    this.setupResult()
   }
 }
 </script>

@@ -9,7 +9,9 @@ const defaultUserSettings = {
   showBatchNotif: true,
   showRunNotif: false,
   showQueryNotif: true,
-  stickyErrorNotif: true
+  stickyErrorNotif: true,
+  stickyWarningNotif: true,
+  codeStyleTheme: 'coy'
 }
 
 /**

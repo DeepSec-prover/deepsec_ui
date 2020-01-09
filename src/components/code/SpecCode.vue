@@ -1,5 +1,5 @@
 <template>
-  <simplebar class="code-block language-deepsec match-braces line-numbers">
+  <simplebar class="code-block language-deepsec match-braces line-numbers" :class="[codeTheme]">
     <!-- Code Block -->
     <pre><code ref="code"></code></pre>
     <!-- Action selection for interactive popup -->
@@ -416,56 +416,6 @@ export default {
   }
 }
 </script>
-
-<style>
-  .focused {
-    outline: solid rgba(255, 0, 0, 0.7);
-  }
-
-  .available-action {
-    outline: dashed rgba(255, 0, 0, 0.5);
-  }
-
-  .available-action:hover {
-    outline: solid rgba(255, 0, 0, 0.7);
-  }
-
-  .available-transitions {
-    outline: dashed rgba(255, 175, 14, 0.5);
-    outline-offset: 2px;
-  }
-
-  .available-transitions:hover {
-    outline: solid rgba(255, 175, 14, 0.7);
-  }
-
-  .language-deepsec .token.in-out {
-    color: lightgreen;
-  }
-
-  .language-deepsec .token.punctuation.brace-selected, .token.punctuation.brace-hover {
-    /*outline: unset;*/
-    outline-color: rgba(255, 255, 0, 0.50);
-    color: rgba(255, 255, 0, 0.90);
-    background-color: rgba(255, 255, 0, 0.25);
-    font-weight: bold;
-  }
-
-  /* To avoid different line high and bad line number */
-  .language-deepsec sup {
-    vertical-align: top;
-  }
-
-  /* To avoid different line high and bad line number */
-  .language-deepsec sub {
-    vertical-align: bottom;
-  }
-
-  /* Scroll bar color */
-  .code-block .simplebar-scrollbar.simplebar-visible:before {
-    background-color: white;
-  }
-</style>
 
 <style scoped>
   /* TODO remove horizontal scroll in <pre> for Simplebar */

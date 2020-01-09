@@ -1,20 +1,27 @@
 <template>
   <el-form-item :label="label">
     <!-- Integer -->
-    <el-input-number v-if="Number.isInteger(value)"
+    <el-input-number v-if="type === 'integer'"
                      v-model="value"
                      controls-position="right"
                      :placeholder="placeholder"
                      :min="min"
                      :max="max"></el-input-number>
     <!-- Boolean -->
-    <el-switch v-else-if="typeof value === 'boolean'"
+    <el-switch v-else-if="type === 'boolean'"
                v-model="value"></el-switch>
+    <!-- Choice -->
+    <el-select v-else-if="type === 'choice'"
+               v-model="value"
+               :placeholder="placeholder">
+      <el-option v-for="choice in choices" :key="choice" :label="choice" :value="choice"></el-option>
+    </el-select>
     <!-- String -->
     <el-input v-else
               v-model="value"
               class="setting-item-text"
               :placeholder="placeholder"></el-input>
+    <!-- Edition indicator -->
     <i v-show="!isDefault" :class="['el-icon-circle-check', 'edited', {'current-edit': currentEdit}]"></i>
   </el-form-item>
 </template>
@@ -27,8 +34,18 @@ import { defaultUserSettings } from '../util/default-user-settings'
 export default {
   name: 'setting-item',
   props: {
-    label: String,
-    settingsPath: String,
+    label: {
+      type: String,
+      required: true
+    },
+    settingsPath: {
+      type: String,
+      required: true
+    },
+    type: {
+      type: String, // string|integer|boolean|choice
+      default: 'string'
+    },
     placeholder: {
       type: String,
       default: ''
@@ -36,11 +53,14 @@ export default {
     min: {
       type: Number,
       default: -Infinity
-
     },
     max: {
       type: Number,
       default: Infinity
+    },
+    choices: {
+      type: Array,
+      default: () => []
     }
   },
   data () {
@@ -54,10 +74,9 @@ export default {
       return this.value === defaultUserSettings[this.settingsPath]
     }
   },
-  mounted () {
+  beforeMount () {
     this.value = userSettings.get(this.settingsPath)
 
-    // TODO try beforeCreate to avoid custom watcher
     // Set watcher after the initialization to avoid useless update
     this.$watch('value', (newValue, oldValue) => {
       logger.debug(`Change user setting "${this.settingsPath}" : ${oldValue} --> ${newValue}`)

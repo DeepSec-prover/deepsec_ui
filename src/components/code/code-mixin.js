@@ -1,4 +1,5 @@
 import logger from 'electron-log'
+import userSettings from 'electron-settings'
 import { isEmptyOrBlankStr } from '../../util/misc'
 
 const mixin = {
@@ -8,6 +9,14 @@ const mixin = {
       required: true
     }
   },
+  date () {
+    return {
+      /**
+       * The current code style theme chosen by the user
+       */
+      codeTheme: 'coy'
+    }
+  },
   methods: {
     /**
      * Parse and highlight the code with Prism.
@@ -15,11 +24,11 @@ const mixin = {
      */
     render () {
       if (isEmptyOrBlankStr(this.code)) {
-        logger.silly('Update Prism code highlight')
+        logger.verbose('Update Prism code highlight')
         this.$refs.code.textContent = '// empty'
         Prism.highlightElement(this.$refs.code)
       } else if (this.code !== null) {
-        logger.silly('Update Prism code highlight')
+        logger.verbose('Update Prism code highlight')
         // We have to edit directly the dom to enable Prism plugins
         this.$refs.code.textContent = this.code
         Prism.highlightElement(this.$refs.code)
@@ -28,6 +37,9 @@ const mixin = {
         this.$refs.code.textContent = 'loading ...'
       }
     },
+  },
+  beforeMount () {
+    this.codeTheme = userSettings.get('codeStyleTheme', 'coy')
   },
   mounted () {
     this.render()

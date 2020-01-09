@@ -1,0 +1,22 @@
+/* ----------- Coy theme ----------- */
+
+.coy.language-deepsec .token.in-out {
+    color: #8322b8;
+}
+
+.coy.inline-code {
+    color: inherit;
+    background-color: rgba(69, 142, 209, 0.04);
+}
+
+.coy.language-deepsec .token.punctuation.brace-selected, .coy.language-deepsec .token.punctuation.brace-hover {
+    /*outline: unset;*/
+    outline-color: rgba(0, 176, 255, 0.5);
+    color: rgba(8, 0, 255, 0.9);
+    background-color: rgba(8, 0, 255, 0.25);
+    font-weight: bold;
+}
+
+.coy.language-deepsec .token.punctuation.brace-selected {
+    background-color: rgba(8, 0, 255, 0.10);
+}
