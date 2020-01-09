@@ -255,27 +255,75 @@ export class ApiStartRun extends ApiManager {
   }
 
   userError (answer) {
+    // Compute the file errors
     const nbFilesIssue = answer.error_runs.length
     let nbTotalWarnings = 0
-    let nbTotalError = 0
+    let nbTotalErrors = 0
 
     answer.error_runs.forEach(error => {
       if (!isEmptyOrBlankStr(error.error_msg)) {
-        nbTotalError++
+        nbTotalErrors++
       }
-      if (error.warning) {
-        nbTotalWarnings += error.warning.length
+      if (error.warnings) {
+        nbTotalWarnings += error.warnings.length
       }
     })
+
+    let strTotalWarnings = ''
+
+    if (nbTotalWarnings === 1) {
+      strTotalWarnings = nbTotalWarnings + ' warning'
+    } else if (nbTotalWarnings > 1){
+      strTotalWarnings = nbTotalWarnings + ' warnings'
+    }
+
+    let strTotalErrors = ''
+
+    if (nbTotalErrors === 1) {
+      strTotalErrors = nbTotalErrors + ' error'
+    } else if (nbTotalErrors > 1) {
+      strTotalErrors = nbTotalErrors + ' errors'
+    }
+
+    const areErrorsInFile = nbTotalErrors !== 0 || nbTotalWarnings !== 0
+
+    let strErrorMsg = ''
+    if (areErrorsInFile) {
+      if (nbTotalWarnings === 0) {
+        strErrorMsg = strTotalErrors
+      } else if (nbTotalErrors === 0) {
+        strErrorMsg = strTotalWarnings
+      } else {
+        strErrorMsg = strTotalErrors + ' and ' + strTotalWarnings
+      }
+      strErrorMsg += ` in ${nbFilesIssue} file${nbFilesIssue > 1 ? 's' : ''}.`
+    }
+
+    // Compute the host erros
+    const nbHostIssue = answer.error_hosts.length
+    let nbTotalHostErrors = 0
+
+    answer.error_hosts.forEach(error => {
+      if (error.error_msgs) {
+        nbTotalHostErrors += error.error_msgs.length
+      }
+    })
+
+    if (nbTotalHostErrors !== 0) {
+      if (areErrorsInFile) {
+        strErrorMsg += ' '
+      }
+      strErrorMsg += `${nbTotalHostErrors} errors with ${nbHostIssue} distant server${nbHostIssue >
+      1 ? 's' : ''}.`
+    }
 
     // Send bad result to the Start Run page
     this.eventReply({
                       success: false,
                       isInternal: false,
-                      errorMsg: `${nbTotalError} error${nbTotalError > 1 ? 's' : ''} and
-                      ${nbTotalWarnings} warning${nbTotalWarnings > 1 ? 's' : ''} in
-                      ${nbFilesIssue} file${nbFilesIssue > 1 ? 's' : ''}.`,
-                      files_issues: answer.error_runs
+                      errorMsg: strErrorMsg,
+                      files_issues: answer.error_runs,
+                      host_issues: answer.error_hosts
                     })
   }
 }

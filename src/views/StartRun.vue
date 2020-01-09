@@ -105,6 +105,12 @@
           <h3>Files errors :</h3>
           <file-issues-list :files-issues="filesIssues"></file-issues-list>
         </el-row>
+        <!-- Host issues -->
+        <el-row v-show="hostIssues.length > 0">
+          <el-divider></el-divider>
+          <h3>Distant servers errors :</h3>
+          <host-issues-list :all-host-issues="hostIssues"></host-issues-list>
+        </el-row>
       </el-col>
       <el-col :span="9" v-show="currentConf.distributed === true">
         <!-- Add Distant server -->
@@ -152,6 +158,7 @@ import SpecFilesSelection from '../components/spec-files/SpecFilesSelection'
 import FormItemHelper from '../components/helpers/FormItemHelper'
 import Helper from '../components/helpers/Helper'
 import FileIssuesList from '../components/spec-files/FileIssuesList'
+import HostIssuesList from '../components/spec-files/HostIssuesList'
 import settings from '../../settings'
 import RunConfigModel from '../models/RunConfigModel'
 import logger from 'electron-log'
@@ -177,7 +184,8 @@ export default {
     SpecFilesSelection,
     FormItemHelper,
     Helper,
-    FileIssuesList
+    FileIssuesList,
+    HostIssuesList
   },
   data () {
     return {
@@ -186,6 +194,7 @@ export default {
       runStarting: false,
       globalError: null,
       filesIssues: [],
+      hostIssues: [],
       settings: settings,
       apiRemote: null
     }
@@ -213,6 +222,7 @@ export default {
       this.runStarting = true
       this.globalError = null
       this.filesIssues = []
+      this.hostIssues = []
 
       // Clean user inputs (eg: trim)
       this.currentConf.preProcessData()
@@ -254,7 +264,7 @@ export default {
         error.title = 'User error'
       }
 
-      if (result.errorMsg) {
+      if (result.errorMsg !== '') {
         // Error message
         error.message = result.errorMsg
       } else {
@@ -265,6 +275,11 @@ export default {
       // Error or warning per files
       if (result.files_issues) {
         this.filesIssues = result.files_issues
+      }
+
+      // Error or warning per files
+      if (result.host_issues) {
+        this.hostIssues = result.host_issues
       }
 
       // Set at the end to have only one UI update
