@@ -40,6 +40,12 @@
           <dd>
             <duration :start-time="query.startTime" :end-time="query.endTime"></duration>
           </dd>
+          <template v-if="query.memory !== 0">
+            <dt>Memory</dt>
+            <dd>
+              <memory :memory="query.memory"></memory>
+            </dd>
+          </template>
         </dl>
       </el-col>
     </el-row>
@@ -123,6 +129,7 @@
 import Helper from '../helpers/Helper'
 import Date from '../Date'
 import Duration from '../Duration'
+import Memory from '../Memory'
 import text from '../../text-content/text'
 import { formatCode, formatTrace } from '../../util/process-parser'
 import AtomicRenamer from '../../util/AtomicRenamer'
@@ -136,6 +143,7 @@ export default {
     SpecCodeInline,
     Helper,
     Date,
+    Memory,
     Duration
   },
   props: {

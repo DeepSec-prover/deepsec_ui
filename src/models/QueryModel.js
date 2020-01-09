@@ -41,6 +41,13 @@ export default class QueryModel extends ResultModel {
       this.progression.generation = undefined
       this.progression.verification = undefined
     }
+
+    // Memory
+    if (json.memory) {
+      this.memory = json.memory
+    } else {
+      this.memory = 0
+    }
   }
 
   loadRelations () {

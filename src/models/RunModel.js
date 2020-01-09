@@ -51,6 +51,13 @@ export default class RunModel extends ResultModel {
     return this.batchFile
   }
 
+  memoryUsed () {
+    const memory = this.queries.reduce(
+      (sum, q) => Math.max(sum,q.memory), 0)
+
+    return memory
+  }
+
   progressionPercent () {
     if (this.isCompleted()) {
       return 100

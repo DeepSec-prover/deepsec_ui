@@ -55,6 +55,13 @@ export default class BatchModel extends ResultModel {
     })
   }
 
+  memoryUsed () {
+    const memory = this.runs.reduce(
+      (sum, r) => Math.max(sum,r.memoryUsed()), 0)
+
+    return memory
+  }
+
   title () {
     if (this.defaultTitle !== null) {
       return this.defaultTitle

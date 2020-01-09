@@ -55,6 +55,12 @@
               <dd>
                 <duration :start-time="run.startTime" :end-time="run.endTime"></duration>
               </dd>
+              <template v-if="run.memoryUsed () != 0">
+                <dt>Memory</dt>
+                <dd>
+                  <memory :memory="run.memoryUsed ()"></memory>
+                </dd>
+              </template>
             </dl>
           </el-col>
         </el-row>
@@ -73,6 +79,7 @@
 
 <script>
 import Date from '../components/Date'
+import Memory from '../components/Memory'
 import Duration from '../components/Duration'
 import QueryCollapsible from '../components/query/QueryCollapsible'
 import ResultLayout from '../components/results/ResultLayout'
@@ -84,7 +91,8 @@ export default {
     Duration,
     Date,
     QueryCollapsible,
-    ResultLayout
+    ResultLayout,
+    Memory
   },
   props: {
     path: String
