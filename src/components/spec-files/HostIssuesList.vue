@@ -2,7 +2,10 @@
   <el-collapse :value="openHost">
     <el-collapse-item v-for="hostIssues in allHostIssues" :name="hostIssues.host">
       <template slot="title">
-        {{ hostIssues.host }}
+        <template v-if="hostIssues.host">
+          {{ hostIssues.host }}
+        </template>
+        <i v-else>no hostname</i>
         <el-tag class="tag-status" effect="dark" type="danger" size="mini"> {{ hostIssues.error_msgs.length }} <i class="el-icon-error"></i></el-tag>
       </template>
       <el-alert class="host-issue" v-for="error_msg in hostIssues.error_msgs" type="error" :description="error_msg" :closable="false"></el-alert>
@@ -15,7 +18,10 @@
 export default {
   name: 'host-issues-list',
   props: {
-    allHostIssues: Array
+    allHostIssues: {
+      type: Array,
+      required: true
+    }
   },
   data () {
     return {

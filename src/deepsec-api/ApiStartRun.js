@@ -255,7 +255,7 @@ export class ApiStartRun extends ApiManager {
   }
 
   userError (answer) {
-    // Compute the file erros
+    // Compute the file errors
     const nbFilesIssue = answer.error_runs.length
     let nbTotalWarnings = 0
     let nbTotalErrors = 0
@@ -285,7 +285,7 @@ export class ApiStartRun extends ApiManager {
       strTotalErrors = nbTotalErrors + ' errors'
     }
 
-    let areErrorsInFile = nbTotalErrors !== 0 || nbTotalWarnings !== 0
+    const areErrorsInFile = nbTotalErrors !== 0 || nbTotalWarnings !== 0
 
     let strErrorMsg = ''
     if (areErrorsInFile) {
@@ -296,7 +296,7 @@ export class ApiStartRun extends ApiManager {
       } else {
         strErrorMsg = strTotalErrors + ' and ' + strTotalWarnings
       }
-      strErrorMsg += ' in ' + nbFilesIssue + ' file' + (nbFilesIssue > 1 ? 's' : '') + '.'
+      strErrorMsg += ` in ${nbFilesIssue} file${nbFilesIssue > 1 ? 's' : ''}.`
     }
 
     // Compute the host erros
@@ -313,7 +313,8 @@ export class ApiStartRun extends ApiManager {
       if (areErrorsInFile) {
         strErrorMsg += ' '
       }
-      strErrorMsg += nbTotalHostErrors + ' errors with ' + nbHostIssue + ' distant server' + (nbHostIssue > 1 ? 's' : '') + '.'
+      strErrorMsg += `${nbTotalHostErrors} errors with ${nbHostIssue} distant server${nbHostIssue >
+      1 ? 's' : ''}.`
     }
 
     // Send bad result to the Start Run page
