@@ -79,7 +79,7 @@
             <template v-else>
               -
               <span class="computed-conf">
-              (<helper helper-str="Value computed during the run.">
+              (<helper helper-str="Value computed during the run." text-content>
                 <duration :duration="computedConfig.roundTimer"></duration>
               </helper>)
             </span>

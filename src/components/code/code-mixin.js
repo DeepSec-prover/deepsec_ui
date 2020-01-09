@@ -15,11 +15,11 @@ const mixin = {
      */
     render () {
       if (isEmptyOrBlankStr(this.code)) {
-        logger.silly('Update Prism code highlight')
+        logger.verbose('Update Prism code highlight')
         this.$refs.code.textContent = '// empty'
         Prism.highlightElement(this.$refs.code)
       } else if (this.code !== null) {
-        logger.silly('Update Prism code highlight')
+        logger.verbose('Update Prism code highlight')
         // We have to edit directly the dom to enable Prism plugins
         this.$refs.code.textContent = this.code
         Prism.highlightElement(this.$refs.code)
