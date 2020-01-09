@@ -45,56 +45,56 @@
     </el-row>
     <el-row>
       <dl class="in-line">
-        <dt>Constructor symbols</dt>
+        <dt :class="{'label-top': publicConstructors && privateConstructors}">Constructor symbols</dt>
         <dd>
           <!-- Public -->
-          <span v-if="publicConstructors">
-              <el-tag size="mini" effect="plain" class="tag" type="success">Public :</el-tag>
-              <spec-code-inline :code="publicConstructors"></spec-code-inline>
-            </span>
+          <div v-if="publicConstructors">
+            <el-tag size="mini" effect="plain" class="tag" type="success">Public :</el-tag>
+            <spec-code-inline :code="publicConstructors"></spec-code-inline>
+          </div>
           <!-- Private -->
-          <span v-if="privateConstructors">
-              <el-tag size="mini" effect="plain" class="tag">Private :</el-tag>
-              <spec-code-inline :code="privateConstructors"></spec-code-inline>
-            </span>
+          <div v-if="privateConstructors">
+            <el-tag size="mini" effect="plain" class="tag">Private :</el-tag>
+            <spec-code-inline :code="privateConstructors"></spec-code-inline>
+          </div>
           <!-- None -->
           <span v-if="!publicConstructors && !privateConstructors">
-              <el-tag size="mini" effect="plain" class="tag" type="info">None</el-tag>
-            </span>
+            <el-tag size="mini" effect="plain" class="tag" type="info">None</el-tag>
+          </span>
         </dd>
-        <dt>Destructor symbols</dt>
+        <dt :class="{'label-top': publicDestructors && privateDestructors}">Destructor symbols</dt>
         <dd>
           <!-- Public -->
-          <span v-if="publicDestructors">
-              <el-tag size="mini" effect="plain" class="tag" type="success">Public :</el-tag>
-              <spec-code-inline :code="publicDestructors"></spec-code-inline>
-            </span>
+          <div v-if="publicDestructors">
+            <el-tag size="mini" effect="plain" class="tag" type="success">Public :</el-tag>
+            <spec-code-inline :code="publicDestructors"></spec-code-inline>
+          </div>
           <!-- Private -->
-          <span v-if="privateDestructors">
-              <el-tag size="mini" effect="plain" class="tag">Private :</el-tag>
-              <spec-code-inline :code="privateDestructors"></spec-code-inline>
-            </span>
+          <div v-if="privateDestructors">
+            <el-tag size="mini" effect="plain" class="tag">Private :</el-tag>
+            <spec-code-inline :code="privateDestructors"></spec-code-inline>
+          </div>
           <!-- None -->
           <span v-if="!publicDestructors && !privateDestructors">
-              <el-tag size="mini" effect="plain" class="tag" type="info">None</el-tag>
-            </span>
+            <el-tag size="mini" effect="plain" class="tag" type="info">None</el-tag>
+          </span>
         </dd>
-        <dt>Names</dt>
+        <dt :class="{'label-top': publicNames && privateNames}">Names</dt>
         <dd>
           <!-- Public -->
-          <span v-if="publicNames">
-              <el-tag size="mini" effect="plain" class="tag" type="success">Public :</el-tag>
-              <spec-code-inline :code="publicNames"></spec-code-inline>
-            </span>
+          <div v-if="publicNames">
+            <el-tag size="mini" effect="plain" class="tag" type="success">Public :</el-tag>
+            <spec-code-inline :code="publicNames"></spec-code-inline>
+          </div>
           <!-- Private -->
-          <span v-if="privateNames">
-              <el-tag size="mini" effect="plain" class="tag">Private :</el-tag>
-              <spec-code-inline :code="privateNames"></spec-code-inline>
-            </span>
+          <div v-if="privateNames">
+            <el-tag size="mini" effect="plain" class="tag">Private :</el-tag>
+            <spec-code-inline :code="privateNames"></spec-code-inline>
+          </div>
           <!-- None -->
           <span v-if="!publicNames && !privateNames">
-              <el-tag size="mini" effect="plain" class="tag" type="info">None</el-tag>
-            </span>
+            <el-tag size="mini" effect="plain" class="tag" type="info">None</el-tag>
+          </span>
         </dd>
         <dt :class="{'label-top': rewritingSystem.length > 1}">Rewriting system</dt>
         <dd>
@@ -224,7 +224,11 @@ export default {
   }
 
   .label-top {
-    align-self: auto; /* Align top for multi line content */
+    margin-bottom: 5px;
+  }
+
+  .label-top + dd {
+    margin: 5px 0;
   }
 
   ul.rewriting-list {
