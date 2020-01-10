@@ -117,8 +117,13 @@
         </dd>
       </dl>
     </el-row>
+    <el-row v-if="query.run.warnings && query.run.warnings.length > 0">
+      <el-collapse>
+        <run-warnings :warnings="query.run.warnings"></run-warnings>
+      </el-collapse>
+    </el-row>
     <el-row v-if="query.isCompleted()">
-      <el-divider></el-divider>
+      <el-divider v-if="!(query.run.warnings && query.run.warnings.length > 0)"></el-divider>
       <p>{{ query.longResultDescription() }}</p>
       <spec-code-inline v-if="query.attackTrace" :code="formattedAttackTrace"></spec-code-inline>
     </el-row>
@@ -126,6 +131,7 @@
 </template>
 
 <script>
+import RunWarnings from '../RunWarnings'
 import Helper from '../helpers/Helper'
 import Date from '../Date'
 import Duration from '../Duration'
@@ -144,7 +150,8 @@ export default {
     Helper,
     Date,
     Memory,
-    Duration
+    Duration,
+    RunWarnings
   },
   props: {
     query: Object

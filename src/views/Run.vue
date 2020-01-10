@@ -69,8 +69,8 @@
 
     <!-- Details -->
     <template slot="details">
-      <!-- TODO show warnings -->
       <el-collapse v-model="openedSummary">
+        <run-warnings :warnings="run.warnings"></run-warnings>
         <query-collapsible v-for="query in run.queries" :query="query"></query-collapsible>
       </el-collapse>
     </template>
@@ -78,6 +78,7 @@
 </template>
 
 <script>
+import RunWarnings from '../components/RunWarnings'
 import Date from '../components/Date'
 import Memory from '../components/Memory'
 import Duration from '../components/Duration'
@@ -92,7 +93,8 @@ export default {
     Date,
     QueryCollapsible,
     ResultLayout,
-    Memory
+    Memory,
+    RunWarnings
   },
   props: {
     path: String

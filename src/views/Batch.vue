@@ -129,6 +129,7 @@
           </span>
           </template>
           <el-collapse>
+            <run-warnings :warnings="run.warnings"></run-warnings>
             <query-collapsible v-for="query in run.queries" :query="query"></query-collapsible>
           </el-collapse>
         </el-collapse-item>
@@ -138,6 +139,7 @@
 </template>
 
 <script>
+import RunWarnings from '../components/RunWarnings'
 import ResultStatus from '../components/results/ResultStatus'
 import Duration from '../components/Duration'
 import Memory from '../components/Memory'
@@ -158,7 +160,8 @@ export default {
     ResultStatus,
     RunConfig,
     Date,
-    Memory
+    Memory,
+    RunWarnings
   },
   props: {
     path: String
