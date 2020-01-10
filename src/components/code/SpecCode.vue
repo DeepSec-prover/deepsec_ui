@@ -232,34 +232,34 @@ export default {
             position: this.selectedAction.position,
             choose_left: selectedTransition.position.tag === 'left'
           })
-      }
-
-      let input, output
-      if (this.selectedAction.type === 'input') {
-        input = this.selectedAction
-        output = selectedTransition
       } else {
-        input = selectedTransition
-        output = this.selectedAction
-      }
+        let input, output
+        if (this.selectedAction.type === 'input') {
+          input = this.selectedAction
+          output = selectedTransition
+        } else {
+          input = selectedTransition
+          output = this.selectedAction
+        }
 
-      if (this.transitionSettings.type === 'comm') {
-        this.sendActionSelection(
-          {
-            type: 'comm',
-            input_position: input.position,
-            output_position: output.position
-          })
-      } else if (this.transitionSettings.type === 'eavesdrop') {
-        this.sendActionSelection(
-          {
-            type: 'eavesdrop',
-            input_position: input.position,
-            output_position: output.position,
-            channel: this.selectedAction.channel
-          })
-      } else {
-        logger.error(`Invalid transition selection type ${this.transitionSettings.type}`)
+        if (this.transitionSettings.type === 'comm') {
+          this.sendActionSelection(
+            {
+              type: 'comm',
+              input_position: input.position,
+              output_position: output.position
+            })
+        } else if (this.transitionSettings.type === 'eavesdrop') {
+          this.sendActionSelection(
+            {
+              type: 'eavesdrop',
+              input_position: input.position,
+              output_position: output.position,
+              channel: this.selectedAction.channel
+            })
+        } else {
+          logger.error(`Invalid transition selection type ${this.transitionSettings.type}`)
+        }
       }
     },
     /**
@@ -425,5 +425,9 @@ export default {
 
   pre {
     margin: 0;
+  }
+
+  code {
+    min-height: 20em;
   }
 </style>
