@@ -426,4 +426,8 @@ export default {
   pre {
     margin: 0;
   }
+
+  code {
+     min-height: 20em;
+   }
 </style>

@@ -173,6 +173,27 @@ export default class ProcessDisplayedModel extends ProcessModel {
   }
 
   /**
+   * Get the n-th visible action.
+   *
+   * @returns {string} 'input', 'output' or 'eavesdrop'
+  */
+
+  getVisibleAction (n) {
+    let count = 0
+
+    for (let i = 0; i < this.actions.length; i++) {
+      if (ProcessModel.isVisibleAction(this.actions[i], 'io')) {
+        count++
+      }
+      if (count === n) {
+        return this.actions[i]
+      }
+    }
+
+    return null
+  }
+
+  /**
    * Create a copy of a process model as a new display model and stop update the original one.
    * If the original process is already a display model just return it (no copy).
    *
