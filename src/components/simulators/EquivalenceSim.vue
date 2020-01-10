@@ -1,44 +1,47 @@
 <template>
-  <el-row :gutter="10">
-    <el-col v-for="process in processes" :key="process.processId" :lg="12">
-      <!-- Title -->
-      <h3>
-        Process {{ process.processId }}
+  <span>
+    <i class="el-icon-view"></i> Single column view <el-switch v-model="singleColumn"></el-switch>
+    <el-row :gutter="10">
+      <el-col v-for="process in processes" :key="process.processId" :lg="sizeWindows(process)">
+        <!-- Title -->
+        <h3>
+          Process {{ process.processId }}
 
-        <span class="action-buttons">
-          <el-button v-if="isFixedProcess(process) && simulatorState === 'phase-1'"
-                     :disabled="getSelectedProcessModel().actions.length === 0"
-                     size="small" icon="el-icon-video-play" type="success"
-                     @click="findEquivalentTrace">
-            Find equivalent trace
-          </el-button>
+          <span class="action-buttons">
+            <el-button v-if="isFixedProcess(process) && simulatorState === 'phase-1'"
+                       :disabled="getSelectedProcessModel().actions.length === 0"
+                       size="small" icon="el-icon-video-play" type="success"
+                       @click="findEquivalentTrace">
+              Find equivalent trace
+            </el-button>
 
-          <el-button class="start-button" size="small" icon="el-icon-video-play"
-                     :type="isApiRunning ? '' : 'primary'" plain
-                     @click="startOrResetSimulation(process.processId)">
-            <template v-if="selectedProcessId === process.processId">
-              Reset
-            </template>
-            <template v-else>
-              Select trace of process {{ process.processId }}
-            </template>
-          </el-button>
-        </span>
-      </h3>
-      <!-- Display Process -->
-      <template v-if="isDisplayProcess(process)">
-        <equivalence-sim-display :processDisplayed="process"></equivalence-sim-display>
-      </template>
-      <!-- User Interactive Process -->
-      <template v-else-if="isUserProcess(process)">
-        <equivalence-sim-user :processUser="process"></equivalence-sim-user>
-      </template>
-      <!-- Fixed Process -->
-      <template v-else>
-        <spec-code :code="processesStr[process.processId - 1]"></spec-code>
-      </template>
-    </el-col>
-  </el-row>
+            <el-button class="start-button" size="small" icon="el-icon-video-play"
+                       :type="isApiRunning ? '' : 'primary'" plain
+                       @click="startOrResetSimulation(process.processId)">
+              <template v-if="selectedProcessId === process.processId">
+                Reset
+              </template>
+              <template v-else>
+                Select trace of process {{ process.processId }}
+              </template>
+            </el-button>
+          </span>
+        </h3>
+        <!-- Display Process -->
+        <template v-if="isDisplayProcess(process)">
+          <equivalence-sim-display :processDisplayed="process"></equivalence-sim-display>
+        </template>
+        <!-- User Interactive Process -->
+        <template v-else-if="isUserProcess(process)">
+          <equivalence-sim-user :processUser="process"></equivalence-sim-user>
+        </template>
+        <!-- Fixed Process -->
+        <template v-else>
+          <spec-code :code="processesStr[process.processId - 1]"></spec-code>
+        </template>
+      </el-col>
+    </el-row>
+  </span>
 </template>
 
 <script>
@@ -73,7 +76,8 @@ export default {
       apiRemote: undefined,
       processes: [],
       simulatorState: 'not-started',
-      selectedProcessId: undefined
+      selectedProcessId: undefined,
+      singleColumn: false
     }
   },
   computed: {
@@ -156,6 +160,8 @@ export default {
         this.loading = false
       })
 
+      this.simulatorState = 'phase-2'
+
       this.apiRemote.sendQuery('find_equivalent_trace')
     },
     isDisplayProcess (process) {
@@ -179,6 +185,17 @@ export default {
                      type: 'error'
                    })
       this.getSelectedProcessModel().undo()
+    },
+    sizeWindows: function(process) {
+      if (this.singleColumn) {
+        return 24
+      } else {
+        if (this.simulatorState === 'phase-1') {
+          return this.isUserProcess(process) ? 14 : 10
+        } else {
+          return 12
+        }
+      }
     }
   },
   beforeMount () {
