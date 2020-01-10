@@ -241,7 +241,7 @@ export default {
           input = selectedTransition
           output = this.selectedAction
         }
-
+        
         if (this.transitionSettings.type === 'comm') {
           this.sendActionSelection(
             {
