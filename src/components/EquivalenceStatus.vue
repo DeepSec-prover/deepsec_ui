@@ -4,41 +4,41 @@
     <template v-slot:header>
       {{ text.query.equivalence_status[equivalence.status] }}
     </template>
+    <template v-if="equivalence.status === 'non_equivalent_message'">
+      The recipe
+      <spec-code-inline :code="recipeStr"></spec-code-inline>
+      yields the message
+      <spec-code-inline :code="termStr"></spec-code-inline>
+      on Process {{ equivalence.process_id }}
+      but fails to compute a message on Process {{ (equivalence.process_id % 2) + 1 }}.
+    </template>
 
-    <simplebar>
-      <template v-if="equivalence.status === 'non_equivalent_message'">
-        The recipe
-        <spec-code-inline :code="recipeStr"></spec-code-inline>
-        yields the message
-        <spec-code-inline :code="termStr"></spec-code-inline>
-        on Process {{ equivalence.process_id }}
-        but fails to compute a message on Process {{ (equivalence.process_id % 2) + 1 }}.
-      </template>
+    <template v-else-if="equivalence.status === 'non_equivalent_equality'">
+      The two recipes
+      <spec-code-inline :code="recipe1Str"></spec-code-inline>
+      and
+      <spec-code-inline :code="recipe2Str"></spec-code-inline>
+      yield the same message
+      <spec-code-inline :code="termEqualStr"></spec-code-inline>
+      on Process {{ equivalence.process_id }}
+      but they yield different messages on Process {{ (equivalence.process_id % 2) + 1 }}
+      (
+      <spec-code-inline :code="term1Str"></spec-code-inline>
+      and
+      <spec-code-inline :code="term2Str"></spec-code-inline>
+      respectively).
+    </template>
 
-      <template v-else-if="equivalence.status === 'non_equivalent_equality'">
-        The two recipes
-        <spec-code-inline :code="recipe1Str"></spec-code-inline>
-        and
-        <spec-code-inline :code="recipe2Str"></spec-code-inline>
-        yield the same message
-        <spec-code-inline :code="termEqualStr"></spec-code-inline>
-        on Process {{ equivalence.process_id }}
-        but they yield different messages on Process {{ (equivalence.process_id % 2) + 1 }}
-        (<spec-code-inline :code="term1Str"></spec-code-inline> and <spec-code-inline :code="term2Str"></spec-code-inline> respectively).
-      </template>
-
-      <template v-else>
-        To imitate the attack trace of Process {{ processDisplayedId }}, an {{ nextAction.type }} transition on the channel
-        <spec-code-inline :code="channelStr"></spec-code-inline>
-        should be available in Process {{ processDisplayedId %2 + 1 }} but no more visible actions are available.
-      </template>
-    </simplebar>
+    <template v-else>
+      To imitate the attack trace of Process {{ processDisplayedId }}, an {{ nextAction.type }} transition on the channel
+      <spec-code-inline :code="channelStr"></spec-code-inline>
+      should be available in Process {{ processDisplayedId %2 + 1 }} but no more visible actions are available.
+    </template>
   </el-card>
 
 </template>
 
 <script>
-import Simplebar from 'simplebar-vue'
 import text from '../text-content/text'
 import AtomicRenamer from '../util/AtomicRenamer'
 import { formatCode } from '../util/process-parser'
@@ -46,7 +46,7 @@ import SpecCodeInline from './code/SpecCodeInline'
 
 export default {
   name: 'equivalence-status',
-  components: { SpecCodeInline, Simplebar },
+  components: { SpecCodeInline },
   props: {
     equivalence: {
       type: Object,

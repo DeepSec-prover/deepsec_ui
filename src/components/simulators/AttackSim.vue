@@ -130,7 +130,8 @@
                               :equivalence="processUser.statusEquivalence"
                               :atomic="processUser.atomic"
                               :nextAction="getNextVisibleAction()"
-                              :processDisplayedId="processDisplayed.processId"></equivalence-status>
+                              :processDisplayedId="processDisplayed.processId"
+                              class="break-word"></equivalence-status>
           <!-- Trace -->
           <sim-trace :atomic="processUser.atomic"
                      :trace-level="processUser.traceLevel"
@@ -310,7 +311,7 @@ export default {
      ***/
     getNextVisibleAction () {
       const goal = this.processUser.nbVisibleAction()
-      return this.processDisplayed.getVisibleAction(goal+1)
+      return this.processDisplayed.getVisibleAction(goal + 1)
     }
   },
   beforeMount () {
