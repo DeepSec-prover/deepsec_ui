@@ -22,11 +22,7 @@
       <spec-code-inline :code="termEqualStr"></spec-code-inline>
       on Process {{ equivalence.process_id }}
       but they yield different messages on Process {{ (equivalence.process_id % 2) + 1 }}
-      (
-      <spec-code-inline :code="term1Str"></spec-code-inline>
-      and
-      <spec-code-inline :code="term2Str"></spec-code-inline>
-      respectively).
+      (<spec-code-inline :code="term1Str"></spec-code-inline> and <spec-code-inline :code="term2Str"></spec-code-inline> respectively).
     </template>
 
     <template v-else>
