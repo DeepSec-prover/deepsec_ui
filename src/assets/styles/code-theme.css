@@ -30,3 +30,15 @@
 .language-deepsec sub {
     vertical-align: bottom;
 }
+
+.token.sub {
+  position: relative;
+  top: 0.8ex;
+  font-size: 75%;
+}
+
+.token.sup {
+  position: relative;
+  bottom: 0.8ex;
+  font-size: 75%;
+}
