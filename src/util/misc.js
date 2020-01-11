@@ -46,4 +46,19 @@ function isEmptyOrBlankStr (str) {
   return !str || str.trim().length === 0
 }
 
-export { isDir, isFile, isEmptyOrBlankStr }
+/**
+ * appendEmptyLines(str,n) appends n blank line to str.
+ *
+ * @param {String} str The string on which the blank lines are appended.
+ * @param {Number} n The number of lines to append.
+ * @returns {String}
+ */
+function appendEmptyLines (str, n) {
+  if (n === 0) {
+    return str
+  } else {
+    return appendEmptyLines(str + '\n', n - 1)
+  }
+}
+
+export { isDir, isFile, isEmptyOrBlankStr, appendEmptyLines }
