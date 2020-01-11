@@ -20,3 +20,7 @@
 .coy.language-deepsec .token.punctuation.brace-selected {
     background-color: rgba(8, 0, 255, 0.10);
 }
+
+code[class*="language-"], pre[class*="language-"]  {
+	font-size: 0.8rem !important; /* 1em */
+}
