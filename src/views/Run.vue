@@ -55,10 +55,12 @@
               <dd>
                 <duration :start-time="run.startTime" :end-time="run.endTime"></duration>
               </dd>
-              <template v-if="run.memoryUsed () != 0">
-                <dt>Memory</dt>
+              <template v-if="run.maxMemoryUsed () != 0">
+                <dt>Max Memory</dt>
                 <dd>
-                  <memory :memory="run.memoryUsed ()"></memory>
+                  <helper helper-id="maxMemory" text-content>
+                    <memory :memory="run.maxMemoryUsed ()"></memory>
+                  </helper>
                 </dd>
               </template>
             </dl>
@@ -84,10 +86,12 @@ import Duration from '../components/Duration'
 import QueryCollapsible from '../components/query/QueryCollapsible'
 import ResultLayout from '../components/results/ResultLayout'
 import RunModel from '../models/RunModel'
+import Helper from '../components/helpers/Helper'
 
 export default {
   name: 'run',
   components: {
+    Helper,
     Duration,
     Date,
     QueryCollapsible,

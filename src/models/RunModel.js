@@ -51,11 +51,13 @@ export default class RunModel extends ResultModel {
     return this.batchFile
   }
 
-  memoryUsed () {
-    const memory = this.queries.reduce(
-      (sum, q) => Math.max(sum,q.memory), 0)
-
-    return memory
+  /**
+   * Get the maximum memory used by OCaml during the running time of this run.
+   *
+   * @returns {Number} The maximum memory in Byte.
+   */
+  maxMemoryUsed () {
+    return this.queries.reduce((sum, q) => Math.max(sum, q.maxMemory), 0)
   }
 
   progressionPercent () {

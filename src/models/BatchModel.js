@@ -55,11 +55,14 @@ export default class BatchModel extends ResultModel {
     })
   }
 
-  memoryUsed () {
-    const memory = this.runs.reduce(
-      (sum, r) => Math.max(sum,r.memoryUsed()), 0)
-
-    return memory
+  /**
+   * Get the maximum memory used by OCaml during the running time of this batch.
+   *
+   * @returns {Number} The maximum memory in Byte.
+   */
+  maxMemoryUsed () {
+    return this.runs.reduce(
+      (sum, r) => Math.max(sum, r.maxMemoryUsed()), 0)
   }
 
   title () {

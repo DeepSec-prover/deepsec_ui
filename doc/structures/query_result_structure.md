@@ -115,6 +115,7 @@ waiting +
   ...
   "start_time": <int>, // Timestamp
   "end_time": <int>, // Timestamp
+  "memory": <int>, // The maximum memory used by OCaml during the running time of this query (in Byte)
   "attack_trace": {
     "index_process": <int>, // In process array (starting from 1)
     "action_sequence": [

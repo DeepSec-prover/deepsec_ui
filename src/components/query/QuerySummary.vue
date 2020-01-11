@@ -40,10 +40,12 @@
           <dd>
             <duration :start-time="query.startTime" :end-time="query.endTime"></duration>
           </dd>
-          <template v-if="query.memory !== 0">
-            <dt>Memory</dt>
+          <template v-if="query.maxMemory !== 0">
+            <dt>Max Memory</dt>
             <dd>
-              <memory :memory="query.memory"></memory>
+              <helper helper-id="maxMemory" text-content>
+                <memory :memory="query.maxMemory"></memory>
+              </helper>
             </dd>
           </template>
         </dl>

@@ -51,10 +51,12 @@
                 <dd>
                   <duration :start-time="batch.startTime" :end-time="batch.endTime"></duration>
                 </dd>
-                <template v-if="batch.memoryUsed () != 0">
-                  <dt>Memory</dt>
+                <template v-if="batch.maxMemoryUsed() != 0">
+                  <dt>Max Memory</dt>
                   <dd>
-                    <memory :memory="batch.memoryUsed ()"></memory>
+                    <helper helper-id="maxMemory" text-content>
+                      <memory :memory="batch.maxMemoryUsed()"></memory>
+                    </helper>
                   </dd>
                 </template>
               </dl>
@@ -148,10 +150,12 @@ import Date from '../components/Date'
 import settings from '../../settings'
 import path from 'path'
 import BatchModel from '../models/BatchModel'
+import Helper from '../components/helpers/Helper'
 
 export default {
   name: 'batch',
   components: {
+    Helper,
     Duration,
     ResultLayout,
     QueryCollapsible,

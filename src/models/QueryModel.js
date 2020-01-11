@@ -44,9 +44,9 @@ export default class QueryModel extends ResultModel {
 
     // Memory
     if (json.memory) {
-      this.memory = json.memory
+      this.maxMemory = json.memory
     } else {
-      this.memory = 0
+      this.maxMemory = 0
     }
   }
 

@@ -34,7 +34,8 @@ const helpers = {
     default: 'Only display input/output/choice/replication/internal communication transitions. Other &tau; transitions are hidden.',
     io: 'Only display input/output transitions. &tau; transitions are hidden.',
     all: 'Display all transitions.'
-  }
+  },
+  maxMemory: 'The maximum memory (RAM) used by OCaml during the running time.'
 }
 
 export default helpers
