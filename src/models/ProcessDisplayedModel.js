@@ -175,9 +175,8 @@ export default class ProcessDisplayedModel extends ProcessModel {
   /**
    * Get the n-th visible action.
    *
-   * @returns {string} 'input', 'output' or 'eavesdrop'
-  */
-
+   * @returns {String|null} 'input', 'output' or 'eavesdrop'
+   */
   getVisibleAction (n) {
     let count = 0
 
