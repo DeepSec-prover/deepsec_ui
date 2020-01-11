@@ -128,9 +128,12 @@
               </div>
             </div>
             <!-- Equivalence status -->
-            <equivalence-status v-if="processUser.statusEquivalence && processUser.statusEquivalence.status !== 'equivalent'"
-                                :equivalence="processUser.statusEquivalence"
-                                :atomic="processUser.atomic"></equivalence-status>
+            <equivalence-status v-if="nonEquivalenceCondition"
+                              :equivalence="processUser.statusEquivalence"
+                              :atomic="processUser.atomic"
+                              :nextAction="getNextVisibleAction()"
+                              :processDisplayedId="processDisplayed.processId"
+                              class="break-word"></equivalence-status>
             <!-- Trace -->
             <sim-trace :atomic="processUser.atomic"
                        :trace-level="processUser.traceLevel"
@@ -191,6 +194,17 @@ export default {
     },
     processUserStr: function () {
       return formatCode(this.processUser.process, this.processUser.atomic)
+    },
+    nonEquivalenceCondition: function () {
+      let isNotEquivalent =
+        this.processUser && this.processUser.statusEquivalence && (
+          this.processUser.statusEquivalence.status !== 'equivalent' || (
+            this.processUser.statusEquivalence.status === 'equivalent' &&
+            this.processUser.availableActions.default.length === 0
+          )
+        )
+
+      return isNotEquivalent
     },
     sizeWindows: function () {
       return (this.singleColumn) ? 24 : 12
@@ -297,6 +311,14 @@ export default {
       if (this.processDisplayed.nbVisibleAction() !== goal) {
         this.processDisplayed.gotoNbVisibleAction(goal)
       }
+    },
+    /***
+     * Take the number of visible actions of th current trace of the ProcessUser
+     * and retrieve the next corresponding visible action of the ProcessDisplayed.
+     ***/
+    getNextVisibleAction () {
+      const goal = this.processUser.nbVisibleAction()
+      return this.processDisplayed.getVisibleAction(goal + 1)
     }
   },
   beforeMount () {

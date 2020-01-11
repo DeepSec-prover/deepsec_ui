@@ -15,3 +15,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  code {
+    /* Break lines if the parent do */
+    overflow-wrap: inherit !important;
+  }
+</style>

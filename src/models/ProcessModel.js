@@ -98,7 +98,7 @@ export default class ProcessModel {
   /**
    * Count the number of visible action (I/O) in this process trace.
    *
-   * @returns {number} The number of visible action.
+   * @returns {Number} The number of visible action.
    */
   nbVisibleAction () {
     throw new TypeError('Must override method')

@@ -62,7 +62,10 @@ const text = {
       }
     },
     equivalence_status: {
-      equivalent: 'Equivalent',
+      equivalent: 'No visible actions available',
+          /** Counter intuitive but this text is only to display the reason of non equivalence.
+              In such a case, it is displayed when there are no more available actions available.
+          **/
       non_equivalent_message: 'Frames not statically equivalent',
       non_equivalent_equality: 'Frames not statically equivalent'
     }
