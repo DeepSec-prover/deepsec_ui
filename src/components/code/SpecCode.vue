@@ -84,7 +84,11 @@ export default {
       /**
        * Toggle the action selection popup. The same popup is used all the time.
        */
-      showActionPopup: false
+      showActionPopup: false,
+      /**
+       * The minimun number of lines that should be displayed.
+       */
+      minimumNbLines: 15
     }
   },
   /**
