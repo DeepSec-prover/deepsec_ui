@@ -129,7 +129,7 @@
           <equivalence-status v-if="nonEquivalenceCondition"
                               :equivalence="processUser.statusEquivalence"
                               :atomic="processUser.atomic"
-                              :nextAction="getTypeNextVisibleAction()"
+                              :nextAction="getNextVisibleAction()"
                               :processDisplayedId="processDisplayed.processId"></equivalence-status>
           <!-- Trace -->
           <sim-trace :atomic="processUser.atomic"
@@ -304,7 +304,11 @@ export default {
         this.processDisplayed.gotoNbVisibleAction(goal)
       }
     },
-    getTypeNextVisibleAction () {
+    /***
+     * Take the number of visible actions of th current trace of the ProcessUser
+     * and retrieve the next corresponding visible action of the ProcessDisplayed.
+     ***/
+    getNextVisibleAction () {
       const goal = this.processUser.nbVisibleAction()
       return this.processDisplayed.getVisibleAction(goal+1)
     }
