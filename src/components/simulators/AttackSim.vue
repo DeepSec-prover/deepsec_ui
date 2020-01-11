@@ -297,10 +297,6 @@ export default {
       if (this.processDisplayed.nbVisibleAction() !== goal) {
         this.processDisplayed.gotoNbVisibleAction(goal)
       }
-    },
-    getTypeNextVisibleAction () {
-      const goal = this.processUser.nbVisibleAction()
-      return this.processDisplayed.getVisibleAction(goal+1)
     }
   },
   beforeMount () {
