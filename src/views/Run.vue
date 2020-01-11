@@ -70,7 +70,7 @@
     <!-- Details -->
     <template slot="details">
       <el-collapse v-model="openedSummary">
-        <run-warnings :warnings="run.warnings"></run-warnings>
+        <run-warnings :warnings="run.warnings" v-if="run.warnings && run.warnings.length > 0"></run-warnings>
         <query-collapsible v-for="query in run.queries" :query="query"></query-collapsible>
       </el-collapse>
     </template>

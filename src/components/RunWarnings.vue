@@ -1,5 +1,5 @@
 <template>
-  <el-collapse-item v-if="warnings && warnings.length > 0">
+  <el-collapse-item>
     <template slot="title">
       <h3>
         <i class="el-icon-warning color-canceled"></i> {{ warnings.length }} Warnings {{ inQuery ? 'found in input file' : ''}}
@@ -14,8 +14,11 @@
 export default {
   name: 'run-warnings',
   props: {
-    warnings: Array,
-    inQuery: Boolean
+    warnings: {
+      type: Array,
+      required: true
+    },
+    inQuery: Boolean // Not required
   }
 }
 </script>
