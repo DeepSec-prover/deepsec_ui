@@ -119,7 +119,7 @@
     </el-row>
     <el-row v-if="query.run.warnings && query.run.warnings.length > 0">
       <el-collapse>
-        <run-warnings :warnings="query.run.warnings"></run-warnings>
+        <run-warnings :warnings="query.run.warnings" :inQuery="true"></run-warnings>
       </el-collapse>
     </el-row>
     <el-row v-if="query.isCompleted()">
