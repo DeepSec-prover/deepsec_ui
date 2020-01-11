@@ -55,10 +55,12 @@
               <dd>
                 <duration :start-time="run.startTime" :end-time="run.endTime"></duration>
               </dd>
-              <template v-if="run.memoryUsed () != 0">
-                <dt>Memory</dt>
+              <template v-if="run.maxMemoryUsed () != 0">
+                <dt>Max Memory</dt>
                 <dd>
-                  <memory :memory="run.memoryUsed ()"></memory>
+                  <helper helper-id="maxMemory" text-content>
+                    <memory :memory="run.maxMemoryUsed ()"></memory>
+                  </helper>
                 </dd>
               </template>
             </dl>
@@ -69,8 +71,8 @@
 
     <!-- Details -->
     <template slot="details">
-      <!-- TODO show warnings -->
       <el-collapse v-model="openedSummary">
+        <run-warnings :warnings="run.warnings" v-if="run.warnings && run.warnings.length > 0"></run-warnings>
         <query-collapsible v-for="query in run.queries" :query="query"></query-collapsible>
       </el-collapse>
     </template>
@@ -78,21 +80,25 @@
 </template>
 
 <script>
+import RunWarnings from '../components/RunWarnings'
 import Date from '../components/Date'
 import Memory from '../components/Memory'
 import Duration from '../components/Duration'
 import QueryCollapsible from '../components/query/QueryCollapsible'
 import ResultLayout from '../components/results/ResultLayout'
 import RunModel from '../models/RunModel'
+import Helper from '../components/helpers/Helper'
 
 export default {
   name: 'run',
   components: {
+    Helper,
     Duration,
     Date,
     QueryCollapsible,
     ResultLayout,
-    Memory
+    Memory,
+    RunWarnings
   },
   props: {
     path: String

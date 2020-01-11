@@ -1,155 +1,158 @@
 <template>
-  <el-row :gutter="10">
-    <el-col :lg="12">
-      <h3>Attacked Process ({{ processDisplayed.processId }})</h3>
-      <el-row :gutter="10">
-        <el-col :span="16">
-          <!-- Process code -->
-          <spec-code :code="processDisplayedStr" :focused-positions="focusedPositions"></spec-code>
-        </el-col>
-        <el-col :span="8">
-          <!-- Interactions -->
-          <div class="nav-buttons centred-content">
-            <!-- Trace level selection -->
-            <div>
-              <el-radio-group v-model="processDisplayed.traceLevel" size="small">
-                <helper helper-id="traceLevel.default">
-                  <el-radio-button label="default">Default</el-radio-button>
-                </helper>
-                <helper helper-id="traceLevel.io">
-                  <el-radio-button label="io">I/O</el-radio-button>
-                </helper>
-                <helper helper-id="traceLevel.all">
-                  <el-radio-button label="all">All</el-radio-button>
-                </helper>
-              </el-radio-group>
+  <span>
+    <i class="el-icon-view"></i> Single column view <el-switch v-model="singleColumn"></el-switch>
+    <el-row :gutter="10">
+      <el-col :lg="sizeWindows">
+        <h3>Attacked Process ({{ processDisplayed.processId }})</h3>
+        <el-row :gutter="10">
+          <el-col :span="16">
+            <!-- Process code -->
+            <spec-code :code="processDisplayedStr" :focused-positions="focusedPositions"></spec-code>
+          </el-col>
+          <el-col :span="8">
+            <!-- Interactions -->
+            <div class="nav-buttons centred-content">
+              <!-- Trace level selection -->
+              <div>
+                <el-radio-group v-model="processDisplayed.traceLevel" size="small">
+                  <helper helper-id="traceLevel.default">
+                    <el-radio-button label="default">Default</el-radio-button>
+                  </helper>
+                  <helper helper-id="traceLevel.io">
+                    <el-radio-button label="io">I/O</el-radio-button>
+                  </helper>
+                  <helper helper-id="traceLevel.all">
+                    <el-radio-button label="all">All</el-radio-button>
+                  </helper>
+                </el-radio-group>
+              </div>
+              <!-- Sync Processes -->
+              <div class="sync-switch">
+                <span>Follow simulated</span>
+                <el-switch v-model="syncProcesses"></el-switch>
+              </div>
+              <!-- Navigation buttons -->
+              <div>
+                <el-button-group>
+                  <helper helper-str="Go to initial state.<br><b>Short Key</b> : ctrl + ⇦">
+                    <el-button :disabled="processDisplayed.loading || !processDisplayed.hasPreviousAction()"
+                               @click="firstAction"
+                               icon="el-icon-d-arrow-left"
+                               v-shortkey="['ctrl', 'arrowleft']" @shortkey.native="firstAction"
+                               size="small">
+                    </el-button>
+                  </helper>
+                  <helper helper-str="Go to previous action.<br><b>Short Key</b> : ⇦">
+                    <el-button :disabled="processDisplayed.loading || !processDisplayed.hasPreviousAction()"
+                               @click="previousAction"
+                               icon="el-icon-arrow-left"
+                               v-shortkey="['arrowleft']" @shortkey.native="previousAction"
+                               size="small">
+                      Prev
+                    </el-button>
+                  </helper>
+                  <helper helper-str="Go to next action.<br><b>Short Key</b> : ⇨">
+                    <el-button :disabled="processDisplayed.loading || !processDisplayed.hasNextAction()"
+                               @click="nextAction"
+                               @mouseenter.native="focusNextActions"
+                               @mouseleave.native="clearFocusActions"
+                               v-shortkey="['arrowright']" @shortkey.native="nextAction"
+                               size="small">
+                      Next
+                      <i class="el-icon-arrow-right"></i>
+                    </el-button>
+                  </helper>
+                  <helper helper-str="Go to last action.<br><b>Short Key</b> : ctrl + ⇨">
+                    <el-button :disabled="processDisplayed.loading || !processDisplayed.hasNextAction()"
+                               @click="lastAction"
+                               v-shortkey="['ctrl', 'arrowright']" @shortkey.native="lastAction"
+                               size="small">
+                      <i class="el-icon-d-arrow-right"></i>
+                    </el-button>
+                  </helper>
+                </el-button-group>
+              </div>
             </div>
-            <!-- Sync Processes -->
-            <div class="sync-switch">
-              <span>Follow simulated</span>
-              <el-switch v-model="syncProcesses"></el-switch>
+            <!-- Trace -->
+            <sim-trace :atomic="processDisplayed.atomic"
+                       :trace-level="processDisplayed.traceLevel"
+                       :current-action="processDisplayed.currentAction"
+                       :actions="processDisplayed.actions"
+                       :nb-preview="nbTracePreview"
+                       @goto="gotoActionDisplayed"
+                       fixedActions></sim-trace>
+            <!-- Frame -->
+            <sim-frame :atomic="processDisplayed.atomic" :frame="processDisplayed.frame"></sim-frame>
+          </el-col>
+        </el-row>
+      </el-col>
+      <el-col :lg="sizeWindows">
+        <h3 class="text-right">Simulated Process ({{ processUser.processId }})</h3>
+        <el-row :gutter="10">
+          <el-col :span="8">
+            <!-- Interactions -->
+            <div class="nav-buttons centred-content">
+              <!-- Trace level selection -->
+              <div>
+                <el-radio-group v-model="processUser.traceLevel" size="small">
+                  <helper helper-id="traceLevel.default">
+                    <el-radio-button label="default">Default</el-radio-button>
+                  </helper>
+                  <helper helper-id="traceLevel.all">
+                    <el-radio-button label="all">All</el-radio-button>
+                  </helper>
+                </el-radio-group>
+              </div>
+              <!-- Navigation buttons -->
+              <div>
+                <el-button-group>
+                  <helper helper-str="Reverse previous user action.<br><b>Short Key</b> : ctrl + z">
+                    <el-button :disabled="!processUser.hasBackHistory() || processDisplayed.loading || processUser.loading"
+                               @click="undo"
+                               icon="el-icon-refresh-left"
+                               v-shortkey="['ctrl', 'z']" @shortkey.native="undo"
+                               size="small">
+                      Undo
+                    </el-button>
+                  </helper>
+                  <helper helper-str="Restore previous reversed action.<br><b>Short Key</b> : ctrl + maj + z">
+                    <el-button :disabled="!processUser.hasNextHistory() || processDisplayed.loading || processUser.loading"
+                               @click="redo"
+                               v-shortkey="['ctrl', 'shift', 'z']" @shortkey.native="redo"
+                               size="small">
+                      Redo
+                      <i class="el-icon-refresh-right"></i>
+                    </el-button>
+                  </helper>
+                </el-button-group>
+              </div>
             </div>
-            <!-- Navigation buttons -->
-            <div>
-              <el-button-group>
-                <helper helper-str="Go to initial state.<br><b>Short Key</b> : ctrl + ⇦">
-                  <el-button :disabled="processDisplayed.loading || !processDisplayed.hasPreviousAction()"
-                             @click="firstAction"
-                             icon="el-icon-d-arrow-left"
-                             v-shortkey="['ctrl', 'arrowleft']" @shortkey.native="firstAction"
-                             size="small">
-                  </el-button>
-                </helper>
-                <helper helper-str="Go to previous action.<br><b>Short Key</b> : ⇦">
-                  <el-button :disabled="processDisplayed.loading || !processDisplayed.hasPreviousAction()"
-                             @click="previousAction"
-                             icon="el-icon-arrow-left"
-                             v-shortkey="['arrowleft']" @shortkey.native="previousAction"
-                             size="small">
-                    Prev
-                  </el-button>
-                </helper>
-                <helper helper-str="Go to next action.<br><b>Short Key</b> : ⇨">
-                  <el-button :disabled="processDisplayed.loading || !processDisplayed.hasNextAction()"
-                             @click="nextAction"
-                             @mouseenter.native="focusNextActions"
-                             @mouseleave.native="clearFocusActions"
-                             v-shortkey="['arrowright']" @shortkey.native="nextAction"
-                             size="small">
-                    Next
-                    <i class="el-icon-arrow-right"></i>
-                  </el-button>
-                </helper>
-                <helper helper-str="Go to last action.<br><b>Short Key</b> : ctrl + ⇨">
-                  <el-button :disabled="processDisplayed.loading || !processDisplayed.hasNextAction()"
-                             @click="lastAction"
-                             v-shortkey="['ctrl', 'arrowright']" @shortkey.native="lastAction"
-                             size="small">
-                    <i class="el-icon-d-arrow-right"></i>
-                  </el-button>
-                </helper>
-              </el-button-group>
-            </div>
-          </div>
-          <!-- Trace -->
-          <sim-trace :atomic="processDisplayed.atomic"
-                     :trace-level="processDisplayed.traceLevel"
-                     :current-action="processDisplayed.currentAction"
-                     :actions="processDisplayed.actions"
-                     :nb-preview="nbTracePreview"
-                     @goto="gotoActionDisplayed"
-                     fixedActions></sim-trace>
-          <!-- Frame -->
-          <sim-frame :atomic="processDisplayed.atomic" :frame="processDisplayed.frame"></sim-frame>
-        </el-col>
-      </el-row>
-    </el-col>
-    <el-col :lg="12">
-      <h3 class="text-right">Simulated Process ({{ processUser.processId }})</h3>
-      <el-row :gutter="10">
-        <el-col :span="8">
-          <!-- Interactions -->
-          <div class="nav-buttons centred-content">
-            <!-- Trace level selection -->
-            <div>
-              <el-radio-group v-model="processUser.traceLevel" size="small">
-                <helper helper-id="traceLevel.default">
-                  <el-radio-button label="default">Default</el-radio-button>
-                </helper>
-                <helper helper-id="traceLevel.all">
-                  <el-radio-button label="all">All</el-radio-button>
-                </helper>
-              </el-radio-group>
-            </div>
-            <!-- Navigation buttons -->
-            <div>
-              <el-button-group>
-                <helper helper-str="Reverse previous user action.<br><b>Short Key</b> : ctrl + z">
-                  <el-button :disabled="!processUser.hasBackHistory() || processDisplayed.loading || processUser.loading"
-                             @click="undo"
-                             icon="el-icon-refresh-left"
-                             v-shortkey="['ctrl', 'z']" @shortkey.native="undo"
-                             size="small">
-                    Undo
-                  </el-button>
-                </helper>
-                <helper helper-str="Restore previous reversed action.<br><b>Short Key</b> : ctrl + maj + z">
-                  <el-button :disabled="!processUser.hasNextHistory() || processDisplayed.loading || processUser.loading"
-                             @click="redo"
-                             v-shortkey="['ctrl', 'shift', 'z']" @shortkey.native="redo"
-                             size="small">
-                    Redo
-                    <i class="el-icon-refresh-right"></i>
-                  </el-button>
-                </helper>
-              </el-button-group>
-            </div>
-          </div>
-          <!-- Equivalence status -->
-          <equivalence-status v-if="nonEquivalenceCondition"
+            <!-- Equivalence status -->
+            <equivalence-status v-if="nonEquivalenceCondition"
                               :equivalence="processUser.statusEquivalence"
                               :atomic="processUser.atomic"
                               :nextAction="getNextVisibleAction()"
                               :processDisplayedId="processDisplayed.processId"
                               class="break-word"></equivalence-status>
-          <!-- Trace -->
-          <sim-trace :atomic="processUser.atomic"
-                     :trace-level="processUser.traceLevel"
-                     :actions="processUser.actions"
-                     @goto="gotoActionUser"></sim-trace>
-          <!-- Frame -->
-          <sim-frame :atomic="processUser.atomic" :frame="processUser.frame"></sim-frame>
-        </el-col>
-        <el-col :span="16">
-          <!-- Process code -->
-          <spec-code :code="processUserStr"
-                     :atomic="processUser.atomic"
-                     :available-actions="processUser.getCurrentAvailableActions()"
-                     @user-select-action="executeAction"></spec-code>
-        </el-col>
-      </el-row>
-    </el-col>
-  </el-row>
+            <!-- Trace -->
+            <sim-trace :atomic="processUser.atomic"
+                       :trace-level="processUser.traceLevel"
+                       :actions="processUser.actions"
+                       @goto="gotoActionUser"></sim-trace>
+            <!-- Frame -->
+            <sim-frame :atomic="processUser.atomic" :frame="processUser.frame"></sim-frame>
+          </el-col>
+          <el-col :span="16">
+            <!-- Process code -->
+            <spec-code :code="processUserStr"
+                       :atomic="processUser.atomic"
+                       :available-actions="processUser.getCurrentAvailableActions()"
+                       @user-select-action="executeAction"></spec-code>
+          </el-col>
+        </el-row>
+      </el-col>
+    </el-row>
+  </span>
 </template>
 
 <script>
@@ -175,7 +178,8 @@ export default {
       apiRemote: undefined,
       syncProcesses: true,
       focusedPositions: [],
-      nbTracePreview: 0
+      nbTracePreview: 0,
+      singleColumn: false
     }
   },
   props: {
@@ -201,6 +205,9 @@ export default {
         )
 
       return isNotEquivalent
+    },
+    sizeWindows: function () {
+      return (this.singleColumn) ? 24 : 12
     }
   },
   watch: {

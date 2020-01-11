@@ -51,10 +51,10 @@
           <dd>
             <duration :start-time="query.startTime" :end-time="query.endTime"></duration>
           </dd>
-          <template v-if="query.memory !== 0">
+          <template v-if="query.maxMemory !== 0">
             <dt>Memory</dt>
             <dd>
-              <memory :memory="query.memory"></memory>
+              <memory :memory="query.maxMemory"></memory>
             </dd>
           </template>
         </dl>

@@ -40,10 +40,12 @@
           <dd>
             <duration :start-time="query.startTime" :end-time="query.endTime"></duration>
           </dd>
-          <template v-if="query.memory !== 0">
-            <dt>Memory</dt>
+          <template v-if="query.maxMemory !== 0">
+            <dt>Max Memory</dt>
             <dd>
-              <memory :memory="query.memory"></memory>
+              <helper helper-id="maxMemory" text-content>
+                <memory :memory="query.maxMemory"></memory>
+              </helper>
             </dd>
           </template>
         </dl>
@@ -117,8 +119,13 @@
         </dd>
       </dl>
     </el-row>
+    <el-row v-if="query.run.warnings && query.run.warnings.length > 0">
+      <el-collapse>
+        <run-warnings :warnings="query.run.warnings" :inQuery="true"></run-warnings>
+      </el-collapse>
+    </el-row>
     <el-row v-if="query.isCompleted()">
-      <el-divider></el-divider>
+      <el-divider v-if="!(query.run.warnings && query.run.warnings.length > 0)"></el-divider>
       <p>{{ query.longResultDescription() }}</p>
       <spec-code-inline v-if="query.attackTrace" :code="formattedAttackTrace"></spec-code-inline>
     </el-row>
@@ -126,6 +133,7 @@
 </template>
 
 <script>
+import RunWarnings from '../RunWarnings'
 import Helper from '../helpers/Helper'
 import Date from '../Date'
 import Duration from '../Duration'
@@ -144,7 +152,8 @@ export default {
     Helper,
     Date,
     Memory,
-    Duration
+    Duration,
+    RunWarnings
   },
   props: {
     query: Object

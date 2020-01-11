@@ -2,11 +2,11 @@ import Prism from 'prismjs'
 
 let filters = {
   position: {
-    pattern: /%(\d+(-\d+)*(-\w+)?)%[^%]+%\/\1%/, // Something like "%142%...%/142%" or "%752-1-2%...%/752-1-2%"
+    pattern: /%(\d+(-\d+)*(-\w+)?)%(.|\n)+?%\/\1%/, // Something like "%142%...%/142%" or "%752-1-2%...%/752-1-2%"
     inside: {
       // Used to avoid infinite loop, see https://github.com/PrismJS/prism/issues/2133
       'position-content': {
-        pattern: /(?<=%(\d+(-\d+)*(-\w+)?)%)[^%]+(?=%\/\1%)/
+        pattern: /(?<=%(\d+(-\d+)*(-\w+)?)%)(.|\n)+?(?=%\/\1%)/
         // Set inside later
       }
     }
@@ -53,7 +53,7 @@ Prism.hooks.add('wrap', env => {
   else if (env.type === 'position') {
     const index = env.content.match(/^%([-\d]+(?:\w+)?)%/)[1]
     env.classes.push(`position-${index}`)
-    env.content = env.content.match(/^%[-\d]+(?:\w+)?%([^%]+)%\/[-\d]+(?:\w+)?%$/)[1]
+    env.content = env.content.match(/^%[-\d]+(?:\w+)?%((.|\n)+?)%\/[-\d]+(?:\w+)?%$/)[1]
   }
   // Format projection function
   else if (env.type === 'function' && env.content.startsWith('proj_{')) {
