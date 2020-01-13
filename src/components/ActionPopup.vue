@@ -1,5 +1,5 @@
 <template>
-  <el-card class="popup">
+  <dialog-drag :options="{buttonPin: false, buttonClose: false, left: leftShift, top: topShift}" class="popup">
     <el-form v-if="action" size="mini">
       <!-- Bang -->
       <template v-if="action.type === 'bang'">
@@ -47,7 +47,7 @@
         </span>
       </div>
     </el-form>
-  </el-card>
+  </dialog-drag>
 </template>
 
 <script>
@@ -57,10 +57,12 @@ import AtomicRenamer from '../util/AtomicRenamer'
 import { isEmptyOrBlankStr } from '../util/misc'
 import Vue from 'vue'
 import ProcessModel from '../models/ProcessModel'
+import DialogDrag from 'vue-dialog-drag'
+import 'vue-dialog-drag/dist/vue-dialog-drag.css'
 
 export default {
   name: 'action-popup',
-  components: { RecipeInput },
+  components: { RecipeInput, DialogDrag },
   props: {
     action: {
       type: Object, // Type available_action_structure
@@ -69,7 +71,9 @@ export default {
     atomic: {
       type: AtomicRenamer,
       require: true
-    }
+    },
+    leftShift: 0,
+    topShift: 0
   },
   data () {
     return {
@@ -189,16 +193,23 @@ export default {
 </script>
 
 <style>
-  .popup .el-card__body {
-    padding: 6px;
-  }
-
-  .popup .el-form-item {
-    margin-bottom: 8px !important;
-  }
-
   .not-clickable .el-radio-button__inner {
     cursor: default;
+  }
+
+  .dialog-drag {
+    width: max-content;
+    border: 1px solid #EBEEF5;
+    border-radius: 4px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .2);
+  }
+
+  .dialog-drag .dialog-header {
+    display: none;
+  }
+
+  .dialog-drag .dialog-body {
+    padding: 0.5em;
   }
 </style>
 
