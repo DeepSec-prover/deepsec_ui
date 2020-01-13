@@ -1,13 +1,20 @@
 @font-face {
-  font-family: 'Monaco2';
+  font-family: 'Monaco-local';
   font-style: normal;
   font-weight: normal;
-  src: url(../fonts/Monaco.woff) format('woff');
+  src: url(../fonts/Monaco-local.woff) format('woff');
+}
+
+@font-face {
+font-family: 'Helvetica-local';
+font-style: normal;
+font-weight: normal;
+src: url(../fonts/Helvetica-local.woff) format('woff');
 }
 
 
 #app {
-  font-family: Helvetica, sans-serif;
+  font-family: Helvetica-local, Helvetica, sans-serif !important;
 }
 
 /* Hide global scrollbar but allow scrolling */
