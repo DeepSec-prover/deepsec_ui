@@ -22,6 +22,6 @@
 }
 
 .coy.language-deepsec code {
-    background-size: 3rem 2.5rem !important;
-    line-height: 1.2rem !important; /* TODO fix line background don't match */
+    background-size: 3rem 40px !important;
+    line-height: 20px !important; /* TODO fix line background don't match */
 }
