@@ -20,6 +20,8 @@ export class ApiDisplayTrace extends ApiManager {
   registerAllAnswers () {
     this.addAnswerHandler('current_step_displayed', this.currentStepDisplayed)
     this.addAnswerHandler('no_attack_trace', this.noAttackTrace)
+    // Error answer
+    this.addAnswerHandler('init_error', this.initError)
   }
 
   registerAllQueries () {
@@ -44,6 +46,13 @@ export class ApiDisplayTrace extends ApiManager {
                       success: false,
                       error: 'No attack trace for this query.'
                     })
+  }
+
+  initError (answer) {
+    this.pushNotification('Internal error',
+                          `Please report this error.<br>Message: ${answer.error_msg}`,
+                          'error')
+    this.eventReply({ success: false, content: answer })
   }
 
   // ==================== Queries ====================
