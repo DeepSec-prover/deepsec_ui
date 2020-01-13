@@ -21,6 +21,7 @@
     background-color: rgba(8, 0, 255, 0.10);
 }
 
-code[class*="language-"], pre[class*="language-"]  {
-	font-size: 0.8rem !important; /* 1em */
+.coy.language-deepsec code {
+    background-size: 3rem 2.5rem !important;
+    line-height: 1.2rem !important; /* TODO fix line background don't match */
 }

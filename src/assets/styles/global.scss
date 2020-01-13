@@ -6,12 +6,11 @@
 }
 
 @font-face {
-font-family: 'Helvetica-local';
-font-style: normal;
-font-weight: normal;
-src: url(../fonts/Helvetica-local.woff) format('woff');
+  font-family: 'Helvetica-local';
+  font-style: normal;
+  font-weight: normal;
+  src: url(../fonts/Helvetica-local.woff) format('woff');
 }
-
 
 #app {
   font-family: Helvetica-local, Helvetica, sans-serif !important;
@@ -124,6 +123,7 @@ dl.in-line dt {
   color: #303133;
   align-self: center;
 }
+
 dl.in-line dt:after {
   content: ":";
 }
