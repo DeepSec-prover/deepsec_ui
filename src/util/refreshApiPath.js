@@ -11,7 +11,7 @@ import which from 'which'
  */
 export function refreshApiPath (mainWindow) {
   // Check the Deepsec API path
-  let apiPath = String(userSettings.get('deepsecApiPath'))
+  const apiPath = String(userSettings.get('deepsecApiPath'))
 
   if (isEmptyOrBlankStr(apiPath)) {
     // Try to see if we can find it in path
