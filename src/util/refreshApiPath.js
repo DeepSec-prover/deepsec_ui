@@ -2,9 +2,7 @@ import logger from 'electron-log'
 import userSettings from 'electron-settings'
 import { isEmptyOrBlankStr, isFile } from './misc'
 import { ApiGetConfig } from '../deepsec-api/ApiGetConfig'
-import { defaultUserSettings } from './default-user-settings'
-
-let which = require('which')
+import which from 'which'
 
 /**
  * Check the current Api path and refresh the results directory path
@@ -18,7 +16,7 @@ export function refreshApiPath (mainWindow) {
   if (isEmptyOrBlankStr(apiPath)) {
     // Try to see if we can find it in path
     let deepsecApi = which.sync('deepsec_api', { nothrow: true })
-    if (deepsecApi === null || isEmptyOrBlankStr(deepsecApi)) {
+    if (isEmptyOrBlankStr(deepsecApi)) {
       logger.warn('DeepSec API path is not set')
       mainWindow.webContents.send('notification:show',
                                   'DeepSec API path is not set',
