@@ -42,3 +42,7 @@
   bottom: 0.8ex;
   font-size: 75%;
 }
+
+.language-deepsec  {
+    font-family: Monaco2 !important;
+}
