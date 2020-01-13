@@ -31,7 +31,7 @@
 
     <!-- Details -->
     <template slot="details">
-      <el-tabs v-model="activeDetail">
+      <el-tabs id="query-details" v-model="activeDetail">
         <!-- Processes -->
         <el-tab-pane label="Processes" name="processes" :lazy="true">
           <query-processes :query="query"></query-processes>
@@ -132,3 +132,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  #query-details {
+    min-height: 100vh; /* 100% of the window height, avoid annoying move */
+  }
+</style>

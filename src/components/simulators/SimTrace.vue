@@ -232,7 +232,7 @@ export default {
   }
 
   #steps {
-    max-height: 50vh;
+    max-height: 30vh; /* 30% of the window height */
   }
 
   .steps-frame {

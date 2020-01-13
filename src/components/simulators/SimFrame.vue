@@ -1,7 +1,7 @@
 <template>
   <el-card header="Frame">
     <ul v-if="frame.length > 0" class="no-bullet">
-      <simplebar>
+      <simplebar id="frames-content">
         <li v-for="i in frame.length">
           <spec-code-inline :code="`ax_${i} -> ${ termsStr[i-1] }`"></spec-code-inline>
         </li>
@@ -51,5 +51,9 @@ export default {
   .info-text {
     font-style: italic;
     color: #909399;
+  }
+
+  #frames-content {
+    max-height: 30vh; /* 30% of the window height */
   }
 </style>
