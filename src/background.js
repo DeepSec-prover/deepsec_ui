@@ -186,3 +186,11 @@ ipcMain.once('app-loaded', () => {
 ipcMain.on('refresh-api-path', () => {
   refreshApiPath(mainWindow)
 })
+
+/**
+ * Interrupt an other process. Necessary for detached children.
+ */
+ipcMain.on('interrupt-child-process', (e, pid) => {
+  logger.info(`Send interrupt signal to process ${pid}`)
+  process.kill(pid, 'SIGINT')
+})
