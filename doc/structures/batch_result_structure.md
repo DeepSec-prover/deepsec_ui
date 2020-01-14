@@ -27,6 +27,7 @@ Format of name: `timestamp_random.json`
   "git_branch": <string>,
   "git_hash": <string>,
   "debug": <bool>,
+  "pid": <int>, // process identifier
   "run_files": [
     <string>,
     ...,
