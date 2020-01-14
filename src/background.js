@@ -12,7 +12,9 @@ import { ApiManager } from './deepsec-api/ApiManager'
 import { ApiAttackSim } from './deepsec-api/ApiAttackSim'
 import { ApiEquivalenceSim } from './deepsec-api/ApiEquivalenceSim'
 import { refreshApiPath } from './util/refreshApiPath'
+import fixPath from 'fix-path'
 
+fixPath()
 // Init default logger
 setupDefaultLogger()
 
