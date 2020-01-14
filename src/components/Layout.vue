@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { ipcRenderer } from 'electron'
+import { ipcRenderer, webFrame } from 'electron'
 import logger from 'electron-log'
 
 export default {
@@ -58,6 +58,17 @@ export default {
     // When received data then show notification
     ipcRenderer.on('notification:show', (event, title, content, type, topic, link) => {
       this.$notification(title, content, type, topic, link, this.$router)
+    })
+
+    // When received data then show notification
+    ipcRenderer.on('zoom', (_, message, firstTime) => {
+      console.log('Received a zoom request')
+      webFrame.setZoomFactor(message)
+      setTimeout(function () {
+        if (firstTime) {
+          ipcRenderer.send('zoom-set')
+        }
+      }, 500)
     })
 
     // Send app loaded signal

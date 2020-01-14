@@ -166,9 +166,12 @@ if (settings.isDevelopment) {
  */
 ipcMain.once('app-loaded', () => {
   logger.info('Application fully loaded (electron + vue)')
-  loadingWindow.destroy()
-  mainWindow.show()
-  refreshApiPath(mainWindow)
+  mainWindow.webContents.send('zoom', userSettings.get('zoom', 1), true)
+  ipcMain.once('zoom-set', () => {
+    loadingWindow.destroy()
+    mainWindow.show()
+    refreshApiPath(mainWindow)
+  })
 })
 
 /**

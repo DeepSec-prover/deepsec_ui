@@ -1,6 +1,7 @@
 import { app } from 'electron'
 import logger from 'electron-log'
 import { openResultFileMain } from './util/open-files-dialogs'
+import userSettings from 'electron-settings'
 import settings from '../settings'
 
 /**
@@ -39,8 +40,32 @@ function mainMenuTemplate (mainWindow) {
         { label: 'Undo', accelerator: 'CmdOrCtrl+Z', role: 'undo' },
         { label: 'Redo', accelerator: 'Shift+CmdOrCtrl+Z', role: 'redo' },
         { type: 'separator' },
-        { label: 'Zoom In', accelerator: 'CmdOrCtrl+numadd', role: 'zoomIn' },
-        { label: 'Zoom Out', accelerator: 'CmdOrCtrl+numsub', role: 'zoomOut' }
+        {
+          label: 'Zoom In',
+          accelerator: 'CmdOrCtrl+numadd',
+          click: () => {
+            const curZoom = userSettings.get('zoom', 1)
+            userSettings.set('zoom', curZoom + 0.05)
+            mainWindow.webContents.send('zoom',curZoom + 0.05, false)
+          }
+        },
+        {
+          label: 'Zoom Out',
+          accelerator: 'CmdOrCtrl+numsub',
+          click: () => {
+            const curZoom = userSettings.get('zoom', 1)
+            userSettings.set('zoom', curZoom - 0.05)
+            mainWindow.webContents.send('zoom',curZoom - 0.05, false)
+          }
+        },
+        {
+          label: 'Real size',
+          accelerator: 'CmdOrCtrl+num0',
+          click: () => {
+            userSettings.set('zoom', 1)
+            mainWindow.webContents.send('zoom', 1, false)
+          }
+        }
       ]
     }
   ]
