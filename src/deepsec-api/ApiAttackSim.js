@@ -19,6 +19,8 @@ export class ApiAttackSim extends ApiManager {
   registerAllAnswers () {
     this.addAnswerHandler('current_step_user', this.currentStepUser)
     this.addAnswerHandler('current_step_displayed', this.currentStepDisplayed)
+    // Error answer
+    this.addAnswerHandler('init_error', this.initError)
   }
 
   registerAllQueries () {
@@ -44,6 +46,13 @@ export class ApiAttackSim extends ApiManager {
                       success: true,
                       content: answer
                     })
+  }
+
+  initError (answer) {
+    this.pushNotification('Internal error',
+                          `Please report this error.<br>Message: ${answer.error_msg}`,
+                          'error')
+    this.eventReply({ success: false, content: answer })
   }
 
   // ==================== Queries ====================

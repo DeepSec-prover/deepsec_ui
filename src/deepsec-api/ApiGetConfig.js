@@ -18,6 +18,8 @@ export class ApiGetConfig extends ApiManager {
 
   registerAllAnswers () {
     this.addAnswerHandler('config', this.config)
+    // Error answer
+    this.addAnswerHandler('init_error', this.initError)
   }
 
   config (answer) {
@@ -25,6 +27,13 @@ export class ApiGetConfig extends ApiManager {
     logger.info(`DeepSec API detected with version: ${answer.version}`)
     logger.info(`Result directory path set to: ${answer.result_files_path}`)
     userSettings.set('resultsDirPath', answer.result_files_path)
+  }
+
+  initError (answer) {
+    this.pushNotification('Internal error',
+                          `Please report this error.<br>Message: ${answer.error_msg}`,
+                          'error')
+    this.eventReply({ success: false, content: answer })
   }
 
   /**

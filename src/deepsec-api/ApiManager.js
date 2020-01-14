@@ -57,7 +57,6 @@ export class ApiManager {
    * @param {String} type The type of notification (success/warning/info/error)
    * @param {String} topic The name of the topic, for filter
    * @param {Object} link The route description for vue-router
-   * @param {Object} router The vue router to use
    */
   pushNotification (title,
                     message = '',

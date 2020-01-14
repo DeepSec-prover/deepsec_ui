@@ -299,7 +299,7 @@ export class ApiStartRun extends ApiManager {
       strErrorMsg += ` in ${nbFilesIssue} file${nbFilesIssue > 1 ? 's' : ''}.`
     }
 
-    // Compute the host erros
+    // Compute the host errors
     const nbHostIssue = answer.error_hosts.length
     let nbTotalHostErrors = 0
 
