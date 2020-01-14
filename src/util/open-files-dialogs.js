@@ -3,6 +3,7 @@ import { dialog, remote } from 'electron'
 import fs from 'fs'
 import path from 'path'
 import { isDir } from './misc'
+import userSettings from 'electron-settings'
 
 /**
  * Open the result file selector from the main process.
@@ -111,6 +112,7 @@ function openSpecFiles (currentDialog, files, directories) {
 
   const promise = currentDialog.showOpenDialog(null, {
     properties: properties,
+    defaultPath: userSettings.get('defaultSpecFilesPath', ''),
     message: 'Select one or many spec files / directories', // Message for mac only
     filters: filters
   })
@@ -140,6 +142,8 @@ function openSpecFiles (currentDialog, files, directories) {
           logger.debug(`${files.length} files found recursively in the directory "${dirPath}"`)
           filePaths.push.apply(filePaths, files)
         })
+
+        userSettings.set('defaultSpecFilesPath', filePaths[0])
 
         logger.info(`After directories search, ${filePaths.length} files are selected : 
         ${filePaths.join(', ')}`)

@@ -11,7 +11,8 @@ const defaultUserSettings = {
   showQueryNotif: true,
   stickyErrorNotif: true,
   stickyWarningNotif: true,
-  codeStyleTheme: 'coy'
+  codeStyleTheme: 'coy',
+  defaultSpecFilesPath: ''
 }
 
 /**
