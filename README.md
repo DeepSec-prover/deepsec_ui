@@ -6,7 +6,7 @@ User interface for [DeepSec](https://github.com/DeepSec-prover/deepsec). **Work 
 
 Download the binary file for your OS.
 
-See the [official website](https://deepsec-prover.github.io/alpha) for instruction.
+See the [official website](https://deepsec-prover.github.io/alpha#installation-of-deepsec-ui) for instruction.
 
 ## Dev Setup
 
