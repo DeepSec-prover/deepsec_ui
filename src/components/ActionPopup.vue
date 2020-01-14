@@ -1,5 +1,5 @@
 <template>
-  <dialog-drag :options="{buttonPin: false, buttonClose: false, left: leftShift, top: topShift}" class="popup">
+  <dialog-drag :options="{buttonPin: false, buttonClose: false, left: 0, top: 0}" class="popup">
     <el-form v-if="action" size="mini">
       <!-- Bang -->
       <template v-if="action.type === 'bang'">
@@ -71,9 +71,7 @@ export default {
     atomic: {
       type: AtomicRenamer,
       require: true
-    },
-    leftShift: 0,
-    topShift: 0
+    }
   },
   data () {
     return {

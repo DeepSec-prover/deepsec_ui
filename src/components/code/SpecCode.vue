@@ -6,8 +6,6 @@
     <div v-show="showActionPopup && selectedAction" ref="actionPopup">
       <action-popup :action="selectedAction"
                     :atomic="atomic"
-                    :top-shift="topShift"
-                    :left-shift="leftShift"
                     @close="closeActionPopup"
                     @user-select-action="sendActionSelection"
                     @user-select-transition="selectAvailableTransitionActions"
@@ -90,15 +88,7 @@ export default {
       /**
        * The minimum number of lines that should be displayed.
        */
-      minimumNbLines: 15,
-      /**
-       * User popup Y shift (by dragging)
-       */
-      topShift: 0,
-      /**
-       * User popup X shift (by dragging)
-       */
-      leftShift: 0
+      minimumNbLines: 15
     }
   },
   /**
@@ -336,7 +326,7 @@ export default {
     /**
      * Display the action selector popup to ask more information to the user.
      *
-     * @param {Object} action The action for which we want to display the popop.
+     * @param {Object} action The action for which we want to display the popup.
      * @param {Element} domElement The DOM element which directly include the action string. Used for popup position.
      */
     displayActionSelectorPopup (action, domElement) {
@@ -348,18 +338,7 @@ export default {
       // Focus on this action
       this.setupFocus([ProcessModel.formatPositionToString(this.selectedAction.position)])
 
-      new Popper(domElement, this.$refs.actionPopup,
-                 {
-                   placement: 'right',
-                   modifiers: [
-                     {
-                       name: 'offset',
-                       options: {
-                         offset: [30, 30]
-                       }
-                     }
-                   ]
-                 })
+      new Popper(domElement, this.$refs.actionPopup, { placement: 'top', strategy: 'fixed' })
       this.showActionPopup = true
     },
     /**
@@ -367,9 +346,6 @@ export default {
      */
     closeActionPopup () {
       this.showActionPopup = false
-      // Reset popup position (moved by the user)
-      this.topShift = 0
-      this.leftShift = 0
     },
     /**
      * Send the "user-select-action" signal to the parent.
