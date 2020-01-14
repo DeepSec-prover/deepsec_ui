@@ -1,0 +1,29 @@
+This file summarizes the most important changes between versions
+of DeepSec UI.
+
+Version 1.0.0 alpha rc2 (14/01/2020)
+  
+  - Fix a bug where symbolic link to `deepsec_api` would not work.
+  - Improved selection of absolute path to `deepsec_api`
+
+Version 1.0.0 alpha rc (14/01/2020)
+
+  DeepSec UI requires DeepSec 2.0.x to run. 
+  See https://github.com/DeepSec-prover/deepsec to download and install DeepSec 2.0.x. 
+  Amongst the new features of both DeepSec and DeepSec UI:
+
+  - Improved efficiency when verifying queries.
+  - Support for "Eavesdrop", "Classic" and "Private" semantics (POST'17)
+  for verifying trace equivalence.
+  - Integration and improvements of session equivalence (CCS'19).
+  - Recording of the result of your runs that can be displayed in DeepSec UI.
+  - DeepSec UI supports all of DeepSec's abilities does but with a nice
+  interface.
+  - Interactive display of attacks for violated queries.
+
+  - Attack and equivalence simulators in DeepSec UI for trace equivalence:
+  when a trace equivalence query holds, you can select a trace on any of
+  the two processes and request an equivalent trace; when violated there
+  is an attack trace on one of the processes, and you can select any trace
+  on the other process to see why they are not equivalent. Note that these
+  simulators only work with trace equivalence and not session equivalence.
