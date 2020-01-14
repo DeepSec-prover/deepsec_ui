@@ -14,6 +14,7 @@ import { ApiEquivalenceSim } from './deepsec-api/ApiEquivalenceSim'
 import { refreshApiPath } from './util/refreshApiPath'
 import fixPath from 'fix-path'
 
+// Fix system path for packaged MacOS (https://stackoverflow.com/a/57705752/2666094)
 fixPath()
 // Init default logger
 setupDefaultLogger()
