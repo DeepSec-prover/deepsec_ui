@@ -21,12 +21,21 @@
     outline: solid rgba(255, 175, 14, 0.7);
 }
 
-/* To avoid different line high and bad line number */
-.language-deepsec sup {
-    vertical-align: top;
+.token.sub {
+    position: relative;
+    top: 0.8ex;
+    font-size: 75%;
+    line-height: 0px;
 }
 
-/* To avoid different line high and bad line number */
-.language-deepsec sub {
-    vertical-align: bottom;
+.token.sup {
+    position: relative;
+    bottom: 0.8ex;
+    font-size: 75%;
+    line-height: 0px;
+}
+
+code {
+    font-family: Monaco-local, monospace !important;
+    font-size: 0.8rem !important;
 }

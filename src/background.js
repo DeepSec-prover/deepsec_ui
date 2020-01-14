@@ -72,7 +72,7 @@ function createLoadingWindow () {
     {
       show: true,
       width: 800,
-      height: 265,
+      height: 320,
       frame: false,
       backgroundColor: '#154C62',
       center: true,
