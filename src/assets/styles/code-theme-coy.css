@@ -20,3 +20,8 @@
 .coy.language-deepsec .token.punctuation.brace-selected {
     background-color: rgba(8, 0, 255, 0.10);
 }
+
+.coy.language-deepsec code {
+    background-size: 3rem 40px !important;
+    line-height: 20px !important; /* TODO fix line background don't match */
+}
