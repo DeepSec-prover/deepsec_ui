@@ -1,7 +1,7 @@
 import fs from 'fs'
 
 /**
- * Check if a path is a file.
+ * Check if a path is a file or a symbolic link.
  * If the path doesn't exist return false.
  *
  * @param {string} path The path to check
@@ -10,7 +10,7 @@ import fs from 'fs'
 function isFile (path) {
   try {
     const stat = fs.lstatSync(path)
-    return stat.isFile()
+    return stat.isFile() || stat.isSymbolicLink()
   } catch (e) {
     // lstatSync throws an error if path doesn't exist
     return false
