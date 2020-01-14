@@ -1,11 +1,11 @@
 {
   "name": "deepsec_ui",
   "productName": "DeepSec UI",
-  "version": "1.0.0-rc",
+  "version": "1.0.0-rc2",
   "description": "User interface for DeepSec tool (DEciding Equivalence Properties in SECurity protocols)",
   "author": {
     "name": "Vincent CHEVAL",
-    "email": "vincent.cheval@loria.fr",
+    "email": "vincent.cheval@inria.fr",
     "url": "https://members.loria.fr/VCheval/"
   },
   "contributors": [
