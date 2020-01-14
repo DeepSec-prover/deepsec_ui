@@ -6,7 +6,7 @@ User interface for [DeepSec](https://github.com/DeepSec-prover/deepsec). **Work 
 
 Download the binary file for your OS.
 
-TODO : Add links
+See the [official website](https://deepsec-prover.github.io/alpha) for instruction.
 
 ## Dev Setup
 
@@ -38,9 +38,7 @@ Note: If you're using Linux Bash for Windows, [see this guide](https://www.howto
 
 - `npm run electron:serve` : Run the application (and set `NODE_ENV` as `dev`)
 - `npm run check` : Check the code syntax
-- `npm run package:mac` : Build and package the application for MacOS (all architectures)
-- `npm run package:win` : Build and package the application for Windows  (all architectures)
-- `npm run package:linux` : Build and package the application for Linux  (all architectures)
+- `npm run electron:build` : Build and package for you current OS.
 
 ## File structure
 
