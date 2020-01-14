@@ -178,3 +178,42 @@ function recursiveFindFiles (dirPath, regex, filesResult) {
     }
   })
 }
+
+/**
+ * Open the DeepSec API files selector from the renderer process.
+ * Do not guaranty to return valid file paths.
+ *
+ * @async
+ * @param {String} defaultPath The default path of the selector
+ * @return {Promise<Array<string>>} A promise with the files absolute paths
+ */
+export function openApiFileRenderer (defaultPath) {
+  return openApiFile(remote.dialog, defaultPath)
+}
+
+function openApiFile (currentDialog, defaultPath) {
+  logger.info('Open API file selection')
+
+  const promise = currentDialog.showOpenDialog(null, {
+    properties: ['openFile'],
+    defaultPath: defaultPath,
+    message: 'Select the DeepSec API file' // Message for mac only
+  })
+
+  // Return the promise
+  return promise.then(result => {
+    if (!result.canceled) {
+      const filePaths = result.filePaths
+      if (filePaths !== null && filePaths.length === 1) {
+        logger.info(`DeepSec API file selected with success : ${filePaths[0]}`)
+        return filePaths[0]
+      } else {
+        logger.warn('Bad file selection path value', filePaths)
+        throw new Error('Bad file selection path value')
+      }
+    } else {
+      logger.info('Open DeepSec API file canceled')
+      throw new Error('Open DeepSec API file canceled')
+    }
+  })
+}

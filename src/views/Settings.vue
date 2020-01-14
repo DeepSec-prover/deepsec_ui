@@ -10,7 +10,11 @@
           <setting-item label="Show Helpers" settings-path="showHelpers" type="boolean"></setting-item>
           <!-- Environment -->
           <el-divider><i class="el-icon-files"></i> Environment</el-divider>
-          <setting-item label="Absolute Path of deepsec_api" settings-path="deepsecApiPath" placeholder="/path/to/deepsec_api" type="text"></setting-item>
+          <setting-item label="Absolute Path of deepsec_api"
+                        settings-path="deepsecApiPath"
+                        placeholder="/path/to/deepsec_api"
+                        type="file"
+                        @file-selected="checkApi"></setting-item>
           <p class="break-word centred-content regular-text">Results directory : <i>{{ this.resultsDir ? this.resultsDir : 'not defined' }}</i></p>
           <div class="centred-content">
             <el-button size="mini" @click="checkApi">Check API</el-button>

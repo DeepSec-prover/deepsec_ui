@@ -16,6 +16,13 @@
                :placeholder="placeholder">
       <el-option v-for="choice in choices" :key="choice" :label="choice" :value="choice"></el-option>
     </el-select>
+    <!-- File -->
+    <template v-else-if="type === 'file'">
+      <el-input v-model="value"
+                class="setting-item-file"
+                :placeholder="placeholder"></el-input>
+      <el-button icon="el-icon-document-add" @click="selectFile">Files ...</el-button>
+    </template>
     <!-- String -->
     <el-input v-else
               v-model="value"
@@ -30,6 +37,7 @@
 import userSettings from 'electron-settings'
 import logger from 'electron-log'
 import { defaultUserSettings } from '../util/default-user-settings'
+import { openApiFileRenderer } from '../util/open-files-dialogs'
 
 export default {
   name: 'setting-item',
@@ -66,12 +74,21 @@ export default {
   data () {
     return {
       value: null,
-      currentEdit: false
+      currentEdit: false,
+      fileSelectionDone: false // Flag for checking the path after the selection
     }
   },
   computed: {
     isDefault: function () {
       return this.value === defaultUserSettings[this.settingsPath]
+    }
+  },
+  methods: {
+    selectFile () {
+      openApiFileRenderer(this.value).then(file => {
+        this.fileSelectionDone = true
+        this.value = file
+      }).catch((_) => {/* Nothing to do if canceled or bad value */})
     }
   },
   beforeMount () {
@@ -82,6 +99,13 @@ export default {
       logger.debug(`Change user setting "${this.settingsPath}" : ${oldValue} --> ${newValue}`)
       userSettings.set(this.settingsPath, newValue)
       this.currentEdit = true
+
+      // Trigger path checking after the selection,
+      // can't be send before because the setting wasn't be saved
+      if (this.fileSelectionDone) {
+        this.$emit('file-selected')
+        this.fileSelectionDone = false
+      }
     })
   }
 }
@@ -101,5 +125,10 @@ export default {
 
   .setting-item-text {
     width: 80% !important;
+  }
+
+  .setting-item-file {
+    padding-right: 5px;
+    width: 70% !important;
   }
 </style>
