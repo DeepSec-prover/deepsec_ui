@@ -226,6 +226,12 @@ export default {
       if (this.focusedPositions && this.focusedPositions.length > 0) {
         this.focusedPositions = this.processDisplayed.getNextActionPositions()
       }
+
+      // Disable the focus after the last action because the "mouseleave" action doesn't trigger when
+      // the button is disable
+      if (!this.processDisplayed.hasNextAction()) {
+        this.clearFocusActions()
+      }
     }
   },
   methods: {
