@@ -12,6 +12,7 @@ let stdoutBuffer = ''
  * @see ApiRemote
  */
 export class ApiManager {
+
   /**
    * Should be override by children classes.
    *
@@ -143,7 +144,16 @@ export class ApiManager {
     })
 
     // Allow the application to close even if the process is still running
-    if (this.detached) { this.process.unref() }
+    if (this.detached) {
+      this.process.unref()
+      ApiManager.detachedProcesses.add(this.process)
+
+      /*
+      setTimeout(() => {
+        ApiManager.closeDetachedIO()
+      }, 10000)
+       */
+    }
 
     // Stdout messages catching
     this.process.stdout.on('data', (data) => {
@@ -250,6 +260,8 @@ export class ApiManager {
       // Stop process pip
       this.process.stdin.end()
     }
+    // Remove from the detached process list
+    ApiManager.detachedProcesses.delete(this.process)
     this.process = null
   }
 
@@ -333,4 +345,20 @@ export class ApiManager {
         })
     })
   }
+
+  static closeDetachedIO () {
+    if (ApiManager.detachedProcesses.size > 0) {
+      logger.debug(`Close detached streams (${ApiManager.detachedProcesses.size} processes)`)
+      ApiManager.detachedProcesses.forEach(p => {
+        p.stdin.end()
+        p.stdin.destroy()
+        p.stderr.unpipe()
+        p.stderr.destroy()
+        p.stdout.unpipe()
+        p.stdout.destroy()
+      })
+    }
+  }
 }
+
+ApiManager.detachedProcesses = new Set()

@@ -134,6 +134,11 @@ app.on('ready', async () => {
   createWindow()
 })
 
+app.on('quit', () => {
+  ApiManager.closeDetachedIO()
+  logger.info('Application closed')
+})
+
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
