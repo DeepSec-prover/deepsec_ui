@@ -12,6 +12,7 @@ let stdoutBuffer = ''
  * @see ApiRemote
  */
 export class ApiManager {
+
   /**
    * Should be override by children classes.
    *
@@ -121,13 +122,19 @@ export class ApiManager {
     // Check DeepSec API path
     if (isEmptyOrBlankStr(apiPath)) {
       // Send bad result to the Start Run page
-      this.eventReply({ success: false, errorMsg: 'DeepSec API path is not define. You can set it in the application setting page.' })
+      this.eventReply({
+                        success: false, errorMsg:
+          'DeepSec API path is not define. You can set it in the application setting page.'
+                      })
       logger.warn('Try to start a command but the DeepSec API path is not set')
       this.processExit()
       return
     } else if (!isFile(apiPath)) {
       // Send bad result to the Start Run page
-      this.eventReply({ success: false, errorMsg: `Incorrect DeepSec API path (${apiPath}). You can change it in the application setting page.` })
+      this.eventReply({
+                        success: false, errorMsg:
+          `Incorrect DeepSec API path (${apiPath}). You can change it in the application setting page.`
+                      })
       logger.warn(
         `Try to start a command but the DeepSec API path is incorrect (${apiPath})`)
       this.processExit()
@@ -143,7 +150,10 @@ export class ApiManager {
     })
 
     // Allow the application to close even if the process is still running
-    if (this.detached) { this.process.unref() }
+    if (this.detached) {
+      this.process.unref()
+      ApiManager.detachedProcesses.add(this.process)
+    }
 
     // Stdout messages catching
     this.process.stdout.on('data', (data) => {
@@ -250,6 +260,8 @@ export class ApiManager {
       // Stop process pip
       this.process.stdin.end()
     }
+    // Remove from the detached process list
+    ApiManager.detachedProcesses.delete(this.process)
     this.process = null
   }
 
@@ -333,4 +345,27 @@ export class ApiManager {
         })
     })
   }
+
+  /**
+   * Close pipes of all current detached processes still running.
+   * Necessary to keep them alive after the end of this process.
+   */
+  static closeDetachedIO () {
+    if (ApiManager.detachedProcesses.size > 0) {
+      logger.debug(`Close detached streams (${ApiManager.detachedProcesses.size} processes)`)
+      ApiManager.detachedProcesses.forEach(p => {
+        p.stderr.unpipe()
+        p.stderr.destroy()
+        p.stdout.unpipe()
+        p.stdout.destroy()
+        p.stdin.end()
+        p.stdin.destroy()
+      })
+    }
+
+    ApiManager.detachedProcesses = []
+  }
 }
+
+// Store all current "to detach" processes
+ApiManager.detachedProcesses = new Set()

@@ -14,6 +14,7 @@ export default class BatchModel extends ResultModel {
     this.ocamlVersion = json.ocaml_version
 
     this.debug = json.debug
+    this.pid = json.pid
     this.commandOptions = RunConfigModel.loadFromJson(json.command_options)
     this.computedOptions = RunConfigModel.loadFromJson(json.computed_options)
 

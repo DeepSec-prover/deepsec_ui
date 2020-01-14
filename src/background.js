@@ -134,6 +134,11 @@ app.on('ready', async () => {
   createWindow()
 })
 
+app.on('quit', () => {
+  ApiManager.closeDetachedIO()
+  logger.info('Application closed')
+})
+
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
@@ -180,4 +185,12 @@ ipcMain.once('app-loaded', () => {
  */
 ipcMain.on('refresh-api-path', () => {
   refreshApiPath(mainWindow)
+})
+
+/**
+ * Interrupt an other process. Necessary for detached children.
+ */
+ipcMain.on('interrupt-child-process', (e, pid) => {
+  logger.info(`Send interrupt signal to process ${pid}`)
+  process.kill(pid, 'SIGINT')
 })

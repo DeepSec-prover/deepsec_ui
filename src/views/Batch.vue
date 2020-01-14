@@ -141,6 +141,7 @@
 </template>
 
 <script>
+import { ipcRenderer } from 'electron'
 import RunWarnings from '../components/RunWarnings'
 import ResultStatus from '../components/results/ResultStatus'
 import Duration from '../components/Duration'
@@ -186,7 +187,9 @@ export default {
   },
   methods: {
     cancelBatch () {
-      this.batch.apiRemote.sendQuery('cancel-batch')
+      ipcRenderer.send('interrupt-child-process', this.batch.pid)
+      // Alternative way to cancel a batch, same result but works only if still attached
+      // this.batch.apiRemote.sendQuery('cancel-batch')
     },
     setupResult () {
       this.batch = new BatchModel(this.path, true, true)
