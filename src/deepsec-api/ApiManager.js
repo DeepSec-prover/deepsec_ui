@@ -252,16 +252,22 @@ export class ApiManager {
     logger.info('Close the communication with the API process and between IPC processes.')
     // Remove handler in ipcMain
     this.removeAllHandlers()
-    if (this.event) {
+
+    if (this.event && this.event.sender && !this.event.sender.isDestroyed()) {
       // Ask to remove all handler in remote ipcRenderer
       this.event.reply(`deepsec-api:${this.constructor.namespace()}:exit`)
     }
+
     if (this.process) {
       // Stop process pip
       this.process.stdin.end()
+
+      if (this.detached) {
+        // Remove from the detached process list
+        ApiManager.detachedProcesses.delete(this.process)
+      }
     }
-    // Remove from the detached process list
-    ApiManager.detachedProcesses.delete(this.process)
+
     this.process = null
   }
 
