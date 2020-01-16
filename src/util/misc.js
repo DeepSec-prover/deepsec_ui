@@ -61,4 +61,25 @@ function appendEmptyLines (str, n) {
   }
 }
 
-export { isDir, isFile, isEmptyOrBlankStr, appendEmptyLines }
+/**
+ * Performs difference operation between two sets.
+ * Because Javascript does't have a fu*king build-in function for this.
+ *
+ * @param {Set} set1 The first set.
+ * @param {Set} set2 The set to subtract to the first one
+ * @return {Set} set1 - set2
+ */
+function setDifference (set1, set2) {
+  // creating new set to store difference
+  const diff = new Set()
+
+  // iterate over the values
+  for (const elem of set1) {
+    if (!set2.has(elem))
+      diff.add(elem)
+  }
+
+  return diff
+}
+
+export { isDir, isFile, isEmptyOrBlankStr, appendEmptyLines, setDifference }
