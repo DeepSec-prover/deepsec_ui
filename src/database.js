@@ -61,11 +61,11 @@ export function closeDatabase () {
  */
 function createTables () {
   // language=SQLite
-  db.run(`
-      -- Batch table
+  db.exec(`
+              -- Batches table
       CREATE TABLE batches
       (
-          path        TEXT PRIMARY KEY,
+          path        TEXT NOT NULL PRIMARY KEY,
           status      TEXT NOT NULL,
           start_time  DATE NOT NULL,
           end_time    DATE,
@@ -74,10 +74,17 @@ function createTables () {
           title       TEXT
       );
 
-      -- Run table
+              -- Batches indexes
+              CREATE INDEX index_status_batches ON batches (status);
+              CREATE INDEX index_start_time_batches ON batches (start_time);
+              CREATE INDEX index_import_date_batches ON batches (import_date);
+              CREATE INDEX index_stared_batches ON batches (stared);
+              CREATE INDEX index_title_batches ON batches (title);
+
+              -- Runs table
       CREATE TABLE runs
       (
-          path       TEXT PRIMARY KEY,
+          path       TEXT NOT NULL PRIMARY KEY,
           status     TEXT NOT NULL,
           start_time DATE,
           end_time   DATE,
@@ -85,18 +92,30 @@ function createTables () {
           input_file TEXT NOT NULL
       );
 
+              -- Runs indexes
+              CREATE INDEX index_status_runs ON runs (status);
+              CREATE INDEX index_start_time_runs ON runs (start_time);
+              CREATE INDEX index_stared_runs ON runs (stared);
+              CREATE INDEX index_input_file_runs ON runs (input_file);
+
       -- Queries table
       CREATE TABLE queries
       (
-          path       TEXT PRIMARY KEY,
-          status     TEXT    NOT NULL,
-          start_time DATE,
-          end_time   DATE,
-          stared     INTEGER DEFAULT 0,
-          q_index    INTEGER NOT NULL,
-          semantics  TEXT    NOT NULL,
-          type       TEXT    NOT NULL
+          path         TEXT    NOT NULL PRIMARY KEY,
+          status       TEXT    NOT NULL,
+          start_time   DATE,
+          end_time     DATE,
+          stared       INTEGER DEFAULT 0,
+          q_index      INTEGER NOT NULL,
+          semantics    TEXT    NOT NULL,
+          type         TEXT    NOT NULL,
+          attack_found INTEGER DEFAULT 0
       );
+
+              -- Query indexes
+              CREATE INDEX index_status_queries ON queries (status);
+              CREATE INDEX index_start_time_queries ON queries (start_time);
+              CREATE INDEX index_stared_queries ON queries (stared);
 
       -- Batches-Runs Join table
       CREATE TABLE batches_runs
@@ -129,7 +148,12 @@ function createTables () {
               ON DELETE CASCADE
               ON UPDATE NO ACTION
       );
-  `)
-
-  logger.info('Database tables initialized')
+    `, // language=default
+       err => {
+         if (err) {
+           logger.error(`An issue occurs when creating the database tables:\n${err}`)
+         } else {
+           logger.info(`Database tables successfully initialized.`)
+         }
+       })
 }
