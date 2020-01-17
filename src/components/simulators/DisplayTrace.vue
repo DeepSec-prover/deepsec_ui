@@ -70,7 +70,7 @@
                    v-on:goto="gotoAction"
                    fixedActions></sim-trace>
         <!-- Trace Frame -->
-        <sim-frame :frame="processDisplayed.frame" :atomic="processDisplayed.atomic"></sim-frame>
+        <sim-frame :frame="processDisplayed.frame" :names="processDisplayed.names" :atomic="processDisplayed.atomic"></sim-frame>
       </el-col>
     </el-row>
   </div>
@@ -78,7 +78,6 @@
 
 <script>
 import QueryModel from '../../models/QueryModel'
-import Simplebar from 'simplebar-vue'
 import Helper from '../helpers/Helper'
 import SpecCode from '../code/SpecCode'
 import { formatCode } from '../../util/process-parser'
@@ -94,8 +93,7 @@ export default {
     SimTrace,
     SimFrame,
     SpecCode,
-    Helper,
-    Simplebar
+    Helper
   },
   props: {
     query: {

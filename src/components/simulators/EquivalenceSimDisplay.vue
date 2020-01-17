@@ -69,7 +69,7 @@
                    v-on:goto="gotoAction"
                    fixedActions></sim-trace>
         <!-- Trace Frame -->
-        <sim-frame :frame="processDisplayed.frame" :atomic="processDisplayed.atomic"></sim-frame>
+        <sim-frame :frame="processDisplayed.frame" :names="processDisplayed.names" :atomic="processDisplayed.atomic"></sim-frame>
       </el-col>
     </el-row>
   </div>

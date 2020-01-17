@@ -204,6 +204,7 @@ export default class ProcessDisplayedModel extends ProcessModel {
       if (!keepContext) {
         processModel.currentAction = -1
         processModel.frame = []
+        processModel.names = []
       }
       return processModel
     }
@@ -223,6 +224,7 @@ export default class ProcessDisplayedModel extends ProcessModel {
     if (keepContext) {
       copy.currentAction = processModel.actions.length - 1
       copy.frame = processModel.frame
+      copy.names = processModel.names
     }
     return copy
   }

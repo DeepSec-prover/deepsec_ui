@@ -137,6 +137,7 @@ export default class ProcessUserModel extends ProcessModel {
     if (Object.getPrototypeOf(processModel) === ProcessUserModel.prototype) {
       if (!keepContext) {
         processModel.frame = []
+        processModel.names = []
         processModel.actions = []
         // remove undo history
         processModel.actionsHistory = []
@@ -158,6 +159,7 @@ export default class ProcessUserModel extends ProcessModel {
 
     if (keepContext) {
       copy.frame = processModel.frame
+      copy.names = processModel.names
       copy.actions = processModel.actions
     }
 
