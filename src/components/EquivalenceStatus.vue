@@ -103,7 +103,7 @@ export default {
     },
     actionStr: function () {
       // For action, we do not need to distinguish the atomic renamer since no names occur.
-      return formatAction(this.nextAction.action, this.atomic,this.nextAction.last_axiom)
+      return formatAction(this.nextAction.action, this.atomic,this.nextAction.lastAxiom)
     }
   }
 }

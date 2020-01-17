@@ -179,17 +179,17 @@ export default class ProcessDisplayedModel extends ProcessModel {
    */
   getVisibleAction (n) {
     let count = 0
-    let last_axiom = 0
+    let lastAxiom = 0
 
     for (let i = 0; i < this.actions.length; i++) {
       if (ProcessModel.isVisibleAction(this.actions[i], 'io')) {
         if (this.actions[i].type === 'output') {
-          last_axiom++
+          lastAxiom++
         }
         count++
       }
       if (count === n) {
-        return { action: this.actions[i], last_axiom: { value: last_axiom } }
+        return { action: this.actions[i], lastAxiom: { value: lastAxiom } }
       }
     }
 
