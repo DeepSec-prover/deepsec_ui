@@ -130,7 +130,8 @@
             <!-- Equivalence status -->
             <equivalence-status v-if="nonEquivalenceCondition"
                               :equivalence="processUser.statusEquivalence"
-                              :atomic="processUser.atomic"
+                              :atomicUser="processUser.atomic"
+                              :atomicDisplayed="processDisplayed.atomic"
                               :nextAction="getNextVisibleAction()"
                               :processDisplayedId="processDisplayed.processId"
                               class="break-word"></equivalence-status>

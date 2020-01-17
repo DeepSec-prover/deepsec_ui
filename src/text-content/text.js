@@ -19,11 +19,11 @@ const text = {
       attack: {
         trace_equiv: {
           short: 'Not trace equivalent',
-          long: 'The processes are not trace equivalent. The following trace from process %p doesn\'t have an equivalent in process %q.'
+          long: 'The processes are not trace equivalent. The following trace from process %p does not have an equivalent trace in process %q.'
         },
         trace_incl: {
           short: 'Not trace included',
-          long: 'The process %p is not trace included in %q. The following trace from process %p doesn\'t have an equivalent in process %q.'
+          long: 'The process %p is not trace included in %q. The following trace from process %p does not have an equivalent trace in process %q.'
         },
         observational_equiv: {
           short: 'TODO short description attack',
@@ -31,11 +31,11 @@ const text = {
         },
         session_equiv: {
           short: 'Not session equivalent',
-          long: 'The processes are not session equivalent. The following trace from process %p doesn\'t have an equivalent in process %q.'
+          long: 'The processes are not session equivalent. The following trace from process %p does not have an equivalent trace in process %q.'
         },
         session_incl: {
           short: 'Not session included',
-          long: 'The process %p is not session included in %q. The following trace from process %p doesn\'t have an equivalent in process %q.'
+          long: 'The process %p is not session included in %q. The following trace from process %p does not have an equivalent trace in process %q.'
         }
       },
       no_attack: {
@@ -62,7 +62,7 @@ const text = {
       }
     },
     equivalence_status: {
-      equivalent: 'No visible actions available',
+      equivalent: 'No matching visible actions available',
           /** Counter intuitive but this text is only to display the reason of non equivalence.
               In such a case, it is displayed when there are no more available actions available.
           **/
