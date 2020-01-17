@@ -18,7 +18,7 @@ import {
   connectDatabase,
   createTablesIfNotExist,
   scanForNewResults
-} from './database'
+} from './database/database'
 
 // Fix system path for packaged MacOS (https://stackoverflow.com/a/57705752/2666094)
 fixPath()

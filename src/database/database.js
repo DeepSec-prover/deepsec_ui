@@ -1,12 +1,12 @@
 import sql from 'sqlite3'
 import logger from 'electron-log'
-import settings from '../settings'
+import settings from '../../settings'
 import { app } from 'electron'
 import path from 'path'
-import { isFile, setDifference } from './util/misc'
+import { isFile, setDifference } from '../util/misc'
 import fs from 'fs'
 import userSettings from 'electron-settings'
-import BatchModel from './models/BatchModel'
+import BatchModel from '../models/BatchModel'
 
 if (settings.isDevelopment) {
   sql.verbose()
@@ -112,6 +112,28 @@ export function insertBatch (batch) {
     } else {
       logger.verbose(`Batch ${batch.path} successfully inserted in the database`)
     }
+  })
+}
+
+export function getBatches () {
+  return new Promise((resolve, reject) => {
+    db.all(
+        `SELECT *
+         FROM batches`,
+      [],
+      (err, rows) => {
+        if (err) {
+          logger.error(`An issue occurs when fetching batches from the database:\n${err}`)
+          reject()
+        } else {
+          logger.verbose(`${rows.length} batches fetch successfully from the database`)
+          const batches = []
+
+          for (const row of rows) {
+            console.log(row)
+          }
+        }
+      })
   })
 }
 
