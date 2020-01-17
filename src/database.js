@@ -6,6 +6,7 @@ import path from 'path'
 import { isFile, setDifference } from './util/misc'
 import fs from 'fs'
 import userSettings from 'electron-settings'
+import BatchModel from './models/BatchModel'
 
 if (settings.isDevelopment) {
   sql.verbose()
@@ -84,10 +85,32 @@ export function scanForNewResults () {
           const diff = setDifference(files, rows)
           logger.info(
             `${diff.size} new file(s) found in the user results directory (${resultsDirPath})`)
+
+          for (let batchPath of diff) {
+            let batch = new BatchModel(batchPath + '.json', false)
+            batch.loadRelationsDeep() // Load all runs and queries
+            insertBatch(batch)
+          }
         }
       })
     } else {
       logger.debug(`No file found in the user results directory (${resultsDirPath})`)
+    }
+  })
+}
+
+/**
+ * Insert a new batch in the database.
+ *
+ * @param {BatchModel} batch The batch to insert (with all relation loaded)
+ */
+export function insertBatch (batch) {
+  db.exec(generateBatchInsertSql(batch), err => {
+    if (err) {
+      logger.error(
+        `An issue occurs when inserting a new batch (${batch.path}) in the database:\n${err}`)
+    } else {
+      logger.verbose(`Batch ${batch.path} successfully inserted in the database`)
     }
   })
 }
@@ -199,4 +222,65 @@ export function createTablesIfNotExist () {
            }
          })
   })
+}
+
+/**
+ * Generate an SQL insert query for a specific batch.
+ *
+ * @param {BatchModel} batch The batch to insert (with all relation loaded)
+ * @return {String} The SQL insert query for the batch its runs and queries
+ */
+function generateBatchInsertSql (batch) {
+  const batchTitle = batch.defaultTitle ? `'${batch.defaultTitle}'` : 'NULL'
+  const batchPath = batch.path.replace('.json', '')
+
+  // language=SQLite
+  // Insert the batch
+  let sql = `
+  INSERT INTO batches (path, status, start_time, end_time, import_date, title)
+  VALUES ('${batchPath}', '${batch.status}', ${timeToSql(batch.startTime)},
+          ${timeToSql(batch.endTime)}, ${timeToSql(batch.importTime)}, ${batchTitle});
+  `
+
+  for (const run of batch.runs) {
+    const runPath = run.path.replace('.json', '')
+
+    // Insert the runs
+    sql += `
+    INSERT INTO runs (path, status, start_time, end_time, input_file)
+    VALUES ('${runPath}', '${run.status}', ${timeToSql(run.startTime)}, ${timeToSql(run.endTime)},
+            '${run.inputFile}');
+  `
+
+    // Insert the batch-run relation
+    sql += `
+    INSERT INTO batches_runs (batch_path, run_path) VALUES ('${batch.path}','${run.path}');
+    `
+
+    for (const query of run.queries) {
+      const queryPath = query.path.replace('.json', '')
+
+      // Insert the query
+      sql += `
+      INSERT INTO queries (path, status, start_time, end_time, q_index, semantics, type)
+      VALUES ('${queryPath}', '${query.status}', ${timeToSql(query.startTime)},
+              ${timeToSql(query.endTime)}, ${query.index}, '${query.semantics}', '${query.type}') ;
+      `
+
+      // Insert the run-query relation
+      sql += `
+      INSERT INTO runs_queries (run_path, query_path) VALUES ('${run.path}', '${query.path}');
+      `
+    }
+  }
+
+  return sql
+}
+
+/**
+ * Transform a Javascript Date into a SQL Date.
+ * @param {Date|null} time A javascript date object.
+ */
+function timeToSql (time) {
+  return time ? time.getTime() : 'NULL'
 }

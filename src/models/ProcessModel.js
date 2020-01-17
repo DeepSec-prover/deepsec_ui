@@ -91,6 +91,7 @@ export default class ProcessModel {
    * @param {Object} answer The API answer.
    */
   update (answer) {
+    // We need to parse the process because we turned it into a string before to send it (for size issue)
     this.process = JSON.parse(answer.process)
     this.frame = answer.frame
   }

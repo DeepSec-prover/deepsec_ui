@@ -47,6 +47,13 @@ export default class BatchModel extends ResultModel {
   }
 
   /**
+   * Load all runs of this batch and their queries.
+   */
+  loadRelationsDeep () {
+    this.runs = this.runFiles.map(file => new RunModel(file, true))
+  }
+
+  /**
    * Link all queries from all run of this batch.
    * Used to be sure they are observable.
    */
