@@ -51,7 +51,7 @@
                  :actions="processUser.actions"
                  @goto="gotoAction"></sim-trace>
       <!-- Frame -->
-      <sim-frame :atomic="processUser.atomic" :frame="processUser.frame"></sim-frame>
+      <sim-frame :atomic="processUser.atomic" :names="processUser.names" :frame="processUser.frame"></sim-frame>
     </el-col>
   </el-row>
 </template>

@@ -82,7 +82,7 @@
                        @goto="gotoActionDisplayed"
                        fixedActions></sim-trace>
             <!-- Frame -->
-            <sim-frame :atomic="processDisplayed.atomic" :frame="processDisplayed.frame"></sim-frame>
+            <sim-frame :atomic="processDisplayed.atomic" :names="processDisplayed.names" :frame="processDisplayed.frame"></sim-frame>
           </el-col>
         </el-row>
       </el-col>
@@ -141,7 +141,7 @@
                        :actions="processUser.actions"
                        @goto="gotoActionUser"></sim-trace>
             <!-- Frame -->
-            <sim-frame :atomic="processUser.atomic" :frame="processUser.frame"></sim-frame>
+            <sim-frame :atomic="processUser.atomic" :names="processUser.names" :frame="processUser.frame"></sim-frame>
           </el-col>
           <el-col :span="16">
             <!-- Process code -->

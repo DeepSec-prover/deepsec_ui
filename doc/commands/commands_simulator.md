@@ -26,6 +26,7 @@ Current step of a displayed process: API -> UI
   "process_id": <int>, // 1 or 2. Optional (Only used for attack and equivalence simulator)
   "process": <process>,
   "frame": [ <term> ],
+  "names": [ <term> ], // In reality, they will only be names (ie of type "Atomic")
   "current_action_id": <int> // Do you actually use that ? I don't think so.
 }
 ```
@@ -38,6 +39,7 @@ Current step of a process with user selected actions: API -> UI
   "process_id": <int>,
   "process": <process>,
   "frame": [ <term> ],
+  "names": [ <term> ], // In reality, they will only be names (ie of type "Atomic")
   "available_actions": {
     "all": [ <available_actions> ],
     "default": [ <available_actions> ]
