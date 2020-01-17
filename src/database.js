@@ -17,30 +17,28 @@ let db = null
 /**
  * Connect to the database.
  * If the file doesn't exist create all tables.
+ *
+ * @return {Promise} Result promise
  */
 export function connectDatabase () {
-  // Check if it's the first connection
-  let firstConnection = false
-  if (isFile(dbPath)) {
-    logger.verbose(`Database file found in "${dbPath}", no creation needed.`)
-  } else {
-    firstConnection = true
-  }
-
-  // Connect to the database
-  db = new sql.Database(dbPath, err => {
-    if (err) {
-      logger.error(`An issue occurs when connecting to the database (${dbPath}):\n${err}`)
+  return new Promise((resolve, reject) => {
+    // Check if it's the first connection
+    if (isFile(dbPath)) {
+      logger.verbose(`Database file found in "${dbPath}", no creation needed.`)
     } else {
-      logger.info(`Database successfully connected (${dbPath}).`)
-      // Create tables if it's the first connection
-      if (firstConnection) {
-        logger.info('No previous database found, let\'s create the tables.')
-        createTables()
-      } else {
-        scanForNewResults()
-      }
+      logger.verbose(`Database file not found in "${dbPath}", will be created`)
     }
+
+    // Connect to the database
+    db = new sql.Database(dbPath, err => {
+      if (err) {
+        logger.error(`An issue occurs when connecting to the database (${dbPath}):\n${err}`)
+        reject()
+      } else {
+        logger.info(`Database successfully connected (${dbPath}).`)
+        resolve()
+      }
+    })
   })
 }
 
@@ -97,103 +95,108 @@ export function scanForNewResults () {
 /**
  * Create all tables.
  * The database should be created and connected first.
+ *
+ * @return {Promise} Result promise
  */
-function createTables () {
-  // language=SQLite
-  db.exec(`
-              -- Batches table
-              CREATE TABLE batches
-              (
-                  path        TEXT NOT NULL PRIMARY KEY,
-                  status      TEXT NOT NULL,
-                  start_time  DATE NOT NULL,
-                  end_time    DATE,
-                  import_date DATE,
-                  stared      INTEGER DEFAULT 0,
-                  title       TEXT
-              );
+export function createTablesIfNotExist () {
+  return new Promise((resolve, reject) => {
+    // language=SQLite
+    db.exec(`
+                -- Batches table
+                CREATE TABLE IF NOT EXISTS batches
+                (
+                    path        TEXT NOT NULL PRIMARY KEY,
+                    status      TEXT NOT NULL,
+                    start_time  DATE NOT NULL,
+                    end_time    DATE,
+                    import_date DATE,
+                    stared      INTEGER DEFAULT 0,
+                    title       TEXT
+                );
 
-              -- Batches indexes
-              CREATE INDEX index_status_batches ON batches (status);
-              CREATE INDEX index_start_time_batches ON batches (start_time);
-              CREATE INDEX index_import_date_batches ON batches (import_date);
-              CREATE INDEX index_stared_batches ON batches (stared);
-              CREATE INDEX index_title_batches ON batches (title);
+                -- Batches indexes
+                CREATE INDEX IF NOT EXISTS index_status_batches ON batches (status);
+                CREATE INDEX IF NOT EXISTS index_start_time_batches ON batches (start_time);
+                CREATE INDEX IF NOT EXISTS index_import_date_batches ON batches (import_date);
+                CREATE INDEX IF NOT EXISTS index_stared_batches ON batches (stared);
+                CREATE INDEX IF NOT EXISTS index_title_batches ON batches (title);
 
-              -- Runs table
-              CREATE TABLE runs
-              (
-                  path       TEXT NOT NULL PRIMARY KEY,
-                  status     TEXT NOT NULL,
-                  start_time DATE,
-                  end_time   DATE,
-                  stared     INTEGER DEFAULT 0,
-                  input_file TEXT NOT NULL
-              );
+                -- Runs table
+                CREATE TABLE IF NOT EXISTS runs
+                (
+                    path       TEXT NOT NULL PRIMARY KEY,
+                    status     TEXT NOT NULL,
+                    start_time DATE,
+                    end_time   DATE,
+                    stared     INTEGER DEFAULT 0,
+                    input_file TEXT NOT NULL
+                );
 
-              -- Runs indexes
-              CREATE INDEX index_status_runs ON runs (status);
-              CREATE INDEX index_start_time_runs ON runs (start_time);
-              CREATE INDEX index_stared_runs ON runs (stared);
-              CREATE INDEX index_input_file_runs ON runs (input_file);
+                -- Runs indexes
+                CREATE INDEX IF NOT EXISTS index_status_runs ON runs (status);
+                CREATE INDEX IF NOT EXISTS index_start_time_runs ON runs (start_time);
+                CREATE INDEX IF NOT EXISTS index_stared_runs ON runs (stared);
+                CREATE INDEX IF NOT EXISTS index_input_file_runs ON runs (input_file);
 
-              -- Queries table
-              CREATE TABLE queries
-              (
-                  path         TEXT    NOT NULL PRIMARY KEY,
-                  status       TEXT    NOT NULL,
-                  start_time   DATE,
-                  end_time     DATE,
-                  stared       INTEGER DEFAULT 0,
-                  q_index      INTEGER NOT NULL,
-                  semantics    TEXT    NOT NULL,
-                  type         TEXT    NOT NULL,
-                  attack_found INTEGER DEFAULT 0
-              );
+                -- Queries table
+                CREATE TABLE IF NOT EXISTS queries
+                (
+                    path         TEXT    NOT NULL PRIMARY KEY,
+                    status       TEXT    NOT NULL,
+                    start_time   DATE,
+                    end_time     DATE,
+                    stared       INTEGER DEFAULT 0,
+                    q_index      INTEGER NOT NULL,
+                    semantics    TEXT    NOT NULL,
+                    type         TEXT    NOT NULL,
+                    attack_found INTEGER DEFAULT 0
+                );
 
-              -- Query indexes
-              CREATE INDEX index_status_queries ON queries (status);
-              CREATE INDEX index_start_time_queries ON queries (start_time);
-              CREATE INDEX index_stared_queries ON queries (stared);
+                -- Query indexes
+                CREATE INDEX IF NOT EXISTS index_status_queries ON queries (status);
+                CREATE INDEX IF NOT EXISTS index_start_time_queries ON queries (start_time);
+                CREATE INDEX IF NOT EXISTS index_stared_queries ON queries (stared);
 
-              -- Batches-Runs Join table
-              CREATE TABLE batches_runs
-              (
-                  batch_path TEXT NOT NULL,
-                  run_path   TEXT NOT NULL,
-                  PRIMARY KEY (batch_path, run_path),
-                  FOREIGN KEY (batch_path)
-                      REFERENCES batches (path)
-                      ON DELETE CASCADE
-                      ON UPDATE NO ACTION,
-                  FOREIGN KEY (run_path)
-                      REFERENCES runs (path)
-                      ON DELETE CASCADE
-                      ON UPDATE NO ACTION
-              );
+                -- Batches-Runs Join table
+                CREATE TABLE IF NOT EXISTS batches_runs
+                (
+                    batch_path TEXT NOT NULL,
+                    run_path   TEXT NOT NULL,
+                    PRIMARY KEY (batch_path, run_path),
+                    FOREIGN KEY (batch_path)
+                        REFERENCES batches (path)
+                        ON DELETE CASCADE
+                        ON UPDATE NO ACTION,
+                    FOREIGN KEY (run_path)
+                        REFERENCES runs (path)
+                        ON DELETE CASCADE
+                        ON UPDATE NO ACTION
+                );
 
-              -- Runs-Queries Join table
-              CREATE TABLE runs_queries
-              (
-                  run_path   TEXT NOT NULL,
-                  query_path TEXT NOT NULL,
-                  PRIMARY KEY (run_path, query_path),
-                  FOREIGN KEY (run_path)
-                      REFERENCES runs (path)
-                      ON DELETE CASCADE
-                      ON UPDATE NO ACTION,
-                  FOREIGN KEY (query_path)
-                      REFERENCES queries (path)
-                      ON DELETE CASCADE
-                      ON UPDATE NO ACTION
-              );
-    `, // language=default
-       err => {
-         if (err) {
-           logger.error(`An issue occurs when creating the database tables:\n${err}`)
-         } else {
-           logger.info(`Database tables successfully initialized.`)
-           scanForNewResults()
-         }
-       })
+                -- Runs-Queries Join table
+                CREATE TABLE IF NOT EXISTS runs_queries
+                (
+                    run_path   TEXT NOT NULL,
+                    query_path TEXT NOT NULL,
+                    PRIMARY KEY (run_path, query_path),
+                    FOREIGN KEY (run_path)
+                        REFERENCES runs (path)
+                        ON DELETE CASCADE
+                        ON UPDATE NO ACTION,
+                    FOREIGN KEY (query_path)
+                        REFERENCES queries (path)
+                        ON DELETE CASCADE
+                        ON UPDATE NO ACTION
+                );
+      `, // language=default
+         err => {
+           if (err) {
+             logger.error(`An issue occurs when creating the database tables:\n${err}`)
+             reject()
+           } else {
+             logger.info(`Database tables successfully initialized.`)
+             resolve()
+           }
+         })
+  })
 }
