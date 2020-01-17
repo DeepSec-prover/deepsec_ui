@@ -129,7 +129,7 @@ app.on('ready', async () => {
     try {
       await installVueDevtools()
     } catch (e) {
-      console.error('Vue Devtools failed to install:', e.toString())
+      logger.error('Vue Devtools failed to install:', e.toString())
     }
   }
 
@@ -147,7 +147,11 @@ app.on('ready', async () => {
       scanForNewResults()
       createWindow()
     })
-    .catch((error) => {throw error})
+    .catch(() => {
+      logger.error('Fail to connect to the database, force close the application')
+      // TODO maybe find a way to send an explicit error message to the user before to leave
+      app.quit()
+    })
 })
 
 app.on('quit', () => {
