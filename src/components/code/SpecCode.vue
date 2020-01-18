@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="code-block language-deepsec match-braces line-numbers scroll" :class="[codeTheme]" ref="codeDiv">
+    <div class="code-block language-deepsec match-braces line-numbers" :class="[codeTheme]" ref="codeDiv">
       <!-- Code Block -->
       <pre><code ref="code" ></code></pre>
     </div>
@@ -378,6 +378,10 @@ export default {
       new Popper(domElement, this.$refs.actionPopup, {
         placement: 'bottom-start', // Important to keep bottom-start for the calculus of dataPopper.
         strategy: 'fixed',
+        modifiers: {
+          hide: { enabled: false },
+          preventOverflow: { enabled: false }
+        },
         onUpdate: (data) => {
           this.setupDataPopper(data)
           Popper.Defaults.onUpdate(data)
@@ -468,6 +472,9 @@ export default {
       strategy: 'fixed',
       onCreate: (data) => {
         this.initialLeft = Math.floor(data.popper.left)
+      },
+      onUpdate: (data) => {
+          this.initialLeft = Math.floor(data.popper.left)
       }
      })
     /* TODO When i try to destroy the popper after it was created using destroy(),
@@ -481,11 +488,7 @@ export default {
 <style scoped>
   /* TODO remove horizontal scroll in <pre> for Simplebar */
   .code-block {
-    max-height: 90vh; /* 90% of the window height */
     margin-bottom: 15px;
-  }
-  .scroll{
-    overflow: scroll !important;
   }
 
   pre {

@@ -95,7 +95,10 @@ export default {
       cacheRecipes: new Map(),
       dataDrag: null,
       options: { buttonPin: false, buttonClose: false, left: 0, top: 0, dragCursor: '-moz-grab'},
-      marginDrag: 5
+      marginDragBot: 25,
+      marginDragTop: 5,
+      marginDragLeft: 15,
+      marginDragRight: 25,
     }
   },
   computed: {
@@ -135,17 +138,17 @@ export default {
         this.dataDrag = { left: 0, top: 0 }
       }
 
-      if (dataPopper.top + dataDrag.top < this.marginDrag) {
-        options.top = this.marginDrag - dataPopper.top
-      } else if (dataPopper.top + dataDrag.top + this.sizeOfFrame.height > dataPopper.heightWindow - this.marginDrag) {
-        options.top = dataPopper.heightWindow - this.marginDrag - this.sizeOfFrame.height - dataPopper.top
+      if (dataPopper.top + dataDrag.top < this.marginDragTop) {
+        options.top = this.marginDragTop - dataPopper.top
+      } else if (dataPopper.top + dataDrag.top + this.sizeOfFrame.height > dataPopper.heightWindow - this.marginDragBot) {
+        options.top = dataPopper.heightWindow - this.marginDragBot - this.sizeOfFrame.height - dataPopper.top
       } else {
         options.top = dataDrag.top
       }
-      if (dataPopper.left + dataDrag.left < this.initialLeft - this.marginDrag) {
-        options.left = this.initialLeft - this.marginDrag - dataPopper.left
-      } else if (dataPopper.left + dataDrag.left + this.sizeOfFrame.width > dataPopper.widthWindow + this.initialLeft - this.marginDrag) {
-        options.left = this.initialLeft + dataPopper.widthWindow - this.marginDrag - dataPopper.left - this.sizeOfFrame.width
+      if (dataPopper.left + dataDrag.left < this.initialLeft + this.marginDragLeft) {
+        options.left = this.initialLeft + this.marginDragLeft - dataPopper.left
+      } else if (dataPopper.left + dataDrag.left + this.sizeOfFrame.width > dataPopper.widthWindow + this.initialLeft - this.marginDragRight) {
+        options.left = this.initialLeft + dataPopper.widthWindow - this.marginDragRight - dataPopper.left - this.sizeOfFrame.width
       } else {
         options.left = dataDrag.left
       }
