@@ -5,7 +5,7 @@
     <spec-code-inline @click.native="codeClick" v-show="!editionEnable" :code="recipe"></spec-code-inline>
     <span v-if="!locked" class="edit-button">
       <el-link @click="clickEdit" :icon="editionEnable ? 'el-icon-check' : 'el-icon-edit'"></el-link>
-      <helper helper-id="recipes" v-if="editionEnable">
+      <helper class="helper-icon" helper-id="recipes" v-if="editionEnable && helperEnabled">
         <i class="el-icon-question"></i>
       </helper>
     </span>
@@ -15,6 +15,7 @@
 <script>
 import SpecCodeInline from './code/SpecCodeInline'
 import Helper from './helpers/Helper'
+import userSettings from 'electron-settings'
 
 export default {
   name: 'recipe-input',
@@ -35,7 +36,8 @@ export default {
   data () {
     return {
       editionEnable: false,
-      recipe: String
+      recipe: String,
+      helperEnabled: userSettings.get('showHelpers', true)
     }
   },
   methods: {
@@ -79,6 +81,10 @@ export default {
 <style scoped>
   .edit-button {
     padding: 0 5px;
+  }
+
+  .helper-icon {
+    opacity: 0.5;
   }
 
   .recipe-input {

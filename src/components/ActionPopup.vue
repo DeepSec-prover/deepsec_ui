@@ -35,13 +35,18 @@
       <!-- Buttons -->
       <div class="buttons">
         <span>
-          <el-button size="mini" type="info" @click="$emit('cancel')" plain>
+          <el-button size="mini"
+                     type="info"
+                     @click="$emit('cancel')"
+                     plain v-shortkey="['esc']"
+                     @shortkey.native="$emit('cancel')">
             Cancel
           </el-button>
         </span>
         <span>
           <el-button class="validate" size="mini" type="success" @click="validate" :plain="!finalAction"
-                     :disabled="!validRecipes">
+                     :disabled="!validRecipes"
+                     v-shortkey="['enter']" @shortkey.native="validate">
             {{ finalAction ? 'Validate' : 'Continue'}}
           </el-button>
         </span>
@@ -95,6 +100,9 @@ export default {
   },
   methods: {
     validate () {
+      if (!this.validRecipes) {
+        return
+      }
       if (this.action.type === 'bang') {
         this.$emit('user-select-action', {
           type: 'bang',
