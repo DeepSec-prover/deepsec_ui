@@ -2,7 +2,7 @@
   <div>
     <el-input v-if="!locked" ref="input" class="recipe-input" v-show="editionEnable" v-model="recipe" placeholder="recipe"
               @input="inputChange" @keyup.native.enter="validateInput"></el-input>
-    <spec-code-inline @click.native="codeClick" v-show="!editionEnable" :code="recipe"></spec-code-inline>
+    <spec-code-inline class="editable-code" @click.native="codeClick" v-show="!editionEnable" :code="recipe"></spec-code-inline>
     <span v-if="!locked" class="edit-button">
       <el-link @click="clickEdit" :icon="editionEnable ? 'el-icon-check' : 'el-icon-edit'"></el-link>
     </span>
@@ -79,5 +79,9 @@ export default {
 
   .recipe-input {
     width: auto;
+  }
+
+  .editable-code {
+    cursor: text;
   }
 </style>
