@@ -1,5 +1,6 @@
 <template>
-  <dialog-drag :options="{buttonPin: false, buttonClose: false, left: 0, top: 0}" class="popup">
+  <dialog-drag :options="options" class="popup" @drag-end="setOffset" >
+  <div ref="dragBox">
     <el-form v-if="action" size="mini">
       <!-- Bang -->
       <template v-if="action.type === 'bang'">
@@ -47,6 +48,7 @@
         </span>
       </div>
     </el-form>
+  </div>
   </dialog-drag>
 </template>
 
@@ -71,6 +73,17 @@ export default {
     atomic: {
       type: AtomicRenamer,
       require: true
+    },
+    dataPopper: {
+      type: Object
+    },
+    isVisible: {
+      type: Boolean,
+      require: true
+    },
+    initialLeft: {
+      type: Number,
+      require: true
     }
   },
   data () {
@@ -79,10 +92,20 @@ export default {
       recipes: {},
       nbProcessUnfolded: 1,
       validRecipes: false,
-      cacheRecipes: new Map()
+      cacheRecipes: new Map(),
+      dataDrag: null,
+      options: { buttonPin: false, buttonClose: false, left: 0, top: 0, dragCursor: '-moz-grab'},
+      marginDrag: 5
     }
   },
   computed: {
+    sizeOfFrame: function () {
+      if (this.isVisible) {
+        return { width: this.$refs.dragBox.clientWidth, height : this.$refs.dragBox.clientHeight  }
+      } else {
+        return { width: 0, height: 0 }
+      }
+    },
     transitionTypes: function () {
       return this.action.transitions.map(t => t.type)
     },
@@ -94,6 +117,39 @@ export default {
     }
   },
   methods: {
+    setOffset (data) {
+      this.dataDrag = {
+        left: data.left,
+        top: data.top
+      }
+      let options = this.options
+      this.reconfigure (this.dataPopper,this.dataDrag,options)
+      this.options = Object.assign({},options)
+        // Seems that just updating the value of options does not work. Creating
+        // a completely new option seems to trigger an update correctly.
+        // Trick obtained on Github by the creator of dialog-drag
+    },
+    reconfigure (dataPopper,dataDrag,options) {
+      if (!dataDrag) {
+        dataDrag = { left: 0, top: 0 }
+        this.dataDrag = { left: 0, top: 0 }
+      }
+
+      if (dataPopper.top + dataDrag.top < this.marginDrag) {
+        options.top = this.marginDrag - dataPopper.top
+      } else if (dataPopper.top + dataDrag.top + this.sizeOfFrame.height > dataPopper.heightWindow - this.marginDrag) {
+        options.top = dataPopper.heightWindow - this.marginDrag - this.sizeOfFrame.height - dataPopper.top
+      } else {
+        options.top = dataDrag.top
+      }
+      if (dataPopper.left + dataDrag.left < this.initialLeft - this.marginDrag) {
+        options.left = this.initialLeft - this.marginDrag - dataPopper.left
+      } else if (dataPopper.left + dataDrag.left + this.sizeOfFrame.width > dataPopper.widthWindow + this.initialLeft - this.marginDrag) {
+        options.left = this.initialLeft + dataPopper.widthWindow - this.marginDrag - dataPopper.left - this.sizeOfFrame.width
+      } else {
+        options.left = dataDrag.left
+      }
+    },
     validate () {
       if (this.action.type === 'bang') {
         this.$emit('user-select-action', {
@@ -185,6 +241,16 @@ export default {
     },
     selectedTransitionType () {
       this.checkRecipes()
+    },
+    dataPopper (newVal, _) {
+      let options = this.options
+      this.reconfigure(newVal,this.dataDrag,options)
+      this.options = Object.assign({},options)
+    },
+    isVisible (bool) {
+      if (!bool) {
+        this.dataDrag = { top: 0, left: 0 }
+      }
     }
   }
 }
@@ -196,6 +262,8 @@ export default {
   }
 
   .dialog-drag {
+    cursor: move;
+    cursor: -webkit-grab;
     width: max-content;
     border: 1px solid #EBEEF5;
     border-radius: 4px;

@@ -1,22 +1,26 @@
 <template>
-  <simplebar class="code-block language-deepsec match-braces line-numbers" :class="[codeTheme]">
-    <!-- Code Block -->
-    <pre><code ref="code"></code></pre>
+  <div>
+    <div class="code-block language-deepsec match-braces line-numbers scroll" :class="[codeTheme]" ref="codeDiv">
+      <!-- Code Block -->
+      <pre><code ref="code" ></code></pre>
+    </div>
     <!-- Action selection for interactive popup -->
     <div v-show="showActionPopup && selectedAction" ref="actionPopup">
       <action-popup :action="selectedAction"
                     :atomic="atomic"
+                    :dataPopper="dataPopper"
+                    :isVisible="(showActionPopup && selectedAction) ? true : false"
+                    :initialLeft="initialLeft"
                     @close="closeActionPopup"
                     @user-select-action="sendActionSelection"
                     @user-select-transition="selectAvailableTransitionActions"
                     @cancel="cancelActionSelection"></action-popup>
     </div>
-  </simplebar>
+  </div>
 </template>
 
 <script>
 import Prism from '../../util/prism-deepsec'
-import Simplebar from 'simplebar-vue'
 import 'simplebar/dist/simplebar.min.css'
 import logger from 'electron-log'
 import ProcessModel from '../../models/ProcessModel'
@@ -33,8 +37,7 @@ export default {
   name: 'spec-code',
   mixins: [codeMixin],
   components: {
-    ActionPopup,
-    Simplebar
+    ActionPopup
   },
   props: {
     atomic: {
@@ -88,7 +91,16 @@ export default {
       /**
        * The minimum number of lines that should be displayed.
        */
-      minimumNbLines: 15
+      minimumNbLines: 15,
+      /**
+       * The data obtained from Popper. Updated at each movement of scroll or change of window size, etc
+       */
+      dataPopper: null,
+      /**
+       * The initial left offset with respect to the left side of the code. Usefull when the
+       * trace and frame are on the left side of the process.
+       */
+      initialLeft: 0
     }
   },
   /**
@@ -324,6 +336,31 @@ export default {
       this.setupAvailableTransitions()
     },
     /**
+     * Retrieve the elements required to compute the offsets of dialog-drag.
+     * @param {Object} dataObject The data used by Popper.
+     */
+    setupDataPopper (data) {
+      // Test require in equivalence simulator when we swap from one process to
+      // another. The popper of the first spec code is alive but the div is not
+      // referenced.
+      if (this.$refs.codeDiv) {
+        this.dataPopper = {
+          top: Math.floor(data.popper.top),
+          left: Math.floor(data.popper.left),
+          widthWindow: this.$refs.codeDiv.clientWidth,
+          heightWindow: this.$refs.codeDiv.clientHeight
+        }
+      } else {
+        this.dataPopper = {
+          top: Math.floor(data.popper.top),
+          left: Math.floor(data.popper.left),
+          widthWindow: 0,
+          heightWindow: 0
+        }
+      }
+
+    },
+    /**
      * Display the action selector popup to ask more information to the user.
      *
      * @param {Object} action The action for which we want to display the popup.
@@ -338,7 +375,16 @@ export default {
       // Focus on this action
       this.setupFocus([ProcessModel.formatPositionToString(this.selectedAction.position)])
 
-      new Popper(domElement, this.$refs.actionPopup, { placement: 'top', strategy: 'fixed' })
+      new Popper(domElement, this.$refs.actionPopup, {
+        placement: 'bottom-start', // Important to keep bottom-start for the calculus of dataPopper.
+        strategy: 'fixed',
+        onUpdate: (data) => {
+          this.setupDataPopper(data)
+          Popper.Defaults.onUpdate(data)
+        },
+        onCreate: this.setupDataPopper
+       })
+
       this.showActionPopup = true
     },
     /**
@@ -417,6 +463,17 @@ export default {
     this.setupFocus(this.focusedPositions)
     // Trigger custom clickable action
     this.setupAvailableActions()
+    new Popper(this.$refs.codeDiv, this.$refs.actionPopup, {
+      placement: 'bottom-start', // Important to keep bottom-start for the calculus of initialLeft
+      strategy: 'fixed',
+      onCreate: (data) => {
+        this.initialLeft = Math.floor(data.popper.left)
+      }
+     })
+    /* TODO When i try to destroy the popper after it was created using destroy(),
+       the function onCreate is not called as if it was destroy before it had the
+       time to be created.
+    */
   }
 }
 </script>
@@ -426,6 +483,9 @@ export default {
   .code-block {
     max-height: 90vh; /* 90% of the window height */
     margin-bottom: 15px;
+  }
+  .scroll{
+    overflow: scroll !important;
   }
 
   pre {
