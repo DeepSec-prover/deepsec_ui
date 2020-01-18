@@ -1,6 +1,6 @@
 <template>
   <dialog-drag :options="{buttonPin: false, buttonClose: false, left: 0, top: 0}" class="popup">
-    <el-form v-if="action" size="mini">
+    <el-form v-if="action" size="mini" v-on:submit.prevent.native>
       <!-- Bang -->
       <template v-if="action.type === 'bang'">
         <el-form-item v-if="action.max_unfolding > 1" label="Nb unfolded">
