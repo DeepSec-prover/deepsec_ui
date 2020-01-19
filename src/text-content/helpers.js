@@ -35,7 +35,8 @@ const helpers = {
     io: 'Only display input/output transitions. &tau; transitions are hidden.',
     all: 'Display all transitions.'
   },
-  maxMemory: 'The maximum memory (RAM) used by OCaml during the running time.'
+  maxMemory: 'The maximum memory (RAM) used by OCaml during the running time.',
+  recipes: 'Public names created by the attacker starts with \'#\', e.g. \'#n\'.<br>Reference to the i-th term of the frame is written \'ax_i\'.<br>The i-th projection of an j-tuple is written \'proj_{i,j}\'. '
 }
 
 export default helpers
