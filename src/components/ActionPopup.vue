@@ -38,15 +38,17 @@
           <el-button size="mini"
                      type="info"
                      @click="$emit('cancel')"
-                     plain v-shortkey="['esc']"
-                     @shortkey.native="$emit('cancel')">
+                     v-shortkey="['esc']"
+                     @shortkey.native="$emit('cancel')"
+                     plain>
             Cancel
           </el-button>
         </span>
         <span>
           <el-button class="validate" size="mini" type="success" @click="validate" :plain="!finalAction"
                      :disabled="!validRecipes"
-                     v-shortkey="['enter']" @shortkey.native="validate">
+                     v-shortkey="['enter']"
+                     @shortkey.native="validate">
             {{ finalAction ? 'Validate' : 'Continue'}}
           </el-button>
         </span>
@@ -101,8 +103,9 @@ export default {
   methods: {
     validate () {
       if (!this.validRecipes) {
-        return
+        return // Do nothing (could happen with shortcut)
       }
+
       if (this.action.type === 'bang') {
         this.$emit('user-select-action', {
           type: 'bang',

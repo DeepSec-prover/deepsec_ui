@@ -5,7 +5,7 @@
     <spec-code-inline @click.native="codeClick" v-show="!editionEnable" :code="recipe"></spec-code-inline>
     <span v-if="!locked" class="edit-button">
       <el-link @click="clickEdit" :icon="editionEnable ? 'el-icon-check' : 'el-icon-edit'"></el-link>
-      <helper class="helper-icon" helper-id="recipes" v-if="editionEnable && helperEnabled">
+      <helper class="helper-icon" helper-id="recipes" v-if="editionEnable && helperEnabled" text-content>
         <i class="el-icon-question"></i>
       </helper>
     </span>
@@ -85,6 +85,7 @@ export default {
 
   .helper-icon {
     opacity: 0.5;
+    margin-left: 3px;
   }
 
   .recipe-input {
