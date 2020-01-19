@@ -13,7 +13,6 @@ export function getBatches () {
       const batches = []
 
       for (const row of rows) {
-        console.log(row)
         batches.push(new BatchModel(row, false, true, true))
       }
 
