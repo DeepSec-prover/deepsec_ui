@@ -94,7 +94,7 @@ export function scanForNewResults () {
           for (let batchPath of diff) {
             let batch = new BatchModel(batchPath + '.json', false)
             batch.loadRelationsDeep() // Load all runs and queries
-            insertBatch(batch)
+            updateOrInsertBatch(batch)
           }
         }
       })
@@ -105,12 +105,12 @@ export function scanForNewResults () {
 }
 
 /**
- * Insert a new batch in the database.
+ * Update the batch if exist in the database or insert a new batch in the database.
  *
- * @param {BatchModel} batch The batch to insert (with all relation loaded)
+ * @param {BatchModel} batch The batch to update or insert (with all relation loaded)
  */
-export function insertBatch (batch) {
-  db.exec(generateBatchInsertSql(batch), err => {
+export function updateOrInsertBatch (batch) {
+  db.exec(generateBatchUpdateOrInsertSql(batch), err => {
     if (err) {
       logger.error(
         `An issue occurs when inserting a new batch (${batch.path}) in the database:\n${err}`)
@@ -231,53 +231,94 @@ export function createTablesIfNotExist () {
 }
 
 /**
- * Generate an SQL insert query for a specific batch.
+ * Generate an SQL update or insert query for a specific batch.
  *
  * @param {BatchModel} batch The batch to insert (with all relation loaded)
  * @return {String} The SQL insert query for the batch its runs and queries
  */
-function generateBatchInsertSql (batch) {
+function generateBatchUpdateOrInsertSql (batch) {
   const batchTitle = batch.defaultTitle ? `'${batch.defaultTitle}'` : 'NULL'
   const batchPath = batch.path.replace('.json', '')
 
   // language=SQLite
-  // Insert the batch
+  // Try to update then insert the batch
   let sql = `
-  INSERT INTO batches (path, status, start_time, end_time, import_date, title, debug)
-  VALUES ('${batchPath}', '${batch.status}', ${timeToSql(batch.startTime)},
-          ${timeToSql(batch.endTime)}, ${timeToSql(batch.importTime)}, ${batchTitle},
+  UPDATE OR IGNORE batches
+  SET status='${batch.status}',
+      start_time=${timeToSql(batch.startTime)},
+      end_time=${timeToSql(batch.endTime)},
+      import_date=${timeToSql(batch.importTime)},
+      title=${batchTitle},
+      debug=${Number(batch.debug)}
+  WHERE path='${batchPath}';
+
+  INSERT OR IGNORE INTO batches (path, status, start_time, end_time, import_date, title, debug)
+  VALUES ('${batchPath}',
+          '${batch.status}',
+          ${timeToSql(batch.startTime)},
+          ${timeToSql(batch.endTime)},
+          ${timeToSql(batch.importTime)},
+          ${batchTitle},
           ${Number(batch.debug)});
   `
 
-  for (const run of batch.runs) {
-    const runPath = run.path.replace('.json', '')
+  if (batch.runs) {
+    for (const run of batch.runs) {
+      const runPath = run.path.replace('.json', '')
 
-    // Insert the runs
-    sql += `
-    INSERT INTO runs (path, status, start_time, end_time, input_file)
-    VALUES ('${runPath}', '${run.status}', ${timeToSql(run.startTime)}, ${timeToSql(run.endTime)},
-            '${run.inputFile}');
-  `
-
-    // Insert the batch-run relation
-    sql += `
-    INSERT INTO batches_runs (batch_path, run_path) VALUES ('${batch.path}','${run.path}');
-    `
-
-    for (const query of run.queries) {
-      const queryPath = query.path.replace('.json', '')
-
-      // Insert the query
+      // Try to update then insert the run
       sql += `
-      INSERT INTO queries (path, status, start_time, end_time, q_index, semantics, type)
-      VALUES ('${queryPath}', '${query.status}', ${timeToSql(query.startTime)},
-              ${timeToSql(query.endTime)}, ${query.index}, '${query.semantics}', '${query.type}') ;
+      UPDATE OR IGNORE runs
+      SET status='${run.status}',
+          start_time=${timeToSql(run.startTime)},
+          end_time=${timeToSql(run.endTime)},
+          input_file='${run.inputFile}'
+      WHERE path='${runPath}';
+  
+      INSERT OR IGNORE INTO runs (path, status, start_time, end_time, input_file)
+      VALUES ('${runPath}',
+              '${run.status}',
+              ${timeToSql(run.startTime)},
+              ${timeToSql(run.endTime)},
+              '${run.inputFile}');
       `
 
-      // Insert the run-query relation
+      // Insert the batch-run relation
       sql += `
-      INSERT INTO runs_queries (run_path, query_path) VALUES ('${run.path}', '${query.path}');
+      INSERT OR IGNORE INTO batches_runs (batch_path, run_path) VALUES ('${batch.path}','${run.path}');
       `
+
+      if (run.queries) {
+        for (const query of run.queries) {
+          const queryPath = query.path.replace('.json', '')
+
+          // Try to update then insert the query
+          sql += `
+          UPDATE OR IGNORE queries
+          SET status='${query.status}', 
+              start_time=${timeToSql(query.startTime)},
+              end_time=${timeToSql(query.endTime)},
+              q_index=${query.index},
+              semantics='${query.semantics}',
+              type='${query.type}'
+          WHERE path='${queryPath}';
+      
+          INSERT OR IGNORE INTO queries (path, status, start_time, end_time, q_index, semantics, type)
+          VALUES ('${queryPath}',
+                  '${query.status}',
+                  ${timeToSql(query.startTime)},
+                  ${timeToSql(query.endTime)},
+                  ${query.index},
+                  '${query.semantics}',
+                  '${query.type}');
+          `
+
+          // Insert the run-query relation
+          sql += `
+          INSERT OR IGNORE INTO runs_queries (run_path, query_path) VALUES ('${run.path}', '${query.path}');
+          `
+        }
+      }
     }
   }
 

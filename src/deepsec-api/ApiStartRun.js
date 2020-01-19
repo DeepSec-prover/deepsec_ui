@@ -4,6 +4,7 @@ import BatchModel from '../models/BatchModel'
 import RunModel from '../models/RunModel'
 import QueryModel from '../models/QueryModel'
 import { ApiManager } from './ApiManager'
+import { updateOrInsertBatch } from '../database/database'
 
 export class ApiStartRun extends ApiManager {
   static namespace () { return 'start-run' }
@@ -53,6 +54,9 @@ export class ApiStartRun extends ApiManager {
   // ====================== Normal Answers ======================
 
   batchStarted (answer) {
+    const batch = new BatchModel(answer.file)
+    updateOrInsertBatch(batch) // Save it in the database
+
     // Save IPC id and setup queries handlers
     this.ipcId = answer.file
     this.addQueryHandler('cancel-batch', this.cancelBatch)
@@ -197,7 +201,12 @@ export class ApiStartRun extends ApiManager {
   batchEnded (answer) {
     let title
     let type
-    const batch = new BatchModel(answer.file, true) // Load with runs
+
+    // Load result file with runs and queries
+    const batch = new BatchModel(answer.file)
+    batch.loadRelationsDeep()
+    updateOrInsertBatch(batch) // Save it in the database
+
     const nbRun = batch.nbRun()
     const runStatus = batch.runsStatusCount()
 

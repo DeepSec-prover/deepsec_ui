@@ -13,7 +13,7 @@ export default class BatchModel extends ResultModel {
     this.gitHash = json.git_hash
     this.ocamlVersion = json.ocaml_version
 
-    this.debug = json.debug === true || json.debug === 1
+    this.debug = json.debug === true || json.debug === 1 // Boolean are stored as int in the database
     this.pid = json.pid
 
     if (json.command_options) {
