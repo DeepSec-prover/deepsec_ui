@@ -30,7 +30,7 @@
             <helper helper-id="runOptions.por" text-content>
               {{ userPorStr }}
             </helper>
-            <span class="computed-conf" v-if="computedConfig.por && userConfig.por !== computedConfig.por">
+            <span class="computed-conf" v-if="computedConfig.por !== undefined && userConfig.por !== computedConfig.por">
               (<helper helper-str="Value computed during the run." helper-id="runOptions.por"
                        text-content>{{ computedConfig.por ? 'yes' : 'no' }}</helper>)
             </span>
@@ -42,7 +42,7 @@
               {{ userDistributedStr }}
             </helper>
             <template v-else>-</template>
-            <span class="computed-conf" v-if="computedConfig.distributed && userConfig.distributed !== computedConfig.distributed">
+            <span class="computed-conf" v-if="computedConfig.distributed !== undefined && userConfig.distributed !== computedConfig.distributed">
               (<helper helper-str="Value computed during the run."
                        :helper-id="`runOptions.distributed.${computedConfig.distributed}`"
                        text-content>{{ computedConfig.distributed ? 'yes' : 'no' }}</helper>)
