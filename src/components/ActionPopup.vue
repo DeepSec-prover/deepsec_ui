@@ -1,6 +1,6 @@
 <template>
   <dialog-drag :options="{buttonPin: false, buttonClose: false, left: 0, top: 0}" class="popup">
-    <el-form v-if="action" size="mini">
+    <el-form v-if="action" size="mini" v-on:submit.prevent.native>
       <!-- Bang -->
       <template v-if="action.type === 'bang'">
         <el-form-item v-if="action.max_unfolding > 1" label="Nb unfolded">
@@ -35,13 +35,20 @@
       <!-- Buttons -->
       <div class="buttons">
         <span>
-          <el-button size="mini" type="info" @click="$emit('cancel')" plain>
+          <el-button size="mini"
+                     type="info"
+                     @click="$emit('cancel')"
+                     v-shortkey="['esc']"
+                     @shortkey.native="$emit('cancel')"
+                     plain>
             Cancel
           </el-button>
         </span>
         <span>
           <el-button class="validate" size="mini" type="success" @click="validate" :plain="!finalAction"
-                     :disabled="!validRecipes">
+                     :disabled="!validRecipes"
+                     v-shortkey="['enter']"
+                     @shortkey.native="validate">
             {{ finalAction ? 'Validate' : 'Continue'}}
           </el-button>
         </span>
@@ -95,6 +102,10 @@ export default {
   },
   methods: {
     validate () {
+      if (!this.validRecipes) {
+        return // Do nothing (could happen with shortcut)
+      }
+
       if (this.action.type === 'bang') {
         this.$emit('user-select-action', {
           type: 'bang',
