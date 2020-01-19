@@ -8,7 +8,7 @@ export default class ProcessUserModel extends ProcessModel {
     this.statusEquivalence = null
 
     this.actionsHistory = []
-    this.actionsRestore = []
+    this.indexHistory = -1
   }
 
   update (answer) {
@@ -20,6 +20,17 @@ export default class ProcessUserModel extends ProcessModel {
     }
   }
 
+  /**
+   * Cleanup the history by removing the actions that occurs after
+   * the indexHistory
+   */
+  cleanupHistory () {
+    const size = this.actionsHistory.length
+    for (let i = this.indexHistory + 1; i < size; i++) {
+      this.actionsHistory.pop()
+    }
+  }
+
   gotoAction (actionId, saveHistory = true) {
     this.loading = true
 
@@ -27,9 +38,15 @@ export default class ProcessUserModel extends ProcessModel {
     const removedActions = this.actions.splice(actionId + 1)
 
     if (saveHistory) {
+      this.cleanupHistory ()
+      // Save prev and next action
       this.actionsHistory.push(
-        () => this.executeActions(removedActions, false)
+        {
+          undo: () => this.executeActions(removedActions, false),
+          redo: () => this.gotoAction(actionId,false)
+        }
       )
+      this.indexHistory++
     }
     super.gotoAction(actionId)
   }
@@ -45,10 +62,15 @@ export default class ProcessUserModel extends ProcessModel {
 
     if (saveHistory) {
       const currentId = this.actions.length - 1
-      // Save reverse action
+      this.cleanupHistory ()
+      // Save prev and next action
       this.actionsHistory.push(
-        () => this.gotoAction(currentId, false)
+        {
+          undo: () => this.gotoAction(currentId, false),
+          redo: () => this.executeActions (actions, false)
+        }
       )
+      this.indexHistory++
     }
 
     // Send query
@@ -69,10 +91,15 @@ export default class ProcessUserModel extends ProcessModel {
 
     if (saveHistory) {
       const currentId = this.actions.length - 1
-      // Save reverse action
+      this.cleanupHistory ()
+      // Save prev and next action
       this.actionsHistory.push(
-        () => this.gotoAction(currentId, false)
+        {
+          undo: () => this.gotoAction(currentId, false),
+          redo: () => this.nextUserAction (action, false)
+        }
       )
+      this.indexHistory++
     }
 
     // Send query
@@ -85,7 +112,7 @@ export default class ProcessUserModel extends ProcessModel {
    * @returns {boolean} True if it's possible to undo the last use action.
    */
   hasBackHistory () {
-    return this.actionsHistory.length > 0
+    return this.indexHistory >= 0
   }
 
   /**
@@ -95,7 +122,7 @@ export default class ProcessUserModel extends ProcessModel {
    * @returns {boolean} True if it's possible to redo an action.
    */
   hasNextHistory () {
-    return this.actionsRestore.length > 0
+    return this.indexHistory < this.actionsHistory.length - 1
   }
 
   /**
@@ -103,16 +130,26 @@ export default class ProcessUserModel extends ProcessModel {
    */
   undo () {
     this.loading = true
-
-    const reverseAction = this.actionsHistory.pop()
-    reverseAction()
+    /* The indexHistory corresponds to the index of the current visible action.
+       Hence to undo an action, we next to apply the 'undo' function of this index.
+    */
+    const undoAction = this.actionsHistory[this.indexHistory].undo
+    this.indexHistory--
+    undoAction()
   }
 
   /**
    * Redo the last undo action.
    */
   redo () {
-
+    this.loading = true
+    /* The indexHistory corresponds to the index of the current visible action.
+       Hence to redo an action, we next to apply the 'redo' function of the index
+       indexHistory+1.
+    */
+    this.indexHistory++
+    const redoAction = this.actionsHistory[this.indexHistory].redo
+    redoAction()
   }
 
   nbVisibleAction () {
@@ -141,7 +178,7 @@ export default class ProcessUserModel extends ProcessModel {
         processModel.actions = []
         // remove undo history
         processModel.actionsHistory = []
-        processModel.actionsRestore = []
+        processModel.indexHistory = -1
       }
       return processModel
     }

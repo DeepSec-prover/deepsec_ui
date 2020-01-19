@@ -1,3 +1,5 @@
+const ctrlOrCmdStr = process.platform === 'darwin' ? '&#8984;' : 'ctrl '
+
 const helpers = {
   runOptions: {
     defaultSemantic: 'Specify the default semantics of the process calculus.',
@@ -35,7 +37,16 @@ const helpers = {
     io: 'Only display input/output transitions. &tau; transitions are hidden.',
     all: 'Display all transitions.'
   },
-  maxMemory: 'The maximum memory (RAM) used by OCaml during the running time.'
+  maxMemory: 'The maximum memory (RAM) used by OCaml during the running time.',
+  shortkeys:{
+    init: 'Go to initial state.<br><b>Short Key</b>: ' + ctrlOrCmdStr + '&#8592;',
+    prev: 'Go to previous action.<br><b>Short Key</b>: &#8592;',
+    next: 'Go to next action.<br><b>Short Key</b>: &#8594;',
+    last: 'Go to last action.<br><b>Short Key</b>: ' + ctrlOrCmdStr + '&#8594;',
+    undo: 'Undo action.<br><b>Short Key</b> : ' + ctrlOrCmdStr + 'Z',
+    redo: 'Redo action.<br><b>Short Key</b> : ' + ctrlOrCmdStr + '&#8679;Z',
+
+  }
 }
 
 export default helpers
