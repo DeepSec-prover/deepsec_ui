@@ -7,6 +7,10 @@ function formatShortKey (list) {
           break
         case 'shift': return process.platform === 'darwin' ? '&#8679;' : 'Shift'
           break
+        case 'left': return process.platform === 'darwin' ? '&larr;' : 'Left'
+          break
+        case 'right': return process.platform === 'darwin' ? '&rarr;' : 'Right'
+          break
         default: return cmd
       }
     }
@@ -58,10 +62,10 @@ const helpers = {
   },
   maxMemory: 'The maximum memory (RAM) used by OCaml during the running time.',
   shortkeys:{
-    init: 'Go to initial state.<br><b>Short Key</b>: ' + formatShortKey(['ctrlOrCmd','&larr;']),
-    prev: 'Go to previous action.<br><b>Short Key</b>: &larr;',
-    next: 'Go to next action.<br><b>Short Key</b>: &rarr;',
-    last: 'Go to last action.<br><b>Short Key</b>: ' + formatShortKey(['ctrlOrCmd','&rarr;']),
+    init: 'Go to initial state.<br><b>Short Key</b>: ' + formatShortKey(['ctrlOrCmd','left']),
+    prev: 'Go to previous action.<br><b>Short Key</b>: ' + formatShortKey(['left']),
+    next: 'Go to next action.<br><b>Short Key</b>: ' + formatShortKey(['right']),
+    last: 'Go to last action.<br><b>Short Key</b>: ' + formatShortKey(['ctrlOrCmd','right']),
     undo: 'Undo action.<br><b>Short Key</b> : ' + formatShortKey(['ctrlOrCmd','Z']),
     redo: 'Redo action.<br><b>Short Key</b> : ' + formatShortKey(['ctrlOrCmd','shift','Z']),
 
