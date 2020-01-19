@@ -13,7 +13,7 @@ export default class BatchModel extends ResultModel {
     this.gitHash = json.git_hash
     this.ocamlVersion = json.ocaml_version
 
-    this.debug = json.debug
+    this.debug = json.debug === true || json.debug === 1
     this.pid = json.pid
 
     if (json.command_options) {

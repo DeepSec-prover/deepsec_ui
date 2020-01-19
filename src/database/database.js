@@ -138,8 +138,9 @@ export function createTablesIfNotExist () {
                     start_time  DATE NOT NULL,
                     end_time    DATE,
                     import_date DATE,
-                    stared      INTEGER DEFAULT 0,
-                    title       TEXT
+                    stared      INT2 DEFAULT 0,
+                    title       TEXT,
+                    debug       INT2 NOT NULL
                 );
 
                 -- Batches indexes
@@ -156,7 +157,7 @@ export function createTablesIfNotExist () {
                     status     TEXT NOT NULL,
                     start_time DATE,
                     end_time   DATE,
-                    stared     INTEGER DEFAULT 0,
+                    stared     INT2 DEFAULT 0,
                     input_file TEXT NOT NULL
                 );
 
@@ -173,7 +174,7 @@ export function createTablesIfNotExist () {
                     status       TEXT    NOT NULL,
                     start_time   DATE,
                     end_time     DATE,
-                    stared       INTEGER DEFAULT 0,
+                    stared       INT2    DEFAULT 0,
                     q_index      INTEGER NOT NULL,
                     semantics    TEXT    NOT NULL,
                     type         TEXT    NOT NULL,
@@ -242,9 +243,10 @@ function generateBatchInsertSql (batch) {
   // language=SQLite
   // Insert the batch
   let sql = `
-  INSERT INTO batches (path, status, start_time, end_time, import_date, title)
+  INSERT INTO batches (path, status, start_time, end_time, import_date, title, debug)
   VALUES ('${batchPath}', '${batch.status}', ${timeToSql(batch.startTime)},
-          ${timeToSql(batch.endTime)}, ${timeToSql(batch.importTime)}, ${batchTitle});
+          ${timeToSql(batch.endTime)}, ${timeToSql(batch.importTime)}, ${batchTitle},
+          ${Number(batch.debug)});
   `
 
   for (const run of batch.runs) {
