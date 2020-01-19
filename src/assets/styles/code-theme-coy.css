@@ -24,6 +24,4 @@
 .coy.language-deepsec code {
     background-size: 3rem 40px !important;
     line-height: 20px !important; /* TODO fix line background don't match */
-    max-height: 90vh;
-    overflow: auto;
 }

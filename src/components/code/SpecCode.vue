@@ -105,7 +105,6 @@ export default {
        * trace and frame are on the left side of the process.
        */
       initialLeft: 0,
-
       initialPopper: null,
       mainPopper: null
     }
@@ -344,7 +343,7 @@ export default {
     },
     /**
      * Retrieve the elements required to compute the offsets of dialog-drag.
-     * @param {Object} dataObject The data used by Popper.
+     * @param {Object} data The data used by Popper.
      */
     setupDataPopper (data) {
       // Test require in equivalence simulator when we swap from one process to
@@ -365,7 +364,6 @@ export default {
           heightWindow: 0
         }
       }
-
     },
     /**
      * Display the action selector popup to ask more information to the user.
@@ -497,7 +495,6 @@ export default {
 </script>
 
 <style scoped>
-  /* TODO remove horizontal scroll in <pre> for Simplebar */
   .code-block {
     margin-bottom: 15px;
   }
