@@ -21,14 +21,10 @@ export default class ProcessUserModel extends ProcessModel {
   }
 
   /**
-   * Cleanup the history by removing the actions that occurs after
-   * the indexHistory
+   * Cleanup the history by removing the actions that occurs after the indexHistory
    */
   cleanupHistory () {
-    const size = this.actionsHistory.length
-    for (let i = this.indexHistory + 1; i < size; i++) {
-      this.actionsHistory.pop()
-    }
+    this.actionsHistory.splice(this.indexHistory + 1)
   }
 
   gotoAction (actionId, saveHistory = true) {
@@ -38,12 +34,12 @@ export default class ProcessUserModel extends ProcessModel {
     const removedActions = this.actions.splice(actionId + 1)
 
     if (saveHistory) {
-      this.cleanupHistory ()
+      this.cleanupHistory()
       // Save prev and next action
       this.actionsHistory.push(
         {
           undo: () => this.executeActions(removedActions, false),
-          redo: () => this.gotoAction(actionId,false)
+          redo: () => this.gotoAction(actionId, false)
         }
       )
       this.indexHistory++
@@ -62,12 +58,12 @@ export default class ProcessUserModel extends ProcessModel {
 
     if (saveHistory) {
       const currentId = this.actions.length - 1
-      this.cleanupHistory ()
+      this.cleanupHistory()
       // Save prev and next action
       this.actionsHistory.push(
         {
           undo: () => this.gotoAction(currentId, false),
-          redo: () => this.executeActions (actions, false)
+          redo: () => this.executeActions(actions, false)
         }
       )
       this.indexHistory++
@@ -91,12 +87,12 @@ export default class ProcessUserModel extends ProcessModel {
 
     if (saveHistory) {
       const currentId = this.actions.length - 1
-      this.cleanupHistory ()
+      this.cleanupHistory()
       // Save prev and next action
       this.actionsHistory.push(
         {
           undo: () => this.gotoAction(currentId, false),
-          redo: () => this.nextUserAction (action, false)
+          redo: () => this.nextUserAction(action, false)
         }
       )
       this.indexHistory++
