@@ -148,6 +148,7 @@
             <spec-code :code="processUserStr"
                        :atomic="processUser.atomic"
                        :available-actions="processUser.getCurrentAvailableActions()"
+                       :singleColumn="singleColumn"
                        @user-select-action="executeAction"></spec-code>
           </el-col>
         </el-row>

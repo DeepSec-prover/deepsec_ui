@@ -2,7 +2,7 @@
   <div>
     <el-input v-if="!locked" ref="input" class="recipe-input" v-show="editionEnable" v-model="recipe" placeholder="recipe"
               @input="inputChange" @keyup.native.enter="validateInput"></el-input>
-    <spec-code-inline @click.native="codeClick" v-show="!editionEnable" :code="recipe"></spec-code-inline>
+    <spec-code-inline :class="{'editable-code': !locked}" @click.native="codeClick" v-show="!editionEnable" :code="recipe"></spec-code-inline>
     <span v-if="!locked" class="edit-button">
       <el-link @click="clickEdit" :icon="editionEnable ? 'el-icon-check' : 'el-icon-edit'"></el-link>
       <helper class="helper-icon" helper-id="recipes" v-if="editionEnable && helperEnabled" text-content>
@@ -50,6 +50,7 @@ export default {
       if (this.editionEnable) {
         this.$nextTick(() => {
           this.$refs.input.focus()
+          this.$emit('popper-to-update')
         })
       }
     },
@@ -59,11 +60,15 @@ export default {
 
         this.$nextTick(() => {
           this.$refs.input.focus()
+          this.$emit('popper-to-update')
         })
       }
     },
     validateInput (event) {
       this.editionEnable = false
+      this.$nextTick(() => {
+        this.$emit('popper-to-update')
+      })
     }
   },
   watch: {
@@ -90,5 +95,9 @@ export default {
 
   .recipe-input {
     width: auto;
+  }
+
+  .editable-code {
+    cursor: text;
   }
 </style>

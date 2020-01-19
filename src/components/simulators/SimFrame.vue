@@ -49,7 +49,7 @@ export default {
       return namesArray.join(', ')
     },
     nameExists: function () {
-      return this.names.length !== 0
+      return this.names && this.names.length !== 0
     }
   }
 }

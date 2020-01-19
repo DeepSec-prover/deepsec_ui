@@ -25,17 +25,19 @@
     position: relative;
     top: 0.8ex;
     font-size: 75%;
-    line-height: 0px;
+    line-height: 0;
 }
 
 .token.sup {
     position: relative;
     bottom: 0.8ex;
     font-size: 75%;
-    line-height: 0px;
+    line-height: 0;
 }
 
-code {
+.language-deepsec code {
     font-family: Monaco-local, monospace !important;
     font-size: 0.8rem !important;
+    max-height: 90vh !important; /* 90% of the window height */
+    overflow: auto !important;
 }
