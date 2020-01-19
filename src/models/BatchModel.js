@@ -15,8 +15,13 @@ export default class BatchModel extends ResultModel {
 
     this.debug = json.debug
     this.pid = json.pid
-    this.commandOptions = RunConfigModel.loadFromJson(json.command_options)
-    this.computedOptions = RunConfigModel.loadFromJson(json.computed_options)
+
+    if (json.command_options) {
+      this.commandOptions = RunConfigModel.loadFromJson(json.command_options)
+    }
+    if (json.computed_options) {
+      this.computedOptions = RunConfigModel.loadFromJson(json.computed_options)
+    }
 
     this.runFiles = json.run_files
 
@@ -27,6 +32,10 @@ export default class BatchModel extends ResultModel {
     }
 
     if (json.import_date) {
+      // In result files the dates are in seconds
+      if (!this.isDbPreview) {
+        json.import_date = json.import_date * 1000
+      }
       this.importTime = new Date(json.import_date * 1000)
     } else {
       this.importTime = null
@@ -101,7 +110,7 @@ export default class BatchModel extends ResultModel {
   }
 
   nbRun () {
-    return this.runFiles.length
+    return this.runFiles ? this.runFiles.length : undefined
   }
 
   nbRunCompleted () {

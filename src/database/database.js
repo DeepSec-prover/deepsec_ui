@@ -1,7 +1,7 @@
 import sql from 'sqlite3'
 import logger from 'electron-log'
 import settings from '../../settings'
-import { app } from 'electron'
+import { app, ipcMain } from 'electron'
 import path from 'path'
 import { isFile, setDifference } from '../util/misc'
 import fs from 'fs'
@@ -16,7 +16,7 @@ const dbPath = path.join(app.getPath('userData'), 'results.db')
 let db = null
 
 /**
- * Connect to the database.
+ * Connect to the database and wait for renderer IPC requests.
  * If the file doesn't exist create all tables.
  *
  * @return {Promise} Result promise
@@ -37,6 +37,10 @@ export function connectDatabase () {
         reject()
       } else {
         logger.info(`Database successfully connected (${dbPath}).`)
+
+        // Wait for renderer requests
+        listenRendererQueries()
+
         resolve()
       }
     })
@@ -68,7 +72,8 @@ export function scanForNewResults () {
   fs.readdir(resultsDirPath, (_, files) => {
     if (files && files.length > 0) {
       // Filter and rename
-      files = files.filter(file => file.endsWith('.json')) // TODO also filter file date to improve perf
+      // TODO also filter file date to improve perf
+      files = files.filter(file => file.endsWith('.json'))
                    .map(file => file.replace('.json', ''))
 
       logger.debug(
@@ -112,28 +117,6 @@ export function insertBatch (batch) {
     } else {
       logger.verbose(`Batch ${batch.path} successfully inserted in the database`)
     }
-  })
-}
-
-export function getBatches () {
-  return new Promise((resolve, reject) => {
-    db.all(
-        `SELECT *
-         FROM batches`,
-      [],
-      (err, rows) => {
-        if (err) {
-          logger.error(`An issue occurs when fetching batches from the database:\n${err}`)
-          reject()
-        } else {
-          logger.verbose(`${rows.length} batches fetch successfully from the database`)
-          const batches = []
-
-          for (const row of rows) {
-            console.log(row)
-          }
-        }
-      })
   })
 }
 
@@ -305,4 +288,22 @@ function generateBatchInsertSql (batch) {
  */
 function timeToSql (time) {
   return time ? time.getTime() : 'NULL'
+}
+
+/**
+ * Setup listener for renderer.
+ * @see ./database-remote.js
+ */
+function listenRendererQueries () {
+  ipcMain.on('get-rows', (event, sqlQuery) => {
+    db.all(sqlQuery, [], (err, rows) => {
+      if (err) {
+        logger.error(`An issue occurs when fetching rows from the database:\n${err}`)
+        event.reply('get-rows-result', [])
+      } else {
+        logger.verbose(`${rows.length} rows successfully fetched from the database`)
+        event.reply('get-rows-result', rows)
+      }
+    })
+  })
 }

@@ -33,7 +33,7 @@
 <script>
 import ResultStatus from './ResultStatus'
 import Date from '../Date'
-import { getBatches } from '../../util/results-loader'
+import { getBatches } from '../../database/database-remote'
 
 export default {
   name: 'results-table',
@@ -52,7 +52,7 @@ export default {
     }
   },
   beforeMount () {
-    this.batches = getBatches()
+    getBatches().then(value => this.batches = value)
   }
 }
 </script>
