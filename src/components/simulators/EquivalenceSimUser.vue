@@ -5,6 +5,7 @@
       <spec-code :code="processStr"
                  :atomic="processUser.atomic"
                  :available-actions="processUser.getCurrentAvailableActions()"
+                 :singleColumn="singleColumn"
                  @user-select-action="executeAction"></spec-code>
     </el-col>
     <el-col :md="8">
@@ -72,6 +73,10 @@ export default {
     processUser: {
       type: ProcessUserModel,
       required: true
+    },
+    singleColumn: {
+      type: Boolean,
+      default: false
     }
   },
   data () {

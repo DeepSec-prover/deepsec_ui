@@ -56,6 +56,10 @@ export default {
     availableActions: {
       type: Array,
       default: () => []
+    },
+    singleColumn: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -100,7 +104,10 @@ export default {
        * The initial left offset with respect to the left side of the code. Usefull when the
        * trace and frame are on the left side of the process.
        */
-      initialLeft: 0
+      initialLeft: 0,
+
+      initialPopper: null,
+      mainPopper: null
     }
   },
   /**
@@ -375,7 +382,7 @@ export default {
       // Focus on this action
       this.setupFocus([ProcessModel.formatPositionToString(this.selectedAction.position)])
 
-      new Popper(domElement, this.$refs.actionPopup, {
+      this.mainPopper = new Popper(domElement, this.$refs.actionPopup, {
         placement: 'bottom-start', // Important to keep bottom-start for the calculus of dataPopper.
         strategy: 'fixed',
         modifiers: {
@@ -457,6 +464,14 @@ export default {
         this.clearAvailableActions()
       }
       this.setupAvailableActions()
+    },
+    singleColumn (newVal, oldVal) {
+      if (this.initialPopper) {
+        this.initialPopper.scheduleUpdate()
+      }
+      if (this.mainPopper) {
+        this.mainPopper.scheduleUpdate()
+      }
     }
   },
   /**
@@ -467,7 +482,7 @@ export default {
     this.setupFocus(this.focusedPositions)
     // Trigger custom clickable action
     this.setupAvailableActions()
-    new Popper(this.$refs.codeDiv, this.$refs.actionPopup, {
+    this.initialPopper = new Popper(this.$refs.codeDiv, this.$refs.actionPopup, {
       placement: 'bottom-start', // Important to keep bottom-start for the calculus of initialLeft
       strategy: 'fixed',
       onCreate: (data) => {
