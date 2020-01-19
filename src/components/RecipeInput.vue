@@ -43,6 +43,7 @@ export default {
       if (this.editionEnable) {
         this.$nextTick(() => {
           this.$refs.input.focus()
+          this.$emit('popper-to-update')
         })
       }
     },
@@ -52,12 +53,16 @@ export default {
 
         this.$nextTick(() => {
           this.$refs.input.focus()
+          this.$emit('popper-to-update')
         })
       }
     },
     validateInput (event) {
       event.preventDefault()
       this.editionEnable = false
+      this.$nextTick(() => {
+        this.$emit('popper-to-update')
+      })
     }
   },
   watch: {

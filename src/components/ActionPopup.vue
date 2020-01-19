@@ -23,14 +23,16 @@
           <div class="recipe-label">Channel's recipe:</div>
           <recipe-input v-model="recipes[selectedTransitionType].recipe_channel"
                         :locked="recipes[selectedTransitionType].locked"
-                        @input="checkRecipes"></recipe-input>
+                        @input="checkRecipes"
+                        @popper-to-update="updatePopper"></recipe-input>
         </template>
         <!-- Term -->
         <template v-if="selectedTransitionType === 'direct' && action.type === 'input'">
           <div class="recipe-label">Term's recipe:</div>
           <recipe-input v-model="recipes[selectedTransitionType].recipe_term"
                         :locked="recipes[selectedTransitionType].locked"
-                        @input="checkRecipes"></recipe-input>
+                        @input="checkRecipes"
+                        @popper-to-update="updatePopper"></recipe-input>
         </template>
       </template>
       <!-- Buttons -->
@@ -102,13 +104,6 @@ export default {
     }
   },
   computed: {
-    sizeOfFrame: function () {
-      if (this.isVisible) {
-        return { width: this.$refs.dragBox.clientWidth, height : this.$refs.dragBox.clientHeight  }
-      } else {
-        return { width: 0, height: 0 }
-      }
-    },
     transitionTypes: function () {
       return this.action.transitions.map(t => t.type)
     },
@@ -120,6 +115,11 @@ export default {
     }
   },
   methods: {
+    updatePopper () {
+      let options = this.options
+      this.reconfigure(this.dataPopper,this.dataDrag,options)
+      this.options = Object.assign({},options)
+    },
     setOffset (data) {
       this.dataDrag = {
         left: data.left,
@@ -138,17 +138,20 @@ export default {
         this.dataDrag = { left: 0, top: 0 }
       }
 
+      const width = this.$refs.dragBox.clientWidth
+      const height = this.$refs.dragBox.clientHeight
+
       if (dataPopper.top + dataDrag.top < this.marginDragTop) {
         options.top = this.marginDragTop - dataPopper.top
-      } else if (dataPopper.top + dataDrag.top + this.sizeOfFrame.height > dataPopper.heightWindow - this.marginDragBot) {
-        options.top = dataPopper.heightWindow - this.marginDragBot - this.sizeOfFrame.height - dataPopper.top
+      } else if (dataPopper.top + dataDrag.top + height > dataPopper.heightWindow - this.marginDragBot) {
+        options.top = dataPopper.heightWindow - this.marginDragBot - height - dataPopper.top
       } else {
         options.top = dataDrag.top
       }
       if (dataPopper.left + dataDrag.left < this.initialLeft + this.marginDragLeft) {
         options.left = this.initialLeft + this.marginDragLeft - dataPopper.left
-      } else if (dataPopper.left + dataDrag.left + this.sizeOfFrame.width > dataPopper.widthWindow + this.initialLeft - this.marginDragRight) {
-        options.left = this.initialLeft + dataPopper.widthWindow - this.marginDragRight - dataPopper.left - this.sizeOfFrame.width
+      } else if (dataPopper.left + dataDrag.left + width > dataPopper.widthWindow + this.initialLeft - this.marginDragRight) {
+        options.left = this.initialLeft + dataPopper.widthWindow - this.marginDragRight - dataPopper.left - width
       } else {
         options.left = dataDrag.left
       }
