@@ -69,7 +69,8 @@ const helpers = {
     undo: 'Undo action.<br><b>Short Key</b> : ' + formatShortKey(['ctrlOrCmd','Z']),
     redo: 'Redo action.<br><b>Short Key</b> : ' + formatShortKey(['ctrlOrCmd','shift','Z']),
 
-  }
+  },
+  recipes: 'Public names created by the attacker starts with \'#\', e.g. \'#n\'.<br>Reference to the i-th term of the frame is written \'ax_i\'.<br>The i-th projection of an j-tuple is written \'proj_{i,j}\'. '
 }
 
 export default helpers
