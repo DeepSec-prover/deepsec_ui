@@ -2,7 +2,7 @@
   <div>
     <div class="code-block language-deepsec match-braces line-numbers" :class="[codeTheme]" ref="codeDiv">
       <!-- Code Block -->
-      <pre><code ref="code" ></code></pre>
+      <pre><code ref="code"></code></pre>
     </div>
     <!-- Action selection for interactive popup -->
     <div v-show="showActionPopup && selectedAction" ref="actionPopup">
@@ -394,7 +394,7 @@ export default {
           Popper.Defaults.onUpdate(data)
         },
         onCreate: this.setupDataPopper
-       })
+      })
 
       this.showActionPopup = true
     },
@@ -489,13 +489,9 @@ export default {
         this.initialLeft = Math.floor(data.popper.left)
       },
       onUpdate: (data) => {
-          this.initialLeft = Math.floor(data.popper.left)
+        this.initialLeft = Math.floor(data.popper.left)
       }
-     })
-    /* TODO When i try to destroy the popper after it was created using destroy(),
-       the function onCreate is not called as if it was destroy before it had the
-       time to be created.
-    */
+    })
   }
 }
 </script>
