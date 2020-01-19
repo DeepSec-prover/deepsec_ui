@@ -2,7 +2,7 @@
   <el-tooltip :placement="helper.placement"
               :effect="helper.effect"
               :open-delay="helper.openDelay"
-              :disabled="helper.disable"
+              :disabled="helper.disable || inactive"
               :enterable="false">
     <div slot="content" v-html="helperContent"></div>
     <!-- If text add span and class for cursor -->
@@ -21,6 +21,10 @@ export default {
   mixins: [helpersMixin],
   props: {
     textContent: {
+      type: Boolean,
+      default: false
+    },
+    inactive: {
       type: Boolean,
       default: false
     }
