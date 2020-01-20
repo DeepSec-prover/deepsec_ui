@@ -26,7 +26,7 @@
                 <dt>Local ID</dt>
                 <dd>{{ batch.localId() }}</dd>
                 <dt>Nb run</dt>
-                <dd>{{ batch.nbRun() }}</dd>
+                <dd>{{ batch.nbRun }}</dd>
                 <template v-if="batch.debug">
                   <dt>Debug</dt>
                   <dd>
@@ -108,7 +108,7 @@
 
     <!-- Progression -->
     <template slot="progression">
-      Runs completed : {{batch.nbRunCompleted()}}/{{batch.nbRun()}}
+      Runs completed : {{batch.nbRunCompleted()}}/{{batch.nbRun}}
     </template>
 
     <!-- Details -->
@@ -203,7 +203,7 @@ export default {
       * array of runs. */
       this.batch.linkQueries()
 
-      if (this.batch.nbRun() === 1) {
+      if (this.batch.nbRun === 1) {
         this.openedRun.push(this.batch.runs[0].path)
       }
     }

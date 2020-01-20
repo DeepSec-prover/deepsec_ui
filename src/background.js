@@ -13,7 +13,12 @@ import { ApiAttackSim } from './deepsec-api/ApiAttackSim'
 import { ApiEquivalenceSim } from './deepsec-api/ApiEquivalenceSim'
 import { refreshApiPath } from './util/refreshApiPath'
 import fixPath from 'fix-path'
-import { closeDatabase, connectDatabase } from './database'
+import {
+  closeDatabase,
+  connectDatabase,
+  createTablesIfNotExist,
+  scanForNewResults
+} from './database/database'
 
 // Fix system path for packaged MacOS (https://stackoverflow.com/a/57705752/2666094)
 fixPath()
@@ -128,9 +133,6 @@ app.on('ready', async () => {
   unsetToDefault()
   logger.debug(`User settings storage path : ${userSettings.file()}`)
 
-  // Connect the database
-  connectDatabase()
-
   if (settings.env !== 'prod') {
     logger.warn(`Not in production mode (current env: ${settings.env})`)
   }
@@ -144,7 +146,7 @@ app.on('ready', async () => {
     try {
       await installVueDevtools()
     } catch (e) {
-      console.error('Vue Devtools failed to install:', e.toString())
+      logger.error('Vue Devtools failed to install:', e.toString())
     }
   }
 
@@ -152,7 +154,21 @@ app.on('ready', async () => {
   ApiManager.registerManagers([ApiStartRun, ApiDisplayTrace, ApiAttackSim, ApiEquivalenceSim],
                               () => mainWindow)
 
-  createWindow()
+  // Connect the database
+  connectDatabase()
+    .then(() => {
+      return createTablesIfNotExist()
+    })
+    .then(() => {
+      logger.info('Database ready')
+      scanForNewResults()
+      createWindow()
+    })
+    .catch(() => {
+      logger.error('Fail to connect to the database, force close the application')
+      // TODO maybe find a way to send an explicit error message to the user before to leave
+      app.quit()
+    })
 })
 
 app.on('quit', () => {

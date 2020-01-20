@@ -13,12 +13,23 @@ export default class BatchModel extends ResultModel {
     this.gitHash = json.git_hash
     this.ocamlVersion = json.ocaml_version
 
-    this.debug = json.debug
+    this.debug = json.debug === true || json.debug === 1 // Boolean are stored as int in the database
     this.pid = json.pid
-    this.commandOptions = RunConfigModel.loadFromJson(json.command_options)
-    this.computedOptions = RunConfigModel.loadFromJson(json.computed_options)
+
+    if (json.command_options) {
+      this.commandOptions = RunConfigModel.loadFromJson(json.command_options)
+    }
+    if (json.computed_options) {
+      this.computedOptions = RunConfigModel.loadFromJson(json.computed_options)
+    }
 
     this.runFiles = json.run_files
+
+    if (this.isDbPreview) {
+      this.nbRun = json.nb_run
+    } else {
+      this.nbRun = this.runFiles ? this.runFiles.length : 0
+    }
 
     if (!isEmptyOrBlankStr(json.title)) {
       this.defaultTitle = json.title
@@ -27,6 +38,10 @@ export default class BatchModel extends ResultModel {
     }
 
     if (json.import_date) {
+      // In result files the dates are in seconds
+      if (!this.isDbPreview) {
+        json.import_date = json.import_date * 1000
+      }
       this.importTime = new Date(json.import_date * 1000)
     } else {
       this.importTime = null
@@ -44,6 +59,13 @@ export default class BatchModel extends ResultModel {
 
   loadRelations () {
     this.runs = this.runFiles.map(file => new RunModel(file, false))
+  }
+
+  /**
+   * Load all runs of this batch and their queries.
+   */
+  loadRelationsDeep () {
+    this.runs = this.runFiles.map(file => new RunModel(file, true))
   }
 
   /**
@@ -90,11 +112,7 @@ export default class BatchModel extends ResultModel {
 
     const runsProgression = this.runs.reduce((sum, r) => sum + r.progressionPercent(), 0)
 
-    return Math.floor(runsProgression / this.nbRun())
-  }
-
-  nbRun () {
-    return this.runFiles.length
+    return Math.floor(runsProgression / this.nbRun)
   }
 
   nbRunCompleted () {

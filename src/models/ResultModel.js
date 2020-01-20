@@ -18,17 +18,26 @@ export default class ResultModel {
   /**
    * Load a result from a json file and map fields in the model.
    *
-   * @param {string} resultFilePath The path to the json file to load
+   * @param {String|Object} filePathOrRow The path to the json file to load or the database row (see flag isDbPreview)
    * @param {Boolean} loadRelations If true load related result (batch, run, queries ...)
    * @param {Boolean} updateListener If true wait for updates from IPC signal, will be ignored if
    * status is not waiting or in progress
+   * @param {Boolean} isDbPreview If true the first parameter should be a database row for this result
    */
-  constructor (resultFilePath, loadRelations = false, updateListener = false) {
-    this.path = resultFilePath
+  constructor (filePathOrRow, loadRelations = false, updateListener = false, isDbPreview = false) {
+    this.isDbPreview = isDbPreview
     this.apiRemote = null
 
-    // Mapping specific for each result type
-    const json = ResultModel.loadResultFile(this.path)
+    let json
+    if (isDbPreview) {
+      this.path = filePathOrRow.path + '.json'
+      json = filePathOrRow
+    } else {
+      this.path = filePathOrRow
+      // Mapping specific for each result type
+      json = ResultModel.loadResultFile(this.path)
+    }
+
     this.mapJsonFile(json)
 
     if (loadRelations) {
@@ -82,13 +91,21 @@ export default class ResultModel {
 
     // Optional fields
     if (json.start_time) {
-      this.startTime = new Date(json.start_time * 1000)
+      // In result files the dates are in seconds
+      if (!this.isDbPreview) {
+        json.start_time = json.start_time * 1000
+      }
+      this.startTime = new Date(json.start_time)
     } else {
       this.startTime = null
     }
 
     if (json.end_time) {
-      this.endTime = new Date(json.end_time * 1000)
+      // In result files the dates are in seconds
+      if (!this.isDbPreview) {
+        json.end_time = json.end_time * 1000
+      }
+      this.endTime = new Date(json.end_time)
     } else {
       this.endTime = null
     }
