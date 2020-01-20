@@ -26,7 +26,6 @@
                         :total="totalBatches"
                         @row-click="rowClick"
                         empty-text="No batch found in the database."
-                        :table-props='{ defaultSort: {prop: "startTime", order: "descending"} }'
                         :pagination-props="{ pageSizes: [10, 15, 20, 25, 50] }"
                         :page-size="15"
                         :loading="loading"
