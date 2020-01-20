@@ -13,8 +13,11 @@ export function refreshApiPath (mainWindow) {
   // Check the Deepsec API path
   let apiPath = String(userSettings.get('deepsecApiPath'))
 
+  let detected = false
+
   if (isEmptyOrBlankStr(apiPath)) {
     // Try to see if we can find it in path
+    detected = true
     apiPath = which.sync('deepsec_api', { nothrow: true })
   }
 
@@ -35,6 +38,9 @@ export function refreshApiPath (mainWindow) {
                                 'init',
                                 { name: 'settings' })
   } else {
+    if (detected) {
+      userSettings.set('deepsecApiPath', apiPath)
+    }
     logger.info(`DeepSec API path: ${apiPath}`)
     const apiGetConf = new ApiGetConfig(mainWindow, 'init')
     apiGetConf.start() // The answer will be catch then the process will close itself
