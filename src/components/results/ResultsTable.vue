@@ -1,8 +1,19 @@
 <template>
-  <el-table id="result-table" :data="batches" @row-click="rowClick"
-            empty-text="No batch found in the result folder."
-            :default-sort="{prop: 'startTime', order: 'descending'}">
-    <el-table-column label="Status" prop="status" sortable>
+  <data-tables-server id="result-table"
+                      :data="pageBatches"
+                      :total="totalBatches"
+                      @row-click="rowClick"
+                      empty-text="No batch found in the result folder."
+                      :default-sort="{prop: 'startTime', order: 'descending'}"
+                      :pagination-props="{ pageSizes: [5, 10, 15] }"
+                      :page-size="10"
+                      :loading="loading"
+                      @query-change="loadData">
+    <el-table-column label="Status"
+                     prop="status"
+                     :filters="statusValues"
+                     :filter-method="filterStatus"
+                     filter-placement="bottom-end">
       <template slot-scope="scope">
         <result-status :status="scope.row.status" tag></result-status>
         <span v-if="scope.row.debug" class="debug-logo">
@@ -27,13 +38,13 @@
         <date :date="scope.row.startTime" strict></date>
       </template>
     </el-table-column>
-  </el-table>
+  </data-tables-server>
 </template>
 
 <script>
 import ResultStatus from './ResultStatus'
 import Date from '../Date'
-import { getBatches } from '../../database/database-remote'
+import { getBatches, getCountBatches } from '../../database/database-remote'
 
 export default {
   name: 'results-table',
@@ -43,16 +54,39 @@ export default {
   },
   data () {
     return {
-      batches: []
+      pageBatches: [],
+      totalBatches: 0,
+      loading: true,
+      statusValues: [
+        { text: 'Completed', value: 'completed' },
+        { text: 'In Progress', value: 'in_progress' },
+        { text: 'Canceled', value: 'canceled' },
+        { text: 'Error', value: 'internal_error' }
+      ]
     }
   },
   methods: {
     rowClick (batch, column, event) {
       this.$router.push({ name: 'batch', params: { 'path': batch.path } })
+    },
+    filterStatus (value, row) {
+      return row.status === value
+    },
+    async loadData (queryInfo) {
+      console.log(queryInfo)
+      this.loading = true
+
+      getBatches()
+        .then(value => {
+          this.pageBatches = value
+          this.loading = false
+        })
+
+      getCountBatches()
+        .then(value => {
+          this.totalBatches = value
+        })
     }
-  },
-  beforeMount () {
-    getBatches().then(value => this.batches = value)
   }
 }
 </script>

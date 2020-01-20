@@ -23,3 +23,21 @@ export function getBatches () {
     ipcRenderer.send('get-rows', `SELECT * FROM batches`)
   })
 }
+
+/**
+ * Get the total number of batches from the database
+ *
+ * @returns {Promise<Number>} A promise of total number of batches
+ */
+export function getCountBatches () {
+  return new Promise((resolve, reject) => {
+    // Wait for result (before send because of async)
+    ipcRenderer.once('get-count-result', (event, result) => {
+      resolve(result[0].total)
+    })
+
+    // Send the query
+    ipcRenderer.send('get-count', `SELECT COUNT(*) AS total
+                                   FROM batches`)
+  })
+}

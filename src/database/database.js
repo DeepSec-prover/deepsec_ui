@@ -349,4 +349,16 @@ function listenRendererQueries () {
       }
     })
   })
+
+  ipcMain.on('get-count', (event, sqlQuery) => {
+    db.all(sqlQuery, [], (err, count) => {
+      if (err) {
+        logger.error(`An issue occurs when fetching rows count from the database:\n${err}`)
+        event.reply('get-count-result', 0)
+      } else {
+        logger.verbose(`Rows count successfully fetched from the database`)
+        event.reply('get-count-result', count)
+      }
+    })
+  })
 }

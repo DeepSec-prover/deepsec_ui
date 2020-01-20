@@ -5,11 +5,17 @@ import 'element-ui/lib/theme-chalk/index.css'
 import Element from 'element-ui' // TODO import only used components
 import notification from './util/notification'
 import VueShortKey from 'vue-shortkey'
+import { DataTablesServer } from 'vue-data-tables'
+import lang from 'element-ui/lib/locale/lang/en'
+import locale from 'element-ui/lib/locale'
+
+locale.use(lang)
 
 const { remote } = require('electron')
 
 Vue.config.productionTip = false
 
+Vue.use(DataTablesServer)
 Vue.use(Element)
 Vue.use(VueShortKey, { prevent: ['input', 'textarea'] }) // https://www.npmjs.com/package/vue-shortkey
 
