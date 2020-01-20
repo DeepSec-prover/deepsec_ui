@@ -27,8 +27,8 @@ let filters = {
     }
   },
   punctuation: /[(),;]/,
-  sup: /(?<=\w)~\d+(-\d+)*(?=\s|$|_|%)/,
-  sub: /(?<=\w)_\d+(?=\b|~|%)/,
+  sup: /(?<=\w|')~\d+(-\d+)*(?=\s|$|_|%)/,
+  sub: /(?<=\w|')_\d+(?=\b|~|%)/,
 }
 
 // Recursive definition for position
