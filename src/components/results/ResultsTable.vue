@@ -25,7 +25,7 @@
                         :data="pageBatches"
                         :total="totalBatches"
                         @row-click="rowClick"
-                        empty-text="No batch found in the result folder."
+                        empty-text="No batch found in the database."
                         :table-props='{ defaultSort: {prop: "startTime", order: "descending"} }'
                         :pagination-props="{ pageSizes: [10, 15, 20, 25, 50] }"
                         :page-size="15"
@@ -103,7 +103,6 @@ export default {
     },
     async loadData (queryInfo) {
       this.loading = true
-      console.log(queryInfo)
 
       // Change the sort order only when sort type, if not it's reset
       if (queryInfo.type === 'sort') {
