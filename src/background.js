@@ -63,9 +63,9 @@ function createWindow () {
     if (ApiManager.detachedProcesses.size > 0) {
       let choice = dialog.showMessageBoxSync(this, {
         type: 'question',
-        buttons: ['Quit and cancel the runs', 'Quit and keep runs in background', 'Cancel'],
+        buttons: ['Quit and cancel the queries', 'Quit and keep the verification in background', 'Cancel'],
         title: 'Confirm',
-        message: 'You are about to quit DeepSec UI but some queries are currently being verified. What do yo want to do ?'
+        message: 'You are about to quit DeepSec UI but some queries are still being verified. What do yo want to do ?'
       })
 
       if (choice === 0) {
