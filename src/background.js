@@ -17,6 +17,7 @@ import {
   closeDatabase,
   connectDatabase,
   createTablesIfNotExist,
+  scanForInProgress,
   scanForNewResults
 } from './database/database'
 
@@ -162,6 +163,7 @@ app.on('ready', async () => {
     .then(() => {
       logger.info('Database ready')
       scanForNewResults()
+      scanForInProgress()
       createWindow()
     })
     .catch(() => {

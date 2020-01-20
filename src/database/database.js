@@ -92,7 +92,7 @@ export function scanForNewResults () {
             `${diff.size} new file(s) found in the user results directory (${resultsDirPath})`)
 
           for (let batchPath of diff) {
-            let batch = new BatchModel(batchPath + '.json', false)
+            const batch = new BatchModel(batchPath + '.json', false)
             batch.loadRelationsDeep() // Load all runs and queries
             updateOrInsertBatch(batch)
           }
@@ -102,6 +102,39 @@ export function scanForNewResults () {
       logger.debug(`No file found in the user results directory (${resultsDirPath})`)
     }
   })
+}
+
+/**
+ * Look for recent batch in progress which could be done.
+ * For performance issue limit to the 30 days old batches.
+ */
+export function scanForInProgress () {
+  // Update batch in progress (no more than 30 days old)
+  db.each(`
+              SELECT path
+              FROM batches
+              WHERE status IS 'in_progress'
+                AND (julianday('now') - julianday(start_time / 1000, 'unixepoch')) <= 30`,
+    [],
+    // Callback for each row
+    (err, row) => {
+      if (err) {
+        logger.error(`An issue occurs when fetching in progress file:\n${err}`)
+      } else {
+        const batch = new BatchModel(row.path + '.json', false)
+        batch.loadRelationsDeep() // Load all runs and queries
+        updateOrInsertBatch(batch)
+      }
+    },
+    // Callback when all row fetched
+    (err, nbUpdated) => {
+      if (err) {
+        logger.error(`An issue occurs when fetching in progress files:\n${err}`)
+      } else {
+        logger.info(`${nbUpdated} recent batch(es) in progress updated`)
+      }
+    }
+  )
 }
 
 /**
@@ -365,5 +398,13 @@ function listenRendererQueries () {
         event.reply('get-count-result', count)
       }
     })
+  })
+
+  ipcMain.on('scan-in-progress', () => {
+    scanForInProgress()
+  })
+
+  ipcMain.on('scan-new-batch', () => {
+    scanForNewResults()
   })
 }

@@ -30,6 +30,13 @@
           <div class="centred-content">
             <el-button class="test-button" size="mini" @click="testNotifications">Test Notifications</el-button>
           </div>
+          <!-- Database -->
+          <el-divider><i class="el-icon-coin"></i> Database</el-divider>
+          <div class="centred-content">
+            <helper helper-str="Only necessary when some batches are started outside the UI.">
+              <el-button size="mini" @click="dbScanForNewResults">Scan for new batch</el-button>
+            </helper>
+          </div>
           <!-- Code Style -->
           <!-- TODO uncomment when multi themes feature -->
           <!--<el-divider><i class="el-icon-tickets"></i> Code Style</el-divider>
@@ -67,10 +74,13 @@ import { ipcRenderer } from 'electron'
 import SpecCodeInline from '../components/code/SpecCodeInline'
 import SpecCode from '../components/code/SpecCode'
 import demoCode from '../text-content/demoCode'
+import { scanForNewResults } from '../database/database-remote'
+import Helper from '../components/helpers/Helper'
 
 export default {
   name: 'settings',
   components: {
+    Helper,
     SpecCode,
     SpecCodeInline,
     SettingItem
@@ -101,6 +111,9 @@ export default {
       ipcRenderer.send('refresh-api-path')
       this.resultsDir = userSettings.get('resultsDirPath', '')
       this.lastCheckedApiPath = userSettings.get('deepsecApiPath', '')
+    },
+    dbScanForNewResults () {
+      scanForNewResults()
     }
   },
   beforeMount () {

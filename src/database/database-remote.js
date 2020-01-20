@@ -82,6 +82,20 @@ export function getCountBatches (filters) {
 }
 
 /**
+ * Remotely call the database function.
+ */
+export function scanForInProgress () {
+  ipcRenderer.send('scan-in-progress')
+}
+
+/**
+ * Remotely call the database function.
+ */
+export function scanForNewResults () {
+  ipcRenderer.send('scan-new-batch')
+}
+
+/**
  * Build the WHERE part of a SQL query depending of filters
  *
  * @param {Object} filters The list of filters
