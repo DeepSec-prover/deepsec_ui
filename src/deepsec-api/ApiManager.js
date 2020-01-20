@@ -358,7 +358,7 @@ export class ApiManager {
    */
   static closeDetachedIO () {
     if (ApiManager.detachedProcesses.size > 0) {
-      logger.debug(`Close detached streams (${ApiManager.detachedProcesses.size} processes)`)
+      logger.info(`Close detached streams (${ApiManager.detachedProcesses.size} processes)`)
       ApiManager.detachedProcesses.forEach(p => {
         p.stderr.unpipe()
         p.stderr.destroy()
@@ -366,6 +366,17 @@ export class ApiManager {
         p.stdout.destroy()
         p.stdin.end()
         p.stdin.destroy()
+      })
+    }
+
+    ApiManager.detachedProcesses = []
+  }
+
+  static cancelDetachedIO () {
+    if (ApiManager.detachedProcesses.size > 0) {
+      logger.info(`Canceling detached streams (${ApiManager.detachedProcesses.size} processes)`)
+      ApiManager.detachedProcesses.forEach(p => {
+        p.kill('SIGINT')
       })
     }
 

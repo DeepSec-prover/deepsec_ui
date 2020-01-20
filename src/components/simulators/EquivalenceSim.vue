@@ -33,7 +33,7 @@
         </template>
         <!-- User Interactive Process -->
         <template v-else-if="isUserProcess(process)">
-          <equivalence-sim-user :processUser="process"></equivalence-sim-user>
+          <equivalence-sim-user :processUser="process" :singleColumn="singleColumn"></equivalence-sim-user>
         </template>
         <!-- Fixed Process -->
         <template v-else>

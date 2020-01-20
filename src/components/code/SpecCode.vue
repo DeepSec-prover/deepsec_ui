@@ -1,22 +1,26 @@
 <template>
-  <simplebar class="code-block language-deepsec match-braces line-numbers" :class="[codeTheme]">
-    <!-- Code Block -->
-    <pre><code ref="code"></code></pre>
+  <div>
+    <div class="code-block language-deepsec match-braces line-numbers" :class="[codeTheme]" ref="codeDiv">
+      <!-- Code Block -->
+      <pre><code ref="code"></code></pre>
+    </div>
     <!-- Action selection for interactive popup -->
     <div v-show="showActionPopup && selectedAction" ref="actionPopup">
       <action-popup :action="selectedAction"
                     :atomic="atomic"
+                    :dataPopper="dataPopper"
+                    :isVisible="(showActionPopup && selectedAction) ? true : false"
+                    :initialLeft="initialLeft"
                     @close="closeActionPopup"
                     @user-select-action="sendActionSelection"
                     @user-select-transition="selectAvailableTransitionActions"
                     @cancel="cancelActionSelection"></action-popup>
     </div>
-  </simplebar>
+  </div>
 </template>
 
 <script>
 import Prism from '../../util/prism-deepsec'
-import Simplebar from 'simplebar-vue'
 import 'simplebar/dist/simplebar.min.css'
 import logger from 'electron-log'
 import ProcessModel from '../../models/ProcessModel'
@@ -33,8 +37,7 @@ export default {
   name: 'spec-code',
   mixins: [codeMixin],
   components: {
-    ActionPopup,
-    Simplebar
+    ActionPopup
   },
   props: {
     atomic: {
@@ -53,6 +56,10 @@ export default {
     availableActions: {
       type: Array,
       default: () => []
+    },
+    singleColumn: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -88,7 +95,18 @@ export default {
       /**
        * The minimum number of lines that should be displayed.
        */
-      minimumNbLines: 15
+      minimumNbLines: 15,
+      /**
+       * The data obtained from Popper. Updated at each movement of scroll or change of window size, etc
+       */
+      dataPopper: null,
+      /**
+       * The initial left offset with respect to the left side of the code. Usefull when the
+       * trace and frame are on the left side of the process.
+       */
+      initialLeft: 0,
+      initialPopper: null,
+      mainPopper: null
     }
   },
   /**
@@ -324,6 +342,30 @@ export default {
       this.setupAvailableTransitions()
     },
     /**
+     * Retrieve the elements required to compute the offsets of dialog-drag.
+     * @param {Object} data The data used by Popper.
+     */
+    setupDataPopper (data) {
+      // Test require in equivalence simulator when we swap from one process to
+      // another. The popper of the first spec code is alive but the div is not
+      // referenced.
+      if (this.$refs.codeDiv) {
+        this.dataPopper = {
+          top: Math.floor(data.popper.top),
+          left: Math.floor(data.popper.left),
+          widthWindow: this.$refs.codeDiv.clientWidth,
+          heightWindow: this.$refs.codeDiv.clientHeight
+        }
+      } else {
+        this.dataPopper = {
+          top: Math.floor(data.popper.top),
+          left: Math.floor(data.popper.left),
+          widthWindow: 0,
+          heightWindow: 0
+        }
+      }
+    },
+    /**
      * Display the action selector popup to ask more information to the user.
      *
      * @param {Object} action The action for which we want to display the popup.
@@ -338,7 +380,20 @@ export default {
       // Focus on this action
       this.setupFocus([ProcessModel.formatPositionToString(this.selectedAction.position)])
 
-      new Popper(domElement, this.$refs.actionPopup, { placement: 'top', strategy: 'fixed' })
+      this.mainPopper = new Popper(domElement, this.$refs.actionPopup, {
+        placement: 'bottom-start', // Important to keep bottom-start for the calculus of dataPopper.
+        strategy: 'fixed',
+        modifiers: {
+          hide: { enabled: false },
+          preventOverflow: { enabled: false }
+        },
+        onUpdate: (data) => {
+          this.setupDataPopper(data)
+          Popper.Defaults.onUpdate(data)
+        },
+        onCreate: this.setupDataPopper
+      })
+
       this.showActionPopup = true
     },
     /**
@@ -407,6 +462,14 @@ export default {
         this.clearAvailableActions()
       }
       this.setupAvailableActions()
+    },
+    singleColumn (newVal, oldVal) {
+      if (this.initialPopper) {
+        this.initialPopper.scheduleUpdate()
+      }
+      if (this.mainPopper) {
+        this.mainPopper.scheduleUpdate()
+      }
     }
   },
   /**
@@ -417,14 +480,22 @@ export default {
     this.setupFocus(this.focusedPositions)
     // Trigger custom clickable action
     this.setupAvailableActions()
+    this.initialPopper = new Popper(this.$refs.codeDiv, this.$refs.actionPopup, {
+      placement: 'bottom-start', // Important to keep bottom-start for the calculus of initialLeft
+      strategy: 'fixed',
+      onCreate: (data) => {
+        this.initialLeft = Math.floor(data.popper.left)
+      },
+      onUpdate: (data) => {
+        this.initialLeft = Math.floor(data.popper.left)
+      }
+    })
   }
 }
 </script>
 
 <style scoped>
-  /* TODO remove horizontal scroll in <pre> for Simplebar */
   .code-block {
-    max-height: 90vh; /* 90% of the window height */
     margin-bottom: 15px;
   }
 

@@ -179,13 +179,17 @@ export default class ProcessDisplayedModel extends ProcessModel {
    */
   getVisibleAction (n) {
     let count = 0
+    let lastAxiom = 0
 
     for (let i = 0; i < this.actions.length; i++) {
       if (ProcessModel.isVisibleAction(this.actions[i], 'io')) {
+        if (this.actions[i].type === 'output') {
+          lastAxiom++
+        }
         count++
       }
       if (count === n) {
-        return this.actions[i]
+        return { action: this.actions[i], lastAxiom: { value: lastAxiom } }
       }
     }
 
@@ -204,6 +208,7 @@ export default class ProcessDisplayedModel extends ProcessModel {
       if (!keepContext) {
         processModel.currentAction = -1
         processModel.frame = []
+        processModel.names = []
       }
       return processModel
     }
@@ -223,6 +228,7 @@ export default class ProcessDisplayedModel extends ProcessModel {
     if (keepContext) {
       copy.currentAction = processModel.actions.length - 1
       copy.frame = processModel.frame
+      copy.names = processModel.names
     }
     return copy
   }

@@ -5,6 +5,7 @@
       <spec-code :code="processStr"
                  :atomic="processUser.atomic"
                  :available-actions="processUser.getCurrentAvailableActions()"
+                 :singleColumn="singleColumn"
                  @user-select-action="executeAction"></spec-code>
     </el-col>
     <el-col :md="8">
@@ -24,19 +25,19 @@
         <!-- Navigation buttons -->
         <div>
           <el-button-group>
-            <helper helper-str="Reverse previous user action.<br><b>Short Key</b> : ctrl + z">
-              <el-button :disabled="!processUser.hasBackHistory() || processUser.loading"
+            <helper helper-id="shortkeys.undo" :inactive="inactiveUndo">
+              <el-button :disabled="inactiveUndo"
                          @click="undo"
                          icon="el-icon-refresh-left"
-                         v-shortkey="['ctrl', 'z']" @shortkey.native="undo"
+                         v-shortkey="[ctrlOrCmd, 'z']" @shortkey.native="undo"
                          size="small">
                 Undo
               </el-button>
             </helper>
-            <helper helper-str="Restore previous reversed action.<br><b>Short Key</b> : ctrl + maj + z">
-              <el-button :disabled="!processUser.hasNextHistory() || processUser.loading"
+            <helper helper-id="shortkeys.redo" :inactive="inactiveRedo">
+              <el-button :disabled="inactiveRedo"
                          @click="redo"
-                         v-shortkey="['ctrl', 'shift', 'z']" @shortkey.native="redo"
+                         v-shortkey="[ctrlOrCmd, 'shift', 'z']" @shortkey.native="redo"
                          size="small">
                 Redo
                 <i class="el-icon-refresh-right"></i>
@@ -51,7 +52,7 @@
                  :actions="processUser.actions"
                  @goto="gotoAction"></sim-trace>
       <!-- Frame -->
-      <sim-frame :atomic="processUser.atomic" :frame="processUser.frame"></sim-frame>
+      <sim-frame :atomic="processUser.atomic" :names="processUser.names" :frame="processUser.frame"></sim-frame>
     </el-col>
   </el-row>
 </template>
@@ -72,14 +73,27 @@ export default {
     processUser: {
       type: ProcessUserModel,
       required: true
+    },
+    singleColumn: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     return {}
   },
   computed: {
+    ctrlOrCmd: function () {
+      return process.platform === 'darwin' ? 'meta' : 'ctrl'
+    },
     processStr: function () {
       return formatCode(this.processUser.process, this.processUser.atomic)
+    },
+    inactiveUndo: function () {
+      return !this.processUser.hasBackHistory() || this.processUser.loading
+    },
+    inactiveRedo: function () {
+      return !this.processUser.hasNextHistory() || this.processUser.loading
     }
   },
   methods: {

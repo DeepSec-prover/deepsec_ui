@@ -1,52 +1,63 @@
 <template>
-  <dialog-drag :options="{buttonPin: false, buttonClose: false, left: 0, top: 0}" class="popup">
-    <el-form v-if="action" size="mini">
-      <!-- Bang -->
-      <template v-if="action.type === 'bang'">
-        <el-form-item v-if="action.max_unfolding > 1" label="Nb unfolded">
-          <el-input-number v-model="nbProcessUnfolded" :min="1" :max="action.max_unfolding"></el-input-number>
-        </el-form-item>
-        <div v-else>Unfold 1</div>
-      </template>
-      <!-- I/O -->
-      <template v-else-if="action.type === 'input' || action.type === 'output'">
-        <div class="centred-content" :class="{'not-clickable': onlyOneType}">
-          <el-radio-group size="mini" v-model="selectedTransitionType">
-            <el-radio-button v-if="transitionTypes.includes('direct')" label="direct">Direct</el-radio-button>
-            <el-radio-button v-if="transitionTypes.includes('comm')" label="comm">Communication</el-radio-button>
-            <el-radio-button v-if="transitionTypes.includes('eavesdrop')" label="eavesdrop">Eavesdrop</el-radio-button>
-          </el-radio-group>
-        </div>
-        <!-- Channel -->
-        <template v-if="selectedTransitionType === 'direct' || selectedTransitionType === 'eavesdrop'">
-          <div class="recipe-label">Channel's recipe:</div>
-          <recipe-input v-model="recipes[selectedTransitionType].recipe_channel"
-                        :locked="recipes[selectedTransitionType].locked"
-                        @input="checkRecipes"></recipe-input>
+  <dialog-drag :options="options" class="popup" @drag-end="setOffset">
+    <div ref="dragBox">
+    <el-form v-if="action" size="mini" v-on:submit.prevent.native>
+        <!-- Bang -->
+        <template v-if="action.type === 'bang'">
+          <el-form-item v-if="action.max_unfolding > 1" label="Nb unfolded">
+            <el-input-number v-model="nbProcessUnfolded" :min="1" :max="action.max_unfolding"></el-input-number>
+          </el-form-item>
+          <div v-else>Unfold 1</div>
         </template>
-        <!-- Term -->
-        <template v-if="selectedTransitionType === 'direct' && action.type === 'input'">
-          <div class="recipe-label">Term's recipe:</div>
-          <recipe-input v-model="recipes[selectedTransitionType].recipe_term"
-                        :locked="recipes[selectedTransitionType].locked"
-                        @input="checkRecipes"></recipe-input>
+        <!-- I/O -->
+        <template v-else-if="action.type === 'input' || action.type === 'output'">
+          <div class="centred-content" :class="{'not-clickable': onlyOneType}">
+            <el-radio-group size="mini" v-model="selectedTransitionType">
+              <el-radio-button v-if="transitionTypes.includes('direct')" label="direct">Direct</el-radio-button>
+              <el-radio-button v-if="transitionTypes.includes('comm')" label="comm">Communication</el-radio-button>
+              <el-radio-button v-if="transitionTypes.includes('eavesdrop')" label="eavesdrop">Eavesdrop</el-radio-button>
+            </el-radio-group>
+          </div>
+          <!-- Channel -->
+          <template v-if="selectedTransitionType === 'direct' || selectedTransitionType === 'eavesdrop'">
+            <div class="recipe-label">Channel's recipe:</div>
+            <recipe-input v-model="recipes[selectedTransitionType].recipe_channel"
+                          :locked="recipes[selectedTransitionType].locked"
+                          @input="checkRecipes"
+                          @popper-to-update="updatePopper"></recipe-input>
+          </template>
+          <!-- Term -->
+          <template v-if="selectedTransitionType === 'direct' && action.type === 'input'">
+            <div class="recipe-label">Term's recipe:</div>
+            <recipe-input v-model="recipes[selectedTransitionType].recipe_term"
+                          :locked="recipes[selectedTransitionType].locked"
+                          @input="checkRecipes"
+                          @popper-to-update="updatePopper"></recipe-input>
+          </template>
         </template>
-      </template>
-      <!-- Buttons -->
-      <div class="buttons">
+        <!-- Buttons -->
+        <div class="buttons">
         <span>
-          <el-button size="mini" type="info" @click="$emit('cancel')" plain>
+          <el-button size="mini"
+                     type="info"
+                     @click="$emit('cancel')"
+                     v-shortkey="['esc']"
+                     @shortkey.native="$emit('cancel')"
+                     plain>
             Cancel
           </el-button>
         </span>
-        <span>
+          <span>
           <el-button class="validate" size="mini" type="success" @click="validate" :plain="!finalAction"
-                     :disabled="!validRecipes">
+                     :disabled="!validRecipes"
+                     v-shortkey="['enter']"
+                     @shortkey.native="validate">
             {{ finalAction ? 'Validate' : 'Continue'}}
           </el-button>
         </span>
-      </div>
-    </el-form>
+        </div>
+      </el-form>
+    </div>
   </dialog-drag>
 </template>
 
@@ -59,9 +70,11 @@ import Vue from 'vue'
 import ProcessModel from '../models/ProcessModel'
 import DialogDrag from 'vue-dialog-drag'
 import 'vue-dialog-drag/dist/vue-dialog-drag.css'
+import positionMixin from './ActionPopup-positionMixin'
 
 export default {
   name: 'action-popup',
+  mixins: [positionMixin],
   components: { RecipeInput, DialogDrag },
   props: {
     action: {
@@ -95,6 +108,10 @@ export default {
   },
   methods: {
     validate () {
+      if (!this.validRecipes) {
+        return // Do nothing (could happen with shortcut)
+      }
+
       if (this.action.type === 'bang') {
         this.$emit('user-select-action', {
           type: 'bang',
@@ -196,6 +213,8 @@ export default {
   }
 
   .dialog-drag {
+    cursor: move;
+    cursor: -webkit-grab;
     width: max-content;
     border: 1px solid #EBEEF5;
     border-radius: 4px;

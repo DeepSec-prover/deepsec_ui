@@ -2,20 +2,26 @@
   <div>
     <el-input v-if="!locked" ref="input" class="recipe-input" v-show="editionEnable" v-model="recipe" placeholder="recipe"
               @input="inputChange" @keyup.native.enter="validateInput"></el-input>
-    <spec-code-inline @click.native="codeClick" v-show="!editionEnable" :code="recipe"></spec-code-inline>
+    <spec-code-inline :class="{'editable-code': !locked}" @click.native="codeClick" v-show="!editionEnable" :code="recipe"></spec-code-inline>
     <span v-if="!locked" class="edit-button">
       <el-link @click="clickEdit" :icon="editionEnable ? 'el-icon-check' : 'el-icon-edit'"></el-link>
+      <helper class="helper-icon" helper-id="recipes" v-if="editionEnable && helperEnabled" text-content>
+        <i class="el-icon-question"></i>
+      </helper>
     </span>
   </div>
 </template>
 
 <script>
 import SpecCodeInline from './code/SpecCodeInline'
+import Helper from './helpers/Helper'
+import userSettings from 'electron-settings'
 
 export default {
   name: 'recipe-input',
   components: {
-    SpecCodeInline
+    SpecCodeInline,
+    Helper
   },
   props: {
     value: {
@@ -30,7 +36,8 @@ export default {
   data () {
     return {
       editionEnable: false,
-      recipe: String
+      recipe: String,
+      helperEnabled: userSettings.get('showHelpers', true)
     }
   },
   methods: {
@@ -43,6 +50,7 @@ export default {
       if (this.editionEnable) {
         this.$nextTick(() => {
           this.$refs.input.focus()
+          this.$emit('popper-to-update')
         })
       }
     },
@@ -52,12 +60,15 @@ export default {
 
         this.$nextTick(() => {
           this.$refs.input.focus()
+          this.$emit('popper-to-update')
         })
       }
     },
     validateInput (event) {
-      event.preventDefault()
       this.editionEnable = false
+      this.$nextTick(() => {
+        this.$emit('popper-to-update')
+      })
     }
   },
   watch: {
@@ -77,7 +88,16 @@ export default {
     padding: 0 5px;
   }
 
+  .helper-icon {
+    opacity: 0.5;
+    margin-left: 3px;
+  }
+
   .recipe-input {
     width: auto;
+  }
+
+  .editable-code {
+    cursor: text;
   }
 </style>

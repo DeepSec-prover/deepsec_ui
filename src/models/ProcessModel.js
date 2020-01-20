@@ -17,6 +17,7 @@ export default class ProcessModel {
     this.process = process
     this.atomic = new AtomicRenamer(atomicData)
     this.frame = []
+    this.names = []
     this.actions = actions
     this.apiRemote = apiRemote
     this.loading = false
@@ -93,6 +94,7 @@ export default class ProcessModel {
   update (answer) {
     this.process = JSON.parse(answer.process)
     this.frame = answer.frame
+    this.names = answer.names
   }
 
   /**
@@ -178,6 +180,7 @@ export default class ProcessModel {
 
     if (keepContext) {
       copy.frame = processModel.frame
+      copy.names = processModel.names
       copy.actions = processModel.actions
     }
 

@@ -57,12 +57,12 @@
         <dd>
           <!-- Public -->
           <div v-if="publicConstructors">
-            <el-tag size="mini" effect="plain" class="tag" type="success">Public :</el-tag>
+            <el-tag size="mini" effect="plain" class="tag" type="success">Public:</el-tag>
             <spec-code-inline :code="publicConstructors"></spec-code-inline>
           </div>
           <!-- Private -->
           <div v-if="privateConstructors">
-            <el-tag size="mini" effect="plain" class="tag">Private :</el-tag>
+            <el-tag size="mini" effect="plain" class="tag">Private:</el-tag>
             <spec-code-inline :code="privateConstructors"></spec-code-inline>
           </div>
           <!-- None -->
@@ -74,12 +74,12 @@
         <dd>
           <!-- Public -->
           <div v-if="publicDestructors">
-            <el-tag size="mini" effect="plain" class="tag" type="success">Public :</el-tag>
+            <el-tag size="mini" effect="plain" class="tag" type="success">Public:</el-tag>
             <spec-code-inline :code="publicDestructors"></spec-code-inline>
           </div>
           <!-- Private -->
           <div v-if="privateDestructors">
-            <el-tag size="mini" effect="plain" class="tag">Private :</el-tag>
+            <el-tag size="mini" effect="plain" class="tag">Private:</el-tag>
             <spec-code-inline :code="privateDestructors"></spec-code-inline>
           </div>
           <!-- None -->
@@ -87,16 +87,16 @@
             <el-tag size="mini" effect="plain" class="tag" type="info">None</el-tag>
           </span>
         </dd>
-        <dt :class="{'label-top': publicNames && privateNames}">Names</dt>
+        <dt :class="{'label-top': publicNames && privateNames}">Constants</dt>
         <dd>
           <!-- Public -->
           <div v-if="publicNames">
-            <el-tag size="mini" effect="plain" class="tag" type="success">Public :</el-tag>
+            <el-tag size="mini" effect="plain" class="tag" type="success">Public:</el-tag>
             <spec-code-inline :code="publicNames"></spec-code-inline>
           </div>
           <!-- Private -->
           <div v-if="privateNames">
-            <el-tag size="mini" effect="plain" class="tag">Private :</el-tag>
+            <el-tag size="mini" effect="plain" class="tag">Private:</el-tag>
             <spec-code-inline :code="privateNames"></spec-code-inline>
           </div>
           <!-- None -->

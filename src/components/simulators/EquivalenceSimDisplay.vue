@@ -25,23 +25,23 @@
           <!-- Navigation buttons -->
           <div>
             <el-button-group>
-              <helper helper-str="Go to initial state.<br><b>Short Key</b> : ctrl + ⇦">
-                <el-button :disabled="processDisplayed.loading || !processDisplayed.hasPreviousAction()"
+              <helper helper-id="shortkeys.init" :inactive="inactivePrev">
+                <el-button :disabled="inactivePrev"
                            @click="firstAction"
                            icon="el-icon-d-arrow-left"
-                           v-shortkey="['ctrl', 'arrowleft']" @shortkey.native="firstAction">
+                           v-shortkey="[ctrlOrCmd, 'arrowleft']" @shortkey.native="firstAction">
                 </el-button>
               </helper>
-              <helper helper-str="Go to previous action.<br><b>Short Key</b> : ⇦">
-                <el-button :disabled="processDisplayed.loading || !processDisplayed.hasPreviousAction()"
+              <helper helper-id="shortkeys.prev" :inactive="inactivePrev">
+                <el-button :disabled="inactivePrev"
                            @click="previousAction"
                            icon="el-icon-arrow-left"
                            v-shortkey="['arrowleft']" @shortkey.native="previousAction">
                   Prev
                 </el-button>
               </helper>
-              <helper helper-str="Go to next action.<br><b>Short Key</b> : ⇨">
-                <el-button :disabled="processDisplayed.loading || !processDisplayed.hasNextAction()"
+              <helper helper-id="shortkeys.next" :inactive="inactiveNext">
+                <el-button :disabled="inactiveNext"
                            @click="nextAction"
                            @mouseenter.native="focusNextActions"
                            @mouseleave.native="clearFocusActions"
@@ -50,10 +50,10 @@
                   <i class="el-icon-arrow-right"></i>
                 </el-button>
               </helper>
-              <helper helper-str="Go to last action.<br><b>Short Key</b> : ctrl + ⇨">
-                <el-button :disabled="processDisplayed.loading || !processDisplayed.hasNextAction()"
+              <helper helper-id="shortkeys.last" :inactive="inactiveNext">
+                <el-button :disabled="inactiveNext"
                            @click="lastAction"
-                           v-shortkey="['ctrl', 'arrowright']" @shortkey.native="lastAction">
+                           v-shortkey="[ctrlOrCmd, 'arrowright']" @shortkey.native="lastAction">
                   <i class="el-icon-d-arrow-right"></i>
                 </el-button>
               </helper>
@@ -69,7 +69,7 @@
                    v-on:goto="gotoAction"
                    fixedActions></sim-trace>
         <!-- Trace Frame -->
-        <sim-frame :frame="processDisplayed.frame" :atomic="processDisplayed.atomic"></sim-frame>
+        <sim-frame :frame="processDisplayed.frame" :names="processDisplayed.names" :atomic="processDisplayed.atomic"></sim-frame>
       </el-col>
     </el-row>
   </div>
@@ -100,8 +100,17 @@ export default {
     }
   },
   computed: {
+    ctrlOrCmd: function () {
+      return process.platform === 'darwin' ? 'meta' : 'ctrl'
+    },
     processStr: function () {
       return formatCode(this.processDisplayed.process, this.processDisplayed.atomic)
+    },
+    inactivePrev: function () {
+      return this.processDisplayed.loading || !this.processDisplayed.hasPreviousAction()
+    },
+    inactiveNext: function () {
+      return this.processDisplayed.loading || !this.processDisplayed.hasNextAction()
     }
   },
   watch: {
