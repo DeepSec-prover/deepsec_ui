@@ -133,14 +133,15 @@ export function createTablesIfNotExist () {
                 -- Batches table
                 CREATE TABLE IF NOT EXISTS batches
                 (
-                    path        TEXT NOT NULL PRIMARY KEY,
-                    status      TEXT NOT NULL,
-                    start_time  DATE NOT NULL,
+                    path        TEXT    NOT NULL PRIMARY KEY,
+                    status      TEXT    NOT NULL,
+                    start_time  DATE    NOT NULL,
                     end_time    DATE,
                     import_date DATE,
                     stared      INT2 DEFAULT 0,
                     title       TEXT,
-                    debug       INT2 NOT NULL
+                    debug       INT2    NOT NULL,
+                    nb_run      INTEGER NOT NULL
                 );
 
                 -- Batches indexes
@@ -249,17 +250,19 @@ function generateBatchUpdateOrInsertSql (batch) {
       end_time=${timeToSql(batch.endTime)},
       import_date=${timeToSql(batch.importTime)},
       title=${batchTitle},
-      debug=${Number(batch.debug)}
+      debug=${Number(batch.debug)},
+      nb_run=${batch.nbRun}
   WHERE path='${batchPath}';
 
-  INSERT OR IGNORE INTO batches (path, status, start_time, end_time, import_date, title, debug)
+  INSERT OR IGNORE INTO batches (path, status, start_time, end_time, import_date, title, debug, nb_run)
   VALUES ('${batchPath}',
           '${batch.status}',
           ${timeToSql(batch.startTime)},
           ${timeToSql(batch.endTime)},
           ${timeToSql(batch.importTime)},
           ${batchTitle},
-          ${Number(batch.debug)});
+          ${Number(batch.debug)},
+          ${batch.nbRun});
   `
 
   if (batch.runs) {

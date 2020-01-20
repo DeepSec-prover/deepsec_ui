@@ -49,7 +49,7 @@
       </el-table-column>
       <el-table-column label="Nb Run">
         <template slot-scope="scope">
-          {{ scope.row.nbRun() }}
+          {{ scope.row.nbRun }}
         </template>
       </el-table-column>
       <el-table-column label="Date" prop="startTime" sortable="custom">

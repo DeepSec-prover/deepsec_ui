@@ -101,7 +101,7 @@ export class ApiStartRun extends ApiManager {
     this.pushNotification(
       `Run ${run.title()} started`,
       `From batch ${run.batch.title()} <br> Run ${run.batch.runIndex(
-        run)} / ${run.batch.nbRun()}`,
+        run)} / ${run.batch.nbRun}`,
       'info',
       'run',
       { name: 'run', params: { path: answer.file } })
@@ -189,7 +189,7 @@ export class ApiStartRun extends ApiManager {
     this.pushNotification(
       title,
       `From batch ${run.batch.title()} <br> Run ${run.batch.runIndex(
-        run)} / ${run.batch.nbRun()}`,
+        run)} / ${run.batch.nbRun}`,
       type,
       'run',
       { name: 'run', params: { path: answer.file } })
@@ -207,7 +207,7 @@ export class ApiStartRun extends ApiManager {
     batch.loadRelationsDeep()
     updateOrInsertBatch(batch) // Save it in the database
 
-    const nbRun = batch.nbRun()
+    const nbRun = batch.nbRun
     const runStatus = batch.runsStatusCount()
 
     switch (batch.status) {

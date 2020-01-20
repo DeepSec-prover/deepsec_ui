@@ -25,6 +25,12 @@ export default class BatchModel extends ResultModel {
 
     this.runFiles = json.run_files
 
+    if (this.isDbPreview) {
+      this.nbRun = json.nb_run
+    } else {
+      this.nbRun = this.runFiles ? this.runFiles.length : 0
+    }
+
     if (!isEmptyOrBlankStr(json.title)) {
       this.defaultTitle = json.title
     } else {
@@ -106,11 +112,7 @@ export default class BatchModel extends ResultModel {
 
     const runsProgression = this.runs.reduce((sum, r) => sum + r.progressionPercent(), 0)
 
-    return Math.floor(runsProgression / this.nbRun())
-  }
-
-  nbRun () {
-    return this.runFiles ? this.runFiles.length : undefined
+    return Math.floor(runsProgression / this.nbRun)
   }
 
   nbRunCompleted () {
