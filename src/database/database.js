@@ -339,6 +339,7 @@ function timeToSql (time) {
  */
 function listenRendererQueries () {
   ipcMain.on('get-rows', (event, sqlQuery) => {
+    logger.verbose(`Get SQL row query :\n${sqlQuery}`)
     db.all(sqlQuery, [], (err, rows) => {
       if (err) {
         logger.error(`An issue occurs when fetching rows from the database:\n${err}`)
@@ -351,6 +352,7 @@ function listenRendererQueries () {
   })
 
   ipcMain.on('get-count', (event, sqlQuery) => {
+    logger.verbose(`Get SQL count query :\n${sqlQuery}`)
     db.all(sqlQuery, [], (err, count) => {
       if (err) {
         logger.error(`An issue occurs when fetching rows count from the database:\n${err}`)

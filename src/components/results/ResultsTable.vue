@@ -1,44 +1,65 @@
 <template>
-  <data-tables-server id="result-table"
-                      :data="pageBatches"
-                      :total="totalBatches"
-                      @row-click="rowClick"
-                      empty-text="No batch found in the result folder."
-                      :default-sort="{prop: 'startTime', order: 'descending'}"
-                      :pagination-props="{ pageSizes: [5, 10, 15] }"
-                      :page-size="10"
-                      :loading="loading"
-                      @query-change="loadData">
-    <el-table-column label="Status"
-                     prop="status"
-                     :filters="statusValues"
-                     :filter-method="filterStatus"
-                     filter-placement="bottom-end">
-      <template slot-scope="scope">
-        <result-status :status="scope.row.status" tag></result-status>
-        <span v-if="scope.row.debug" class="debug-logo">
+  <div>
+    <!-- Filters -->
+    <el-form class="centred-content" size="small" :inline="true" @submit.native.prevent>
+      <!-- Filter title -->
+      <el-form-item label="Title">
+        <el-input v-model="filters[0].value"
+                  prefix-icon="el-icon-search"
+                  placeholder="Filter"
+                  clearable></el-input>
+      </el-form-item>
+      <!-- Filter status -->
+      <el-form-item label="Status">
+        <el-select v-model="filters[1].value" multiple placeholder="Filter">
+          <el-option
+                  v-for="status in statusOptions"
+                  :key="status.value"
+                  :label="status.label"
+                  :value="status.value">
+          </el-option>
+        </el-select>
+      </el-form-item>
+    </el-form>
+    <data-tables-server id="result-table"
+                        :data="pageBatches"
+                        :total="totalBatches"
+                        @row-click="rowClick"
+                        empty-text="No batch found in the result folder."
+                        :table-props='{ defaultSort: {prop: "startTime", order: "descending"} }'
+                        :pagination-props="{ pageSizes: [10, 15, 20, 25, 50] }"
+                        :page-size="15"
+                        :loading="loading"
+                        :filters="filters"
+                        @query-change="loadData"
+                        @sort-condition="loadData">
+      <el-table-column label="Status" prop="status">
+        <template slot-scope="scope">
+          <result-status :status="scope.row.status" tag></result-status>
+          <span v-if="scope.row.debug" class="debug-logo">
           <el-tooltip content="Ran in debug mode">
             <el-tag size="small" type="danger"><i class="el-icon-view"></i></el-tag>
           </el-tooltip>
         </span>
-      </template>
-    </el-table-column>
-    <el-table-column label="Title">
-      <template slot-scope="scope">
-        {{ scope.row.defaultTitle ? scope.row.defaultTitle : '-' }}
-      </template>
-    </el-table-column>
-    <el-table-column label="Nb Run">
-      <template slot-scope="scope">
-        {{ scope.row.nbRun() }}
-      </template>
-    </el-table-column>
-    <el-table-column label="Date" prop="startTime" sortable>
-      <template slot-scope="scope">
-        <date :date="scope.row.startTime" strict></date>
-      </template>
-    </el-table-column>
-  </data-tables-server>
+        </template>
+      </el-table-column>
+      <el-table-column label="Title" prop="defaultTitle" sortable="custom">
+        <template slot-scope="scope">
+          {{ scope.row.defaultTitle ? scope.row.defaultTitle : '-' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="Nb Run">
+        <template slot-scope="scope">
+          {{ scope.row.nbRun() }}
+        </template>
+      </el-table-column>
+      <el-table-column label="Date" prop="startTime" sortable="custom">
+        <template slot-scope="scope">
+          <date :date="scope.row.startTime" strict></date>
+        </template>
+      </el-table-column>
+    </data-tables-server>
+  </div>
 </template>
 
 <script>
@@ -57,11 +78,22 @@ export default {
       pageBatches: [],
       totalBatches: 0,
       loading: true,
-      statusValues: [
-        { text: 'Completed', value: 'completed' },
-        { text: 'In Progress', value: 'in_progress' },
-        { text: 'Canceled', value: 'canceled' },
-        { text: 'Error', value: 'internal_error' }
+      filters: [
+        {
+          value: '',
+          search_prop: 'title',
+          type: 'text'
+        },
+        {
+          value: [],
+          search_prop: 'status',
+          type: 'select'
+        }],
+      statusOptions: [
+        { label: 'Completed', value: 'completed' },
+        { label: 'In Progress', value: 'in_progress' },
+        { label: 'Canceled', value: 'canceled' },
+        { label: 'Error', value: 'internal_error' }
       ]
     }
   },
@@ -69,20 +101,17 @@ export default {
     rowClick (batch, column, event) {
       this.$router.push({ name: 'batch', params: { 'path': batch.path } })
     },
-    filterStatus (value, row) {
-      return row.status === value
-    },
     async loadData (queryInfo) {
       console.log(queryInfo)
       this.loading = true
 
-      getBatches()
+      getBatches(queryInfo.pageSize, queryInfo.page, queryInfo.sort, queryInfo.filters)
         .then(value => {
           this.pageBatches = value
           this.loading = false
         })
 
-      getCountBatches()
+      getCountBatches(queryInfo.filters)
         .then(value => {
           this.totalBatches = value
         })
