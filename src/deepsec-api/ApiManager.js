@@ -371,6 +371,17 @@ export class ApiManager {
 
     ApiManager.detachedProcesses = []
   }
+
+  static cancelDetachedIO () {
+    if (ApiManager.detachedProcesses.size > 0) {
+      logger.debug(`Canceling detached streams (${ApiManager.detachedProcesses.size} processes)`)
+      ApiManager.detachedProcesses.forEach(p => {
+        p.kill('SIGINT')
+      })
+    }
+
+    ApiManager.detachedProcesses = []
+  }
 }
 
 // Store all current "to detach" processes
