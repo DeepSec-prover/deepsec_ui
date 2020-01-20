@@ -31,8 +31,7 @@
                         :page-size="15"
                         :loading="loading"
                         :filters="filters"
-                        @query-change="loadData"
-                        @sort-condition="loadData">
+                        @query-change="loadData">
       <el-table-column label="Status" prop="status">
         <template slot-scope="scope">
           <result-status :status="scope.row.status" tag></result-status>
@@ -78,6 +77,7 @@ export default {
       pageBatches: [],
       totalBatches: 0,
       loading: true,
+      currentSort: { prop: 'startTime', order: 'descending' },
       filters: [
         {
           value: '',
@@ -102,10 +102,15 @@ export default {
       this.$router.push({ name: 'batch', params: { 'path': batch.path } })
     },
     async loadData (queryInfo) {
-      console.log(queryInfo)
       this.loading = true
+      console.log(queryInfo)
 
-      getBatches(queryInfo.pageSize, queryInfo.page, queryInfo.sort, queryInfo.filters)
+      // Change the sort order only when sort type, if not it's reset
+      if (queryInfo.type === 'sort') {
+        this.currentSort = queryInfo.sort
+      }
+
+      getBatches(queryInfo.pageSize, queryInfo.page, this.currentSort, queryInfo.filters)
         .then(value => {
           this.pageBatches = value
           this.loading = false
