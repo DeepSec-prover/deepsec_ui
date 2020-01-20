@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Menu, protocol, dialog } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, Menu, protocol } from 'electron'
 import { createProtocol, installVueDevtools } from 'vue-cli-plugin-electron-builder/lib'
 import mainMenuTemplate from './electron-menu'
 import settings from '../settings'
@@ -59,22 +59,21 @@ function createWindow () {
     mainWindow = null
   })
 
-  mainWindow.on('close', function(e){
+  mainWindow.on('close', function (e) {
     if (ApiManager.detachedProcesses.size > 0) {
       let choice = dialog.showMessageBoxSync(this, {
-          type: 'question',
-          buttons: ['Quit and cancel the runs', 'Quit and keep runs in background', 'Cancel'],
-          title: 'Confirm',
-          message: 'You are about to quit DeepSec UI but some queries are currently being verified. What do yo want to do ?'
-       })
+        type: 'question',
+        buttons: ['Quit and cancel the runs', 'Quit and keep runs in background', 'Cancel'],
+        title: 'Confirm',
+        message: 'You are about to quit DeepSec UI but some queries are currently being verified. What do yo want to do ?'
+      })
 
       if (choice === 0) {
         ApiManager.cancelDetachedIO()
-      } else if(choice == 2){
-        e.preventDefault();
+      } else if (choice === 2) {
+        e.preventDefault()
       }
     }
-
   })
 
   // Attache the menu to the window
