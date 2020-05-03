@@ -105,9 +105,7 @@ function openSpecFiles (currentDialog, files, directories) {
 
   // Filter DPS only if file selected
   if (files) {
-    filters.unshift({
-                      name: 'DPS', extensions: ['dps']
-                    })
+    filters.unshift({ name: 'DPS', extensions: ['dps'] })
   }
 
   const promise = currentDialog.showOpenDialog(null, {
@@ -145,7 +143,7 @@ function openSpecFiles (currentDialog, files, directories) {
 
         userSettings.set('defaultSpecFilesPath', filePaths[0])
 
-        logger.info(`After directories search, ${filePaths.length} files are selected : 
+        logger.info(`After directories search, ${filePaths.length} files are selected :
         ${filePaths.join(', ')}`)
 
         return filePaths

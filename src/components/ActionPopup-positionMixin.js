@@ -24,7 +24,7 @@ const mixin = {
   },
   methods: {
     updatePopper () {
-      let options = this.options
+      const options = this.options
       this.reconfigure(this.dataPopper, this.dataDrag, options)
       this.options = Object.assign({}, options)
     },
@@ -33,7 +33,7 @@ const mixin = {
         left: data.left,
         top: data.top
       }
-      let options = this.options
+      const options = this.options
       this.reconfigure(this.dataPopper, this.dataDrag, options)
       this.options = Object.assign({}, options)
       // Seems that just updating the value of options does not work. Creating
@@ -70,7 +70,7 @@ const mixin = {
   },
   watch: {
     dataPopper (newVal, _) {
-      let options = this.options
+      const options = this.options
       this.reconfigure(newVal, this.dataDrag, options)
       this.options = Object.assign({}, options)
     },

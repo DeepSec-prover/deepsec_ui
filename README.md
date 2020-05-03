@@ -31,7 +31,7 @@ Note: If you're using Linux Bash for Windows, [see this guide](https://www.howto
 ### Environment variables
 
 - `NODE_ENV` can be :
-  - `prod` (default) : For final user
+  - `production` (default) : For final user
   - `dev` : Enable development tools and mock data
 
 ### Commands
@@ -64,7 +64,7 @@ Note: If you're using Linux Bash for Windows, [see this guide](https://www.howto
 
 ### Log
 
-The log file `app.log` is stored : 
+The log file `app.log` is stored :
 - Packaged : In the OS default user's data directory
 - Development : In the app root directory
 

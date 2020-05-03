@@ -1,15 +1,19 @@
 This file summarizes the most important changes between versions
 of DeepSec UI.
 
+Version 1.0.0 (03/05/2020)
+
+  - Official release.
+
 Version 1.0.0 alpha rc2 (14/01/2020)
-  
+
   - Fix a bug where symbolic link to `deepsec_api` would not work.
   - Improved selection of absolute path to `deepsec_api`
 
 Version 1.0.0 alpha rc (14/01/2020)
 
-  DeepSec UI requires DeepSec 2.0.x to run. 
-  See https://github.com/DeepSec-prover/deepsec to download and install DeepSec 2.0.x. 
+  DeepSec UI requires DeepSec 2.0.x to run.
+  See https://github.com/DeepSec-prover/deepsec to download and install DeepSec 2.0.x.
   Amongst the new features of both DeepSec and DeepSec UI:
 
   - Improved efficiency when verifying queries.

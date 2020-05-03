@@ -1,7 +1,7 @@
 {
   "name": "deepsec_ui",
   "productName": "DeepSec UI",
-  "version": "1.0.0-rc3",
+  "version": "1.0.0",
   "description": "User interface for DeepSec tool (DEciding Equivalence Properties in SECurity protocols)",
   "author": {
     "name": "Vincent CHEVAL",
@@ -9,8 +9,7 @@
     "url": "https://members.loria.fr/VCheval/"
   },
   "contributors": [
-    "Victor YON <victor.yon@loria.fr>",
-    "Steve KREMER <steve.kremer@inria.fr>"
+    "Victor YON <victor.yon@loria.fr>"
   ],
   "main": "background.js",
   "scripts": {

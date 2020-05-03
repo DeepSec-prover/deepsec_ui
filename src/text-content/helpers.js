@@ -1,20 +1,14 @@
 function formatShortKey (list) {
-  let updatedList = list.map(cmd => {
-      switch (cmd) {
-        case 'ctrl': return process.platform === 'darwin' ? '&#94;' : 'Ctrl'
-          break
-        case 'ctrlOrCmd': return process.platform === 'darwin' ? '&#8984;' : 'Ctrl'
-          break
-        case 'shift': return process.platform === 'darwin' ? '&#8679;' : 'Shift'
-          break
-        case 'left': return process.platform === 'darwin' ? '&larr;' : 'Left'
-          break
-        case 'right': return process.platform === 'darwin' ? '&rarr;' : 'Right'
-          break
-        default: return cmd
-      }
+  const updatedList = list.map(cmd => {
+    switch (cmd) {
+      case 'ctrl': return process.platform === 'darwin' ? '&#94;' : 'Ctrl'
+      case 'ctrlOrCmd': return process.platform === 'darwin' ? '&#8984;' : 'Ctrl'
+      case 'shift': return process.platform === 'darwin' ? '&#8679;' : 'Shift'
+      case 'left': return process.platform === 'darwin' ? '&larr;' : 'Left'
+      case 'right': return process.platform === 'darwin' ? '&rarr;' : 'Right'
+      default: return cmd
     }
-  )
+  })
 
   if (process.platform === 'darwin') {
     return updatedList.join('')
@@ -61,13 +55,13 @@ const helpers = {
     all: 'Display all transitions.'
   },
   maxMemory: 'The maximum memory (RAM) used by OCaml during the running time.',
-  shortkeys:{
-    init: 'Go to initial state.<br><b>Short Key</b>: ' + formatShortKey(['ctrlOrCmd','left']),
+  shortkeys: {
+    init: 'Go to initial state.<br><b>Short Key</b>: ' + formatShortKey(['ctrlOrCmd', 'left']),
     prev: 'Go to previous action.<br><b>Short Key</b>: ' + formatShortKey(['left']),
     next: 'Go to next action.<br><b>Short Key</b>: ' + formatShortKey(['right']),
-    last: 'Go to last action.<br><b>Short Key</b>: ' + formatShortKey(['ctrlOrCmd','right']),
-    undo: 'Undo action.<br><b>Short Key</b> : ' + formatShortKey(['ctrlOrCmd','Z']),
-    redo: 'Redo action.<br><b>Short Key</b> : ' + formatShortKey(['ctrlOrCmd','shift','Z'])
+    last: 'Go to last action.<br><b>Short Key</b>: ' + formatShortKey(['ctrlOrCmd', 'right']),
+    undo: 'Undo action.<br><b>Short Key</b> : ' + formatShortKey(['ctrlOrCmd', 'Z']),
+    redo: 'Redo action.<br><b>Short Key</b> : ' + formatShortKey(['ctrlOrCmd', 'shift', 'Z'])
   },
   recipes: 'Public names created by the attacker starts with \'#\', e.g. \'#n\'.<br>Reference to the i-th term of the frame is written \'ax_i\'.<br>The i-th projection of an j-tuple is written \'proj_{i,j}\'. '
 }

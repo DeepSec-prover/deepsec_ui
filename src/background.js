@@ -68,7 +68,7 @@ function createWindow () {
 
   mainWindow.on('close', function (e) {
     if (ApiManager.detachedProcesses.size > 0) {
-      let choice = dialog.showMessageBoxSync(this, {
+      const choice = dialog.showMessageBoxSync(this, {
         type: 'question',
         buttons: ['Quit and cancel the queries', 'Quit and keep the verification in background', 'Cancel'],
         title: 'Confirm',
@@ -153,7 +153,7 @@ app.on('ready', async () => {
 
   // Every API manager that you want to use with the remote has to be in this list.
   ApiManager.registerManagers([ApiStartRun, ApiDisplayTrace, ApiAttackSim, ApiEquivalenceSim],
-                              () => mainWindow)
+    () => mainWindow)
 
   // Connect the database
   connectDatabase()

@@ -184,7 +184,7 @@ export default class ProcessUserModel extends ProcessModel {
 
     const copy = new ProcessUserModel(processModel.processId,
                                       processModel.process,
-                                      [],  // Copy the atomic renamer after
+                                      [], // Copy the atomic renamer after
                                       processModel.apiRemote)
 
     copy.traceLevel = processModel.traceLevel

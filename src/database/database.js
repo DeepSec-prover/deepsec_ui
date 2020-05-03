@@ -74,7 +74,7 @@ export function scanForNewResults () {
       // Filter and rename
       // TODO also filter file date to improve perf
       files = files.filter(file => file.endsWith('.json'))
-                   .map(file => file.replace('.json', ''))
+        .map(file => file.replace('.json', ''))
 
       logger.debug(
         `${files.length} file(s) found in the user results directory (${resultsDirPath})`)
@@ -310,7 +310,7 @@ function generateBatchUpdateOrInsertSql (batch) {
           end_time=${timeToSql(run.endTime)},
           input_file='${run.inputFile}'
       WHERE path='${runPath}';
-  
+
       INSERT OR IGNORE INTO runs (path, status, start_time, end_time, input_file)
       VALUES ('${runPath}',
               '${run.status}',
@@ -331,14 +331,14 @@ function generateBatchUpdateOrInsertSql (batch) {
           // Try to update then insert the query
           sql += `
           UPDATE OR IGNORE queries
-          SET status='${query.status}', 
+          SET status='${query.status}',
               start_time=${timeToSql(query.startTime)},
               end_time=${timeToSql(query.endTime)},
               q_index=${query.index},
               semantics='${query.semantics}',
               type='${query.type}'
           WHERE path='${queryPath}';
-      
+
           INSERT OR IGNORE INTO queries (path, status, start_time, end_time, q_index, semantics, type)
           VALUES ('${queryPath}',
                   '${query.status}',

@@ -282,7 +282,7 @@ export class ApiStartRun extends ApiManager {
 
     if (nbTotalWarnings === 1) {
       strTotalWarnings = nbTotalWarnings + ' warning'
-    } else if (nbTotalWarnings > 1){
+    } else if (nbTotalWarnings > 1) {
       strTotalWarnings = nbTotalWarnings + ' warnings'
     }
 

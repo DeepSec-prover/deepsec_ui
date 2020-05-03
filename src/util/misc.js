@@ -75,8 +75,9 @@ function setDifference (set1, set2) {
 
   // iterate over the values
   for (const elem of set1) {
-    if (!set2.has(elem))
+    if (!set2.has(elem)) {
       diff.add(elem)
+    }
   }
 
   return diff

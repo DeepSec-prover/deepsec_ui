@@ -54,10 +54,10 @@ export default class AtomicRenamer {
     const label = data.label
     const index = data.index
 
-    // Existing label
     if (this.renameTable.has(label)) {
-      // Existing label and index
+      // Existing label
       if (this.renameTable.get(label).has(index)) {
+        // Existing label and index
         const newId = this.renameTable.get(label).get(index)
         // Hide "0"
         if (newId === 0) {
@@ -65,17 +65,15 @@ export default class AtomicRenamer {
         } else {
           return label + '_' + (newId + 1)
         }
-      }
-      // Existing label but new index
-      else {
+      } else {
+        // Existing label but new index
         const labelTable = this.renameTable.get(label)
         const newId = labelTable.size
         labelTable.set(index, newId)
         return label + '_' + (newId + 1)
       }
-    }
-    // New label in the table
-    else {
+    } else {
+      // New label in the table
       this.renameTable.set(label, new Map([[index, 0]]))
       return label // Hide "0"
     }

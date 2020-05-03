@@ -1,6 +1,6 @@
 import Prism from 'prismjs'
 
-let filters = {
+const filters = {
   position: {
     pattern: /%(\d+(-\d+)*(-\w+)?)%(.|\n)+?%\/\1%/, // Something like "%142%...%/142%" or "%752-1-2%...%/752-1-2%"
     inside: {
@@ -28,7 +28,7 @@ let filters = {
   },
   punctuation: /[(),;]/,
   sup: /(?<=\w|')~\d+(-\d+)*(?=\s|$|_|%)/,
-  sub: /(?<=\w|')_\d+(?=\b|~|%)/,
+  sub: /(?<=\w|')_\d+(?=\b|~|%)/
 }
 
 // Recursive definition for position
@@ -39,22 +39,19 @@ Prism.languages.deepsec = filters
 
 // Create hook before rendering code
 Prism.hooks.add('wrap', env => {
-  // Add <sub> tag
   if (env.type === 'sub') {
+    // Add <sub> tag
     env.content = env.content.replace('_', '')
-  }
-  // Add <sup> tag
-  else if (env.type === 'sup') {
+  } else if (env.type === 'sup') {
+    // Add <sup> tag
     env.content = env.content.replace('~', '')
-  }
-  // Position tag
-  else if (env.type === 'position') {
+  } else if (env.type === 'position') {
+    // Position tag
     const index = env.content.match(/^%([-\d]+(?:\w+)?)%/)[1]
     env.classes.push(`position-${index}`)
     env.content = env.content.match(/^%[-\d]+(?:\w+)?%((.|\n)+?)%\/[-\d]+(?:\w+)?%$/)[1]
-  }
-  // Format projection function
-  else if (env.type === 'function' && env.content.startsWith('proj_{')) {
+  } else if (env.type === 'function' && env.content.startsWith('proj_{')) {
+    // Format projection function
     const n = Array.from(env.content.matchAll(/\d+/g))
     env.content = `\u03A0<span class="token sub">${n[0]},${n[1]}</span>`
   }

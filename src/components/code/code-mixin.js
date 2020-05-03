@@ -1,7 +1,7 @@
+import Prism from '../../util/prism-deepsec'
 import logger from 'electron-log'
 import userSettings from 'electron-settings'
-import { isEmptyOrBlankStr } from '../../util/misc'
-import { appendEmptyLines } from '../../util/misc'
+import { isEmptyOrBlankStr, appendEmptyLines } from '../../util/misc'
 
 const mixin = {
   props: {
@@ -37,7 +37,7 @@ const mixin = {
           nblines = lines.length
         }
         if (nblines <= this.minimumNbLines) {
-          return appendEmptyLines(this.code,(this.minimumNbLines - nblines))
+          return appendEmptyLines(this.code, (this.minimumNbLines - nblines))
         } else {
           return this.code
         }
@@ -55,7 +55,7 @@ const mixin = {
       } else if (this.code !== null) {
         logger.verbose('Update Prism code highlight')
         // We have to edit directly the dom to enable Prism plugins
-        this.$refs.code.textContent = this.codeWithMinimumNbLines ()
+        this.$refs.code.textContent = this.codeWithMinimumNbLines()
         Prism.highlightElement(this.$refs.code)
       } else {
         // No code yet

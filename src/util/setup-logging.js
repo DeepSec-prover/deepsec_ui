@@ -12,13 +12,12 @@ import fs from 'fs'
 function setupDefaultLogger () {
   let logDir = null
 
-  // Get and create the log directory for the current user depending of the OS
   if (app.isPackaged) {
+    // Get and create the log directory for the current user depending of the OS
     app.setAppLogsPath() // Create
     logDir = app.getPath('logs')
-  }
-  // For dev create at project root
-  else {
+  } else {
+    // For dev create at project root
     logDir = path.join(settings.appRoot, 'log')
 
     // Create the log directory if it does not exist

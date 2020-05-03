@@ -36,7 +36,7 @@ export function getBatches (pageSize, pageNumber, sort, filters) {
     // Sort
     if (sort && sort.order) {
       const sortOrder = sort.order === 'descending' ? 'DESC' : 'ASC'
-      let sortField = undefined
+      let sortField
       switch (sort.prop) {
         case 'startTime':
           sortField = 'start_time'

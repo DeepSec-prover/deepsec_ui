@@ -194,12 +194,11 @@ function formatLetInElse (subProcess, atomic, indent) {
 
   res += '\n'
 
-  // No "else" so no indent "in"
   if (subProcess.process_else === undefined) {
+    // No "else" so no indent "in"
     res += format(subProcess.process_then, atomic, indent)
-  }
-  // With "else" so no indent all
-  else {
+  } else {
+    // With "else" so no indent all
     res += format(subProcess.process_then, atomic, indent + 1) +
       strIndent(indent)
 
@@ -360,12 +359,11 @@ function formatIfThenElse (subProcess, atomic, indent) {
 
   res += '\n'
 
-  // No "else" so no indent "then"
   if (subProcess.process_else === undefined) {
+    // No "else" so no indent "then"
     res += format(subProcess.process_then, atomic, indent)
-  }
-  // With "else" so indent all
-  else {
+  } else {
+    // With "else" so indent all
     res += format(subProcess.process_then, atomic, indent + 1) +
       strIndent(indent)
 
@@ -413,7 +411,6 @@ function formatChoice (subProcess, atomic, indent) {
   let left = format(subProcess.process1, atomic, indent + 1)
   let middle = ' + '
   let right = format(subProcess.process2, atomic, indent + 1)
-
 
   if (subProcess.position) {
     left = tagPosition(left, subProcess.position, 'left')
