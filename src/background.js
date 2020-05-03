@@ -134,7 +134,7 @@ app.on('ready', async () => {
   unsetToDefault()
   logger.debug(`User settings storage path : ${userSettings.file()}`)
 
-  if (settings.env !== 'prod') {
+  if (settings.env !== 'production') {
     logger.warn(`Not in production mode (current env: ${settings.env})`)
   }
   if (settings.devTools.startUp || settings.devTools.menu) {
