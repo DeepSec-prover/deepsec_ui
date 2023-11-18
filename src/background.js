@@ -1,5 +1,6 @@
 import { app, BrowserWindow, dialog, ipcMain, Menu, protocol } from 'electron'
-import { createProtocol, installVueDevtools } from 'vue-cli-plugin-electron-builder/lib'
+import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
+import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import mainMenuTemplate from './electron-menu'
 import settings from '../settings'
 import setupDefaultLogger from './util/setup-logging'
@@ -145,7 +146,7 @@ app.on('ready', async () => {
     // If you are not using Windows 10 dark mode, you may uncomment these lines
     // In addition, if the linked issue is closed, you can upgrade electron and uncomment these lines
     try {
-      await installVueDevtools()
+      await installExtension(VUEJS_DEVTOOLS)
     } catch (e) {
       logger.error('Vue Devtools failed to install:', e.toString())
     }
