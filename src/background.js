@@ -5,7 +5,7 @@ import mainMenuTemplate from './electron-menu'
 import settings from '../settings'
 import setupDefaultLogger from './util/setup-logging'
 import logger from 'electron-log'
-import { unsetToDefault } from './util/default-user-settings'
+import { unsetToDefault } from './util/user-settings-main'
 import userSettings from 'electron-settings'
 import { ApiStartRun } from './deepsec-api/ApiStartRun'
 import { ApiDisplayTrace } from './deepsec-api/ApiDisplayTrace'
@@ -21,6 +21,22 @@ import {
   scanForInProgress,
   scanForNewResults
 } from './database/database'
+import defaultValues from './util/default-values'
+import path from 'path'
+import 'events'; // Ensure 'events' is imported to avoid issues with Electron 12+ and Node.js 14+
+// This allows you to use `require` in the renderer process
+// and is necessary for compatibility with Electron 12+ and Node.js 14+
+import { openSpecFilesRenderer, openApiFileRenderer}  from './util/open-files-dialogs';
+import * as remoteMain from '@electron/remote/main';
+
+remoteMain.initialize(); // Initialize remote module
+
+console.log(`Starting DeepSec UI in : ${process.defaultApp}`)
+
+const resultsDirPath = path.join(app.getPath('userData'), '../Deepsec/result_files');
+defaultValues['resultsDirPath'] = resultsDirPath
+
+process.traceProcessWarnings = true
 
 // Fix system path for packaged MacOS (https://stackoverflow.com/a/57705752/2666094)
 fixPath()
@@ -32,32 +48,48 @@ setupDefaultLogger()
 let mainWindow
 let loadingWindow
 
+
+// vue-cli-plugin-electron-builder defines app.isPackaged for us
+const isDev = !app.isPackaged;
+
+/**
+ * Resolve an asset that lives in <project-root>/public/icons/
+ * During development we read it directly from disk.
+ * In the packaged app it is copied to  resources/icons/*  via extraResources.
+ */
+function resolveIcon (filename) {
+  return isDev
+    ? path.join(__dirname, '..', 'public', 'icons', filename)                    // dev
+    : path.join(process.resourcesPath, 'icons', filename);                      // prod
+}
+
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged(
   [{ scheme: 'app', privileges: { secure: true, standard: true } }])
 
 function createWindow () {
-  // Create the browser window.
-  mainWindow = new BrowserWindow(
-    {
-      show: false,
-      width: 1200,
-      height: 1000,
-      minWidth: 1000,
-      minHeight: 600,
-      webPreferences: {
-        nodeIntegration: true // To use node in the client side
-      },
-      icon: 'public/icons/icon.png' // Probably override by the packaged application (but useful for dev)
-    })
+  mainWindow = new BrowserWindow({
+    show: false,
+    width: 1200,
+    height: 1000,
+    minWidth: 1000,
+    minHeight: 600,
+    enableRemoteModule: true,
+    webPreferences: {
+      nodeIntegration: true, // Enable Node.js integration
+      contextIsolation: false, // Disable context isolation
+      enableRemoteModule: true,
+    },
+    icon: resolveIcon('icon.png')
+  });
+  
+  remoteMain.enable(mainWindow.webContents);
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
-    // Load the url of the dev server if in development mode
-    mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
+    mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
   } else {
-    createProtocol('app')
-    // Load the index.html when not in development
-    mainWindow.loadURL('app://./index.html')
+    createProtocol('app');
+    mainWindow.loadURL('app://./index.html');
   }
 
   mainWindow.on('closed', () => {
@@ -91,7 +123,8 @@ function createWindow () {
     mainWindow.webContents.openDevTools()
   }
 
-  logger.info('Main windows created')
+  
+  console.log('Main windows created')
 }
 
 function createLoadingWindow () {
@@ -108,9 +141,9 @@ function createLoadingWindow () {
       movable: false,
       minimizable: false,
       maximizable: false,
-      closable: false,
+      closable: true,
       fullscreenable: false,
-      icon: 'public/icons/icon-loading.png' // Probably override by the packaged application (but useful for dev)
+      icon: resolveIcon('icon-loading.png') // Probably override by the packaged application (but useful for dev)
     })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -129,34 +162,29 @@ function createLoadingWindow () {
 app.on('ready', async () => {
   logger.info('Electron app ready')
 
-  createLoadingWindow()
-
-  // Set user settings to default if never set or missing
+  createLoadingWindow()  // Set user settings to default if never set or missing
   unsetToDefault()
   logger.debug(`User settings storage path : ${userSettings.file()}`)
 
   if (settings.env !== 'production') {
     logger.warn(`Not in production mode (current env: ${settings.env})`)
-  }
+  } 
+
+  // Comment out this block to disable Vue DevTools
+  /*
   if (settings.devTools.startUp || settings.devTools.menu) {
-    // Install Vue Devtools
-    // Devtools extensions are broken in Electron 6.0.0 and greater
-    // See https://github.com/nklayman/vue-cli-plugin-electron-builder/issues/378 for more info
-    // Electron will not launch with Devtools extensions installed on Windows 10 with dark mode
-    // If you are not using Windows 10 dark mode, you may uncomment these lines
-    // In addition, if the linked issue is closed, you can upgrade electron and uncomment these lines
     try {
       await installExtension(VUEJS_DEVTOOLS)
     } catch (e) {
       logger.error('Vue Devtools failed to install:', e.toString())
     }
   }
+  */
 
   // Every API manager that you want to use with the remote has to be in this list.
   ApiManager.registerManagers([ApiStartRun, ApiDisplayTrace, ApiAttackSim, ApiEquivalenceSim],
     () => mainWindow)
 
-  // Connect the database
   connectDatabase()
     .then(() => {
       return createTablesIfNotExist()
@@ -233,5 +261,20 @@ ipcMain.on('refresh-api-path', () => {
  */
 ipcMain.on('interrupt-child-process', (e, pid) => {
   logger.info(`Send interrupt signal to process ${pid}`)
-  process.kill(pid, 'SIGINT')
+  try {
+    process.kill(pid, 'SIGINT');
+  } catch (error) {
+    logger.error(`Failed to send interrupt signal to process ${pid}: ${error.message}`);
+  }
 })
+
+/* handle invocations coming from the renderer */
+
+ipcMain.handle('specFiles:open', async (_, opts = {}) => {
+  return openSpecFilesRenderer(dialog, opts.files, opts.directories);
+});
+
+ipcMain.handle('apiFile:open', async (_, opts = {}) => {
+  return openApiFileRenderer(dialog, opts.value);
+});
+

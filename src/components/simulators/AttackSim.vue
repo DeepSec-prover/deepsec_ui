@@ -167,7 +167,6 @@ import SimFrame from './SimFrame'
 import SimTrace from './SimTrace'
 import Helper from '../helpers/Helper'
 import ApiRemote from '../../deepsec-api/ApiRemote'
-import logger from 'electron-log'
 import EquivalenceStatus from '../EquivalenceStatus'
 
 export default {
@@ -257,7 +256,7 @@ export default {
         this.syncProcesses = false
         this.processDisplayed.gotoFirstAction()
       } else {
-        logger.warn('Action ignored because a process is currently loading or is impossible.')
+        console.warn('Action ignored because a process is currently loading or is impossible.')
       }
     },
     previousAction () {
@@ -265,7 +264,7 @@ export default {
         this.syncProcesses = false
         this.processDisplayed.gotoPreviousAction()
       } else {
-        logger.warn('Action ignored because a process is currently loading or is impossible.')
+        console.warn('Action ignored because a process is currently loading or is impossible.')
       }
     },
     nextAction () {
@@ -273,7 +272,7 @@ export default {
         this.syncProcesses = false
         this.processDisplayed.gotoNextAction()
       } else {
-        logger.warn('Action ignored because a process is currently loading or is impossible.')
+        console.warn('Action ignored because a process is currently loading or is impossible.')
       }
     },
     lastAction () {
@@ -281,7 +280,7 @@ export default {
         this.syncProcesses = false
         this.processDisplayed.gotoLastAction()
       } else {
-        logger.warn('Action ignored because a process is currently loading or is impossible.')
+        console.warn('Action ignored because a process is currently loading or is impossible.')
       }
     },
     gotoActionDisplayed (id) {
@@ -289,7 +288,7 @@ export default {
         this.syncProcesses = false
         this.processDisplayed.gotoAction(id)
       } else {
-        logger.warn('Action ignored because a process is currently loading.')
+        console.warn('Action ignored because a process is currently loading.')
       }
     },
     focusNextActions () {
@@ -304,28 +303,28 @@ export default {
       if (!this.processDisplayed.loading && !this.processUser.loading) {
         this.processUser.nextUserAction(action)
       } else {
-        logger.warn('Action ignored because a process is currently loading.')
+        console.warn('Action ignored because a process is currently loading.')
       }
     },
     gotoActionUser (id) {
       if (!this.processUser.loading) {
         this.processUser.gotoAction(id)
       } else {
-        logger.warn('Action ignored because a process is currently loading.')
+        console.warn('Action ignored because a process is currently loading.')
       }
     },
     undo () {
       if (!this.processDisplayed.loading && !this.processUser.loading && this.processUser.hasBackHistory()) {
         this.processUser.undo()
       } else {
-        logger.warn('Action ignored because a process is currently loading or is impossible.')
+        console.warn('Action ignored because a process is currently loading or is impossible.')
       }
     },
     redo () {
       if (!this.processDisplayed.loading && !this.processUser.loading && this.processUser.hasNextHistory()) {
         this.processUser.redo()
       } else {
-        logger.warn('Action ignored because a process is currently loading or is impossible.')
+        console.warn('Action ignored because a process is currently loading or is impossible.')
       }
     },
     forceSyncProcesses () {

@@ -1,9 +1,8 @@
 import logger from 'electron-log'
-import userSettings from 'electron-settings'
 import { isEmptyOrBlankStr, isFile } from './misc'
 import { ApiGetConfig } from '../deepsec-api/ApiGetConfig'
 import which from 'which'
-
+import defaultValues  from './default-values'
 /**
  * Check the current Api path and refresh the results directory path
  *
@@ -11,8 +10,8 @@ import which from 'which'
  */
 export function refreshApiPath (mainWindow) {
   // Check the Deepsec API path
-  let apiPath = String(userSettings.get('deepsecApiPath'))
-
+  let apiPath = String(defaultValues['deepsecApiPath'])
+  
   let detected = false
 
   if (isEmptyOrBlankStr(apiPath)) {
@@ -39,9 +38,10 @@ export function refreshApiPath (mainWindow) {
                                 { name: 'settings' })
   } else {
     if (detected) {
-      userSettings.set('deepsecApiPath', apiPath)
+      defaultValues['deepsecApiPath'] = apiPath
     }
     logger.info(`DeepSec API path: ${apiPath}`)
+    defaultValues['deepsecApiPath'] = apiPath
     const apiGetConf = new ApiGetConfig(mainWindow, 'init')
     apiGetConf.start() // The answer will be catch then the process will close itself
   }

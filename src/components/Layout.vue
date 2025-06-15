@@ -34,7 +34,6 @@
 
 <script>
 import { ipcRenderer } from 'electron'
-import logger from 'electron-log'
 
 export default {
   name: 'layout',
@@ -47,7 +46,7 @@ export default {
   },
   beforeMount () {
     window.addEventListener('beforeunload', () => {
-      logger.info('Application refreshing or closing detected, Execute Order 66: destroy all components!')
+      console.info('Application refreshing or closing detected, Execute Order 66: destroy all components!')
       // Trigger all the "beforeDestroy" and "destroyed" hooks from this components and its children.
       // This is necessary to send "die" comment to child processes.
       // This is quite brutal but seems good for this use case.

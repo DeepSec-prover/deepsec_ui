@@ -1,7 +1,6 @@
 import { ApiManager } from './ApiManager'
-import userSettings from 'electron-settings'
 import logger from 'electron-log'
-
+import defaultValues from '../util/default-values';
 /**
  * This manager is made to be used inside the main process.
  */
@@ -26,7 +25,7 @@ export class ApiGetConfig extends ApiManager {
     this.pushNotification(`DeepSec API version ${answer.version} successfully detected`)
     logger.info(`DeepSec API detected with version: ${answer.version}`)
     logger.info(`Result directory path set to: ${answer.result_files_path}`)
-    userSettings.set('resultsDirPath', answer.result_files_path)
+    defaultValues['resultsDirPath']=answer.result_files_path
   }
 
   initError (answer) {

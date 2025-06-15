@@ -130,7 +130,7 @@
               </el-link>
               <!-- Server Hostname -->
               <form-item-helper label="Hostname" helper-id="runOptions.server.host">
-                <el-input placeholder="user@adress" v-model="server.host"></el-input>
+                <el-input placeholder="user@address" v-model="server.host"></el-input>
               </form-item-helper>
               <!-- Server Local Path -->
               <form-item-helper label="Local path" helper-id="runOptions.server.path">
@@ -161,7 +161,6 @@ import FileIssuesList from '../components/spec-files/FileIssuesList'
 import HostIssuesList from '../components/spec-files/HostIssuesList'
 import settings from '../../settings'
 import RunConfigModel from '../models/RunConfigModel'
-import logger from 'electron-log'
 import ApiRemote from '../deepsec-api/ApiRemote'
 
 export default {
@@ -233,7 +232,7 @@ export default {
 
       // Wait for the run confirmation or error message
       this.apiRemote.onReply((event, result) => {
-        logger.silly(`Run starting confirmation : ${JSON.stringify(result)}`)
+        console.log(`Run starting confirmation : ${JSON.stringify(result)}`)
         if (!result.success) {
           this.showGlobalError(result)
         }

@@ -15,7 +15,7 @@
 <script>
 import SpecCodeInline from './code/SpecCodeInline'
 import Helper from './helpers/Helper'
-import userSettings from 'electron-settings'
+import defaultValues from '../util/default-values'
 
 export default {
   name: 'recipe-input',
@@ -33,11 +33,11 @@ export default {
       default: true
     }
   },
-  data () {
+   data () {
     return {
       editionEnable: false,
       recipe: String,
-      helperEnabled: userSettings.get('showHelpers', true)
+      helperEnabled: defaultValues.showHelpers
     }
   },
   methods: {

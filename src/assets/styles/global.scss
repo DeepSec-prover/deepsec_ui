@@ -2,18 +2,24 @@
   font-family: 'Monaco-local';
   font-style: normal;
   font-weight: normal;
-  src: url(../fonts/Monaco-local.woff) format('woff');
+  src: url('../fonts/Monaco-local.woff') format('woff');
 }
 
 @font-face {
   font-family: 'Helvetica-local';
   font-style: normal;
   font-weight: normal;
-  src: url(../fonts/Helvetica-local.woff) format('woff');
+  src: url('../fonts/Helvetica-local.woff') format('woff');
+}
+
+@font-face {
+  font-family: "element-icons";
+  src: url("../fonts/element-icons.woff") format("woff"),
+       url("../fonts/element-icons.ttf")  format("truetype");
 }
 
 #app {
-  font-family: Helvetica-local, Helvetica, sans-serif !important;
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif !important;
 }
 
 /* Hide global scrollbar but allow scrolling */
@@ -150,5 +156,5 @@ dl.in-line dd {
 }
 
 .el-tooltip__popper {
-  font-family: Helvetica-local, Helvetica, sans-serif !important;
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif !important;
 }

@@ -82,7 +82,7 @@ import { formatCode } from '../../util/process-parser'
 import Helper from '../helpers/Helper'
 import SimTrace from './SimTrace'
 import SimFrame from './SimFrame'
-import logger from 'electron-log'
+import console from 'electron-log'
 
 export default {
   name: 'equivalence-sim-display',
@@ -132,35 +132,35 @@ export default {
       if (!this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
         this.processDisplayed.gotoFirstAction()
       } else {
-        logger.warn('Action ignored because the process is currently loading or is impossible.')
+        console.warn('Action ignored because the process is currently loading or is impossible.')
       }
     },
     previousAction () {
       if (!this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
         this.processDisplayed.gotoPreviousAction()
       } else {
-        logger.warn('Action ignored because the process is currently loading or is impossible.')
+        console.warn('Action ignored because the process is currently loading or is impossible.')
       }
     },
     nextAction () {
       if (!this.processDisplayed.loading && this.processDisplayed.hasNextAction()) {
         this.processDisplayed.gotoNextAction()
       } else {
-        logger.warn('Action ignored because the process is currently loading or is impossible.')
+        console.warn('Action ignored because the process is currently loading or is impossible.')
       }
     },
     lastAction () {
       if (!this.processDisplayed.loading && this.processDisplayed.hasNextAction()) {
         this.processDisplayed.gotoLastAction()
       } else {
-        logger.warn('Action ignored because the process is currently loading or is impossible.')
+        console.warn('Action ignored because the process is currently loading or is impossible.')
       }
     },
     gotoAction (id) {
       if (!this.processDisplayed.loading) {
         this.processDisplayed.gotoAction(id)
       } else {
-        logger.warn('Action ignored because the process is currently loading.')
+        console.warn('Action ignored because the process is currently loading.')
       }
     },
     focusNextActions () {

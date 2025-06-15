@@ -40,7 +40,7 @@ function setupDefaultLogger () {
 
   // TODO Handled error management
   // logger.catchErrors({onError (error) {}})
-
+  
   logger.info(`Logger setup: console and file (${logFile})`)
 }
 

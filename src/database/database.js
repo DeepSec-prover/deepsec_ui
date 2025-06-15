@@ -5,16 +5,15 @@ import { app, ipcMain } from 'electron'
 import path from 'path'
 import { isFile, setDifference } from '../util/misc'
 import fs from 'fs'
-import userSettings from 'electron-settings'
+import defaultValues from '../util/default-values';
 import BatchModel from '../models/BatchModel'
 
 if (settings.isDevelopment) {
   sql.verbose()
 }
 
-const dbPath = path.join(app.getPath('userData'), 'results.db')
+let dbPath = path.join(app.getPath('userData'), 'results.db')
 let db = null
-
 /**
  * Connect to the database and wait for renderer IPC requests.
  * If the file doesn't exist create all tables.
@@ -67,7 +66,7 @@ export function closeDatabase () {
  * When such file is found add it in the database.
  */
 export function scanForNewResults () {
-  const resultsDirPath = userSettings.get('resultsDirPath').toString()
+  const resultsDirPath = defaultValues['resultsDirPath'];
   // List batches files in the folder
   fs.readdir(resultsDirPath, (_, files) => {
     if (files && files.length > 0) {

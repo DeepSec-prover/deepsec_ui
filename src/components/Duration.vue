@@ -3,7 +3,6 @@
 </template>
 
 <script>
-import logger from 'electron-log'
 
 const PERIODS = [
   ['day', 60 * 60 * 24],
@@ -68,7 +67,7 @@ export default {
   computed: {
     durationStr: function () {
       if (this.realtimeDuration < 0) {
-        logger.error(`Bad value for duration : ${this.realtimeDuration}s`)
+        console.error(`Bad value for duration : ${this.realtimeDuration}s`)
         return '-'
       }
 

@@ -2,6 +2,13 @@
 
 User interface for [DeepSec](https://github.com/DeepSec-prover/deepsec). **Work in progress**.
 
+## Environment Variable Setup
+## MacOS Edit ~/.zshrc
+
+add this line at the bottom: 
+export PATH="$HOME/deepsec:$PATH"
+for e.g deepsec exists at: /Users/chandanjagdishpanjwani/deepsec
+
 ## Installation
 
 Download the binary file for your OS.
