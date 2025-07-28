@@ -1,6 +1,6 @@
 import helpers from '../../text-content/helpers'
-import logger from 'electron-log'
-import userSettings from 'electron-settings'
+import defaultValues  from '../../util/default-values'
+
 
 const mixin = {
   props: {
@@ -19,7 +19,7 @@ const mixin = {
         openDelay: 400, // ms
         effect: 'light',
         placement: 'top',
-        disable: !userSettings.get('showHelpers', true)
+        disable: !defaultValues.showHelpers,
       }
     }
   },
@@ -48,14 +48,14 @@ const mixin = {
             helperContent = helperContent[idParts[part]]
           }
         } catch (e) {
-          logger.error(`Can't find the id "${this.helperId}" in the helpers file`)
+          console.error(`Can't find the id "${this.helperId}" in the helpers file`)
           return null
         }
 
         if (typeof helperContent === 'string' || helperContent instanceof String) {
           content.push(helperContent)
         } else {
-          logger.error(`Can't find the id "${this.helperId}" in the helpers file`)
+          console.error(`Can't find the id "${this.helperId}" in the helpers file`)
           return null
         }
       }

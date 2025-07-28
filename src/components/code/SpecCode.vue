@@ -22,7 +22,6 @@
 <script>
 import Prism from '../../util/prism-deepsec'
 import 'simplebar/dist/simplebar.min.css'
-import logger from 'electron-log'
 import ProcessModel from '../../models/ProcessModel'
 import Popper from 'popper.js'
 import ActionPopup from '../ActionPopup'
@@ -237,7 +236,7 @@ export default {
       } else if (type === 'choice') {
         this.selectAvailableChoice(availableAction)
       } else {
-        logger.error(`Not implemented action type ${type}`)
+        console.error(`Not implemented action type ${type}`)
       }
     },
     /**
@@ -280,7 +279,7 @@ export default {
               channel: this.selectedAction.channel
             })
         } else {
-          logger.error(`Invalid transition selection type ${this.transitionSettings.type}`)
+           console.error(`Invalid transition selection type ${this.transitionSettings.type}`)
         }
       }
     },

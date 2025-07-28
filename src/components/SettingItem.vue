@@ -21,7 +21,7 @@
       <el-input v-model="value"
                 class="setting-item-file"
                 :placeholder="placeholder"></el-input>
-      <el-button icon="el-icon-document-add" @click="selectFile">Files ...</el-button>
+      <el-button icon="el-icon-document-add" @click="(selectFile())">Files ...</el-button>
     </template>
     <!-- String -->
     <el-input v-else
@@ -34,10 +34,8 @@
 </template>
 
 <script>
-import userSettings from 'electron-settings'
-import logger from 'electron-log'
-import { defaultUserSettings } from '../util/default-user-settings'
-import { openApiFileRenderer } from '../util/open-files-dialogs'
+import defaultValues  from '../util/default-values'
+import { ipcRenderer } from 'electron'
 
 export default {
   name: 'setting-item',
@@ -80,24 +78,23 @@ export default {
   },
   computed: {
     isDefault: function () {
-      return this.value === defaultUserSettings[this.settingsPath]
+      return this.value === defaultValues[this.settingsPath]
     }
   },
   methods: {
     selectFile () {
-      openApiFileRenderer(this.value).then(file => {
+        ipcRenderer.invoke('apiFile:open', this.value ).then(file => {
         this.fileSelectionDone = true
         this.value = file
       }).catch((_) => {/* Nothing to do if canceled or bad value */})
     }
   },
   beforeMount () {
-    this.value = userSettings.get(this.settingsPath)
-
+    this.value = defaultValues[this.settingsPath]
     // Set watcher after the initialization to avoid useless update
     this.$watch('value', (newValue, oldValue) => {
-      logger.debug(`Change user setting "${this.settingsPath}" : ${oldValue} --> ${newValue}`)
-      userSettings.set(this.settingsPath, newValue)
+      console.debug(`Change user setting "${this.settingsPath}" : ${oldValue} --> ${newValue}`)
+      defaultValues[this.settingsPath] = newValue
       this.currentEdit = true
 
       // Trigger path checking after the selection,

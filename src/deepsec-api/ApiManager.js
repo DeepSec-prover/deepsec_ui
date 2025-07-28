@@ -1,10 +1,10 @@
-import userSettings from 'electron-settings'
 import logger from 'electron-log'
 import { isEmptyOrBlankStr, isFile } from '../util/misc'
 import { spawn } from 'child_process'
 import { ipcMain } from 'electron'
-
 let stdoutBuffer = ''
+import defaultValues  from '../util/default-values'
+
 
 /**
  * To communicate with DeepSec API.
@@ -117,8 +117,7 @@ export class ApiManager {
       throw Error('Can\'t start a process twice.')
     }
 
-    const apiPath = String(userSettings.get('deepsecApiPath'))
-
+    const apiPath = String(defaultValues['deepsecApiPath'])
     // Check DeepSec API path
     if (isEmptyOrBlankStr(apiPath)) {
       // Send bad result to the Start Run page
@@ -363,7 +362,7 @@ export class ApiManager {
       })
     }
 
-    ApiManager.detachedProcesses = []
+    ApiManager.detachedProcesses.clear()
   }
 
   static cancelDetachedIO () {
@@ -374,7 +373,7 @@ export class ApiManager {
       })
     }
 
-    ApiManager.detachedProcesses = []
+    ApiManager.detachedProcesses.clear()
   }
 }
 

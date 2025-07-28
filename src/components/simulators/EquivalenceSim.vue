@@ -54,7 +54,6 @@ import ProcessUserModel from '../../models/ProcessUserModel'
 import ProcessDisplayedModel from '../../models/ProcessDisplayedModel'
 import EquivalenceSimDisplay from './EquivalenceSimDisplay'
 import EquivalenceSimUser from './EquivalenceSimUser'
-import logger from 'electron-log'
 import Vue from 'vue'
 import errorMessage from '../errorMessage'
 
@@ -151,11 +150,11 @@ export default {
       // Wait for the next reply
       this.apiRemote.onReply((_, answer) => {
         if (answer.success) {
-          logger.silly('Equivalent trace received.')
+          console.log('Equivalent trace received.')
           this.processes[notSelectedProcessId].actions = answer.content.action_sequence
           this.processes[notSelectedProcessId].loading = false
         } else {
-          logger.error(`Equivalent trace finding failed : ${JSON.stringify(answer)}`)
+          console.error(`Equivalent trace finding failed : ${JSON.stringify(answer)}`)
         }
         this.loading = false
       })

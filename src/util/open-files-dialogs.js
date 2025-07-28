@@ -1,9 +1,9 @@
 import logger from 'electron-log'
-import { dialog, remote } from 'electron'
+import {dialog, remote} from 'electron'
 import fs from 'fs'
 import path from 'path'
 import { isDir } from './misc'
-import userSettings from 'electron-settings'
+import defaultValues from './default-values'
 
 /**
  * Open the result file selector from the main process.
@@ -12,7 +12,7 @@ import userSettings from 'electron-settings'
  * @async
  * @return {Promise<string>} A promise with the file absolute path
  */
-export function openResultFileMain () {
+function openResultFileMain () {
   return openResultFile(dialog)
 }
 
@@ -23,8 +23,8 @@ export function openResultFileMain () {
  * @async
  * @return {Promise<string>} A promise with the file absolute path
  */
-export function openResultFileRemote () {
-  return openResultFile(remote.dialog)
+function openResultFileRemote () {
+  return openResultFile(dialog)
 }
 
 function openResultFile (currentDialog) {
@@ -70,7 +70,7 @@ function openResultFile (currentDialog) {
  * @param {boolean} directories If true the dialog allow to select directories
  * @return {Promise<Array<string>>} A promise with the files absolute path
  */
-export function openSpecFilesMain (files, directories) {
+function openSpecFilesMain (files, directories) {
   return openSpecFiles(dialog, files, directories)
 }
 
@@ -84,8 +84,8 @@ export function openSpecFilesMain (files, directories) {
  * @param {boolean} directories If true the dialog allow to select directories
  * @return {Promise<Array<string>>} A promise with the files absolute paths
  */
-export function openSpecFilesRenderer (files, directories) {
-  return openSpecFiles(remote.dialog, files, directories)
+function openSpecFilesRenderer (specDialog, files, directories) {
+  return openSpecFiles(specDialog, files, directories)
 }
 
 function openSpecFiles (currentDialog, files, directories) {
@@ -95,7 +95,7 @@ function openSpecFiles (currentDialog, files, directories) {
     throw new Error('At least one option should be selected (files or directories)')
   }
 
-  const properties = ['multiSelections']
+  const properties = ['openFile']
   if (files) properties.push('openFile')
   if (directories) properties.push('openDirectory')
 
@@ -110,7 +110,7 @@ function openSpecFiles (currentDialog, files, directories) {
 
   const promise = currentDialog.showOpenDialog(null, {
     properties: properties,
-    defaultPath: userSettings.get('defaultSpecFilesPath', ''),
+    defaultPath: defaultValues.defaultSpecFilesPath,
     message: 'Select one or many spec files / directories', // Message for mac only
     filters: filters
   })
@@ -141,7 +141,7 @@ function openSpecFiles (currentDialog, files, directories) {
           filePaths.push.apply(filePaths, files)
         })
 
-        userSettings.set('defaultSpecFilesPath', filePaths[0])
+        defaultValues['defaultSpecFilesPath'] = filePaths[0]
 
         logger.info(`After directories search, ${filePaths.length} files are selected :
         ${filePaths.join(', ')}`)
@@ -189,14 +189,14 @@ function recursiveFindFiles (dirPath, regex, filesResult) {
  * @param {String} defaultPath The default path of the selector
  * @return {Promise<Array<string>>} A promise with the files absolute paths
  */
-export function openApiFileRenderer (defaultPath) {
-  return openApiFile(remote.dialog, defaultPath)
+function openApiFileRenderer (apiDialog, defaultPath) {
+  return openApiFile(apiDialog, defaultPath)
 }
 
 function openApiFile (currentDialog, defaultPath) {
   logger.info('Open API file selection')
 
-  const promise = currentDialog.showOpenDialog(null, {
+  const promise = currentDialog.showOpenDialog({
     properties: ['openFile'],
     defaultPath: defaultPath,
     message: 'Select the DeepSec API file' // Message for mac only
@@ -218,4 +218,12 @@ function openApiFile (currentDialog, defaultPath) {
       throw new Error('Open DeepSec API file canceled')
     }
   })
+}
+
+export  { 
+  openResultFileMain,
+  openResultFileRemote,
+  openSpecFilesMain,
+  openSpecFilesRenderer,
+  openApiFileRenderer
 }

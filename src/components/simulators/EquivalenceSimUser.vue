@@ -64,7 +64,6 @@ import { formatCode } from '../../util/process-parser'
 import Helper from '../helpers/Helper'
 import SimTrace from './SimTrace'
 import SimFrame from './SimFrame'
-import logger from 'electron-log'
 
 export default {
   name: 'equivalence-sim-user',
@@ -101,28 +100,28 @@ export default {
       if (!this.processUser.loading) {
         this.processUser.nextUserAction(action)
       } else {
-        logger.warn('Action ignored because a process is currently loading.')
+        console.warn('Action ignored because a process is currently loading.')
       }
     },
     gotoAction (id) {
       if (!this.processUser.loading) {
         this.processUser.gotoAction(id)
       } else {
-        logger.warn('Action ignored because a process is currently loading.')
+        console.warn('Action ignored because a process is currently loading.')
       }
     },
     undo () {
       if (!this.processUser.loading && this.processUser.hasBackHistory()) {
         this.processUser.undo()
       } else {
-        logger.warn('Action ignored because a process is currently loading or is impossible.')
+        console.warn('Action ignored because a process is currently loading or is impossible.')
       }
     },
     redo () {
       if (!this.processUser.loading && this.processUser.hasNextHistory()) {
         this.processUser.redo()
       } else {
-        logger.warn('Action ignored because a process is currently loading or is impossible.')
+        console.warn('Action ignored because a process is currently loading or is impossible.')
       }
     }
   }

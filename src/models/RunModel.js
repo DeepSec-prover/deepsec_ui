@@ -1,8 +1,8 @@
-import userSettings from 'electron-settings'
 import ResultModel from './ResultModel'
 import BatchModel from './BatchModel'
 import QueryModel from './QueryModel'
 import path from 'path'
+import defaultValues  from '../util/default-values'
 
 export default class RunModel extends ResultModel {
   mapJsonFile (json) {
@@ -91,6 +91,6 @@ export default class RunModel extends ResultModel {
    * @returns {String} Input (spec) file absolute paths
    */
   inputFileAbsolutePath () {
-    return path.join(userSettings.get('resultsDirPath'), this.inputFile)
+    return path.join(String(defaultValues['resultsDirPath']), this.inputFile)
   }
 }

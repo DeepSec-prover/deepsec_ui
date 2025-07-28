@@ -67,9 +67,9 @@
 </template>
 
 <script>
-import { resetAll } from '../util/default-user-settings'
+import {resetAll}  from '../util/user-settings-main'
+import defaultValues from '../util/default-values'
 import SettingItem from '../components/SettingItem'
-import userSettings from 'electron-settings'
 import { ipcRenderer } from 'electron'
 import SpecCodeInline from '../components/code/SpecCodeInline'
 import SpecCode from '../components/code/SpecCode'
@@ -109,8 +109,8 @@ export default {
     checkApi () {
       // Send checking signal to the main process
       ipcRenderer.send('refresh-api-path')
-      this.resultsDir = userSettings.get('resultsDirPath', '')
-      this.lastCheckedApiPath = userSettings.get('deepsecApiPath', '')
+      this.resultsDir =  defaultValues.resultsDirPath
+      this.lastCheckedApiPath =  defaultValues.deepsecApiPath
     },
     dbScanForNewResults () {
       scanForNewResults()
@@ -118,11 +118,11 @@ export default {
   },
   beforeMount () {
     this.demoCode = demoCode
-    this.lastCheckedApiPath = userSettings.get('deepsecApiPath', '')
-    this.resultsDir = userSettings.get('resultsDirPath', '')
+    this.lastCheckedApiPath =  defaultValues.deepsecApiPath
+    this.resultsDir =  defaultValues.resultsDirPath
   },
   beforeDestroy () {
-    if (this.lastCheckedApiPath !== userSettings.get('deepsecApiPath', '')) {
+    if (this.lastCheckedApiPath !==  defaultValues.deepsecApiPath) {
       // Send checking signal to the main process
       ipcRenderer.send('refresh-api-path')
     }

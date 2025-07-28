@@ -1,8 +1,10 @@
-import userSettings from 'electron-settings'
 import { isDir, isEmptyOrBlankStr, isFile } from '../util/misc'
 import logger from 'electron-log'
 import path from 'path'
 import fs from 'fs'
+import defaultValues  from '../util/default-values'
+
+
 
 import ApiRemote from '../deepsec-api/ApiRemote'
 
@@ -163,8 +165,7 @@ export default class ResultModel {
    * @throws Error If any problem with the file
    */
   static loadResultFile (relativePath) {
-    const dirPath = userSettings.get('resultsDirPath').toString()
-
+    const dirPath = defaultValues['resultsDirPath']
     if (isEmptyOrBlankStr(dirPath)) {
       logger.error('Result directory not set')
       throw Error('Result directory not set')

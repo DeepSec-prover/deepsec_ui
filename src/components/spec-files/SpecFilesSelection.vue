@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { openSpecFilesRenderer } from '../../util/open-files-dialogs'
+import { ipcRenderer } from 'electron'
 import FilesList from './FilesList'
 
 export default {
@@ -66,8 +66,8 @@ export default {
     }
   },
   methods: {
-    selectFiles (files, directories) {
-      openSpecFilesRenderer(files, directories).then(files => {
+    async selectFiles (files, directories) {
+        ipcRenderer.invoke('specFiles:open', { files, directories }).then(files => {
         // Add files to the Set (duplicate are skipped)
         files.forEach(file => {
           if (!this.filesSet.has(file)) {

@@ -1,7 +1,7 @@
 import logger from 'electron-log'
 import { Notification } from 'element-ui'
-import userSettings from 'electron-settings'
 import dash from 'lodash'
+import  defaultValues  from '../util/default-values'
 
 /**
  * Send a notification depending of the user settings.
@@ -21,28 +21,28 @@ export default function notification (title,
                                       router = null) {
   if (type === 'success' || type === 'info' || type === '') {
     // Check skip query
-    if (topic === 'query' && !userSettings.get('showQueryNotif')) {
+    if (topic === 'query' && !defaultValues.showQueryNotif) {
       return
     }
 
     // Check skip run
-    if (topic === 'run' && !userSettings.get('showRunNotif')) {
+    if (topic === 'run' && !defaultValues.showRunNotif) {
       return
     }
 
     // Check skip batch
-    if (topic === 'batch' && !userSettings.get('showBatchNotif')) {
+    if (topic === 'batch' && !defaultValues.showBatchNotif) {
       return
     }
   }
 
   // Set time
   let time // in ms
-  if ((type === 'error' && userSettings.get('stickyErrorNotif')) ||
-    (type === 'warning' && userSettings.get('stickyWarningNotif'))) {
+  if ((type === 'error' && defaultValues.stickyErrorNotif) ||
+    (type === 'warning' && defaultValues.stickyWarningNotif)) {
     time = 0 // no auto dismiss
   } else {
-    time = userSettings.get('notificationDuration') * 1000 // Seconds to ms
+    time = defaultValues.notificationDuration * 1000 // Seconds to ms
   }
 
   // If link add click event and css class

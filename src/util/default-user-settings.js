@@ -1,10 +1,10 @@
-import userSettings from 'electron-settings'
 import logger from 'electron-log'
+import userSettings from 'electron-settings'
 
 const defaultUserSettings = {
   showHelpers: true,
   deepsecApiPath: '',
-  resultsDirPath: '',
+  resultsDirPath: '',  
   notificationDuration: 5, // seconds
   showBatchNotif: true,
   showRunNotif: false,

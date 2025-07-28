@@ -6,7 +6,15 @@
   "mac": {
     "target": "dmg",
     "icon": "build/icon.icns",
-    "category": "public.app-category.developer-tools"
+    "category": "public.app-category.developer-tools",
+    "extraResources": [
+      "./node_modules/@electron/remote/**",
+        {       
+          "from": "node_modules/sqlite3/lib/binding/napi-v6-darwin-x64",
+          "to": "node_modules/sqlite3/lib/binding/napi-v6-darwin-x64",
+          "filter": ["*.node"]
+        }
+      ]
   },
   "win": {
     "icon": "build/icon.ico"
@@ -17,8 +25,11 @@
       "snap",
       "deb"
     ],
-    "category": "Development",
+    "category": "Production",
     "icon": "build/icons",
     "synopsis": "User interface for DeepSec"
-  }
+  },
+    "asarUnpack": [
+      "node_modules/sqlite3/**/*"
+    ]
 }

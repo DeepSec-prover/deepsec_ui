@@ -81,7 +81,6 @@ import QueryModel from '../../models/QueryModel'
 import Helper from '../helpers/Helper'
 import SpecCode from '../code/SpecCode'
 import { formatCode } from '../../util/process-parser'
-import logger from 'electron-log'
 import SimFrame from './SimFrame'
 import SimTrace from './SimTrace'
 import ProcessDisplayedModel from '../../models/ProcessDisplayedModel'
@@ -144,14 +143,14 @@ export default {
       if (!this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
         this.processDisplayed.gotoFirstAction()
       } else {
-        logger.warn('Action ignored because the process is currently loading or is impossible.')
+        console.warn('Action ignored because the process is currently loading or is impossible.')
       }
     },
     previousAction () {
       if (!this.processDisplayed.loading && this.processDisplayed.hasPreviousAction()) {
         this.processDisplayed.gotoPreviousAction()
       } else {
-        logger.warn('Action ignored because the process is currently loading or is impossible.')
+        console.warn('Action ignored because the process is currently loading or is impossible.')
       }
     },
     nextAction () {
@@ -166,7 +165,7 @@ export default {
             })
         }
       } else {
-        logger.warn('Action ignored because the process is currently loading or is impossible.')
+        console.warn('Action ignored because the process is currently loading or is impossible.')
       }
     },
     lastAction () {
@@ -181,14 +180,14 @@ export default {
             })
         }
       } else {
-        logger.warn('Action ignored because the process is currently loading or is impossible.')
+        console.warn('Action ignored because the process is currently loading or is impossible.')
       }
     },
     gotoAction (id) {
       if (!this.processDisplayed.loading) {
         this.processDisplayed.gotoAction(id)
       } else {
-        logger.warn('Action ignored because the process is currently loading.')
+        console.warn('Action ignored because the process is currently loading.')
       }
     },
     focusNextActions () {
